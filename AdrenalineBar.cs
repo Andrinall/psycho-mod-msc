@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using MSCLoader;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Adrenaline
 {
@@ -8,13 +10,12 @@ namespace Adrenaline
         internal static Transform HUD;
         internal static Transform Bar;
 
-        private static const MIN_ADRENALINE = 0f;
-        private static const MAX_ADRENALINE = 2f;
+        private const float MIN_ADRENALINE = 0f;
+        private const float MAX_ADRENALINE = 2f;
 
         public static void Setup()
         {
             HUD = GameObject.Find("GUI/HUD").transform;
-            HUD.Find("Money").transform.localPosition = new Vector3(-11.5f, 6.4f);
             Transform clone = Object.Instantiate(HUD.Find("Stress"));
             Transform label = clone.Find("HUDLabel");
             clone.name = "Adrenaline";
@@ -28,6 +29,13 @@ namespace Adrenaline
             Mat = Bar.Find("HUDBar").GetComponent<MeshRenderer>().material;
 
             Mat.color = Color.white;
+        }
+
+        private void StructurizeHUD()
+        {
+            List<string> labels = new List<string> { "Hunger", "Urine", "Stress", "Dirtiness", "Adrenaline" };
+            if (ModLoader.IsModPresent("")) labels.Add("Temperature");
+            if (ModLoader.IsModPresent("")) labels.Add("Health");
         }
 
         public static void Set(int value)
