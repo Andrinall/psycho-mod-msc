@@ -8,7 +8,10 @@ namespace Adrenaline
         internal static Transform HUD;
         internal static Transform Bar;
 
-        public static void Init()
+        private static const MIN_ADRENALINE = 0f;
+        private static const MAX_ADRENALINE = 2f;
+
+        public static void Setup()
         {
             HUD = GameObject.Find("GUI/HUD").transform;
             HUD.Find("Money").transform.localPosition = new Vector3(-11.5f, 6.4f);
@@ -29,7 +32,7 @@ namespace Adrenaline
 
         public static void Set(int value)
         {
-            Bar.localScale = new Vector3(Mathf.Clamp(value / 100f, 0f, 1f), 1f);
+            Bar.localScale = new Vector3(Mathf.Clamp(value / 100f, MIN_ADRENALINE, MAX_ADRENALINE), 1f);
         }
     }
 }
