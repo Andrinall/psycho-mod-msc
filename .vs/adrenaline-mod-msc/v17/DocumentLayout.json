@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\AdrenalineBar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AdrenalineBar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A664CD62-4AA8-461D-84DE-7B98AEF87751}|Adrenaline.csproj|c:\\users\\administrator\\documents\\github\\adrenaline-mod-msc\\adrenalinebar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A664CD62-4AA8-461D-84DE-7B98AEF87751}|Adrenaline.csproj|solutionrelative:adrenalinebar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\Adrenaline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Adrenaline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A664CD62-4AA8-461D-84DE-7B98AEF87751}|Adrenaline.csproj|C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\Adrenaline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A664CD62-4AA8-461D-84DE-7B98AEF87751}|Adrenaline.csproj|solutionrelative:Adrenaline.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,9 +26,9 @@
               "Title": "AdrenalineBar.cs",
               "DocumentMoniker": "C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\AdrenalineBar.cs",
               "RelativeDocumentMoniker": "AdrenalineBar.cs",
-              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\AdrenalineBar.cs",
-              "RelativeToolTip": "AdrenalineBar.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAAAkAAAA",
+              "ToolTip": "C:\\Users\\Administrator\\Documents\\GitHub\\adrenaline-mod-msc\\AdrenalineBar.cs*",
+              "RelativeToolTip": "AdrenalineBar.cs*",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-08-02T18:45:56.73Z",
               "EditorCaption": ""
