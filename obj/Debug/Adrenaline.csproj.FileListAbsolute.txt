@@ -1,8 +1,0 @@
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\bin\Debug\adrenaline-mod-msc.dll
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\bin\Debug\adrenaline-mod-msc.pdb
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\obj\Debug\Adrenaline.csproj.AssemblyReference.cache
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\obj\Debug\Adrenaline.csproj.CoreCompileInputs.cache
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\obj\Debug\adrenaline-mod-msc.dll
-C:\Users\Administrator\Documents\GitHub\adrenaline-mod-msc\obj\Debug\adrenaline-mod-msc.pdb
-D:\SteamLibrary\steamapps\common\My Summer Car\Mods\adrenaline-mod-msc.dll
-D:\SteamLibrary\steamapps\common\My Summer Car\Mods\adrenaline-mod-msc.pdb
