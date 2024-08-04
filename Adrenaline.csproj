@@ -35,6 +35,10 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FixHUDStructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -76,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adrenaline.cs" />
-    <Compile Include="AdrenalineBar.cs" />
     <Compile Include="AdrenalineLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
