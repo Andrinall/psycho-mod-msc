@@ -1,5 +1,5 @@
 ﻿using MSCLoader;
-using System.Threading;
+using StructuredHUD;
 using UnityEngine;
 
 namespace Adrenaline
@@ -12,56 +12,50 @@ namespace Adrenaline
         public override string Version => "0.0.1";
         public override string Description => "";
 
-        public static GameObject death;
+        internal AdrenalineLogic logic;
 
-        public static string deathTextMinAdrenaline = "Young male\nfound dead\nwith out of\nadrenaline in\n region of\nAlivieska";
+        public float tempValue = 100f;
+        public float tempLoss = 1f;
 
-        internal static Settings lossRateSet = new Settings("adrlossrate", "Adrenaline Loss Rate", 1f, updateSettings);
-
-        public override void ModSetup()
+        public override void OnNewGame()
         {
-            SetupFunction(Setup.OnNewGame, Mod_NewGame);
-            SetupFunction(Setup.OnLoad, Mod_OnLoad);
-            SetupFunction(Setup.OnSave, Mod_Save);
+            tempValue = 100f;
+            tempLoss = 1f;
+            
+            if(logic != null)
+            {
+                logic.value = 100f;
+                logic.lossRate = 1f;
+            }
         }
 
-        private void Mod_NewGame()
-        {
-            AdrenalineLogic.value = 100f;
-        }
-
-        private void Mod_OnLoad()
+        public override void OnLoad()
         {
             // load value and loss rate
             // ...
 
-            death = GameObject.Find("Systems").transform.Find("Death").gameObject;
+            FixedHUD.AddElement(eHUDCloneType.RECT, "Adrenaline", "Money");
 
-            AdrenalineBar.Setup();
-            AdrenalineLogic.Set(100f);
-
-            GameObject.Find("PLAYER").AddComponent<AdrenalineLogic>();
+            logic = GameObject.Find("PLAYER").AddComponent<AdrenalineLogic>();
+            logic.value = tempValue;
+            logic.lossRate = tempLoss;
 
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
         }
 
-        private void Mod_Save()
+        public override void OnGUI()
+        {
+            FixedHUD.Structurize();
+        }
+
+        public override void OnSave()
         {
             // save value and loss rate
         }
 
-        public static void Kill()
-        {
-            death.SetActive(true);
-            death.GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Fatigue").Value = true;
-
-            death.transform.Find("GameOverScreen/Paper/Fatigue/TextEN").GetComponent<TextMesh>().text = deathTextMinAdrenaline;
-            death.transform.Find("GameOverScreen/Paper/Fatigue/TextFI").GetComponent<TextMesh>().text = deathTextMinAdrenaline;
-        }
-
         internal static void updateSettings()
         {
-            AdrenalineLogic.lossRate = Mathf.Clamp((float)lossRateSet.Value, 0.5f, 3f);
+            //AdrenalineLogic.lossRate = Mathf.Clamp((float)lossRateSet.Value, 0.5f, 3f);
         }
     }
 }
