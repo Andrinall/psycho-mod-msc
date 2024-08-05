@@ -53,12 +53,6 @@ namespace Adrenaline
 
             pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
-
-            ModConsole.Print("States: " + pubWindow.FsmStates.Length.ToString());
-            foreach (FsmState i in pubWindow.FsmStates)
-            {
-                ModConsole.Print("State: " + i.Name + " [" + i.Active.ToString() + "]");
-            }
             //fight = FsmVariables.GlobalVariables.FindFsmInt("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
         }
 
