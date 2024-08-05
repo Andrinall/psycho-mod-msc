@@ -21,14 +21,10 @@ namespace Adrenaline
         private float DEFAULT_DECREASE = 0.18f;
         private float DEFAULT_SPRINT_INCREASE = 0.28f;
         private float DEFAULT_HIGHSPEED_INCREASE = 0.35f;
-        private float FIGHT = 0.47f;
 
         private GameObject death;
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
-        private FsmBool breakWindowShop;
-        private FsmBool breakWindowPub;
-        private FsmBool fight;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
@@ -36,7 +32,6 @@ namespace Adrenaline
         public float lossRate = 1f;
         public bool lockDecrease = false;
         public float lockCooldown = 12000f; // 1 minute
-
 
         public void OnEnable()
         {
@@ -48,33 +43,15 @@ namespace Adrenaline
             drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)").GetComponent<Drivetrain>());
-
-            breakWindowPub = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub");
-            breakWindowShop = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow");
-            fight = FsmVariables.GlobalVariables.FindFsmBool("DANCEHALL/Functions/FIGHTER/Fighter");
         }
 
         public void FixedUpdate()
         {
-            if (breakWindowShop.Value == true)
-            {
-                value += 25f;
-            }
-
-            if (breakWindowPub.Value == true)
-            {
-                value += 25f;
-            }
-
             if (!DecreaseIsLocked())
                 value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
 
             if (playerMovementSpeed.Value >= 3.5)
                 value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
-
-            if (fight.Value == true) value += FIGHT * Time.fixedDeltaTime; /* Задокументировал
-                                                                             а теперь в деньгах */
-                                           
 
             CheckHighSpeed(); // increase adrenaline from driving on high speed
             SetAdrenaline(value);
