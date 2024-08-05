@@ -15,6 +15,10 @@ namespace Adrenaline
 
         private GameObject death;
         private FsmFloat playerMovementSpeed;
+        private FsmFloat mopedSpeed;
+        private FsmFloat fendaleSpeed;
+        private FsmFloat vanSpeed;
+        private FsmFloat satsumaSpeed;
         private PlayMakerFSM coffeeCup;
 
         private string deathTextMinAdrenaline = "Young male\nfound dead of\nhearth attack in\nregion of Alivieska";
@@ -28,6 +32,10 @@ namespace Adrenaline
         {
             death = GameObject.Find("Systems").transform.Find("Death").gameObject;
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
+            mopedSpeed = FsmVariables.GlobalVariables.FindFsmFloat("JONNEZ ES/LOD/Simulation/Speed");
+            fendaleSpeed = FsmVariables.GlobalVariables.FindFsmFloat("FERNDALE(1630kg)/LOD/Dashboard/Gauges/NeedleSpeedometer");
+            vanSpeed = FsmVariables.GlobalVariables.FindFsmFloat("HAYOSIKO(1500kg, 250)/LOD/Simulation/Speed");
+            satsumaSpeed = FsmVariables.GlobalVariables.FindFsmFloat("SATSUMA(557kg, 248)/LOD/Simulation/Speed");
             coffeeCup = GameObject.Find("Coffee").GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == "Use");
         }
 
@@ -57,6 +65,14 @@ namespace Adrenaline
             
             // increase adrenaline while player sprinting
             if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+
+            if (mopedSpeed.Value > 80) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+
+            if (fendaleSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+
+            if (vanSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+
+            if (satsumaSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
 
             Set(value);
 
