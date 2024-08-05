@@ -15,7 +15,6 @@ namespace Adrenaline
 
         private GameObject death;
         private FsmFloat playerMovementSpeed;
-        private FsmFloat mopedSpeed;
         private PlayMakerFSM coffeeCup;
 
         private string deathTextMinAdrenaline = "Young male\nfound dead of\nhearth attack in\nregion of Alivieska";
@@ -29,7 +28,6 @@ namespace Adrenaline
         {
             death = GameObject.Find("Systems").transform.Find("Death").gameObject;
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
-            mopedSpeed = FsmVariables.GlobalVariables.FindFsmFloat("JONNEZ ES/SteerLimit/Speed");
             coffeeCup = GameObject.Find("Coffee").GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == "Use");
         }
 
@@ -59,8 +57,6 @@ namespace Adrenaline
             
             // increase adrenaline while player sprinting
             if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
-
-            if (mopedSpeed.Value > 20) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
 
             Set(value);
 
