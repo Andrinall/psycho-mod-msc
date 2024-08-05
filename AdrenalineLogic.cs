@@ -3,6 +3,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using System.Collections.Generic;
 using MSCLoader;
+using System.Linq;
 
 namespace Adrenaline
 {
@@ -21,13 +22,14 @@ namespace Adrenaline
         private float DEFAULT_DECREASE = 0.18f;
         private float DEFAULT_SPRINT_INCREASE = 0.28f;
         private float DEFAULT_HIGHSPEED_INCREASE = 0.35f;
-        private float FIGHT = 0.47f;
+        private float DEFAULT_FIGHT_INCREASE = 0.47f;
+        private float DEFAULT_WINDOW_BREAK_INCREASE = 5f;
 
         private GameObject death;
+        private PlayMakerFSM storeWindow;
+        private PlayMakerFSM pubWindow;
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
-        private FsmBool breakWindowShop;
-        private FsmBool breakWindowPub;
         private FsmInt fight;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
@@ -49,33 +51,26 @@ namespace Adrenaline
             drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)").GetComponent<Drivetrain>());
 
-            breakWindowPub = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub/Break/Open2");
-            breakWindowShop = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow/Break/Open2");
-            fight = FsmVariables.GlobalVariables.FindFsmBool("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
+            pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
+            storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
+
+            ModConsole.Print("States: " + pubWindow.FsmStates.Length.ToString());
+            foreach (FsmState i in pubWindow.FsmStates)
+            {
+                ModConsole.Print("State: " + i.Name + " [" + i.Active.ToString() + "]");
+            }
+            //fight = FsmVariables.GlobalVariables.FindFsmInt("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
         }
 
         public void FixedUpdate()
         {
-            if (breakWindowShop.Value == true)
-            {
-                value += 25f;
-            }
+            if (!DecreaseIsLocked()) value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
 
-            if (breakWindowPub.Value == true)
-            {
-                value += 25f;
-            }
+            if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
 
-            if (!DecreaseIsLocked())
-                value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
+            //if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime;
 
-            if (playerMovementSpeed.Value >= 3.5)
-                value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
-
-            if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime; /* Задокументировал
-                                                                             а теперь в деньгах */
-                                           
-
+            CheckBreakWindow();
             CheckHighSpeed(); // increase adrenaline from driving on high speed
             SetAdrenaline(value);
 
@@ -104,6 +99,16 @@ namespace Adrenaline
                 if (car.differentialSpeed > CAR_SPEEDS[idx])
                     value += DEFAULT_HIGHSPEED_INCREASE * Time.fixedDeltaTime;
             }
+        }
+
+        private void CheckBreakWindow()
+        {
+            ModConsole.Print(storeWindow.ActiveStateName);
+            if (storeWindow.ActiveStateName == "Shatter")
+                value += DEFAULT_WINDOW_BREAK_INCREASE * Time.fixedDeltaTime;
+
+            if (pubWindow.ActiveStateName == "Shatter")
+                value += DEFAULT_WINDOW_BREAK_INCREASE * Time.fixedDeltaTime;
         }
 
         private void SetDecreaseLock(float time)
