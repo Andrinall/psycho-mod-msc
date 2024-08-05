@@ -43,11 +43,6 @@ namespace Adrenaline
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
         }
 
-        public override void OnGUI()
-        {
-            FixedHUD.Structurize();
-        }
-
         public override void OnSave()
         {
             // save value and loss rate
