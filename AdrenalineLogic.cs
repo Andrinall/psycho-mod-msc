@@ -28,7 +28,7 @@ namespace Adrenaline
         private FsmString playerCurrentCar;
         private FsmBool breakWindowShop;
         private FsmBool breakWindowPub;
-        private FsmBool fight;
+        private FsmInt fight;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
@@ -49,9 +49,9 @@ namespace Adrenaline
             drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)").GetComponent<Drivetrain>());
 
-            breakWindowPub = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub");
-            breakWindowShop = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow");
-            fight = FsmVariables.GlobalVariables.FindFsmBool("DANCEHALL/Functions/FIGHTER/Fighter");
+            breakWindowPub = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub/Break/Open2");
+            breakWindowShop = FsmVariables.GlobalVariables.FindFsmBool("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow/Break/Open2");
+            fight = FsmVariables.GlobalVariables.FindFsmBool("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
         }
 
         public void FixedUpdate()
@@ -72,7 +72,7 @@ namespace Adrenaline
             if (playerMovementSpeed.Value >= 3.5)
                 value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
 
-            if (fight.Value == true) value += FIGHT * Time.fixedDeltaTime; /* Задокументировал
+            if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime; /* Задокументировал
                                                                              а теперь в деньгах */
                                            
 
