@@ -34,23 +34,20 @@ namespace Adrenaline
             // load value and loss rate
             // ...
 
-            FixedHUD.AddElement(eHUDCloneType.RECT, "Adrenaline", "Money");
+            if (GameObject.Find("GUI/HUD/Adrenaline") == null)
+                FixedHUD.AddElement(eHUDCloneType.RECT, "Adrenaline", "Money");
 
-            logic = GameObject.Find("PLAYER").AddComponent<AdrenalineLogic>();
-            logic.value = tempValue;
-            logic.lossRate = tempLoss;
+            if (logic == null)
+                logic = GameObject.Find("PLAYER").AddComponent<AdrenalineLogic>();
+                logic.value = tempValue;
+                logic.lossRate = tempLoss;
 
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
         }
 
         public override void OnSave()
         {
-            // save value and loss rate
-        }
-
-        internal static void updateSettings()
-        {
-            //AdrenalineLogic.lossRate = Mathf.Clamp((float)lossRateSet.Value, 0.5f, 3f);
+            
         }
     }
 }

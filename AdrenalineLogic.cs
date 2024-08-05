@@ -1,27 +1,32 @@
 ﻿using StructuredHUD;
 using UnityEngine;
-using MSCLoader;
 using HutongGames.PlayMaker;
-using System.Linq;
+using System.Collections.Generic;
+using MSCLoader;
 
 namespace Adrenaline
 {
     internal class AdrenalineLogic : MonoBehaviour
     {
-        private const float MIN_ADRENALINE = 0f;
-        private const float MAX_ADRENALINE = 2f;
-        private const float DEFAULT_DECREASE = 0.18f;
-        private const float DEFAULT_SPRINT_INCREASE = 0.28f;
+        private enum CARS : int { JONEZZ = 0, SATSUMA = 1, FERNDALE = 2, HAYOSIKO = 3 };
+        private readonly string[] CAR_NAMES = { "Jonezz", "Satsuma", "Ferndale", "Hayosiko" };
+        private readonly float[] CAR_SPEEDS = { 70f, 120f, 110f, 110f };
+
+        private readonly string deathTextMinAdrenaline = "Young male\nfound dead of\nhearth attack in\nregion of Alivieska";
+
+        private readonly float MIN_ADRENALINE = 0f;
+        private readonly float MAX_ADRENALINE = 2f;
+
+
+        private float DEFAULT_DECREASE = 0.18f;
+        private float DEFAULT_SPRINT_INCREASE = 0.28f;
+        private float DEFAULT_HIGHSPEED_INCREASE = 0.35f;
 
         private GameObject death;
         private FsmFloat playerMovementSpeed;
-        private FsmFloat mopedSpeed;
-        private FsmFloat fendaleSpeed;
-        private FsmFloat vanSpeed;
-        private FsmFloat satsumaSpeed;
-        private PlayMakerFSM coffeeCup;
+        private FsmString playerCurrentCar;
 
-        private string deathTextMinAdrenaline = "Young male\nfound dead of\nhearth attack in\nregion of Alivieska";
+        public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
         public float value = 100f;
         public float lossRate = 1f;
@@ -32,63 +37,68 @@ namespace Adrenaline
         {
             death = GameObject.Find("Systems").transform.Find("Death").gameObject;
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
-            mopedSpeed = FsmVariables.GlobalVariables.FindFsmFloat("JONNEZ ES/LOD/Simulation/Speed");
-            fendaleSpeed = FsmVariables.GlobalVariables.FindFsmFloat("FERNDALE(1630kg)/LOD/Dashboard/Gauges/NeedleSpeedometer");
-            vanSpeed = FsmVariables.GlobalVariables.FindFsmFloat("HAYOSIKO(1500kg, 250)/LOD/Simulation/Speed");
-            satsumaSpeed = FsmVariables.GlobalVariables.FindFsmFloat("SATSUMA(557kg, 248)/LOD/Simulation/Speed");
-            coffeeCup = GameObject.Find("Coffee").GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == "Use");
+            playerCurrentCar = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
+
+            drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)").GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)").GetComponent<Drivetrain>());
         }
 
         public void FixedUpdate()
         {
-            // drunk coffee handler
-            if (coffeeCup.ActiveStateName == "State 2" && !lockDecrease)
-            {
-                value += 5f;
-                lockDecrease = true;
-            }
+            if (!DecreaseIsLocked())
+                value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
 
-            if (lockDecrease)
-            {
-                lockCooldown -= Time.fixedDeltaTime;
-                if (lockCooldown <= 0)
-                {
-                    lockDecrease = false; // disable decrease lock
-                    lockCooldown = 12000f;
-                }
-            }
-            else
-            {
-                // basic decrease adrenaline
-                value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime;
-            }
-            
-            // increase adrenaline while player sprinting
-            if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+            if (playerMovementSpeed.Value >= 3.5)
+                value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
 
-            if (mopedSpeed.Value > 80) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
+            CheckHighSpeed(); // increase adrenaline from driving on high speed
+            SetAdrenaline(value);
 
-            if (fendaleSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
-
-            if (vanSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
-
-            if (satsumaSpeed.Value > 120) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime;
-
-            Set(value);
-
-            if (value <= 0)
-                Kill();
-            if (value >= 200)
-                Kill();
+            if (value <= 0) Kill();
+            if (value >= 200) Kill();
         }
 
-        public void Set(float value_)
+        public void SetAdrenaline(float value_)
         {
             var clamped = Mathf.Clamp(value_ / 100f, MIN_ADRENALINE, MAX_ADRENALINE);
+            value = value_;
+
             FixedHUD.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
             FixedHUD.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 1.75f) ? Color.red : Color.white);
+        }
 
-            value = clamped;
+        private void CheckHighSpeed()
+        {
+            foreach (Drivetrain car in drivetrains)
+            {
+                if (car == null) continue;
+
+                int idx = drivetrains.IndexOf(car);
+                if (idx == -1) continue;
+                if (playerCurrentCar.Value != CAR_NAMES[idx]) continue;
+                if (car.differentialSpeed > CAR_SPEEDS[idx])
+                    value += DEFAULT_HIGHSPEED_INCREASE * Time.fixedDeltaTime;
+            }
+        }
+
+        private void SetDecreaseLock(float time)
+        {
+            if (lockDecrease) return;
+            lockDecrease = true;
+            lockCooldown = time;
+        }
+
+        private bool DecreaseIsLocked()
+        {
+            if (!lockDecrease) return false;
+            
+            lockCooldown -= Time.fixedDeltaTime;
+            if (lockCooldown >= 0) return true;
+
+            lockDecrease = false; // disable decrease lock
+            return false;
         }
 
         public void Kill()
