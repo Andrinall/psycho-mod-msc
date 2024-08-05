@@ -4,6 +4,8 @@ using HutongGames.PlayMaker;
 using System.Collections.Generic;
 using MSCLoader;
 using System.Linq;
+using HealthMod;
+using HutongGames.PlayMaker.Actions;
 
 namespace Adrenaline
 {
@@ -24,6 +26,10 @@ namespace Adrenaline
         private float DEFAULT_HIGHSPEED_INCREASE = 0.35f;
         private float DEFAULT_FIGHT_INCREASE = 0.47f;
         private float DEFAULT_WINDOW_BREAK_INCREASE = 5f;
+        private float HOUSE_BURNING = 0.56f;
+        private float TEIMO_PISS = 0.035f;
+        private float LOW_HP = 0.018f;
+        private float HIGH_HP = 0.018f;
 
         private GameObject death;
         private PlayMakerFSM storeWindow;
@@ -31,6 +37,8 @@ namespace Adrenaline
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
         private FsmInt fight;
+        private FsmBool houseBurning;
+        private FsmBool teimoPiss;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
@@ -45,6 +53,9 @@ namespace Adrenaline
             death = GameObject.Find("Systems").transform.Find("Death").gameObject;
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
             playerCurrentCar = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
+            houseBurning = FsmVariables.GlobalVariables.FindFsmBool("HouseBurning");
+
+            //teimoPiss = FsmVariables.GlobalVariables.FindFsmBool("STORE/TeimoInShop/Pivot/FacePissTrigger/Reaction/PissOn");
 
             drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>());
@@ -54,6 +65,7 @@ namespace Adrenaline
             pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             //fight = FsmVariables.GlobalVariables.FindFsmInt("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
+            
         }
 
         public void FixedUpdate()
@@ -61,6 +73,17 @@ namespace Adrenaline
             if (!DecreaseIsLocked()) value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
 
             if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
+
+            if (houseBurning.Value == true) lossRate -= HOUSE_BURNING - Time.fixedDeltaTime;
+
+
+            //if (teimoPiss.Value == true) lossRate -= TEIMO_PISS - Time.fixedDeltaTime;
+
+
+            if (HealthMod.Health.hp <= 41) lossRate -= LOW_HP - Time.fixedDeltaTime;
+
+            if (HealthMod.Health.hp >= 80) lossRate += HIGH_HP * Time.fixedDeltaTime;
+
 
             //if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime;
 
@@ -122,6 +145,9 @@ namespace Adrenaline
             lockDecrease = false; // disable decrease lock
             return false;
         }
+
+
+
 
         public void Kill()
         {
