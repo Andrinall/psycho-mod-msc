@@ -2,10 +2,9 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 using System.Collections.Generic;
-using MSCLoader;
 using System.Linq;
 using HealthMod;
-using HutongGames.PlayMaker.Actions;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -21,28 +20,28 @@ namespace Adrenaline
         private readonly float MIN_ADRENALINE = 0f;
         private readonly float MAX_ADRENALINE = 200f;
 
-
-        private float DEFAULT_DECREASE = 0.18f;
-        private float SPRINT_INCREASE = 0.28f;
+        private float DEFAULT_DECREASE = 0.38f;
+        private float SPRINT_INCREASE = 0.3f;
         private float HIGHSPEED_INCREASE = 0.35f;
         private float FIGHT_INCREASE = 0.47f;
         private float WINDOW_BREAK_INCREASE = 6f;
         private float HOUSE_BURNING = 0.56f;
         private float TEIMO_PISS = 2.5f;
         private float GUARD_CATCH = 2.5f;
-        private float FIGHTING = 8f;
-        private float VENTTI_WIN = 5f;
-        private float LOW_HP_LOSS_MOD = 0.01f;
-        private float HIGH_HP_LOSS_MOD = 0.01f;
+        private float VENTTI_WIN = 11f;
+        private float LOW_HP_LOSS = 0.01f;
+        private float HIGH_HP_LOSS = 0.01f;
 
-        private GameObject death;
+        private short venttiWinStreak = 0;
+
         private PlayMakerFSM storeWindow;
         private PlayMakerFSM pubWindow;
         private PlayMakerFSM teimoFacePissTrigger;
-        private PlayMakerFSM dancehallGuardReact;
+        private PlayMakerFSM clubGuard;
         private PlayMakerFSM clubFighter;
         private PlayMakerFSM pubFighter;
-        private PlayMakerFSM venttiWin;
+        private PlayMakerFSM venttiGame;
+
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
         private FsmBool houseBurning;
@@ -56,33 +55,23 @@ namespace Adrenaline
 
         private List<string> fightStates = new List<string> { "State 1", "State 7", "State 10" };
 
-        private List<string> venttiStates = new List<string> { "Lose" };
-
 
         public void OnEnable()
         {
-            death = GameObject.Find("Systems").transform.Find("Death").gameObject;
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
             playerCurrentCar = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
             houseBurning = FsmVariables.GlobalVariables.FindFsmBool("HouseBurning");
 
-            drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)").GetComponent<Drivetrain>());
-            drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>());
-            drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
-            drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)").GetComponent<Drivetrain>());
-
-            pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
-            storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
-            teimoFacePissTrigger = GameObject.Find("STORE/TeimoInShop/Pivot/FacePissTrigger").GetComponent<PlayMakerFSM>();
-            dancehallGuardReact = GameObject.Find("DANCEHALL/Functions/GUARD/Guard").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "React");
-            clubFighter = GameObject.Find("DANCEHALL/Functions/FIGHTER/Fighter").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Hit");
-            venttiWin = GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Lose");
+            drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)")?.GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)")?.GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)")?.GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)")?.GetComponent<Drivetrain>());
         }
 
         public void FixedUpdate()
         {
-            if (Health.hp < 30) SetLossRate(lossRate - LOW_HP_LOSS_MOD * Time.fixedDeltaTime);
-            if (Health.hp > 80) SetLossRate(lossRate + HIGH_HP_LOSS_MOD * Time.fixedDeltaTime);
+            if (Health.hp < 30) SetLossRate(lossRate - LOW_HP_LOSS * Time.fixedDeltaTime);
+            if (Health.hp > 80) SetLossRate(lossRate + HIGH_HP_LOSS * Time.fixedDeltaTime);
 
             if (!DecreaseIsLocked())
                 value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
@@ -93,18 +82,16 @@ namespace Adrenaline
             if (houseBurning.Value == true)
                 IncreaseValue(HOUSE_BURNING); // increase adrenaline while house is burning
 
-            if (teimoFacePissTrigger.ActiveStateName == "State 2")
-                IncreaseValue(TEIMO_PISS); // increase andrenaline from piss on teimo in shop
-
-            CheckBreakWindow(); // increase adrenaline while breaking store/pub windows
             CheckHighSpeed(); // increase adrenaline while driving on high speed
-            CheckDanceHallActions();
-            CheckVenttiWin();
+            CheckStoreActions(); // increase adrenaline while breaking store window or piss on teimo
+            CheckPubActions(); // increase adrenaline while breaking pub store or fighting
+            CheckDanceHallActions(); // increase adrenaline while fighting or guart trying to catch player
+            CheckVenttiWin(); // increase adrenaline for every defeat in ventti game
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
-            if (value <= MIN_ADRENALINE) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
-            if (value >= MAX_ADRENALINE) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
+            if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && Health.damage(100f))
+                Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
         }
 
         public void SetAdrenaline(float value_)
@@ -143,15 +130,6 @@ namespace Adrenaline
             value += val * Time.fixedDeltaTime;
         }
 
-        private void CheckBreakWindow()
-        {
-            if (storeWindow.ActiveStateName == "Shatter")
-                IncreaseValue(WINDOW_BREAK_INCREASE);
-
-            if (pubWindow.ActiveStateName == "Shatter")
-                IncreaseValue(WINDOW_BREAK_INCREASE);
-        }
-
         private void CheckHighSpeed()
         {
             foreach (Drivetrain car in drivetrains)
@@ -166,32 +144,58 @@ namespace Adrenaline
             }
         }
 
+        private void CheckStoreActions()
+        {
+            CacheFSM(ref storeWindow, "STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow", "Break");
+            CacheFSM(ref teimoFacePissTrigger, "STORE/TeimoInShop/Pivot/FacePissTrigger", "Reaction", true);
+
+            if (storeWindow?.ActiveStateName == "Shatter")
+                IncreaseValue(WINDOW_BREAK_INCREASE);
+            
+            if (teimoFacePissTrigger?.ActiveStateName == "State 2")
+                IncreaseValue(TEIMO_PISS);
+        }
+
+        private void CheckPubActions()
+        {
+            CacheFSM(ref pubWindow, "STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub", "Break");
+
+            if (pubWindow?.ActiveStateName == "Shatter")
+                IncreaseValue(WINDOW_BREAK_INCREASE);
+
+            //if (pubFighter != null) { }
+        }
+
         private void CheckDanceHallActions()
         {
-            if (dancehallGuardReact.ActiveStateName == "Catch")
+            CacheFSM(ref clubGuard, "DANCEHALL/Functions/GUARD/Guard", "React");
+            CacheFSM(ref clubFighter, "DANCEHALL/Functions/FIGHTER/Fighter", "Hit");
+            
+            if (clubGuard?.ActiveStateName == "Catch")
                 IncreaseValue(GUARD_CATCH);
 
-            if (clubFighter != null)
-            {
-                if (clubFighter.ActiveStateName != "State 3" && clubFighter.ActiveStateName != "State 6")
-                    ModConsole.Print(clubFighter.ActiveStateName);
-
-                if (fightStates.Contains(clubFighter.ActiveStateName))
-                    IncreaseValue(FIGHTING);
-            }
-
-            if (pubFighter != null)
-            {
-
-            }
+            if (fightStates.Contains(clubFighter?.ActiveStateName))
+                IncreaseValue(FIGHT_INCREASE);
         }
 
         private void CheckVenttiWin()
         {
-            if (venttiWin != null)
+            CacheFSM(ref venttiGame, "CABIN/Cabin/Ventti/Table/GameManager", "Use");
+
+            if (venttiGame?.ActiveStateName == "Lose")
+                IncreaseValue(VENTTI_WIN);
+        }
+
+        private void CacheFSM(ref PlayMakerFSM obj, string path, string fsm, bool single = false)
+        {
+            if (obj?.gameObject == null)
             {
-                if (venttiStates.Contains(venttiWin.ActiveStateName))
-                    IncreaseValue(VENTTI_WIN);
+                if (single)
+                    obj = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
+                else
+                    obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == fsm);
+
+                if (obj?.gameObject != null) ModConsole.Print("Cached FSM: " + path + " | " + fsm);
             }
         }
     }

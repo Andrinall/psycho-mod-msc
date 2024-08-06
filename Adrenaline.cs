@@ -35,7 +35,9 @@ namespace Adrenaline
             // ...
 
             if (GameObject.Find("GUI/HUD/Adrenaline") == null)
+            {
                 FixedHUD.AddElement(eHUDCloneType.RECT, "Adrenaline", "Money");
+            }
 
             if (logic == null)
                 logic = GameObject.Find("PLAYER").AddComponent<AdrenalineLogic>();
