@@ -15,17 +15,17 @@ namespace Adrenaline
         internal AdrenalineLogic logic;
 
         public float tempValue = 100f;
-        public float tempLoss = 1f;
+        public float tempLoss = 1.2f;
 
         public override void OnNewGame()
         {
             tempValue = 100f;
-            tempLoss = 1f;
+            tempLoss = 1.2f;
             
             if(logic != null)
             {
                 logic.value = 100f;
-                logic.lossRate = 1f;
+                logic.lossRate = 1.2f;
             }
         }
 

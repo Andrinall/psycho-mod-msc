@@ -43,7 +43,7 @@ namespace Adrenaline
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
         public float value = 100f;
-        public float lossRate = 1f;
+        public float lossRate = 1.2f;
         public bool lockDecrease = false;
         public float lockCooldown = 12000f; // 1 minute
 
