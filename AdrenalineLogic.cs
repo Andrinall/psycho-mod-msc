@@ -20,7 +20,7 @@ namespace Adrenaline
         private readonly float MIN_ADRENALINE = 0f;
         private readonly float MAX_ADRENALINE = 200f;
 
-        private float DEFAULT_DECREASE = 0.38f;
+        private float DEFAULT_DECREASE = 0.18f;
         private float SPRINT_INCREASE = 0.3f;
         private float HIGHSPEED_INCREASE = 0.35f;
         private float FIGHT_INCREASE = 0.47f;
@@ -31,8 +31,6 @@ namespace Adrenaline
         private float VENTTI_WIN = 11f;
         private float LOW_HP_LOSS = 0.01f;
         private float HIGH_HP_LOSS = 0.01f;
-
-        private short venttiWinStreak = 0;
 
         private PlayMakerFSM storeWindow;
         private PlayMakerFSM pubWindow;
