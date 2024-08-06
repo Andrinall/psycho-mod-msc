@@ -31,6 +31,7 @@ namespace Adrenaline
         private float TEIMO_PISS = 2.5f;
         private float GUARD_CATCH = 2.5f;
         private float FIGHTING = 8f;
+        private float VENTTI_WIN = 5f;
         private float LOW_HP_LOSS_MOD = 0.01f;
         private float HIGH_HP_LOSS_MOD = 0.01f;
 
@@ -41,6 +42,7 @@ namespace Adrenaline
         private PlayMakerFSM dancehallGuardReact;
         private PlayMakerFSM clubFighter;
         private PlayMakerFSM pubFighter;
+        private PlayMakerFSM venttiWin;
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
         private FsmBool houseBurning;
@@ -53,6 +55,8 @@ namespace Adrenaline
         public float lockCooldown = 12000f; // 1 minute
 
         private List<string> fightStates = new List<string> { "State 1", "State 7", "State 10" };
+
+        private List<string> venttiStates = new List<string> { "Lose" };
 
 
         public void OnEnable()
@@ -72,6 +76,7 @@ namespace Adrenaline
             teimoFacePissTrigger = GameObject.Find("STORE/TeimoInShop/Pivot/FacePissTrigger").GetComponent<PlayMakerFSM>();
             dancehallGuardReact = GameObject.Find("DANCEHALL/Functions/GUARD/Guard").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "React");
             clubFighter = GameObject.Find("DANCEHALL/Functions/FIGHTER/Fighter").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Hit");
+            venttiWin = GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Lose");
         }
 
         public void FixedUpdate()
@@ -94,6 +99,7 @@ namespace Adrenaline
             CheckBreakWindow(); // increase adrenaline while breaking store/pub windows
             CheckHighSpeed(); // increase adrenaline while driving on high speed
             CheckDanceHallActions();
+            CheckVenttiWin();
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
@@ -177,6 +183,15 @@ namespace Adrenaline
             if (pubFighter != null)
             {
 
+            }
+        }
+
+        private void CheckVenttiWin()
+        {
+            if (venttiWin != null)
+            {
+                if (venttiStates.Contains(venttiWin.ActiveStateName))
+                    IncreaseValue(VENTTI_WIN);
             }
         }
     }
