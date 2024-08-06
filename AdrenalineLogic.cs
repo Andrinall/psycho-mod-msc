@@ -26,15 +26,16 @@ namespace Adrenaline
         private float DEFAULT_SPRINT_INCREASE = 0.28f;
         private float DEFAULT_HIGHSPEED_INCREASE = 0.35f;
         private float DEFAULT_FIGHT_INCREASE = 0.47f;
-        private float DEFAULT_WINDOW_BREAK_INCREASE = 5f;
+        private float DEFAULT_WINDOW_BREAK_INCREASE = 6f;
         private float HOUSE_BURNING = 0.56f;
-        private float TEIMO_PISS = 0.035f;
-        private float LOW_HP = 0.018f;
-        private float HIGH_HP = 0.018f;
+        private float TEIMO_PISS = 2.5f;
+        private float LOW_HP = 0.01f;
+        private float HIGH_HP = 0.01f;
 
         private GameObject death;
         private PlayMakerFSM storeWindow;
         private PlayMakerFSM pubWindow;
+        private PlayMakerFSM teimoFacePissTrigger;
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
         private FsmInt fight;
@@ -62,6 +63,7 @@ namespace Adrenaline
 
             pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
+            teimoFacePissTrigger = GameObject.Find("STORE/TeimoInShop/Pivot/FacePissTrigger").GetComponent<PlayMakerFSM>();
             //fight = FsmVariables.GlobalVariables.FindFsmInt("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
         }
 
@@ -76,6 +78,11 @@ namespace Adrenaline
 
             if (houseBurning.Value == true) IncreaseValue(HOUSE_BURNING); // increase adrenaline while house is burning
 
+            if (teimoFacePissTrigger.ActiveStateName == "State 2")
+            {
+                ModConsole.Print("Pissing on teimo | " + teimoFacePissTrigger.ActiveStateName + " | value: " + value.ToString());
+                IncreaseValue(TEIMO_PISS); // increase andrenaline from piss on teimo in shop
+            }
 
             //if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime;
 
