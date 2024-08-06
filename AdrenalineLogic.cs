@@ -15,7 +15,8 @@ namespace Adrenaline
         private readonly string[] CAR_NAMES = { "Jonezz", "Satsuma", "Ferndale", "Hayosiko" };
         private readonly float[] CAR_SPEEDS = { 70f, 120f, 110f, 110f };
 
-        private readonly string deathTextMinAdrenaline = "Young male\nfound dead of\nhearth attack in\nregion of Alivieska";
+        private readonly string PAPER_TEXT_FI = "";
+        private readonly string DEATH_TEXT_HEARTH_ATTACK = "Man found dead\nwith hearth attack\nin region of\nAlivieska";
 
         private readonly float MIN_ADRENALINE = 0f;
         private readonly float MAX_ADRENALINE = 2f;
@@ -91,8 +92,8 @@ namespace Adrenaline
             CheckHighSpeed(); // increase adrenaline from driving on high speed
             SetAdrenaline(value);
 
-            if (value <= 0) Kill();
-            if (value >= 200) Kill();
+            if (value <= 0) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
+            if (value >= 200) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
         }
 
         public void SetAdrenaline(float value_)
@@ -144,18 +145,6 @@ namespace Adrenaline
 
             lockDecrease = false; // disable decrease lock
             return false;
-        }
-
-
-
-
-        public void Kill()
-        {
-            death.SetActive(true);
-            death.GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Fatigue").Value = true;
-
-            death.transform.Find("GameOverScreen/Paper/Fatigue/TextEN").GetComponent<TextMesh>().text = deathTextMinAdrenaline;
-            death.transform.Find("GameOverScreen/Paper/Fatigue/TextFI").GetComponent<TextMesh>().text = deathTextMinAdrenaline;
         }
     }
 }
