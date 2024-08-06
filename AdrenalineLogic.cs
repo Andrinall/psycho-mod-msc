@@ -39,7 +39,6 @@ namespace Adrenaline
         private FsmString playerCurrentCar;
         private FsmInt fight;
         private FsmBool houseBurning;
-        private FsmBool teimoPiss;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
@@ -56,8 +55,6 @@ namespace Adrenaline
             playerCurrentCar = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
             houseBurning = FsmVariables.GlobalVariables.FindFsmBool("HouseBurning");
 
-            //teimoPiss = FsmVariables.GlobalVariables.FindFsmBool("STORE/TeimoInShop/Pivot/FacePissTrigger/Reaction/PissOn");
-
             drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)").GetComponent<Drivetrain>());
@@ -66,31 +63,26 @@ namespace Adrenaline
             pubWindow = GameObject.Find("STORE/LOD/GFX_Pub/BreakableWindowsPub/BreakableWindowPub").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             storeWindow = GameObject.Find("STORE/LOD/GFX_Store/BreakableWindows/BreakableWindow").GetComponents<PlayMakerFSM>().First(x => x.FsmName == "Break");
             //fight = FsmVariables.GlobalVariables.FindFsmInt("DANCEHALL/Functions/FIGHTER/Fighter/Move/Anger");
-            
         }
 
         public void FixedUpdate()
         {
+            if (Health.hp < 30) SetLossRate(lossRate - LOW_HP * Time.fixedDeltaTime);
+            if (Health.hp > 80) SetLossRate(lossRate + HIGH_HP * Time.fixedDeltaTime);
+
             if (!DecreaseIsLocked()) value -= DEFAULT_DECREASE * lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
 
-            if (playerMovementSpeed.Value >= 3.5) value += DEFAULT_SPRINT_INCREASE * Time.fixedDeltaTime; // increase adrenaline while player sprinting
+            if (playerMovementSpeed.Value >= 3.5) IncreaseValue(DEFAULT_SPRINT_INCREASE); // increase adrenaline while player sprinting
 
-            if (houseBurning.Value == true) lossRate -= HOUSE_BURNING - Time.fixedDeltaTime;
-
-
-            //if (teimoPiss.Value == true) lossRate -= TEIMO_PISS - Time.fixedDeltaTime;
-
-
-            if (HealthMod.Health.hp <= 41) lossRate -= LOW_HP - Time.fixedDeltaTime;
-
-            if (HealthMod.Health.hp >= 80) lossRate += HIGH_HP * Time.fixedDeltaTime;
+            if (houseBurning.Value == true) IncreaseValue(HOUSE_BURNING); // increase adrenaline while house is burning
 
 
             //if (fight.Value == 4) value += FIGHT * Time.fixedDeltaTime;
 
-            CheckBreakWindow();
-            CheckHighSpeed(); // increase adrenaline from driving on high speed
-            SetAdrenaline(value);
+            CheckBreakWindow(); // increase adrenaline while breaking store/pub windows
+            CheckHighSpeed(); // increase adrenaline while driving on high speed
+            
+            SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
             if (value <= 0) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
             if (value >= 200) Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
@@ -99,10 +91,28 @@ namespace Adrenaline
         public void SetAdrenaline(float value_)
         {
             var clamped = Mathf.Clamp(value_ / 100f, MIN_ADRENALINE, MAX_ADRENALINE);
-            value = value_;
 
             FixedHUD.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
             FixedHUD.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 1.75f) ? Color.red : Color.white);
+        }
+
+        public void SetLossRate(float value_)
+        {
+            lossRate = Mathf.Clamp(value_, 0.6f, 1.4f);
+        }
+
+        private void IncreaseValue(float val)
+        {
+            value += val * Time.fixedDeltaTime;
+        }
+
+        private void CheckBreakWindow()
+        {
+            if (storeWindow.ActiveStateName == "Shatter")
+                IncreaseValue(DEFAULT_WINDOW_BREAK_INCREASE);
+
+            if (pubWindow.ActiveStateName == "Shatter")
+                IncreaseValue(DEFAULT_WINDOW_BREAK_INCREASE);
         }
 
         private void CheckHighSpeed()
@@ -115,18 +125,8 @@ namespace Adrenaline
                 if (idx == -1) continue;
                 if (playerCurrentCar.Value != CAR_NAMES[idx]) continue;
                 if (car.differentialSpeed > CAR_SPEEDS[idx])
-                    value += DEFAULT_HIGHSPEED_INCREASE * Time.fixedDeltaTime;
+                    IncreaseValue(DEFAULT_HIGHSPEED_INCREASE);
             }
-        }
-
-        private void CheckBreakWindow()
-        {
-            ModConsole.Print(storeWindow.ActiveStateName);
-            if (storeWindow.ActiveStateName == "Shatter")
-                value += DEFAULT_WINDOW_BREAK_INCREASE * Time.fixedDeltaTime;
-
-            if (pubWindow.ActiveStateName == "Shatter")
-                value += DEFAULT_WINDOW_BREAK_INCREASE * Time.fixedDeltaTime;
         }
 
         private void SetDecreaseLock(float time)
