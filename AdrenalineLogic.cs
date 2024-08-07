@@ -24,11 +24,13 @@ namespace Adrenaline
         private float SPRINT_INCREASE = 0.3f;
         private float HIGHSPEED_INCREASE = 0.35f;
         private float FIGHT_INCREASE = 0.47f;
+        private float FIGHTER_HIT = 0.911f;
         private float WINDOW_BREAK_INCREASE = 6f;
         private float HOUSE_BURNING = 0.56f;
         private float TEIMO_PISS = 2.5f;
         private float GUARD_CATCH = 2.5f;
         private float VENTTI_WIN = 11f;
+        private float JANNI_PETTERI_HIT = 45.5f;
         private float LOW_HP_LOSS = 0.01f;
         private float HIGH_HP_LOSS = 0.01f;
 
@@ -37,8 +39,11 @@ namespace Adrenaline
         private PlayMakerFSM teimoFacePissTrigger;
         private PlayMakerFSM clubGuard;
         private PlayMakerFSM clubFighter;
+        private PlayMakerFSM clubFighterHit;
         private PlayMakerFSM pubFighter;
         private PlayMakerFSM venttiGame;
+        private PlayMakerFSM janniHit;
+        private PlayMakerFSM petteriHit;
 
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
@@ -85,6 +90,7 @@ namespace Adrenaline
             CheckPubActions(); // increase adrenaline while breaking pub store or fighting
             CheckDanceHallActions(); // increase adrenaline while fighting or guart trying to catch player
             CheckVenttiWin(); // increase adrenaline for every defeat in ventti game
+            CheckJanniAndPetteri(); // increases the adrenaline from hitting Jani or Petteri.
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
@@ -168,12 +174,17 @@ namespace Adrenaline
         {
             CacheFSM(ref clubGuard, "DANCEHALL/Functions/GUARD/Guard", "React");
             CacheFSM(ref clubFighter, "DANCEHALL/Functions/FIGHTER/Fighter", "Hit");
-            
+            CacheFSM(ref clubFighterHit, "DANCEHALL/Functions/FIGHTER/Fighter", "Hit"); ;
+
             if (clubGuard?.ActiveStateName == "Catch")
                 IncreaseValue(GUARD_CATCH);
 
+            if (clubFighterHit?.ActiveStateName == "State 9")
+                IncreaseValue(FIGHT_INCREASE);
+
             if (fightStates.Contains(clubFighter?.ActiveStateName))
                 IncreaseValue(FIGHT_INCREASE);
+
         }
 
         private void CheckVenttiWin()
@@ -182,6 +193,18 @@ namespace Adrenaline
 
             if (venttiGame?.ActiveStateName == "Lose")
                 IncreaseValue(VENTTI_WIN);
+        }
+
+        private void CheckJanniAndPetteri()
+        {
+            CacheFSM(ref janniHit, "NPC_CARS/Amikset/KYLAJANI/Driver/Animations", "Logic");
+            CacheFSM(ref petteriHit, "NPC_CARS/Amikset/AMIS2/Passengers 3/Animations", "Logic");
+
+            if (janniHit?.ActiveStateName == "Hit")
+                IncreaseValue(JANNI_PETTERI_HIT);
+
+            if (petteriHit?.ActiveStateName == "Hit")
+                IncreaseValue(JANNI_PETTERI_HIT);
         }
 
         private void CacheFSM(ref PlayMakerFSM obj, string path, string fsm, bool single = false)
