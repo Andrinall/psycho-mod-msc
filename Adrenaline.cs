@@ -1,4 +1,5 @@
 ﻿using MSCLoader;
+using MSCLoader.Helper;
 using StructuredHUD;
 using UnityEngine;
 
@@ -14,12 +15,14 @@ namespace Adrenaline
 
         internal AdrenalineLogic logic;
 
-        public float tempValue = 100f;
+        public float tempValue = 54f;
         public float tempLoss = 1.2f;
+
+       
 
         public override void OnNewGame()
         {
-            tempValue = 100f;
+            tempValue = 54f;
             tempLoss = 1.2f;
             
             if(logic != null)
@@ -33,6 +36,8 @@ namespace Adrenaline
         {
             // load value and loss rate
             // ...
+            
+            
 
             if (GameObject.Find("GUI/HUD/Adrenaline") == null)
             {
@@ -50,6 +55,12 @@ namespace Adrenaline
         public override void OnSave()
         {
             
+        }
+
+        public override void FixedUpdate()
+        {
+
+
         }
     }
 }

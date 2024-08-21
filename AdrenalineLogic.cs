@@ -5,14 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using HealthMod;
 using MSCLoader;
+using System;
+using HutongGames.PlayMaker.Actions;
+using System.Media;
+using System.Collections;
 
 namespace Adrenaline
 {
     internal class AdrenalineLogic : MonoBehaviour
     {
-        private enum CARS : int { JONEZZ = 0, SATSUMA = 1, FERNDALE = 2, HAYOSIKO = 3 };
-        private readonly string[] CAR_NAMES = { "Jonezz", "Satsuma", "Ferndale", "Hayosiko" };
-        private readonly float[] CAR_SPEEDS = { 70f, 120f, 110f, 110f };
+        private enum CARS : int { JONEZZ = 0, SATSUMA = 1, FERNDALE = 2, HAYOSIKO = 3, FITTAN = 4 };
+        private readonly string[] CAR_NAMES = { "Jonezz", "Satsuma", "Ferndale", "Hayosiko", "Fittan" };
+        private readonly float[] CAR_SPEEDS = { 70f, 120f, 110f, 110f, 70f };
 
         private readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
         private readonly string DEATH_TEXT_HEARTH_ATTACK = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
@@ -31,6 +35,7 @@ namespace Adrenaline
         private float GUARD_CATCH = 2.5f;
         private float VENTTI_WIN = 11f;
         private float JANNI_PETTERI_HIT = 45.5f;
+        private float TEIMO_SWEAR = 3f;
         private float LOW_HP_LOSS = 0.01f;
         private float HIGH_HP_LOSS = 0.01f;
 
@@ -44,6 +49,8 @@ namespace Adrenaline
         private PlayMakerFSM venttiGame;
         private PlayMakerFSM janniHit;
         private PlayMakerFSM petteriHit;
+        private PlayMakerFSM teimoFaceFuckTrigger;
+        private PlayMakerFSM fittanSpeed;
 
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
@@ -69,6 +76,7 @@ namespace Adrenaline
             drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)")?.GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.FERNDALE, GameObject.Find("FERNDALE(1630kg)")?.GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.HAYOSIKO, GameObject.Find("HAYOSIKO(1500kg, 250)")?.GetComponent<Drivetrain>());
+            drivetrains.Insert((int)CARS.FITTAN, GameObject.Find("FITTAN")?.GetComponent<Drivetrain>());
         }
 
         public void FixedUpdate()
@@ -91,11 +99,13 @@ namespace Adrenaline
             CheckDanceHallActions(); // increase adrenaline while fighting or guart trying to catch player
             CheckVenttiWin(); // increase adrenaline for every defeat in ventti game
             CheckJanniAndPetteri(); // increases the adrenaline from hitting Jani or Petteri.
+            CheckTeimoSwear();
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
             if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && Health.damage(100f))
                 Health.killCustom(DEATH_TEXT_HEARTH_ATTACK, PAPER_TEXT_FI);
+
         }
 
         public void SetAdrenaline(float value_)
@@ -155,7 +165,7 @@ namespace Adrenaline
 
             if (storeWindow?.ActiveStateName == "Shatter")
                 IncreaseValue(WINDOW_BREAK_INCREASE);
-            
+
             if (teimoFacePissTrigger?.ActiveStateName == "State 2")
                 IncreaseValue(TEIMO_PISS);
         }
@@ -207,6 +217,14 @@ namespace Adrenaline
                 IncreaseValue(JANNI_PETTERI_HIT);
         }
 
+        private void CheckTeimoSwear()
+        {
+            CacheFSM(ref teimoFaceFuckTrigger, "STORE/TeimoInShop/Pivot/Speak", "Speak");
+
+            if (teimoFaceFuckTrigger?.ActiveStateName == "State 1")
+                IncreaseValue(TEIMO_SWEAR);
+        }
+
         private void CacheFSM(ref PlayMakerFSM obj, string path, string fsm, bool single = false)
         {
             if (obj?.gameObject == null)
@@ -219,5 +237,6 @@ namespace Adrenaline
                 if (obj?.gameObject != null) ModConsole.Print("Cached FSM: " + path + " | " + fsm);
             }
         }
+        
     }
 }
