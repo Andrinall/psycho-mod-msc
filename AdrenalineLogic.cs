@@ -28,7 +28,6 @@ namespace Adrenaline
         private float SPRINT_INCREASE = 0.3f;
         private float HIGHSPEED_INCREASE = 0.35f;
         private float FIGHT_INCREASE = 0.47f;
-        private float FIGHTER_HIT = 0.911f;
         private float WINDOW_BREAK_INCREASE = 6f;
         private float HOUSE_BURNING = 0.56f;
         private float TEIMO_PISS = 2.5f;
@@ -36,6 +35,7 @@ namespace Adrenaline
         private float VENTTI_WIN = 11f;
         private float JANNI_PETTERI_HIT = 45.5f;
         private float TEIMO_SWEAR = 3f;
+        private float PISS_ON_DEVICES = 4f;
         private float LOW_HP_LOSS = 0.01f;
         private float HIGH_HP_LOSS = 0.01f;
 
@@ -51,6 +51,7 @@ namespace Adrenaline
         private PlayMakerFSM petteriHit;
         private PlayMakerFSM teimoFaceFuckTrigger;
         private PlayMakerFSM fittanSpeed;
+        private PlayMakerFSM pissOnDevices;
 
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
@@ -63,7 +64,7 @@ namespace Adrenaline
         public bool lockDecrease = false;
         public float lockCooldown = 12000f; // 1 minute
 
-        private List<string> fightStates = new List<string> { "State 1", "State 7", "State 10" };
+        private List<string> fightStates = new List<string> { "State 1", "State 7", "State 9", "State 10" };
 
 
         public void OnEnable()
@@ -80,6 +81,7 @@ namespace Adrenaline
         }
 
         public void FixedUpdate()
+
         {
             if (Health.hp < 30) SetLossRate(lossRate - LOW_HP_LOSS * Time.fixedDeltaTime);
             if (Health.hp > 80) SetLossRate(lossRate + HIGH_HP_LOSS * Time.fixedDeltaTime);
@@ -100,6 +102,7 @@ namespace Adrenaline
             CheckVenttiWin(); // increase adrenaline for every defeat in ventti game
             CheckJanniAndPetteri(); // increases the adrenaline from hitting Jani or Petteri.
             CheckTeimoSwear();
+            CheckPissOnDevices();
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
@@ -184,13 +187,9 @@ namespace Adrenaline
         {
             CacheFSM(ref clubGuard, "DANCEHALL/Functions/GUARD/Guard", "React");
             CacheFSM(ref clubFighter, "DANCEHALL/Functions/FIGHTER/Fighter", "Hit");
-            CacheFSM(ref clubFighterHit, "DANCEHALL/Functions/FIGHTER/Fighter", "Hit"); ;
 
             if (clubGuard?.ActiveStateName == "Catch")
                 IncreaseValue(GUARD_CATCH);
-
-            if (clubFighterHit?.ActiveStateName == "State 9")
-                IncreaseValue(FIGHT_INCREASE);
 
             if (fightStates.Contains(clubFighter?.ActiveStateName))
                 IncreaseValue(FIGHT_INCREASE);
@@ -223,6 +222,14 @@ namespace Adrenaline
 
             if (teimoFaceFuckTrigger?.ActiveStateName == "State 1")
                 IncreaseValue(TEIMO_SWEAR);
+        }
+
+        private void CheckPissOnDevices()
+        {
+            CacheFSM(ref pissOnDevices, "PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger", "Pouring");
+
+            if (pissOnDevices?.ActiveStateName == "TV")
+                IncreaseValue(PISS_ON_DEVICES);        
         }
 
         private void CacheFSM(ref PlayMakerFSM obj, string path, string fsm, bool single = false)
