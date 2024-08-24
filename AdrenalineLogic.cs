@@ -36,6 +36,9 @@ namespace Adrenaline
         private float JANNI_PETTERI_HIT = 45.5f;
         private float TEIMO_SWEAR = 3f;
         private float PISS_ON_DEVICES = 4f;
+        private float SPARKS_WIRING = 3f;
+        private float SPILL_SHIT = 1.1f;
+        private float RALLY_PLAYER = 1f;
         private float LOW_HP_LOSS = 0.01f;
         private float HIGH_HP_LOSS = 0.01f;
 
@@ -52,10 +55,13 @@ namespace Adrenaline
         private PlayMakerFSM teimoFaceFuckTrigger;
         private PlayMakerFSM fittanSpeed;
         private PlayMakerFSM pissOnDevices;
+        private PlayMakerFSM sparksWiring;
+        private PlayMakerFSM spilledShit;
 
         private FsmFloat playerMovementSpeed;
         private FsmString playerCurrentCar;
         private FsmBool houseBurning;
+        private FsmBool rallyStart;
 
         public readonly List<Drivetrain> drivetrains = new List<Drivetrain>();
 
@@ -72,6 +78,7 @@ namespace Adrenaline
             playerMovementSpeed = FsmVariables.GlobalVariables.FindFsmFloat("PlayerMovementSpeed");
             playerCurrentCar = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
             houseBurning = FsmVariables.GlobalVariables.FindFsmBool("HouseBurning");
+            rallyStart = FsmVariables.GlobalVariables.FindFsmBool("RallyPlayerOnStage");
 
             drivetrains.Insert((int)CARS.JONEZZ, GameObject.Find("JONNEZ ES(Clone)")?.GetComponent<Drivetrain>());
             drivetrains.Insert((int)CARS.SATSUMA, GameObject.Find("SATSUMA(557kg, 248)")?.GetComponent<Drivetrain>());
@@ -95,6 +102,9 @@ namespace Adrenaline
             if (houseBurning.Value == true)
                 IncreaseValue(HOUSE_BURNING); // increase adrenaline while house is burning
 
+            if (rallyStart.Value == true)
+                IncreaseValue(RALLY_PLAYER);
+
             CheckHighSpeed(); // increase adrenaline while driving on high speed
             CheckStoreActions(); // increase adrenaline while breaking store window or piss on teimo
             CheckPubActions(); // increase adrenaline while breaking pub store or fighting
@@ -103,6 +113,8 @@ namespace Adrenaline
             CheckJanniAndPetteri(); // increases the adrenaline from hitting Jani or Petteri.
             CheckTeimoSwear();
             CheckPissOnDevices();
+            CheckSparksWiring();
+            CheckSpilledShit();
 
             SetAdrenaline(value); // set final adrenaline value of current checks iteration
 
@@ -229,7 +241,23 @@ namespace Adrenaline
             CacheFSM(ref pissOnDevices, "PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger", "Pouring");
 
             if (pissOnDevices?.ActiveStateName == "TV")
-                IncreaseValue(PISS_ON_DEVICES);        
+                IncreaseValue(PISS_ON_DEVICES);
+        }
+
+        private void CheckSparksWiring()
+        {
+            CacheFSM(ref sparksWiring, "SATSUMA(557kg, 248)/Wiring/FireElectric", "Init");
+
+            if (sparksWiring?.ActiveStateName == "Sparks")
+                IncreaseValue(SPARKS_WIRING);
+        }
+
+        private void CheckSpilledShit()
+        {
+            CacheFSM(ref spilledShit, "GIFU(750/450psi)/ShitTank", "SpillPump");
+
+            if (spilledShit?.ActiveStateName == "Spill grow")
+                IncreaseValue(SPILL_SHIT);
         }
 
         private void CacheFSM(ref PlayMakerFSM obj, string path, string fsm, bool single = false)
