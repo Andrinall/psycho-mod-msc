@@ -7,7 +7,7 @@
     <ProjectGuid>{A664CD62-4AA8-461D-84DE-7B98AEF87751}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>adrenaline_mod_msc</RootNamespace>
+    <RootNamespace>Adrenaline</RootNamespace>
     <AssemblyName>adrenaline-mod-msc</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>D:\SteamLibrary\steamapps\common\My Summer Car\Mods\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -85,7 +85,16 @@
   <ItemGroup>
     <Compile Include="Adrenaline.cs" />
     <Compile Include="AdrenalineLogic.cs" />
+    <Compile Include="CarData.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="DanceHallHandler.cs" />
+    <Compile Include="GlobalHandler.cs" />
+    <Compile Include="HighSpeedHandler.cs" />
+    <Compile Include="PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoreActionsHandler.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="VenttiGameHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
