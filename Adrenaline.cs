@@ -1,9 +1,10 @@
-﻿using HutongGames.PlayMaker;
-using MSCLoader;
-using System;
+﻿using System.Reflection;
 using System.Collections.Generic;
-using System.Reflection;
+
+using MSCLoader;
 using UnityEngine;
+using HutongGames.PlayMaker;
+
 
 namespace Adrenaline
 {

@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Adrenaline
+﻿namespace Adrenaline
 {
     public class Configuration
     {
