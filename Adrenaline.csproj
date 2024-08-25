@@ -35,10 +35,6 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FixHUDStructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Health, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\Mods\Health.dll</HintPath>
@@ -85,13 +81,17 @@
   <ItemGroup>
     <Compile Include="Adrenaline.cs" />
     <Compile Include="AdrenalineLogic.cs" />
+    <Compile Include="AmiksetHandler.cs" />
     <Compile Include="CarData.cs" />
+    <Compile Include="CarElectricityHandler.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DanceHallHandler.cs" />
+    <Compile Include="FixedHUD.cs" />
     <Compile Include="GlobalHandler.cs" />
     <Compile Include="HighSpeedHandler.cs" />
     <Compile Include="PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpillHandler.cs" />
     <Compile Include="StoreActionsHandler.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="VenttiGameHandler.cs" />

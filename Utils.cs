@@ -1,7 +1,8 @@
-﻿using MSCLoader;
-using UnityEngine;
+﻿using UnityEngine;
+using MSCLoader;
 using System.Linq;
 using HutongGames.PlayMaker;
+using System;
 
 namespace Adrenaline
 {
@@ -21,8 +22,24 @@ namespace Adrenaline
             else
                 obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == fsm);
 
-            if (obj?.gameObject != null) PrintDebug("Cached FSM: " + path + " | " + fsm);
+            if (obj?.gameObject != null)
+                PrintDebug(String.Format("Cached FSM: %s | %s", path, fsm));
         }
+
+        public static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
+        {
+            if (var?.gameObject != null) return;
+            if (obj == null) return;
+
+            if (fsm.Length == 0)
+                var = obj.transform.Find(path)?.GetComponent<PlayMakerFSM>();
+            else
+                var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == fsm);
+
+            if (var?.gameObject != null)
+                PrintDebug(String.Format("Cached FSM: %s/%s | %s", obj.name, path, fsm)); 
+        }
+
 
         public static void PrintDebug(string msg)
         {

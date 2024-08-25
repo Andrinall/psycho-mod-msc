@@ -1,11 +1,11 @@
-﻿using StructuredHUD;
-using UnityEngine;
+﻿using UnityEngine;
 using HealthMod;
 
 namespace Adrenaline
 {
     public static class AdrenalineLogic
     {
+        private static FixedHUD _hud;
         private static float _value = 100f;
         private static float _lossRate = 1.2f;
         private static bool  _lockDecrease = false;
@@ -18,12 +18,12 @@ namespace Adrenaline
             {
                 if ((value <= Configuration.MIN_ADRENALINE || value >= Configuration.MAX_ADRENALINE) && Health.damage(25f))
                     Health.killCustom(Configuration.PAPER_TEXT_EN, Configuration.PAPER_TEXT_FI);
-                else if (GameObject.Find("GUI/HUD/Adrenaline") != null)
+                else if (_hud.IsElementExist("Adrenaline"))
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 1f);
 
-                    FixedHUD.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
-                    FixedHUD.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 1.75f) ? Color.red : Color.white);
+                    _hud.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
+                    _hud.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 1.75f) ? Color.red : Color.white);
                 }
 
                 _value = value;
@@ -36,6 +36,19 @@ namespace Adrenaline
             { return _lossRate; }
             set
             { _lossRate = Mathf.Clamp(value, Configuration.MIN_LOSS_RATE, Configuration.MAX_LOSS_RATE); }
+        }
+
+        public static void InitHUD()
+        {
+            _hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
+            _hud.AddElement(eHUDCloneType.RECT, "Adrenaline", _hud.GetIndexByName("Money"));
+            Utils.PrintDebug("HUD Enabled");
+        }
+
+        public static void DestroyHUD()
+        {
+            Object.Destroy(_hud);
+            Utils.PrintDebug("HUD Destroyed");
         }
 
         public static void Tick()

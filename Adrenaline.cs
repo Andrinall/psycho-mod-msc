@@ -1,4 +1,5 @@
 ﻿using MSCLoader;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +18,8 @@ namespace Adrenaline
             new CarData { CarObject = "SATSUMA(557kg, 248)",   CarName = "Satsuma",  RequiredSpeed = 120f },
             new CarData { CarObject = "FERNDALE(1630kg)",      CarName = "Ferndale", RequiredSpeed = 110f },
             new CarData { CarObject = "HAYOSIKO(1500kg, 250)", CarName = "Hayosiko", RequiredSpeed = 110f },
-            new CarData { CarObject = "FITTAN",                CarName = "Fittan",   RequiredSpeed = 70f  }
+            new CarData { CarObject = "FITTAN",                CarName = "Fittan",   RequiredSpeed = 70f  },
+            new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu",     RequiredSpeed = 70f  }
         };
 
         public override void OnNewGame()
@@ -31,10 +33,14 @@ namespace Adrenaline
             var player = GameObject.Find("PLAYER");
             player.AddComponent<GlobalHandler>();
             player.AddComponent<HighSpeedHandler>();
-            player.AddComponent<PissOnDevicesHandler>();
+
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera").AddComponent<PissOnDevicesHandler>();
             GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
             GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
             GameObject.Find("CABIN/Cabin").AddComponent<VenttiGameHandler>();
+            GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
+            GameObject.Find("SATSUMA(557kg, 248)/Wiring/FireElectric").AddComponent<CarElectricityHandler>();
+            GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
 
             foreach (var item in CARS)
             {
@@ -50,7 +56,7 @@ namespace Adrenaline
 
         public override void OnSave()
         {
-            Object.Destroy(GameObject.Find("PLAYER")?.GetComponent<GlobalHandler>());
+            UnityEngine.Object.Destroy(GameObject.Find("PLAYER")?.GetComponent<GlobalHandler>());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Adrenaline
 {
@@ -9,12 +10,11 @@ namespace Adrenaline
         private void OnEnable()
         {
             Utils.PrintDebug("PissOnDevicesHandler enabled");
+            FluidTrigger = base.transform.Find("Piss/Fluid/FluidTrigger").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Pouring");
         }
 
         private void FixedUpdate()
         {
-            Utils.CacheFSM(ref FluidTrigger, "PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger", "Pouring");
-
             if (FluidTrigger?.ActiveStateName == "TV")
             {
                 AdrenalineLogic.IncreaseOnce(Configuration.PISS_ON_DEVICES);
