@@ -16,7 +16,7 @@ namespace Adrenaline
         {
             if (FireElectric?.ActiveStateName == "Sparks")
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.SPARKS_WIRING);
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.SPARKS_WIRING);
                 Utils.PrintDebug("Value increased by hit from electricity into satsuma");
             }
         }

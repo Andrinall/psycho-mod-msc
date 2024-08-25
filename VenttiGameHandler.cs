@@ -19,7 +19,7 @@ namespace Adrenaline
 
             if (VenttiGame?.ActiveStateName == "Lose")
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.VENTTI_WIN);
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.VENTTI_WIN);
                 Utils.PrintDebug("Value increased by losing in ventti game");
             }
         }

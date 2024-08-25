@@ -16,7 +16,7 @@ namespace Adrenaline
         {
             if (SpillPump?.ActiveStateName == "Spill grow")
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.SPILL_SHIT);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.SPILL_SHIT);
                 Utils.PrintDebug("Value increased by spill grow");
             }
         }

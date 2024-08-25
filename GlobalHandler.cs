@@ -31,13 +31,13 @@ namespace Adrenaline
 
             if (PlayerMovementSpeed.Value >= 3.5)
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.SPRINT_INCREASE); // increase adrenaline while player sprinting
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.SPRINT_INCREASE); // increase adrenaline while player sprinting
                 Utils.PrintDebug("Value increased by player sprinting");
             }
 
             if (HouseBurningState.Value == true)
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.HOUSE_BURNING); // increase adrenaline while house is burning
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.HOUSE_BURNING); // increase adrenaline while house is burning
                 Utils.PrintDebug("Value increased by house burning");
             }
         }

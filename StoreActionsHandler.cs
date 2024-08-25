@@ -30,25 +30,25 @@ namespace Adrenaline
 
             if (StoreWindow?.ActiveStateName == "Shatter")
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.WINDOW_BREAK_INCREASE);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
                 Utils.PrintDebug("Value timed increased by broke store window");
             }
 
             if (PubWindow?.ActiveStateName == "Shatter")
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.WINDOW_BREAK_INCREASE);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
                 Utils.PrintDebug("Value timed increased by broke pub window");
             }
 
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.TEIMO_PISS);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_PISS);
                 Utils.PrintDebug("Value timed increased by piss on teimo's face");
             }
 
             if (TeimoSwears?.ActiveStateName == "State 1")
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.TEIMO_SWEAR);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_SWEAR);
                 Utils.PrintDebug("Value timed increased by teimo is swears");
             }
         }

@@ -1,6 +1,8 @@
-﻿using MSCLoader;
+﻿using HutongGames.PlayMaker;
+using MSCLoader;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Adrenaline
@@ -22,14 +24,49 @@ namespace Adrenaline
             new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu",     RequiredSpeed = 70f  }
         };
 
+        private List<SettingsSlider> _sliders = new List<SettingsSlider>();
+        private List<string> _highValues =
+            new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING" };
+
+        public override void ModSettings()
+        {
+            Settings.AddHeader(this, "DEBUG SETTINGS");
+            foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
+            {
+                _sliders.Add(Settings.AddSlider(
+                    mod: this,
+                    settingID: field.Name.GetHashCode().ToString(),
+                    name: field.Name,
+                    minValue: 0f,
+                    maxValue: _highValues.Contains(field.Name) ? 50f : 2f,
+                    value: (float)field.GetValue(AdrenalineLogic.config),
+                    onValueChanged: OnValueChanged
+                ));
+            }
+        }
+
+        private void OnValueChanged()
+        {
+            foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
+            {
+                var slider = _sliders.Find(v => v.Instance.Name == field.Name);
+                float value = slider.GetValue();
+                if (value == AdrenalineLogic.config.GetFieldValue<float>(field.Name)) continue;
+                
+                field.SetValue(AdrenalineLogic.config, value);
+            }
+        }
+
         public override void OnNewGame()
         {
-            AdrenalineLogic.LossRate = Configuration.MAX_LOSS_RATE - Configuration.MIN_LOSS_RATE;
+            AdrenalineLogic.LossRate = AdrenalineLogic.config.MAX_LOSS_RATE - AdrenalineLogic.config.MIN_LOSS_RATE;
             AdrenalineLogic.Value = 100f;
         }
 
         public override void OnLoad()
         {
+            AdrenalineLogic.config = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
+
             var player = GameObject.Find("PLAYER");
             player.AddComponent<GlobalHandler>();
             player.AddComponent<HighSpeedHandler>();
@@ -57,6 +94,8 @@ namespace Adrenaline
         public override void OnSave()
         {
             UnityEngine.Object.Destroy(GameObject.Find("PLAYER")?.GetComponent<GlobalHandler>());
+
+            SaveLoad.SerializeSaveFile(this, AdrenalineLogic.config, "AdrenalineModConfiguration");
         }
     }
 }

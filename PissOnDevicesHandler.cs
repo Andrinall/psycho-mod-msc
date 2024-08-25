@@ -17,7 +17,7 @@ namespace Adrenaline
         {
             if (FluidTrigger?.ActiveStateName == "TV")
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.PISS_ON_DEVICES);
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.PISS_ON_DEVICES);
                 Utils.PrintDebug("Value increased by piss on TV and hit electricity");
             }
         }

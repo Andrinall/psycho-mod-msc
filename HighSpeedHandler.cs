@@ -12,7 +12,7 @@ namespace Adrenaline
         private void OnEnable()
         {
             drivetrain = GetComponent<Drivetrain>();
-            playerVehicle = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
+            playerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
 
             Utils.PrintDebug("HighSpeedHandler enabled");
         }
@@ -22,7 +22,7 @@ namespace Adrenaline
             if (playerVehicle.Value != data.CarName) return;
             if (drivetrain.differentialSpeed > data.RequiredSpeed)
             {
-                AdrenalineLogic.IncreaseTimed(Configuration.HIGHSPEED_INCREASE);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.HIGHSPEED_INCREASE);
                 Utils.PrintDebug("Value increased by driving on high speed");
             }
         }

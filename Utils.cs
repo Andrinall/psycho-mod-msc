@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
-using MSCLoader;
 using System.Linq;
 using HutongGames.PlayMaker;
 using System;
+#if DEBUG
+using MSCLoader;
+#endif
+
 
 namespace Adrenaline
 {

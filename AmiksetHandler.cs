@@ -23,13 +23,13 @@ namespace Adrenaline
 
             if (JanniHit?.ActiveStateName == "Hit")
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.JANNI_PETTERI_HIT);
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
                 Utils.PrintDebug("Value increased by Janni hit player");
             }
 
             if (PetteriHit?.ActiveStateName == "Hit")
             {
-                AdrenalineLogic.IncreaseOnce(Configuration.JANNI_PETTERI_HIT);
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
                 Utils.PrintDebug("Value increased by Petteri hit player");
             }
         }
