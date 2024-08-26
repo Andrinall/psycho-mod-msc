@@ -11,6 +11,12 @@ namespace Adrenaline
         private static bool  _lockDecrease = false;
         private static float _lockCooldown = 12000f; // 1 minute
 
+        private static readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
+        private static readonly string PAPER_TEXT_EN = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
+
+        public static readonly float MIN_ADRENALINE = 0f;
+        public static readonly float MAX_ADRENALINE = 200f;
+
         public static Configuration config = new Configuration();
 
         public static float Value {
@@ -18,14 +24,14 @@ namespace Adrenaline
             { return _value; }
             set
             {
-                if ((value <= config.MIN_ADRENALINE || value >= config.MAX_ADRENALINE) && Health.damage(100f))
-                    Health.killCustom(config.PAPER_TEXT_EN, config.PAPER_TEXT_FI);
+                if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && Health.damage(100f))
+                    Health.killCustom(PAPER_TEXT_EN, PAPER_TEXT_FI);
                 else if (_hud.IsElementExist("Adrenaline"))
                 {
-                    var clamped1 = Mathf.Clamp(value / 100f, 0f, 2f);
+                    var clamped = Mathf.Clamp(value / 100f, 0f, 1f);
 
-                    _hud.SetElementScale("Adrenaline", new Vector3(Mathf.Clamp(clamped1, 0f, 1f), 1f));
-                    _hud.SetElementColor("Adrenaline", (clamped1 <= 0.15f || clamped1 >= 1.75f) ? Color.red : Color.white);
+                    _hud.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
+                    _hud.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 0.75f) ? Color.red : Color.white);
                 }
                 _value = value;
             }
@@ -59,6 +65,13 @@ namespace Adrenaline
 
             if (IsDecreaseLocked()) return;
             Value -= config.DEFAULT_DECREASE * _lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
+
+            if (Value <= 30f)
+                _hud.SetElementColor("Adrenaline", Color.red);
+            else if (Value >= 175)
+                _hud.SetElementColor("Adrenaline", Color.red);
+            else
+                _hud.SetElementColor("Adrenaline", Color.white);
         }
 
         public static void IncreaseTimed(float val)
