@@ -79,6 +79,7 @@ namespace Adrenaline
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
             GameObject.Find("SATSUMA(557kg, 248)/Wiring/FireElectric").AddComponent<CarElectricityHandler>();
             GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
+            GameObject.Find("KILJUGUY/KiljuMurderer").AddComponent<KiljuMurderHandler>();
 
             foreach (var item in CARS)
             {
