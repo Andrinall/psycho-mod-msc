@@ -8,6 +8,7 @@
         public float DEFAULT_DECREASE = 0.18f;
         public float SPRINT_INCREASE = 0.3f;
         public float HIGHSPEED_INCREASE = 0.35f;
+        public float BROKEN_WINDSHIELD_INCREASE = 0.35f;
         public float FIGHT_INCREASE = 0.47f;
         public float WINDOW_BREAK_INCREASE = 6f;
         public float HOUSE_BURNING = 0.56f;

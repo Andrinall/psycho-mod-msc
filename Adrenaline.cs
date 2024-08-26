@@ -69,16 +69,25 @@ namespace Adrenaline
             AdrenalineLogic.config = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
 
             var player = GameObject.Find("PLAYER");
+            var satsuma = GameObject.Find("SATSUMA(557kg, 248)");
+            var gifu = GameObject.Find("GIFU(750/450psi)");
+
             player.AddComponent<GlobalHandler>();
             player.AddComponent<HighSpeedHandler>();
+            player.transform.Find("Pivot/AnimPivot/Camera/FPSCamera").gameObject.AddComponent<PissOnDevicesHandler>();
 
-            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera").AddComponent<PissOnDevicesHandler>();
-            GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
-            GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
-            GameObject.Find("CABIN/Cabin").AddComponent<VenttiGameHandler>();
+            satsuma.transform.Find("Wiring/FireElectric").gameObject.AddComponent<CarElectricityHandler>();
+            
+            satsuma.transform.Find("Body/Windshield").gameObject.AddComponent<WindshieldHandler>();
+            GameObject.Find("HAYOSIKO(1500kg, 250)/LOD/Windshield").AddComponent<WindshieldHandler>();
+            gifu.transform.Find("LOD/WindshieldLeft").gameObject.AddComponent<WindshieldHandler>();
+
+            gifu.transform.Find("ShitTank").gameObject.AddComponent<SpillHandler>();
+
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
-            GameObject.Find("SATSUMA(557kg, 248)/Wiring/FireElectric").AddComponent<CarElectricityHandler>();
-            GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
+            GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
+            GameObject.Find("CABIN/Cabin").AddComponent<VenttiGameHandler>();
+            GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
 
             foreach (var item in CARS)
             {
