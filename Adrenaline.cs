@@ -26,14 +26,20 @@ namespace Adrenaline
         };
 
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
+        private SettingsCheckBox lockbox;
         private List<string> _highValues =
             new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING" };
 
         public override void ModSettings()
         {
+#if DEBUG
             Settings.AddHeader(this, "DEBUG SETTINGS");
+            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Current Adrenaline", 20f, 180f, AdrenalineLogic.Value, OnValueChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_rate", "Current Loss Rate", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, OnValueChanged));
+            lockbox = Settings.AddCheckBox(this, "adn_lock", "Lock Loss Rate", AdrenalineLogic.IsDecreaseLocked(), CheckBoxChecked);
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
             {
+                if (field.IsInitOnly) continue; // ignore readonly variables for avoid errors
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
                     settingID: field.Name.GetHashCode().ToString(),
@@ -44,8 +50,9 @@ namespace Adrenaline
                     onValueChanged: OnValueChanged
                 ));
             }
+#endif
         }
-
+#if DEBUG
         private void OnValueChanged()
         {
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
@@ -55,8 +62,29 @@ namespace Adrenaline
                 if (value == AdrenalineLogic.config.GetFieldValue<float>(field.Name)) continue;
                 
                 field.SetValue(AdrenalineLogic.config, value);
+                return;
+            }
+
+            if (_sliders[0].GetValue() != AdrenalineLogic.Value)
+            {
+                AdrenalineLogic.Value = _sliders[0].GetValue();
+                return;
+            }
+
+            if (_sliders[1].GetValue() != AdrenalineLogic.LossRate)
+            {
+                AdrenalineLogic.LossRate = _sliders[1].GetValue();
+                return;
             }
         }
+        private void CheckBoxChecked()
+        {
+            if (lockbox.GetValue())
+                AdrenalineLogic.SetDecreaseLocked(12000);
+            else
+                AdrenalineLogic.SetDecreaseLocked(1);
+        }
+#endif
 
         public override void OnNewGame()
         {

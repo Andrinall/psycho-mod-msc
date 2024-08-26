@@ -10,7 +10,7 @@ namespace Adrenaline
     {
         private readonly List<GameObject> _struct = new List<GameObject>();
         private readonly List<string> _blacklisted = new List<string> {
-            "FPS", "Clutch", "Clutch 1", "DRMpink", "SpeedyHUD"
+            "FPS", "Clutch", "Clutch 1", "DRMpink", "SpeedyHUD", "SPEED"
         };
         private readonly List<string> _default = new List<string> {
             "Mortal", "Day", "Thrist",
