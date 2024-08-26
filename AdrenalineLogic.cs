@@ -11,12 +11,6 @@ namespace Adrenaline
         private static bool  _lockDecrease = false;
         private static float _lockCooldown = 12000f; // 1 minute
 
-        private static readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
-        private static readonly string PAPER_TEXT_EN = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
-
-        public static readonly float MIN_ADRENALINE = 0f;
-        public static readonly float MAX_ADRENALINE = 200f;
-
         public static Configuration config = new Configuration();
 
         public static float Value {
@@ -24,8 +18,8 @@ namespace Adrenaline
             { return _value; }
             set
             {
-                if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && Health.damage(100f))
-                    Health.killCustom(PAPER_TEXT_EN, PAPER_TEXT_FI);
+                if ((value <= config.MIN_ADRENALINE || value >= config.MAX_ADRENALINE) && Health.damage(100f))
+                    Health.killCustom(config.PAPER_TEXT_EN, config.PAPER_TEXT_FI);
                 else if (_hud.IsElementExist("Adrenaline"))
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 1f);

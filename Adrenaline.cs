@@ -34,6 +34,7 @@ namespace Adrenaline
             Settings.AddHeader(this, "DEBUG SETTINGS");
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
             {
+                if (field.IsInitOnly) continue; // ignore readonly variables for avoid errors
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
                     settingID: field.Name.GetHashCode().ToString(),

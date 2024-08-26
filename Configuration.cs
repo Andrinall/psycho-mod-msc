@@ -2,6 +2,12 @@
 {
     public class Configuration
     {
+        public readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
+        public readonly string PAPER_TEXT_EN = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
+
+        public readonly float MIN_ADRENALINE = 0f;
+        public readonly float MAX_ADRENALINE = 200f;
+
         public float MIN_LOSS_RATE = 0.6f;
         public float MAX_LOSS_RATE = 1.4f;
 
@@ -20,7 +26,6 @@
         public float SPARKS_WIRING = 3f;
         public float SPILL_SHIT = 1.1f;
         public float RALLY_PLAYER = 1f;
-
 
         public T GetFieldValue<T>(string name)
         {
