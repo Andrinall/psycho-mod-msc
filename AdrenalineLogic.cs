@@ -22,10 +22,10 @@ namespace Adrenaline
                     Health.killCustom(config.PAPER_TEXT_EN, config.PAPER_TEXT_FI);
                 else if (_hud.IsElementExist("Adrenaline"))
                 {
-                    var clamped = Mathf.Clamp(value / 100f, 0f, 1f);
+                    var clamped1 = Mathf.Clamp(value / 100f, 0f, 2f);
 
-                    _hud.SetElementScale("Adrenaline", new Vector3(clamped, 1f));
-                    _hud.SetElementColor("Adrenaline", (clamped <= 0.15f || clamped >= 0.75f) ? Color.red : Color.white);
+                    _hud.SetElementScale("Adrenaline", new Vector3(Mathf.Clamp(clamped1, 0f, 1f), 1f));
+                    _hud.SetElementColor("Adrenaline", (clamped1 <= 0.15f || clamped1 >= 1.75f) ? Color.red : Color.white);
                 }
                 _value = value;
             }
@@ -59,13 +59,6 @@ namespace Adrenaline
 
             if (IsDecreaseLocked()) return;
             Value -= config.DEFAULT_DECREASE * _lossRate * Time.fixedDeltaTime; // basic decrease adrenaline
-
-            if (Value <= 30f)
-                _hud.SetElementColor("Adrenaline", Color.red);
-            else if (Value >= 175)
-                _hud.SetElementColor("Adrenaline", Color.red);
-            else
-                _hud.SetElementColor("Adrenaline", Color.white);
         }
 
         public static void IncreaseTimed(float val)
