@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Adrenaline
 {
@@ -8,8 +9,8 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            FireElectric = base.GetComponent<PlayMakerFSM>();
-            Utils.PrintDebug("CarElectricityHandler: " + FireElectric.FsmName);
+            FireElectric = base.transform.Find("FireElectric").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Init");
+            Utils.PrintDebug("CarElectricityHandler enabled");
         }
 
         private void FixedUpdate()
