@@ -25,15 +25,24 @@ namespace Adrenaline
             new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu",     RequiredSpeed = 70f  }
         };
 
+        private SettingsCheckBox lockbox;
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
         private List<string> _highValues =
             new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING" };
 
+#if DEBUG
         public override void ModSettings()
         {
             Settings.AddHeader(this, "DEBUG SETTINGS");
+            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Current Adrenaline", 20f, 180f, AdrenalineLogic.Value, AdrenalineChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_rate", "Current Loss Rate", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
+            lockbox = Settings.AddCheckBox(this, "adn_lock", "Lock Adrenaline Loss", false, () => {
+                AdrenalineLogic.SetDecreaseLocked(lockbox.GetValue());
+            });
+            
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
             {
+                if (field.IsInitOnly) continue; // ignore readonly variables for avoid errors
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
                     settingID: field.Name.GetHashCode().ToString(),
@@ -46,16 +55,35 @@ namespace Adrenaline
             }
         }
 
+        private void AdrenalineChanged()
+        {
+            AdrenalineLogic.Value = _sliders[0].GetValue();
+        }
+
+        private void LossRateChanged()
+        {
+            AdrenalineLogic.LossRate = _sliders[1].GetValue();
+        }
+
         private void OnValueChanged()
         {
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
             {
+                if (field.IsInitOnly) continue;
                 var slider = _sliders.Find(v => v.Instance.Name == field.Name);
                 float value = slider.GetValue();
-                if (value == AdrenalineLogic.config.GetFieldValue<float>(field.Name)) continue;
+                if (value == (float)field.GetValue(AdrenalineLogic.config)) continue;
                 
                 field.SetValue(AdrenalineLogic.config, value);
+                return;
             }
+        }
+#endif
+
+        public override void FixedUpdate()
+        {
+            _sliders[0].Instance.Value = AdrenalineLogic.Value;
+            _sliders[1].Instance.Value = AdrenalineLogic.LossRate;
         }
 
         public override void OnNewGame()
@@ -66,28 +94,24 @@ namespace Adrenaline
 
         public override void OnLoad()
         {
-            AdrenalineLogic.config = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
+            Configuration temp = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
+            if (temp == null)
+                Utils.PrintDebug("<color=red>DeserializeSaveFile is null</color>");
+            else
+                AdrenalineLogic.config = temp;
 
-            var player = GameObject.Find("PLAYER");
-            var satsuma = GameObject.Find("SATSUMA(557kg, 248)");
-            var gifu = GameObject.Find("GIFU(750/450psi)");
-
-            player.AddComponent<GlobalHandler>();
-            player.transform.Find("Pivot/AnimPivot/Camera/FPSCamera").gameObject.AddComponent<PissOnDevicesHandler>();
-
-            satsuma.transform.Find("Wiring/FireElectric").gameObject.AddComponent<CarElectricityHandler>();
-            
-            satsuma.transform.Find("Body/Windshield").gameObject.AddComponent<WindshieldHandler>();
-            GameObject.Find("HAYOSIKO(1500kg, 250)/LOD/Windshield").AddComponent<WindshieldHandler>();
-            gifu.transform.Find("LOD/WindshieldLeft").gameObject.AddComponent<WindshieldHandler>();
-
-            gifu.transform.Find("ShitTank").gameObject.AddComponent<SpillHandler>();
-
+            GameObject.Find("PLAYER").AddComponent<GlobalHandler>();
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger").AddComponent<PissOnDevicesHandler>();
+            GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
             GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
-            GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
             GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").AddComponent<VenttiGameHandler>();
+            GameObject.Find("DANCEHALL").AddComponent<DanceHallHandler>();
+
             GameObject.Find("SATSUMA(557kg, 248)/Wiring").AddComponent<CarElectricityHandler>();
+            GameObject.Find("SATSUMA(557kg, 248)/Body/Windshield").AddComponent<WindshieldHandler>().CarName = "Satsuma";
+            GameObject.Find("GIFU(750/450psi)/LOD/WindshieldLeft").AddComponent<WindshieldHandler>().CarName = "Gifu";
+            GameObject.Find("HAYOSIKO(1500kg, 250)").AddComponent<WindshieldHandler>().CarName = "Hayosiko";
 
             foreach (var item in CARS)
             {
@@ -103,8 +127,6 @@ namespace Adrenaline
 
         public override void OnSave()
         {
-            UnityEngine.Object.Destroy(GameObject.Find("PLAYER")?.GetComponent<GlobalHandler>());
-
             SaveLoad.SerializeSaveFile(this, AdrenalineLogic.config, "AdrenalineModConfiguration");
         }
     }

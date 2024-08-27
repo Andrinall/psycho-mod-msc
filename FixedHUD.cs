@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using UnityEngine;
 
 namespace Adrenaline
@@ -35,6 +34,7 @@ namespace Adrenaline
         public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
             if (name.Length == 0) return;
+            if (IsElementExist(name)) return;
 
             GameObject hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
             hudElement.name = name;
@@ -45,7 +45,16 @@ namespace Adrenaline
             Destroy(hudElement.GetComponentInChildren<PlayMakerFSM>());
             hudElement.transform.SetParent(base.transform, worldPositionStays: false);
 
-            Insert(hudElement, index);
+            if (index > 0)
+                _struct.Insert(index, hudElement);
+            else
+                _struct.Add(hudElement);
+
+            Utils.PrintDebug(String.Format(
+                "Element {0} inserted into _struct with index {1}",
+                hudElement.name, index
+            ));
+
             Structurize();
         }
 
@@ -62,6 +71,7 @@ namespace Adrenaline
         public void MoveElement(string name, int index)
         {
             if (index < 0 || index > _struct.Capacity) return;
+            if (!IsElementExist(name)) return;
 
             GameObject temp = _struct.Find(v => v.name == name);
             if (temp?.gameObject == null) return;
@@ -82,11 +92,13 @@ namespace Adrenaline
 
         public void HideElement(string name, bool hide)
         {
-            _struct.Find(v => v.name == name)?.SetActive(!hide);
+            if (!IsElementExist(name)) return;
+            _struct.Find(v => v.name == name).SetActive(!hide);
         }
 
         public void SetElementText(string name, string text)
         {
+            if (!IsElementExist(name)) return;
             Transform label = _struct.Find(v => v.name == name).transform.Find("HUDLabel");
             label.GetComponent<TextMesh>().text = text;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
@@ -94,32 +106,21 @@ namespace Adrenaline
 
         public void SetElementColor(string name, Color color)
         {
-            _struct.Find(v => v.name == name)
-                .transform.Find("Pivot/HUDBar")
+            if (!IsElementExist(name)) return;
+            base.transform.Find(name + "/Pivot/HUDBar")
                 .GetComponent<MeshRenderer>()
                 .material.color = color;
         }
 
         public void SetElementScale(string name, Vector3 scale)
         {
+            if (!IsElementExist(name)) return;
             base.transform.Find(name + "/Pivot").localScale = scale;
         }
 
         public int GetIndexByName(string name)
         {
             return _struct.FindIndex(v => v.name == name);
-        }
-
-        private void Insert(GameObject element, int index = -1)
-        {
-            if (element?.gameObject == null) return;
-            if (index > 0) _struct.Insert(index, element);
-            else _struct.Add(element);
-            
-            Utils.PrintDebug(String.Format(
-                "Element %s inserted into _struct with index %d",
-                element.name, index
-            ));
         }
 
         private void Structurize()

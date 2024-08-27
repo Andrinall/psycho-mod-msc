@@ -9,8 +9,8 @@ namespace Adrenaline
 
         private void OnEnable()
         {
+            FluidTrigger = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Pouring");
             Utils.PrintDebug("PissOnDevicesHandler enabled");
-            FluidTrigger = base.transform.Find("Piss/Fluid/FluidTrigger").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Pouring");
         }
 
         private void FixedUpdate()

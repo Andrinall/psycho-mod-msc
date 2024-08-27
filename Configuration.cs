@@ -2,8 +2,8 @@
 {
     public class Configuration
     {
-        public float MIN_LOSS_RATE = 0.6f;
-        public float MAX_LOSS_RATE = 1.4f;
+        public float MIN_LOSS_RATE = 0.60000f;
+        public float MAX_LOSS_RATE = 1.40000f;
 
         public float DEFAULT_DECREASE = 0.18f;
         public float SPRINT_INCREASE = 0.3f;
@@ -22,10 +22,18 @@
         public float SPILL_SHIT = 1.1f;
         public float RALLY_PLAYER = 1f;
 
+        public float REQUIRED_SPEED_Jonezz = 70f;
+        public float REQUIRED_SPEED_Satsuma = 120f;
+        public float REQUIRED_SPEED_Ferndale = 110f;
+        public float REQUIRED_SPEED_Hayosiko = 110f;
+        public float REQUIRED_SPEED_Fittan = 70f;
+        public float REQUIRED_SPEED_Gifu = 70f;
 
-        public T GetFieldValue<T>(string name)
+        public float REQUIRED_WINDSHIELD_SPEED = 45f;
+
+        /*public float GetFieldValue(string name)
         {
-            return (T)GetType().GetField(name).GetValue(this);
-        }
+            return (float)(GetType().GetField(name).GetValue(this) ?? 0f);
+        }*/
     }
 }
