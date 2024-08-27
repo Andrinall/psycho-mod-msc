@@ -10,6 +10,7 @@ namespace Adrenaline
         private void OnEnable()
         {
             SpillPump = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "SpillPump");
+            Utils.PrintDebug("SpillHandler enabled");
         }
 
         private void FixedUpdate()
