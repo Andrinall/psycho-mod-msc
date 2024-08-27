@@ -15,10 +15,10 @@ namespace Adrenaline
 
         private void OnEnable()
         {
+            GFX_Store = base.transform.FindChild("LOD/GFX_Store")?.gameObject;
+            GFX_Pub = base.transform.FindChild("LOD/GFX_Pub")?.gameObject;
+            _Teimo = base.transform.FindChild("TeimoInShop")?.gameObject;
             Utils.PrintDebug("StoreActionsHandler enabled");
-            GFX_Store = base.transform.Find("LOD/GFX_Store").gameObject;
-            GFX_Pub = base.transform.Find("LOD/GFX_Pub").gameObject;
-            _Teimo = base.transform.Find("TeimoInShop").gameObject;
         }
 
         private void FixedUpdate()
