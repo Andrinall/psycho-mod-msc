@@ -73,7 +73,6 @@ namespace Adrenaline
             var gifu = GameObject.Find("GIFU(750/450psi)");
 
             player.AddComponent<GlobalHandler>();
-            player.AddComponent<HighSpeedHandler>();
             player.transform.Find("Pivot/AnimPivot/Camera/FPSCamera").gameObject.AddComponent<PissOnDevicesHandler>();
 
             satsuma.transform.Find("Wiring/FireElectric").gameObject.AddComponent<CarElectricityHandler>();
@@ -86,7 +85,6 @@ namespace Adrenaline
 
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
             GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
-            GameObject.Find("CABIN/Cabin").AddComponent<VenttiGameHandler>();
             GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
             GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").AddComponent<VenttiGameHandler>();
             GameObject.Find("SATSUMA(557kg, 248)/Wiring").AddComponent<CarElectricityHandler>();
@@ -97,7 +95,7 @@ namespace Adrenaline
                 if (obj == null)
                     throw new MissingComponentException("Car with object name \"" + item.CarObject + "\" doesn't exists");
 
-                obj.AddComponent<HighSpeedHandler>().data = item;
+                obj.AddComponent<HighSpeedHandler>().CarName = item.CarName;
             }
 
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
