@@ -20,14 +20,29 @@ namespace Adrenaline
         public static void CacheFSM(ref PlayMakerFSM obj, string path, string fsm = "")
         {
             if (obj?.gameObject != null) return;
-            
-            if (fsm.Length == 0)
-                obj = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
-            else
-                obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == fsm);
 
-            if (obj?.gameObject != null)
-                PrintDebug(String.Format("Cached FSM: %s | %s", path, fsm));
+            if (fsm.Length == 0)
+            {
+                var temp = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
+                if (temp == null)
+                {
+                    PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
+                    return;
+                }
+                obj = temp;
+            }
+            else
+            {
+                var temp = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
+                if (temp == null)
+                {
+                    PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
+                    return;
+                }
+                obj = temp;
+            }
+
+            // if (obj?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0} | {1}", path, fsm));
         }
 
         public static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
@@ -38,10 +53,9 @@ namespace Adrenaline
             if (fsm.Length == 0)
                 var = obj.transform.Find(path)?.GetComponent<PlayMakerFSM>();
             else
-                var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().FirstOrDefault(x => x.FsmName == fsm);
+                var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
 
-            if (var?.gameObject != null)
-                PrintDebug(String.Format("Cached FSM: %s/%s | %s", obj.name, path, fsm)); 
+            // if (var?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
         }
 
 
