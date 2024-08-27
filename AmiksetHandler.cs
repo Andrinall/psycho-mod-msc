@@ -12,8 +12,9 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            Janni = base.transform.Find("KYLAJANI").gameObject;
-            Petteri = base.transform.Find("AMIS2").gameObject;
+            Janni = base.transform.FindChild("KYLAJANI")?.gameObject;
+            Petteri = base.transform.FindChild("AMIS2")?.gameObject;
+            Utils.PrintDebug("AmiksetHandler enabled");
         }
 
         private void FixedUpdate()
