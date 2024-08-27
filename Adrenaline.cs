@@ -88,6 +88,7 @@ namespace Adrenaline
             GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
             GameObject.Find("CABIN/Cabin").AddComponent<VenttiGameHandler>();
             GameObject.Find("DANCEHALL/Functions").AddComponent<DanceHallHandler>();
+            GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").AddComponent<VenttiGameHandler>();
             GameObject.Find("SATSUMA(557kg, 248)/Wiring").AddComponent<CarElectricityHandler>();
 
             foreach (var item in CARS)
