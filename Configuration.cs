@@ -21,6 +21,7 @@
         public float SPARKS_WIRING = 3f;
         public float SPILL_SHIT = 1.1f;
         public float RALLY_PLAYER = 1f;
+        public float MURDER_WALKING = 0.45f;
 
         public float REQUIRED_SPEED_Jonezz = 70f;
         public float REQUIRED_SPEED_Satsuma = 120f;

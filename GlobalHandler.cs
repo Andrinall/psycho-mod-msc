@@ -9,6 +9,8 @@ namespace Adrenaline
         private FsmBool HouseBurningState;
         private FsmBool RallyPlayerOnStage;
 
+        private PlayMakerFSM kiljuguy;
+
         private void OnEnable()
         {
             PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
@@ -29,6 +31,8 @@ namespace Adrenaline
         {
             AdrenalineLogic.Tick();
 
+            Utils.CacheFSM(ref kiljuguy, "KILJUGUY/KiljuMurderer", "Move");
+
             if (PlayerMovementSpeed?.Value >= 3.5)
             {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.SPRINT_INCREASE); // increase adrenaline while player sprinting
@@ -39,6 +43,12 @@ namespace Adrenaline
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.HOUSE_BURNING); // increase adrenaline while house is burning
                 Utils.PrintDebug("Value increased by house burning");
+            }
+
+            if (kiljuguy?.ActiveStateName == "Walking")
+            {
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.MURDER_WALKING);
+                Utils.PrintDebug("Value increased by KiljuMurderer is Walking");
             }
         }
     }
