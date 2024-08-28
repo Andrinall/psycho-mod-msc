@@ -13,18 +13,14 @@ namespace Adrenaline
         {
             prefabs = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.root.IsPrefab()).ToList();
 
-            Utils.PrintDebug("PREFAB objects in scene: " + prefabs.Count);
-            Utils.PrintDebug("Scene contains Coffee prefab" + prefabs.Any(v => v.name == "Coffee"));
-            Utils.PrintDebug("Scene contains empty coffee cup prefab" + prefabs.Any(v => v.name == "coffee_cup_bar.mesh"));
-
             TryReplacePrefab("Coffee");
             TryReplacePrefab("coffee_cup_bar.mesh", true);
             TryReplacePrefab("coffee_cup_bar_coffee.mesh");
             TryReplacePrefab("CoffeeFly", true);
             TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
+            TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
 
             Utils.PrintDebug("CustomEnergyDrink enabled");
-            Utils.PrintDebug("CustomTexture: " + AdrenalineLogic.texture.name.ToString());
         }
 
         private void TryReplacePrefab(string name, bool isEmpty = false)
