@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define SILENT
+using System;
 using System.Linq;
 
 using UnityEngine;
@@ -22,27 +23,14 @@ namespace Adrenaline
             if (obj?.gameObject != null) return;
 
             if (fsm.Length == 0)
-            {
-                var temp = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
-                if (temp == null)
-                {
-                    PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
-                    return;
-                }
-                obj = temp;
-            }
+                obj = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
             else
-            {
-                var temp = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
-                if (temp == null)
-                {
-                    PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
-                    return;
-                }
-                obj = temp;
-            }
+                obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
 
-            // if (obj?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0} | {1}", path, fsm));
+#if !SILENT
+            if (obj?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0} | {1}", path, fsm));
+            else PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
+#endif
         }
 
         public static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
@@ -55,7 +43,10 @@ namespace Adrenaline
             else
                 var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
 
-            // if (var?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
+#if !SILENT
+            if (var?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
+            else PrintDebug(String.Format("Failed to cache FSM: {0}/{1} | {2}", obj.name, path, fsm));
+#endif
         }
 
 
