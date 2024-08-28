@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
+using System.CodeDom;
 
 namespace Adrenaline
 {
@@ -13,11 +14,14 @@ namespace Adrenaline
 
         private void OnEnable()
         {
+            AdrenalineLogic.InitHUD();
+
             PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
             HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             RallyPlayerOnStage = Utils.GetGlobalVariable<FsmBool>("RallyPlayerOnStage");
 
-            var drink = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink").gameObject;
+            var fpsCamera = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
+            var drink = fpsCamera.Find("Drink").gameObject;
             GameHook.InjectStateHook(drink, "Activate 5", delegate
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
@@ -36,7 +40,6 @@ namespace Adrenaline
                 AdrenalineLogic.SetDecreaseLocked(true, 12000f);
             });
 
-            AdrenalineLogic.InitHUD();
             Utils.PrintDebug("GlobalHandler enabled");
         }
 

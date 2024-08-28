@@ -5,6 +5,7 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using Harmony;
+using System.Linq;
 
 namespace Adrenaline
 {
@@ -138,6 +139,12 @@ namespace Adrenaline
             else
                 AdrenalineLogic.config = temp;
 #endif
+            var asset = LoadAssets.LoadBundle(this, "energy.unity3d");
+            AdrenalineLogic.texture = asset.LoadAsset<Texture>("energy.png");
+            AdrenalineLogic.empty_cup = asset.LoadAsset<Mesh>("coffee_cup_bar.mesh.obj");
+            AdrenalineLogic.coffee_cup = asset.LoadAsset<Mesh>("coffee_cup_bar_coffee.mesh.obj");
+            //foreach (var assetName in asset.GetAllAssetNames()) Utils.PrintDebug("[bundle] Asset: " + assetName);
+            asset.Unload(false);
 
             GameObject.Find("PLAYER").AddComponent<GlobalHandler>();
             if (SaveLoad.ValueExists(this, "Adrenaline"))
@@ -158,6 +165,7 @@ namespace Adrenaline
             GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
             GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
+            GameObject.Find("STORE").AddComponent<CustomEnergyDrink>();
             GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").AddComponent<VenttiGameHandler>();
             GameObject.Find("DANCEHALL").AddComponent<DanceHallHandler>();
 
@@ -165,6 +173,7 @@ namespace Adrenaline
             GameObject.Find("SATSUMA(557kg, 248)/Body/Windshield").AddComponent<WindshieldHandler>().CarName = "Satsuma";
             GameObject.Find("GIFU(750/450psi)/LOD/WindshieldLeft").AddComponent<WindshieldHandler>().CarName = "Gifu";
             GameObject.Find("HAYOSIKO(1500kg, 250)").AddComponent<WindshieldHandler>().CarName = "Hayosiko";
+            //GameObject.Find("FERNDALE(1630kg)/LOD/DriverHeadPivot/CameraPivot/Pivot").AddComponent<FerndaleSeatbeltFix>();
 
             try
             {
@@ -181,6 +190,7 @@ namespace Adrenaline
             {
                 Utils.PrintDebug("<color=red>HighSpeedHandlers loading error: " + ex.GetFullMessage() + "</color>");
             }
+
 
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
         }

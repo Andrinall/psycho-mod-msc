@@ -85,7 +85,9 @@
     <Compile Include="CarData.cs" />
     <Compile Include="CarElectricityHandler.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="CustomEnergyDrink.cs" />
     <Compile Include="DanceHallHandler.cs" />
+    <Compile Include="FerndaleSeatbeltFix.cs" />
     <Compile Include="FixedHUD.cs" />
     <Compile Include="GameHook.cs" />
     <Compile Include="GlobalHandler.cs" />

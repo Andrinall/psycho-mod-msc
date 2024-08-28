@@ -6,6 +6,7 @@ namespace Adrenaline
     internal class WindshieldHandler : MonoBehaviour
     {
         private FsmBool Damaged;
+        private FsmBool Helmet;
         private FsmString PlayerVehicle;
         private Drivetrain drivetrain;
         public string CarName;
@@ -16,6 +17,7 @@ namespace Adrenaline
             {
                 drivetrain = base.GetComponent<Drivetrain>();
                 Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
                 Utils.PrintDebug("WindshieldHandler enabled for hayosiko");
             }
             else
@@ -30,7 +32,7 @@ namespace Adrenaline
         private void FixedUpdate()
         {
             if (PlayerVehicle?.Value != CarName) return;
-            if (Damaged?.Value == true && drivetrain?.differentialSpeed > AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED)
+            if (!Helmet.Value && Damaged?.Value == true && drivetrain?.differentialSpeed > AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED)
             {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.BROKEN_WINDSHIELD_INCREASE);
                 Utils.PrintDebug("Value increased by driving with broken windshield and speed > " + AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED.ToString());

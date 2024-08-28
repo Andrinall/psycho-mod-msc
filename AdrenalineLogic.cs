@@ -19,6 +19,9 @@ namespace Adrenaline
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
         public static Configuration config = new Configuration();
+        public static Texture texture = null;
+        public static Mesh empty_cup = null;
+        public static Mesh coffee_cup = null;
 
         public static float Value {
             get
@@ -101,6 +104,15 @@ namespace Adrenaline
             if (_lockCooldown < 0) _lockCooldown = 0;
 
             return (_lockDecrease && _lockCooldown > 0);
+        }
+
+        public static bool IsPrefab(this Transform tempTrans)
+        {
+            if (!tempTrans.gameObject.activeInHierarchy && tempTrans.gameObject.activeSelf)
+            {
+                return tempTrans.root == tempTrans;
+            }
+            return false;
         }
     }
 }
