@@ -5,7 +5,6 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-
 namespace Adrenaline
 {
     public class Adrenaline : Mod
@@ -113,13 +112,20 @@ namespace Adrenaline
             GameObject.Find("GIFU(750/450psi)/LOD/WindshieldLeft").AddComponent<WindshieldHandler>().CarName = "Gifu";
             GameObject.Find("HAYOSIKO(1500kg, 250)").AddComponent<WindshieldHandler>().CarName = "Hayosiko";
 
-            foreach (var item in CARS)
+            try
             {
-                GameObject obj = GameObject.Find(item.CarObject);
-                if (obj == null)
-                    throw new MissingComponentException("Car with object name \"" + item.CarObject + "\" doesn't exists");
+                foreach (var item in CARS)
+                {
+                    GameObject obj = GameObject.Find(item.CarObject);
+                    if (obj == null)
+                        throw new MissingComponentException("Car with object name \"" + item.CarObject + "\" doesn't exists");
 
-                obj.AddComponent<HighSpeedHandler>().CarName = item.CarName;
+                    obj.AddComponent<HighSpeedHandler>().CarName = item.CarName;
+                }
+            }
+            catch (MissingComponentException ex)
+            {
+                Utils.PrintDebug("<color=red>HighSpeedHandlers loading error: " + ex.GetFullMessage() + "</color>");
             }
 
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
