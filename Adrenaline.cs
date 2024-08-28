@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using Harmony;
 
 namespace Adrenaline
 {
@@ -12,7 +13,7 @@ namespace Adrenaline
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
         public override string Author => "Andrinall,@racer";
-        public override string Version => "0.15.9";
+        public override string Version => "0.17.9";
         public override string Description => "";
 
         internal readonly List<CarData> CARS = new List<CarData> {
@@ -24,19 +25,53 @@ namespace Adrenaline
             new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu",     RequiredSpeed = 70f  }
         };
 
+#if DEBUG
         private SettingsCheckBox lockbox;
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
         private List<string> _highValues =
             new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING", "COFFEE_INCREASE" };
 
-#if DEBUG
+        private Dictionary<string, string> localization = new Dictionary<string, string>
+        {
+            ["MIN_LOSS_RATE"] = "Минимально возможная скорость пассивного снижения",
+            ["MAX_LOSS_RATE"] = "Максимально возможная скорость пассивного снижения",
+            ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
+            ["SPRINT_INCREASE"] = "Увеличение от бега",
+            ["HIGHSPEED_INCREASE"] = "Увеличение от езды на большой скорости",
+            ["BROKEN_WINDSHIELD_INCREASE"] = "Увеличение при езде без лобового стекла",
+            ["FIGHT_INCREASE"] = "Увеличение во время драки",
+            ["WINDOW_BREAK_INCREASE"] = "Увеличение за разбивание окон (магазин, паб)",
+            ["HOUSE_BURNING"] = "Увеличение во время пожара в доме (??)",
+            ["TEIMO_PISS"] = "Увеличение за обоссывание Теймо",
+            ["GUARD_CATCH"] = "Увеличение при попытках охранника поймать игрока",
+            ["VENTTI_WIN"] = "Увеличение адреналина при поражениях в игре со свином",
+            ["JANNI_PETTERI_HIT"] = "Увеличение за накаут от NPC (Janni и Petteri)",
+            ["TEIMO_SWEAR"] = "Увеличение при ругани Теймо на персонажа",
+            ["PISS_ON_DEVICES"] = "Увеличение за обоссывание приборов в доме(TV)",
+            ["SPARKS_WIRING"] = "Увеличение при замыкании проводки Satsuma",
+            ["SPILL_SHIT"] = "Увеличение при ... ??? ...",
+            ["RALLY_PLAYER"] = "Увеличение при ... ??? ...",
+            ["MURDER_WALKING"] = "Увеличение при приследовании мужиком с топором",
+            ["COFFEE_INCREASE"] = "Увеличение от употребления кофе",
+
+            ["REQUIRED_SPEED_Jonezz"] = "Мин.скорость для прибавки при езде на Jonezz",
+            ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
+            ["REQUIRED_SPEED_Ferndale"] = "Мин.скорость для прибавки при езде в Ferndale",
+            ["REQUIRED_SPEED_Hayosiko"] = "Мин.скорость для прибавки при езде в Hayosiko",
+            ["REQUIRED_SPEED_Fittan"] = "Мин.скорость для прибавки при езде в Fittan",
+            ["REQUIRED_SPEED_Gifu"] = "Мин.скорость для прибавки при езде в Gifu",
+
+            ["REQUIRED_WINDSHIELD_SPEED"] = "Мин.скорость для прибавки при езде без лобаша"
+        };
+
         public override void ModSettings()
         {
             Settings.AddHeader(this, "DEBUG SETTINGS");
-            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Current Adrenaline", 20f, 180f, AdrenalineLogic.Value, AdrenalineChanged));
-            _sliders.Add(Settings.AddSlider(this, "adn_rate", "Current Loss Rate", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
-            lockbox = Settings.AddCheckBox(this, "adn_lock", "Lock Adrenaline Loss", false, () => {
-                AdrenalineLogic.SetDecreaseLocked(lockbox.GetValue());
+            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 20f, 180f, AdrenalineLogic.Value, AdrenalineChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_rate", "Скорость пассивного уменьшения", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
+            lockbox = Settings.AddCheckBox(this, "adn_lock", "Заблокировать уменьшение адреналина", false, delegate {
+                var lock_ = lockbox.GetValue();
+                AdrenalineLogic.SetDecreaseLocked(lock_, 2_000_000_000f, lock_);
             });
             
             foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
@@ -45,9 +80,9 @@ namespace Adrenaline
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
                     settingID: field.Name.GetHashCode().ToString(),
-                    name: field.Name,
+                    name: localization.GetValueSafe(field.Name),
                     minValue: 0f,
-                    maxValue: _highValues.Contains(field.Name) ? 50f : 2f,
+                    maxValue: _highValues.Contains(field.Name) ? 50f : (field.Name.Contains("REQUIRED_SPEED") ? 180f : 2f),
                     value: (float)field.GetValue(AdrenalineLogic.config),
                     onValueChanged: OnValueChanged
                 ));
@@ -77,29 +112,48 @@ namespace Adrenaline
                 return;
             }
         }
-#endif
 
         public override void FixedUpdate()
         {
             _sliders[0].Instance.Value = AdrenalineLogic.Value;
             _sliders[1].Instance.Value = AdrenalineLogic.LossRate;
+            lockbox.Instance.Value = AdrenalineLogic.IsDecreaseLocked();
         }
+#endif
 
         public override void OnNewGame()
         {
             AdrenalineLogic.LossRate = AdrenalineLogic.config.MAX_LOSS_RATE - AdrenalineLogic.config.MIN_LOSS_RATE;
             AdrenalineLogic.Value = 100f;
+            if (SaveLoad.ValueExists(this, "Adrenaline"))
+                SaveLoad.DeleteValue(this, "Adrenaline");
         }
 
         public override void OnLoad()
         {
+#if DEBUG
             Configuration temp = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
             if (temp == null)
                 Utils.PrintDebug("<color=red>DeserializeSaveFile is null</color>");
             else
                 AdrenalineLogic.config = temp;
+#endif
 
             GameObject.Find("PLAYER").AddComponent<GlobalHandler>();
+            if (SaveLoad.ValueExists(this, "Adrenaline"))
+            {
+                var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
+                var time = data.GetValueSafe("LossRateLockTime");
+
+                AdrenalineLogic.Value = data.GetValueSafe("Value");
+                AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
+                AdrenalineLogic.SetDecreaseLocked(time > 0, time);
+
+                Utils.PrintDebug("<color=green>Save Data Loaded!</color>");
+            }
+            else
+                ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
+
             GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger").AddComponent<PissOnDevicesHandler>();
             GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
             GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
@@ -133,7 +187,15 @@ namespace Adrenaline
 
         public override void OnSave()
         {
-            SaveLoad.SerializeSaveFile(this, AdrenalineLogic.config, "AdrenalineModConfiguration");
+#if DEBUG
+            SaveLoad.SerializeSaveFile(this, AdrenalineLogic.config, "AdrenalineModConfiguration.json");
+#endif
+            SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
+            {
+                ["Value"] = AdrenalineLogic.Value,
+                ["LossRate"] = AdrenalineLogic.LossRate,
+                ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime()
+            });
         }
     }
 }

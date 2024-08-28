@@ -32,10 +32,5 @@
         public float REQUIRED_SPEED_Gifu = 70f;
 
         public float REQUIRED_WINDSHIELD_SPEED = 45f;
-
-        /*public float GetFieldValue(string name)
-        {
-            return (float)(GetType().GetField(name).GetValue(this) ?? 0f);
-        }*/
     }
 }

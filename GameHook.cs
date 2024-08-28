@@ -16,7 +16,7 @@ namespace Adrenaline
             public override void OnEnter()
             {
                 hook();
-                ((FsmStateAction)this).Finish();
+                this.Finish();
             }
         }
 
@@ -28,7 +28,7 @@ namespace Adrenaline
                 List<FsmStateAction> list = new List<FsmStateAction>(stateFromGameObject.Actions);
                 FsmHookAction fsmHookAction = new FsmHookAction();
                 fsmHookAction.hook = hook;
-                list.Insert(0, (FsmStateAction)(object)fsmHookAction);
+                list.Insert(0, fsmHookAction);
                 stateFromGameObject.Actions = list.ToArray();
             }
         }
@@ -38,11 +38,8 @@ namespace Adrenaline
             PlayMakerFSM[] components = obj.GetComponents<PlayMakerFSM>();
             for (int i = 0; i < components.Length; i++)
             {
-                FsmState val = components[i].FsmStates.FirstOrDefault((FsmState x) => x.Name == stateName);
-                if (val != null)
-                {
-                    return val;
-                }
+                FsmState val = components[i].FsmStates.FirstOrDefault(x => x.Name == stateName);
+                if (val != null) return val;
             }
             return null;
         }

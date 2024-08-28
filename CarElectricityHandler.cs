@@ -5,21 +5,14 @@ namespace Adrenaline
 {
     internal class CarElectricityHandler : MonoBehaviour
     {
-        private PlayMakerFSM FireElectric;
-
         private void OnEnable()
         {
-            FireElectric = base.transform.Find("FireElectric").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Init");
-            Utils.PrintDebug("CarElectricityHandler enabled");
-        }
-
-        private void FixedUpdate()
-        {
-            if (FireElectric?.ActiveStateName == "Sparks")
+            GameHook.InjectStateHook(base.transform.Find("FireElectric").gameObject, "Sparks", delegate
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.SPARKS_WIRING);
                 Utils.PrintDebug("Value increased by hit from electricity into satsuma");
-            }
+            });
+            Utils.PrintDebug("CarElectricityHandler enabled");
         }
     }
 }

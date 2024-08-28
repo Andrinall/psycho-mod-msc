@@ -1,5 +1,4 @@
 ﻿using HealthMod;
-using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -13,6 +12,7 @@ namespace Adrenaline
         public static readonly float MAX_ADRENALINE = 200f;
 
         private static FixedHUD _hud;
+        private static bool _debug = false;
         private static float _value = 100f;
         private static float _lossRate = 1.2f;
         private static bool  _lockDecrease = false;
@@ -27,7 +27,7 @@ namespace Adrenaline
             {
                 if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && Health.damage(100f))
                     Health.killCustom(PAPER_TEXT_EN, PAPER_TEXT_FI);
-                else
+                else if (_hud.IsElementExist("Adrenaline"))
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 2f);
 
@@ -67,7 +67,7 @@ namespace Adrenaline
             if (Health.hp > 80)
                 LossRate += 0.01f * Time.fixedDeltaTime;
 
-            if (IsDecreaseLocked()) return;
+            if (IsDecreaseLocked() && _debug) return;
             Value -= config.DEFAULT_DECREASE * LossRate * Time.fixedDeltaTime; // basic decrease adrenaline
         }
 
@@ -81,17 +81,24 @@ namespace Adrenaline
             Value += val;
         }
 
-        public static void SetDecreaseLocked(bool state, float time = 12000f)
+        public static void SetDecreaseLocked(bool state, float time = 12000f, bool debug = false)
         {
             if (state == _lockDecrease) return;
             _lockDecrease = state;
             _lockCooldown = time;
+            _debug = debug;
+        }
+
+        public static float GetDecreaseLockTime()
+        {
+            return (_lockDecrease && _lockCooldown > 0) ? _lockCooldown : 0f;
         }
 
         public static bool IsDecreaseLocked()
         {
             if (_lockCooldown > 0)
                 _lockCooldown -= Time.fixedDeltaTime;
+            if (_lockCooldown < 0) _lockCooldown = 0;
 
             return (_lockDecrease && _lockCooldown > 0);
         }
