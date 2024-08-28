@@ -16,7 +16,23 @@ namespace Adrenaline
             PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
             HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             RallyPlayerOnStage = Utils.GetGlobalVariable<FsmBool>("RallyPlayerOnStage");
-            
+
+            var drink = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink").gameObject;
+            GameHook.InjectStateHook(drink, "Activate 5", delegate
+            {
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+            });
+
+            GameHook.InjectStateHook(drink, "Activate 7", delegate
+            {
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+            });
+
+            GameHook.InjectStateHook(drink, "HomeCoffee", delegate
+            {
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+            });
+
             AdrenalineLogic.InitHUD();
             Utils.PrintDebug("GlobalHandler enabled");
         }

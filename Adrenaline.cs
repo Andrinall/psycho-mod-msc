@@ -27,7 +27,7 @@ namespace Adrenaline
         private SettingsCheckBox lockbox;
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
         private List<string> _highValues =
-            new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING" };
+            new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING", "COFFEE_INCREASE" };
 
 #if DEBUG
         public override void ModSettings()
