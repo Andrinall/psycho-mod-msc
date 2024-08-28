@@ -21,16 +21,19 @@ namespace Adrenaline
             GameHook.InjectStateHook(drink, "Activate 5", delegate
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+                AdrenalineLogic.SetDecreaseLocked(true, 12000f);
             });
 
             GameHook.InjectStateHook(drink, "Activate 7", delegate
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+                AdrenalineLogic.SetDecreaseLocked(true, 12000f); // 1 minute
             });
 
             GameHook.InjectStateHook(drink, "HomeCoffee", delegate
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.COFFEE_INCREASE);
+                AdrenalineLogic.SetDecreaseLocked(true, 12000f);
             });
 
             AdrenalineLogic.InitHUD();
