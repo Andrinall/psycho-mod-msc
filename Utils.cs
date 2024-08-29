@@ -1,5 +1,4 @@
 ﻿#define SILENT
-using System;
 using System.Linq;
 
 using UnityEngine;
@@ -28,8 +27,8 @@ namespace Adrenaline
                 obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
 
 #if !SILENT
-            if (obj?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0} | {1}", path, fsm));
-            else PrintDebug(String.Format("Failed to cache FSM: {0} | {1}", path, fsm));
+            if (obj?.gameObject != null) PrintDebug(string.Format("Cached FSM: {0} | {1}", path, fsm));
+            else PrintDebug(string.Format("Failed to cache FSM: {0} | {1}", path, fsm));
 #endif
         }
 
@@ -44,8 +43,8 @@ namespace Adrenaline
                 var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
 
 #if !SILENT
-            if (var?.gameObject != null) PrintDebug(String.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
-            else PrintDebug(String.Format("Failed to cache FSM: {0}/{1} | {2}", obj.name, path, fsm));
+            if (var?.gameObject != null) PrintDebug(string.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
+            else PrintDebug(string.Format("Failed to cache FSM: {0}/{1} | {2}", obj.name, path, fsm));
 #endif
         }
 

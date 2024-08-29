@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Adrenaline
@@ -50,7 +49,7 @@ namespace Adrenaline
             else
                 _struct.Add(hudElement);
 
-            Utils.PrintDebug(String.Format(
+            Utils.PrintDebug(string.Format(
                 "Element {0} inserted into _struct with index {1}",
                 hudElement.name, index
             ));

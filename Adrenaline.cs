@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
 
+using Harmony;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
-using Harmony;
-using System.Linq;
 
 namespace Adrenaline
 {
