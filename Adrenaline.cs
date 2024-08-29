@@ -151,8 +151,8 @@ namespace Adrenaline
             {
                 var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
                 var time = data.GetValueSafe("LossRateLockTime");
-
-                AdrenalineLogic.Value = data.GetValueSafe("Value");
+                var value = data.GetValueSafe("Value");
+                AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 5f) ? 20f : value;
                 AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
                 AdrenalineLogic.SetDecreaseLocked(time > 0, time);
 
