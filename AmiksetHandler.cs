@@ -12,9 +12,15 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            Janni = base.transform.FindChild("KYLAJANI")?.gameObject;
-            Petteri = base.transform.FindChild("AMIS2")?.gameObject;
-            Utils.PrintDebug("AmiksetHandler enabled");
+            try
+            {
+                Janni = base.transform.FindChild("KYLAJANI")?.gameObject;
+                Petteri = base.transform.FindChild("AMIS2")?.gameObject;
+                Utils.PrintDebug(eConsoleColors.GREEN, "AmiksetHandler enabled");
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load AmiksetHandler component");
+            }
         }
 
         private void FixedUpdate()
@@ -25,13 +31,13 @@ namespace Adrenaline
             if (JanniHit?.ActiveStateName == "Hit")
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
-                Utils.PrintDebug("Value increased by Janni hit player");
+                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by Janni hit player");
             }
 
             if (PetteriHit?.ActiveStateName == "Hit")
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
-                Utils.PrintDebug("Value increased by Petteri hit player");
+                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by Petteri hit player");
             }
         }
     }

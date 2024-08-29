@@ -9,8 +9,17 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            FluidTrigger = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Pouring");
-            Utils.PrintDebug("PissOnDevicesHandler enabled");
+            try
+            {
+                FluidTrigger = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger")
+                    .GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Pouring");
+
+                Utils.PrintDebug(eConsoleColors.GREEN, "PissOnDevicesHandler enabled");
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load PissOnDevicesHandler enabled");
+            }
         }
 
         private void FixedUpdate()
@@ -18,7 +27,7 @@ namespace Adrenaline
             if (FluidTrigger?.ActiveStateName == "TV")
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.PISS_ON_DEVICES);
-                Utils.PrintDebug("Value increased by piss on TV and hit electricity");
+                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by piss on TV and hit electricity");
             }
         }
     }

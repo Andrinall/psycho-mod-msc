@@ -11,9 +11,16 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
-            pivot = base.transform.Find("LOD/DriverHeadPivot/CameraPivot/Pivot");
-            Utils.PrintDebug("FerndaleSeatbeltFix enabled");
+            try
+            {
+                SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
+                pivot = base.transform.Find("LOD/DriverHeadPivot/CameraPivot/Pivot");
+                Utils.PrintDebug(eConsoleColors.GREEN, "FerndaleSeatbeltFix enabled");
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load FerndaleSeatbeltFix component");
+            }
         }
 
         private void FixedUpdate()

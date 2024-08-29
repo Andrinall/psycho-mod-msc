@@ -49,10 +49,7 @@ namespace Adrenaline
             else
                 _struct.Add(hudElement);
 
-            Utils.PrintDebug(string.Format(
-                "Element {0} inserted into _struct with index {1}",
-                hudElement.name, index
-            ));
+            //Utils.PrintDebug("Element {0} inserted into _struct with index {1}", hudElement.name, index);
 
             Structurize();
         }

@@ -3,6 +3,8 @@ using System.Linq;
 
 using UnityEngine;
 using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
+
 #if DEBUG
 using MSCLoader;
 #endif
@@ -10,8 +12,11 @@ using MSCLoader;
 
 namespace Adrenaline
 {
+    internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN };
     internal static class Utils
     {
+        private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
+
         public static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
@@ -52,8 +57,46 @@ namespace Adrenaline
         public static void PrintDebug(string msg)
         {
 #if DEBUG
-            ModConsole.Print("[Adrenaline-DBG]: " + msg);
+            ModConsole.Print(DBG_STRING + msg);
 #endif
+        }
+
+        public static void PrintDebug(eConsoleColors color, string msg)
+        {
+#if DEBUG
+            ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), msg));
+#endif
+        }
+
+        public static void PrintDebug(string fmt, params object[] vars)
+        {
+#if DEBUG
+            ModConsole.Print(string.Format(DBG_STRING + fmt, vars));
+#endif
+        }
+
+        public static void PrintDebug(eConsoleColors color, string fmt, params object[] vars)
+        {
+#if DEBUG
+            ModConsole.Print(string.Format(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), fmt), vars));
+#endif
+        }
+
+        private static string GetColor(eConsoleColors color)
+        {
+            switch (color)
+            {
+                case eConsoleColors.WHITE:
+                    return "white";
+                case eConsoleColors.RED:
+                    return "red";
+                case eConsoleColors.YELLOW:
+                    return "yellow";
+                case eConsoleColors.GREEN:
+                    return "green";
+                default:
+                    return "white";
+            }
         }
     }
 }

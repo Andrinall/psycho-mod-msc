@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Adrenaline
 {
@@ -9,16 +8,19 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            VenttiGame = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Use");
-            Utils.PrintDebug("VenttiGameHandler enabled");
-        }
-
-        private void FixedUpdate()
-        {
-            if (VenttiGame?.ActiveStateName == "Lose")
+            try
             {
-                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.VENTTI_WIN);
-                Utils.PrintDebug("Value increased by losing in ventti game");
+                GameHook.InjectStateHook(base.gameObject, "Lose", delegate
+                {
+                    AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.VENTTI_WIN);
+                    Utils.PrintDebug("Value increased by losing in ventti game");
+                });
+                // VenttiGame = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Use");
+                Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler enabled");
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load VenttiGameHandler component");
             }
         }
     }

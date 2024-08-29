@@ -15,10 +15,16 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            GFX_Store = base.transform.FindChild("LOD/GFX_Store")?.gameObject;
-            GFX_Pub = base.transform.FindChild("LOD/GFX_Pub")?.gameObject;
-            _Teimo = base.transform.FindChild("TeimoInShop")?.gameObject;
-            Utils.PrintDebug("StoreActionsHandler enabled");
+            try
+            {
+                GFX_Store = base.transform.FindChild("LOD/GFX_Store").gameObject;
+                GFX_Pub = base.transform.FindChild("LOD/GFX_Pub").gameObject;
+                _Teimo = base.transform.FindChild("TeimoInShop").gameObject;
+                Utils.PrintDebug(eConsoleColors.GREEN, "StoreActionsHandler enabled");
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load StoreActionsHandler component");
+            }
         }
 
         private void FixedUpdate()
@@ -29,28 +35,16 @@ namespace Adrenaline
             Utils.CacheFSM(ref TriggerPissOnTeimo, ref _Teimo, "Pivot/FacePissTrigger");
 
             if (StoreWindow?.ActiveStateName == "Shatter")
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
-                Utils.PrintDebug("Value timed increased by broke store window");
-            }
 
             if (PubWindow?.ActiveStateName == "Shatter")
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
-                Utils.PrintDebug("Value timed increased by broke pub window");
-            }
 
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_PISS);
-                Utils.PrintDebug("Value timed increased by piss on teimo's face");
-            }
 
             if (TeimoSwears?.ActiveStateName == "State 1")
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_SWEAR);
-                Utils.PrintDebug("Value timed increased by teimo is swears");
-            }
         }
     }
 }

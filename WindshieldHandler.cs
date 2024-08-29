@@ -13,18 +13,25 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            if (base.GetComponents<Drivetrain>().Length != 0)
+            try
             {
-                drivetrain = base.GetComponent<Drivetrain>();
-                Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
-                Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
-                Utils.PrintDebug("WindshieldHandler enabled for hayosiko");
+                if (base.GetComponents<Drivetrain>().Length != 0)
+                {
+                    drivetrain = base.GetComponent<Drivetrain>();
+                    Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                    Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
+                    Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled for hayosiko");
+                }
+                else
+                {
+                    drivetrain = base.transform.parent.parent.GetComponent<Drivetrain>();
+                    Damaged = base.GetComponent<PlayMakerFSM>().FsmVariables?.GetFsmBool("Damaged");
+                    Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled");
+                }
             }
-            else
+            catch
             {
-                drivetrain = base.transform.parent.parent.GetComponent<Drivetrain>();
-                Damaged = base.GetComponent<PlayMakerFSM>().FsmVariables?.GetFsmBool("Damaged");
-                Utils.PrintDebug("WindshieldHandler enabled");
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load WindshieldHandler");
             }
             PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
         }

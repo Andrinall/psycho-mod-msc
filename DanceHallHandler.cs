@@ -14,15 +14,22 @@ namespace Adrenaline
         private PlayMakerFSM ClubFighter;
 
         private void OnEnable()
-        {   
-            ClubGuard =
-                base.transform.Find("Functions/GUARD/Guard").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "React");
-            
+        {
+            try
+            {
+                ClubGuard =
+                    base.transform.Find("Functions/GUARD/Guard").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "React");
 
-            ClubFighter =
-                base.transform.Find("Functions/FIGHTER/Fighter").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Hit");
-            
-            Utils.PrintDebug("DanceHallHandler enabled");
+
+                ClubFighter =
+                    base.transform.Find("Functions/FIGHTER/Fighter").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Hit");
+
+                Utils.PrintDebug(eConsoleColors.GREEN, "DanceHallHandler enabled");
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load DanceHallHandler component");
+            }
         }
 
         private void FixedUpdate()
@@ -30,13 +37,13 @@ namespace Adrenaline
             if (ClubGuard?.ActiveStateName == "Catch")
             {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GUARD_CATCH);
-                Utils.PrintDebug("Value increased by ClubGuard try to catch player");
+                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by ClubGuard try to catch player");
             }
 
             if (FightStates.Contains(ClubFighter?.ActiveStateName ?? ""))
             {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.FIGHT_INCREASE);
-                Utils.PrintDebug("Value increased by fighting in Club");
+                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by fighting in Club");
             }
         }
     }

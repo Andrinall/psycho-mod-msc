@@ -1,4 +1,5 @@
 ﻿using HealthMod;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -52,23 +53,31 @@ namespace Adrenaline
 
         public static void InitHUD()
         {
-            _hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
-            _hud.AddElement(eHUDCloneType.RECT, "Adrenaline", _hud.GetIndexByName("Money"));
-            Utils.PrintDebug("HUD Enabled");
+            try
+            {
+                _hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
+                _hud.AddElement(eHUDCloneType.RECT, "Adrenaline", _hud.GetIndexByName("Money"));
+                Utils.PrintDebug(eConsoleColors.GREEN, "HUD Enabled");
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to init HUD bar");
+            }
         }
 
         public static void DestroyHUD()
         {
             Object.Destroy(_hud);
-            Utils.PrintDebug("HUD Destroyed");
         }
 
         public static void Tick()
         {
-            if (Health.hp < 30)
-                LossRate -= 0.01f * Time.fixedDeltaTime;
-            if (Health.hp > 80)
-                LossRate += 0.01f * Time.fixedDeltaTime;
+            if (ModLoader.IsModPresent("Health"))
+            {
+                if (Health.hp < 30)
+                    LossRate -= 0.01f * Time.fixedDeltaTime;
+                if (Health.hp > 80)
+                    LossRate += 0.01f * Time.fixedDeltaTime;
+            }
 
             if (IsDecreaseLocked() && _debug) return;
             Value -= config.DEFAULT_DECREASE * LossRate * Time.fixedDeltaTime; // basic decrease adrenaline

@@ -12,10 +12,17 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            drivetrain = base.GetComponent<Drivetrain>();
-            PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
-            SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
-            Utils.PrintDebug("HighSpeedHandler enabled");
+            try
+            {
+                drivetrain = base.GetComponent<Drivetrain>();
+                PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
+                SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
+                Utils.PrintDebug(eConsoleColors.GREEN, "HighSpeedHandler enabled");
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load HighSpeedHandler component");
+            }
         }
 
         private void FixedUpdate()
@@ -24,10 +31,7 @@ namespace Adrenaline
 
             var RequiredSpeed = (float)typeof(Configuration).GetField("REQUIRED_SPEED_" + CarName).GetValue(AdrenalineLogic.config);
             if (!SeatbeltLocked.Value && drivetrain.differentialSpeed > RequiredSpeed)
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.HIGHSPEED_INCREASE);
-                Utils.PrintDebug("Value++ by driving on high speed on " + CarName);
-            }
         }
     }
 }

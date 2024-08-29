@@ -33,21 +33,26 @@ namespace Adrenaline
 
         private void OnEnable()
         {
-            prefabs = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.root.IsPrefab()).ToList();
+            try
+            {
+                prefabs = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.root.IsPrefab()).ToList();
 
-            TryReplacePrefab("Coffee");
-            TryReplacePrefab("coffee_cup_bar.mesh", true);
-            TryReplacePrefab("coffee_cup_bar_coffee.mesh");
-            TryReplacePrefab("CoffeeFly", true);
-            TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
-            TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
+                TryReplacePrefab("Coffee");
+                TryReplacePrefab("coffee_cup_bar.mesh", true);
+                TryReplacePrefab("coffee_cup_bar_coffee.mesh");
+                TryReplacePrefab("CoffeeFly", true);
+                TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
+                TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
 
-            prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
-            prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
+                prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
+                prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
 
-            SetDrinkPrice(AdrenalineLogic.config.PUB_PRICE);
-
-            Utils.PrintDebug("CustomEnergyDrink enabled");
+                SetDrinkPrice(AdrenalineLogic.config.PUB_PRICE);
+                Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load CustomEnergyDrink component");
+            }
         }
 
         public void SetDrinkPrice(float price)
@@ -66,7 +71,7 @@ namespace Adrenaline
             {
                 var prefab = prefabs.Find(v => v.name == name);
                 if (prefab == null)
-                    Utils.PrintDebug("<color=red>TryReplacePrefab(" + name + ",bool) | prefab is null!</color>");
+                    Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab({0},bool) | prefab is null!", name);
 
                 SetMaterial(prefab, isEmpty);
 
@@ -75,7 +80,7 @@ namespace Adrenaline
             }
             catch
             {
-                Utils.PrintDebug("<color=red>Unable to set texture for " + name + " prefab</color>");
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to set texture for {0} prefab", name);
             }
         }
 
@@ -84,7 +89,7 @@ namespace Adrenaline
             try
             {
                 if (obj == null)
-                    Utils.PrintDebug("<color=red>TryReplacePrefab(Transform,bool) | prefab is null</color>");
+                    Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab(Transform,bool) | prefab is null");
 
                 SetMaterial(obj, isEmpty);
                 if (obj.childCount > 0)
@@ -92,7 +97,7 @@ namespace Adrenaline
             }
             catch
             {
-                Utils.PrintDebug("<color=red>Unable to set texture for " + obj?.name.ToString() + "prefab</color>");
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to set texture for {0} prefab", obj?.name.ToString());
             }
         }
         

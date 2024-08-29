@@ -17,13 +17,14 @@ namespace Adrenaline
         public override string Description => "";
 
         internal readonly List<CarData> CARS = new List<CarData> {
-            new CarData { CarObject = "JONNEZ ES(Clone)",      CarName = "Jonezz",   RequiredSpeed = 70f  },
-            new CarData { CarObject = "SATSUMA(557kg, 248)",   CarName = "Satsuma",  RequiredSpeed = 120f },
-            new CarData { CarObject = "FERNDALE(1630kg)",      CarName = "Ferndale", RequiredSpeed = 110f },
-            new CarData { CarObject = "HAYOSIKO(1500kg, 250)", CarName = "Hayosiko", RequiredSpeed = 110f },
-            new CarData { CarObject = "FITTAN",                CarName = "Fittan",   RequiredSpeed = 70f  },
-            new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu",     RequiredSpeed = 70f  }
+            new CarData { CarObject = "JONNEZ ES(Clone)",      CarName = "Jonezz"   },
+            new CarData { CarObject = "SATSUMA(557kg, 248)",   CarName = "Satsuma"  },
+            new CarData { CarObject = "FERNDALE(1630kg)",      CarName = "Ferndale" },
+            new CarData { CarObject = "HAYOSIKO(1500kg, 250)", CarName = "Hayosiko" },
+            new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu"     }
         };
+
+        private string LastAddedComponent = "";
 
 #if DEBUG
         private SettingsCheckBox lockbox;
@@ -103,7 +104,7 @@ namespace Adrenaline
 
         private void PubPriceChanged()
         {
-            GameObject.Find("STORE").GetComponent<CustomEnergyDrink>().SetDrinkPrice((float)priceSlider.GetValue());
+            GameObject.Find("STORE").GetComponent<CustomEnergyDrink>()?.SetDrinkPrice((float)priceSlider.GetValue());
         }
 
         private void OnValueChanged()
@@ -141,49 +142,60 @@ namespace Adrenaline
 #if DEBUG
             Configuration temp = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
             if (temp == null)
-                Utils.PrintDebug("<color=red>DeserializeSaveFile is null</color>");
+                Utils.PrintDebug(eConsoleColors.RED, "DeserializeSaveFile is null");
             else
                 AdrenalineLogic.config = temp;
 #endif
-            var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
-            AdrenalineLogic.texture = asset.LoadAsset<Texture>("energy.png");
-            AdrenalineLogic.empty_cup = asset.LoadAsset<Mesh>("coffee_cup_bar.mesh.obj");
-            AdrenalineLogic.coffee_cup = asset.LoadAsset<Mesh>("coffee_cup_bar_coffee.mesh.obj");
-            //foreach (var assetName in asset.GetAllAssetNames()) Utils.PrintDebug("[bundle] Asset: " + assetName);
-            asset.Unload(false);
-
-            GameObject.Find("PLAYER").AddComponent<GlobalHandler>();
-            if (SaveLoad.ValueExists(this, "Adrenaline"))
+            try
             {
-                var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
-                var time = data.GetValueSafe("LossRateLockTime");
-                var value = data.GetValueSafe("Value");
-                AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 5f) ? 20f : value;
-                AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
-                AdrenalineLogic.SetDecreaseLocked(time > 0, time);
-
-                Utils.PrintDebug("<color=green>Save Data Loaded!</color>");
+                var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
+                AdrenalineLogic.texture = asset.LoadAsset<Texture>("energy.png");
+                AdrenalineLogic.empty_cup = asset.LoadAsset<Mesh>("coffee_cup_bar.mesh.obj");
+                AdrenalineLogic.coffee_cup = asset.LoadAsset<Mesh>("coffee_cup_bar_coffee.mesh.obj");
+                asset.Unload(false);
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset from embedded resource (??!)");
             }
-            else
-                ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
-
-            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger").AddComponent<PissOnDevicesHandler>();
-            GameObject.Find("GIFU(750/450psi)/ShitTank").AddComponent<SpillHandler>();
-            GameObject.Find("NPC_CARS/Amikset").AddComponent<AmiksetHandler>();
-            GameObject.Find("STORE").AddComponent<StoreActionsHandler>();
-            GameObject.Find("STORE").AddComponent<CustomEnergyDrink>();
-            GameObject.Find("CABIN/Cabin/Ventti/Table/GameManager").AddComponent<VenttiGameHandler>();
-            GameObject.Find("DANCEHALL").AddComponent<DanceHallHandler>();
-
-            GameObject.Find("SATSUMA(557kg, 248)/Wiring").AddComponent<CarElectricityHandler>();
-            GameObject.Find("SATSUMA(557kg, 248)/Body/Windshield").AddComponent<WindshieldHandler>().CarName = "Satsuma";
-            GameObject.Find("GIFU(750/450psi)/LOD/WindshieldLeft").AddComponent<WindshieldHandler>().CarName = "Gifu";
-            GameObject.Find("HAYOSIKO(1500kg, 250)").AddComponent<WindshieldHandler>().CarName = "Hayosiko";
-            GameObject.Find("FERNDALE(1630kg)").AddComponent<FerndaleSeatbeltFix>();
 
             try
             {
-                foreach (var item in CARS)
+                AddComponent<GlobalHandler>("PLAYER");
+                if (SaveLoad.ValueExists(this, "Adrenaline"))
+                {
+                    var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
+                    var time = data.GetValueSafe("LossRateLockTime");
+                    var value = data.GetValueSafe("Value");
+                    AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 5f) ? 20f : value;
+                    AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
+                    AdrenalineLogic.SetDecreaseLocked(time > 0, time);
+
+                    Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
+                }
+                else
+                    ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
+
+                AddComponent<PissOnDevicesHandler>("PLAYER");
+                AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
+                AddComponent<AmiksetHandler>("NPC_CARS/Amikset");
+                AddComponent<StoreActionsHandler>("STORE");
+                AddComponent<CustomEnergyDrink>("STORE");
+                AddComponent<VenttiGameHandler>("CABIN/Cabin/Ventti/Table/GameManager");
+                AddComponent<DanceHallHandler>("DANCEHALL");
+
+                AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)");
+                AddComponent<WindshieldHandler>("SATSUMA(557kg, 248)/Body/Windshield").CarName = "Satsuma";
+                AddComponent<WindshieldHandler>("GIFU(750/450psi)/LOD/WindshieldLeft").CarName = "Gifu";
+                AddComponent<WindshieldHandler>("HAYOSIKO(1500kg, 250)").CarName = "Hayosiko";
+                AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)");
+            } catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load component {0}", LastAddedComponent);
+            }
+
+            foreach (var item in CARS)
+            {
+                try
                 {
                     GameObject obj = GameObject.Find(item.CarObject);
                     if (obj == null)
@@ -191,14 +203,20 @@ namespace Adrenaline
 
                     obj.AddComponent<HighSpeedHandler>().CarName = item.CarName;
                 }
+                catch
+                {
+                    Utils.PrintDebug(eConsoleColors.RED, "HighSpeedHandler loading error for {0}", item.CarObject);
+                }
             }
-            catch (MissingComponentException ex)
-            {
-                Utils.PrintDebug("<color=red>HighSpeedHandlers loading error: " + ex.GetFullMessage() + "</color>");
-            }
-
-
+            
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
+        }
+
+        private T AddComponent<T>(string obj) where T : Component
+        {
+            LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T).Name.ToString());
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Loading component " + LastAddedComponent);
+            return GameObject.Find(obj).AddComponent<T>();
         }
 
         public override void OnSave()
