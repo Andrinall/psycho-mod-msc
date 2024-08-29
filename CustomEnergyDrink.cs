@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using HutongGames.PlayMaker;
+using Steamworks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace Adrenaline
     internal class CustomEnergyDrink : MonoBehaviour
     {
         private List<Transform> prefabs;
+        private FsmString guiText;
 
         private void OnEnable()
         {
@@ -20,7 +22,14 @@ namespace Adrenaline
             TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
             TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
 
+            guiText = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
             Utils.PrintDebug("CustomEnergyDrink enabled");
+        }
+
+        private void OnGUI()
+        {
+            if (guiText?.Value == "COFFEE 7 MK")
+                guiText.Value = "ENERGY DRINK 7 MK";
         }
 
         private void TryReplacePrefab(string name, bool isEmpty = false)
