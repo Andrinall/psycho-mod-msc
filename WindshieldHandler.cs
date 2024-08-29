@@ -40,10 +40,7 @@ namespace Adrenaline
         {
             if (PlayerVehicle?.Value != CarName) return;
             if (!Helmet.Value && Damaged?.Value == true && drivetrain?.differentialSpeed > AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED)
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.BROKEN_WINDSHIELD_INCREASE);
-                Utils.PrintDebug("Value increased by driving with broken windshield and speed > " + AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED.ToString());
-            }
         }
     }
 }
