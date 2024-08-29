@@ -100,5 +100,8 @@
     <Compile Include="Utils.cs" />
     <Compile Include="VenttiGameHandler.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\energy.unity3d" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
