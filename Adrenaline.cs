@@ -173,7 +173,7 @@ namespace Adrenaline
             GameObject.Find("SATSUMA(557kg, 248)/Body/Windshield").AddComponent<WindshieldHandler>().CarName = "Satsuma";
             GameObject.Find("GIFU(750/450psi)/LOD/WindshieldLeft").AddComponent<WindshieldHandler>().CarName = "Gifu";
             GameObject.Find("HAYOSIKO(1500kg, 250)").AddComponent<WindshieldHandler>().CarName = "Hayosiko";
-            //GameObject.Find("FERNDALE(1630kg)/LOD/DriverHeadPivot/CameraPivot/Pivot").AddComponent<FerndaleSeatbeltFix>();
+            GameObject.Find("FERNDALE(1630kg)").AddComponent<FerndaleSeatbeltFix>();
 
             try
             {
