@@ -1,15 +1,34 @@
 ﻿using HutongGames.PlayMaker;
-using Steamworks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Adrenaline
 {
+    internal class ItemRenamer : MonoBehaviour
+    {
+        private void Update()
+        {
+            if (base.gameObject.name == "coffee(itemx)")
+            {
+                base.gameObject.name = "energy drunk(itemx)";
+                Object.Destroy(this);
+                return;
+            }
+
+            if (base.gameObject.name == "empty cup(Clone)")
+            {
+                base.gameObject.name = "empty can(Clone)";
+                Object.Destroy(this);
+                return;
+            }
+        }
+    }
+
     internal class CustomEnergyDrink : MonoBehaviour
     {
         private List<Transform> prefabs;
-        private FsmString guiText;
+        private FsmVariables OrderVars;
 
         private void OnEnable()
         {
@@ -22,14 +41,22 @@ namespace Adrenaline
             TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
             TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
 
-            guiText = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
+            prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
+            prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
+
+            SetDrinkPrice(AdrenalineLogic.config.PUB_PRICE);
+
             Utils.PrintDebug("CustomEnergyDrink enabled");
         }
 
-        private void OnGUI()
+        public void SetDrinkPrice(float price)
         {
-            if (guiText?.Value == "COFFEE 7 MK")
-                guiText.Value = "ENERGY DRINK 7 MK";
+            var OrderCoffee = base.transform.Find("LOD/ActivateBar/OrderList/4")
+                .GetComponents<PlayMakerFSM>().First(v => v.FsmName == "Buy");
+
+            OrderVars = OrderCoffee.FsmVariables;
+            OrderVars.GetFsmString("Notification").Value = string.Format("ENERGY DRINK {0} MK", price);
+            OrderVars.GetFsmFloat("Price").Value = price;
         }
 
         private void TryReplacePrefab(string name, bool isEmpty = false)
@@ -37,11 +64,12 @@ namespace Adrenaline
             try
             {
                 var prefab = prefabs.Find(v => v.name == name);
-                if (prefab == null) Utils.PrintDebug("TryReplacePrefab(" + name + ",bool) | prefab is null!");
-                
+                if (prefab == null)
+                    Utils.PrintDebug("<color=red>TryReplacePrefab(" + name + ",bool) | prefab is null!</color>");
+
                 SetMaterial(prefab, isEmpty);
-                
-                if(prefab.childCount > 0)
+
+                if (prefab.childCount > 0)
                     SetMaterial(prefab.GetChild(0), isEmpty);
             }
             catch
@@ -54,7 +82,8 @@ namespace Adrenaline
         {
             try
             {
-                if (obj == null) Utils.PrintDebug("TryReplacePrefab(Transform,bool) | prefab is null");
+                if (obj == null)
+                    Utils.PrintDebug("<color=red>TryReplacePrefab(Transform,bool) | prefab is null</color>");
 
                 SetMaterial(obj, isEmpty);
                 if (obj.childCount > 0)
@@ -69,10 +98,8 @@ namespace Adrenaline
         private void SetMaterial(Transform obj, bool isEmpty)
         {
             if (obj == null)
-            {
-                Utils.PrintDebug("obj == null in SetMaterial");
                 return;
-            }
+
             var renderer = obj?.GetComponent<MeshRenderer>();
             if (renderer != null)
             {

@@ -24,6 +24,8 @@
         public float MURDER_WALKING = 0.45f;
         public float COFFEE_INCREASE = 11.3f;
 
+        public float PUB_PRICE = 14f;
+
         public float REQUIRED_SPEED_Jonezz = 70f;
         public float REQUIRED_SPEED_Satsuma = 120f;
         public float REQUIRED_SPEED_Ferndale = 110f;

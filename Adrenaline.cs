@@ -14,7 +14,7 @@ namespace Adrenaline
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
         public override string Author => "Andrinall,@racer";
-        public override string Version => "0.17.9";
+        public override string Version => "0.19.10";
         public override string Description => "";
 
         internal readonly List<CarData> CARS = new List<CarData> {
@@ -28,9 +28,10 @@ namespace Adrenaline
 
 #if DEBUG
         private SettingsCheckBox lockbox;
+        private SettingsSliderInt priceSlider;
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
         private List<string> _highValues =
-            new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING", "COFFEE_INCREASE" };
+            new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING", "COFFEE_INCREASE", "PUB_PRICE" };
 
         private Dictionary<string, string> localization = new Dictionary<string, string>
         {
@@ -70,6 +71,7 @@ namespace Adrenaline
             Settings.AddHeader(this, "DEBUG SETTINGS");
             _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 20f, 180f, AdrenalineLogic.Value, AdrenalineChanged));
             _sliders.Add(Settings.AddSlider(this, "adn_rate", "Скорость пассивного уменьшения", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
+            priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 0, 50, (int)AdrenalineLogic.config.PUB_PRICE, PubPriceChanged);
             lockbox = Settings.AddCheckBox(this, "adn_lock", "Заблокировать уменьшение адреналина", false, delegate {
                 var lock_ = lockbox.GetValue();
                 AdrenalineLogic.SetDecreaseLocked(lock_, 2_000_000_000f, lock_);
@@ -98,6 +100,11 @@ namespace Adrenaline
         private void LossRateChanged()
         {
             AdrenalineLogic.LossRate = _sliders[1].GetValue();
+        }
+
+        private void PubPriceChanged()
+        {
+            GameObject.Find("STORE").GetComponent<CustomEnergyDrink>().SetDrinkPrice((float)priceSlider.GetValue());
         }
 
         private void OnValueChanged()
