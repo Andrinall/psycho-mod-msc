@@ -109,8 +109,9 @@ namespace Adrenaline
             get { return _lossRate; }
             set {
                 if (IsDecreaseLocked()) return;
-                var lossSpeed = config.GetValueSafe("LOSS_RATE_SPEED");
-                _lossRate = Mathf.Clamp(value, lossSpeed.minValue, lossSpeed.maxValue);
+                var MIN_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
+                var MAX_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE");
+                _lossRate = Mathf.Clamp(value, MIN_LOSS_RATE.Value, MAX_LOSS_RATE.Value);
             }
         }
 

@@ -69,7 +69,11 @@ namespace Adrenaline
         {
             Settings.AddHeader(this, "DEBUG SETTINGS");
             _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 10f, 190f, AdrenalineLogic.Value, AdrenalineChanged));
-            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", 0f, 2f, AdrenalineLogic.LossRate, LossRateChanged));
+
+            var MIN_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
+            var MAX_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE");
+            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", 
+                MIN_LOSS_RATE.Value, MAX_LOSS_RATE.Value, AdrenalineLogic.LossRate, LossRateChanged));
 
             var PUB_COFFEE_PRICE = AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE");
             priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 
@@ -127,8 +131,12 @@ namespace Adrenaline
         public override void FixedUpdate()
         {
             _sliders[0].Instance.Value = AdrenalineLogic.Value;
-            _sliders[1].Instance.Value = AdrenalineLogic.LossRate;
-            lockbox.Instance.Value = AdrenalineLogic.IsDecreaseLocked();
+
+            var slider1 = _sliders[1].Instance;
+            slider1.Value = AdrenalineLogic.LossRate;
+            slider1.Vals[0] = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE").Value;
+            slider1.Vals[1] = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE").Value;
+            lockbox.SetValue(AdrenalineLogic.IsDecreaseLocked());
         }
 #endif
 
