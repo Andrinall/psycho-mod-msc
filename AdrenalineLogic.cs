@@ -88,7 +88,7 @@ namespace Adrenaline
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 2f);
 
-                    _hud.SetElementScale("Adrenaline", new Vector3(Mathf.Clamp(value / 100f, 0f, 1f), 1f));
+                    _hud.SetElementScale("Adrenaline", new Vector3(Mathf.Clamp(value / 200f, 0f, 1f), 1f));
                     
                     var color = Color.white;
                     if (clamped <= 0.15f || clamped >= 1.75f)
