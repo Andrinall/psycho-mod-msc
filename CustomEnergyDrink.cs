@@ -14,19 +14,19 @@ namespace Adrenaline
             if (base.gameObject.name == "coffee(itemx)")
             {
                 base.gameObject.name = "energy drunk(itemx)";
-                Object.Destroy(this);
+                Destroy(this);
                 return;
             }
 
             if (base.gameObject.name == "empty cup(Clone)")
             {
                 base.gameObject.name = "empty can(Clone)";
-                Object.Destroy(this);
+                Destroy(this);
                 return;
             }
         }
     }
-
+    
     internal class CustomEnergyDrink : MonoBehaviour
     {
         private List<Transform> prefabs;
@@ -45,7 +45,26 @@ namespace Adrenaline
                 TryReplacePrefab(base.transform.Find("TeimoInShop/Pivot/Teimo/skeleton/pelvis/spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/ItemPivot/CoffeeCup"));
                 TryReplacePrefab(GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/Coffee").transform, true);
 
-                prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
+                try
+                {
+                    var prefab = base.transform.Find("LOD/GFX_Pub/paper_stand");
+                    if (prefab == null) Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab(pub_desk,bool) | prefab is null!");
+
+                    var renderer = prefab?.GetComponent<MeshRenderer>();
+                    if (renderer != null)
+                    {
+                        var mat = renderer.materials.ElementAt(0);
+
+                        mat.name = "ATLAS_OFFICE(Clone)";
+                        mat.mainTexture = AdrenalineLogic.atlas_texture;
+                    }
+                }
+                catch
+                {
+                    Utils.PrintDebug("Failed to set texture for pub_desk");
+                }
+
+                    prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
                 prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
 
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE").Value);
@@ -114,7 +133,7 @@ namespace Adrenaline
                 var filter = obj.GetComponent<MeshFilter>();
 
                 mat.name = "Energy";
-                mat.mainTexture = AdrenalineLogic.texture;
+                mat.mainTexture = AdrenalineLogic.can_texture;
                 mat.mainTextureOffset = new Vector2(0f, 0f);
                 mat.mainTextureScale = new Vector2(1f, 1f);
                 

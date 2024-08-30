@@ -29,7 +29,8 @@ namespace Adrenaline
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
         internal static FixedHUD _hud;
-        public static Texture texture = null;
+        public static Texture can_texture = null;
+        public static Texture atlas_texture = null;
         public static Mesh empty_cup = null;
         public static Mesh coffee_cup = null;
 

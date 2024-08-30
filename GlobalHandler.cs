@@ -40,10 +40,17 @@ namespace Adrenaline
                 GameHook.InjectStateHook(drink, "Activate 7", IncreaseByCoffee);
                 GameHook.InjectStateHook(drink, "HomeCoffee", IncreaseByCoffee);
 
-                /*GameHook.InjectStateHook(GameObject.Find("fridge_paper"), "Use", "Wait button", delegate
+                var fridge_paper = GameObject.Find("fridge_paper");
+                GameHook.InjectStateHook(fridge_paper, "Use", "Wait button", SetFridgePaperText, true);
+                
+                var renderer = fridge_paper?.GetComponent<MeshRenderer>();
+                if (renderer != null)
                 {
-                    Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = "u fkn' bastard";
-                }, true);*/
+                    var mat = renderer.materials.ElementAt(0);
+
+                    mat.name = "ATLAS_OFFICE(Clone)";
+                    mat.mainTexture = AdrenalineLogic.atlas_texture;
+                }
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             }
@@ -98,6 +105,11 @@ namespace Adrenaline
         {
             AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE").Value);
             AdrenalineLogic.SetDecreaseLocked(true, 12000f); // 1 minute
+        }
+
+        private void SetFridgePaperText()
+        {
+            Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = "Hi! You are sick and need to keep your adrenaline high! Drink coffee, drive fast, risk your life, conflict with society.\nYou can buy an energy drink at the Nappo pub.You will die if your adrenaline drops to zero or gets too high.\nLove, Doctor.";
         }
     }
 }

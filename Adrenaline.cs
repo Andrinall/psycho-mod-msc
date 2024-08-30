@@ -162,7 +162,8 @@ namespace Adrenaline
             try
             {
                 var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
-                AdrenalineLogic.texture = asset.LoadAsset<Texture>("energy.png");
+                AdrenalineLogic.can_texture = asset.LoadAsset<Texture>("energy.png");
+                AdrenalineLogic.atlas_texture = asset.LoadAsset<Texture>("ATLAS_OFFICE.png");
                 AdrenalineLogic.empty_cup = asset.LoadAsset<Mesh>("coffee_cup_bar.mesh.obj");
                 AdrenalineLogic.coffee_cup = asset.LoadAsset<Mesh>("coffee_cup_bar_coffee.mesh.obj");
                 asset.Unload(false);
