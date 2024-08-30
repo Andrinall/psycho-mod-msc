@@ -33,6 +33,8 @@ namespace Adrenaline
 
         private Dictionary<string, string> localization = new Dictionary<string, string>
         {
+            ["MIN_LOSS_RATE"] = "Мин.значение пассивного уменьшения",
+            ["MAX_LOSS_RATE"] = "Макс.значение пассивного уменьшения",
             ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
             ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
             ["SPRINT_INCREASE"] = "Увеличение от бега",
