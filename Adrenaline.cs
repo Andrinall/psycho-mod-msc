@@ -11,7 +11,7 @@ namespace Adrenaline
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
         public override string Author => "Andrinall,@racer";
-        public override string Version => "0.20.13";
+        public override string Version => "0.22.29";
         public override string Description => "";
 
         private readonly List<string> CARS = new List<string> {
