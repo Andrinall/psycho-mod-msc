@@ -83,7 +83,6 @@
     <Compile Include="AdrenalineLogic.cs" />
     <Compile Include="AmiksetHandler.cs" />
     <Compile Include="CarElectricityHandler.cs" />
-    <Compile Include="Configuration.cs" />
     <Compile Include="CustomEnergyDrink.cs" />
     <Compile Include="DanceHallHandler.cs" />
     <Compile Include="FerndaleSeatbeltFix.cs" />
