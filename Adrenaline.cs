@@ -1,10 +1,8 @@
-﻿using System.Reflection;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Harmony;
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
@@ -16,12 +14,12 @@ namespace Adrenaline
         public override string Version => "0.20.13";
         public override string Description => "";
 
-        internal readonly List<CarData> CARS = new List<CarData> {
-            new CarData { CarObject = "JONNEZ ES(Clone)",      CarName = "Jonezz"   },
-            new CarData { CarObject = "SATSUMA(557kg, 248)",   CarName = "Satsuma"  },
-            new CarData { CarObject = "FERNDALE(1630kg)",      CarName = "Ferndale" },
-            new CarData { CarObject = "HAYOSIKO(1500kg, 250)", CarName = "Hayosiko" },
-            new CarData { CarObject = "GIFU(750/450psi)",      CarName = "Gifu"     }
+        private readonly List<string> CARS = new List<string> {
+            "JONNEZ ES(Clone)",
+            "SATSUMA(557kg, 248)",
+            "FERNDALE(1630kg)",
+            "HAYOSIKO(1500kg, 250)",
+            "GIFU(750/450psi)",
         };
 
         private string LastAddedComponent = "";
@@ -35,8 +33,7 @@ namespace Adrenaline
 
         private Dictionary<string, string> localization = new Dictionary<string, string>
         {
-            ["MIN_LOSS_RATE"] = "Минимально возможная скорость пассивного уменьшения",
-            ["MAX_LOSS_RATE"] = "Максимально возможная скорость пассивного уменьшения",
+            ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
             ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
             ["SPRINT_INCREASE"] = "Увеличение от бега",
             ["HIGHSPEED_INCREASE"] = "Увеличение от езды на большой скорости",
@@ -69,24 +66,27 @@ namespace Adrenaline
         public override void ModSettings()
         {
             Settings.AddHeader(this, "DEBUG SETTINGS");
-            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 20f, 180f, AdrenalineLogic.Value, AdrenalineChanged));
-            _sliders.Add(Settings.AddSlider(this, "adn_rate", "Скорость пассивного уменьшения", AdrenalineLogic.config.MIN_LOSS_RATE, AdrenalineLogic.config.MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
-            priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 0, 50, (int)AdrenalineLogic.config.PUB_PRICE, PubPriceChanged);
+            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 10f, 190f, AdrenalineLogic.Value, AdrenalineChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", 0f, 2f, AdrenalineLogic.LossRate, LossRateChanged));
+
+            var PUB_COFFEE_PRICE = AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE");
+            priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 
+                (int)PUB_COFFEE_PRICE.minValue, (int)PUB_COFFEE_PRICE.maxValue, (int)PUB_COFFEE_PRICE.Value, PubPriceChanged);
+
             lockbox = Settings.AddCheckBox(this, "adn_lock", "Заблокировать уменьшение адреналина", false, delegate {
                 var lock_ = lockbox.GetValue();
                 AdrenalineLogic.SetDecreaseLocked(lock_, 2_000_000_000f, lock_);
             });
             
-            foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
+            foreach (var element in AdrenalineLogic.config)
             {
-                if (field.IsInitOnly) continue; // ignore readonly variables for avoid errors
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
-                    settingID: field.Name.GetHashCode().ToString(),
-                    name: localization.GetValueSafe(field.Name),
-                    minValue: 0f,
-                    maxValue: _highValues.Contains(field.Name) ? 50f : (field.Name.Contains("REQUIRED_SPEED") ? 180f : 2f),
-                    value: (float)field.GetValue(AdrenalineLogic.config),
+                    settingID: element.Key.GetHashCode().ToString(),
+                    name: localization.GetValueSafe(element.Key),
+                    minValue: element.Value.minValue,
+                    maxValue: element.Value.maxValue,
+                    value: element.Value.Value,
                     onValueChanged: OnValueChanged
                 ));
             }
@@ -104,19 +104,20 @@ namespace Adrenaline
 
         private void PubPriceChanged()
         {
-            GameObject.Find("STORE").GetComponent<CustomEnergyDrink>()?.SetDrinkPrice((float)priceSlider.GetValue());
+            GameObject.Find("STORE")
+                ?.GetComponent<CustomEnergyDrink>()
+                ?.SetDrinkPrice((float)priceSlider.GetValue());
         }
 
         private void OnValueChanged()
         {
-            foreach (FieldInfo field in typeof(Configuration).GetPublicFields())
+            foreach (var element in AdrenalineLogic.config)
             {
-                if (field.IsInitOnly) continue;
-                var slider = _sliders.Find(v => v.Instance.Name == field.Name);
+                var slider = _sliders.Find(v => v.Instance.ID == element.Key.GetHashCode().ToString());
                 float value = slider.GetValue();
-                if (value == (float)field.GetValue(AdrenalineLogic.config)) continue;
+                if (value == element.Value.Value) continue;
                 
-                field.SetValue(AdrenalineLogic.config, value);
+                element.Value.Value = value;
                 return;
             }
         }
@@ -131,8 +132,11 @@ namespace Adrenaline
 
         public override void OnNewGame()
         {
-            AdrenalineLogic.LossRate = AdrenalineLogic.config.MAX_LOSS_RATE - AdrenalineLogic.config.MIN_LOSS_RATE;
+            AdrenalineLogic.LossRate =
+                AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE").Value - AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE").Value;
+            
             AdrenalineLogic.Value = 100f;
+
             if (SaveLoad.ValueExists(this, "Adrenaline"))
                 SaveLoad.DeleteValue(this, "Adrenaline");
         }
@@ -140,11 +144,10 @@ namespace Adrenaline
         public override void OnLoad()
         {
 #if DEBUG
-            Configuration temp = SaveLoad.DeserializeSaveFile<Configuration>(this, "AdrenalineModConfiguration.json");
-            if (temp == null)
-                Utils.PrintDebug(eConsoleColors.RED, "DeserializeSaveFile is null");
+            if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
+                AdrenalineLogic.config = SaveLoad.ReadValueAsDictionary<string, ConfigItem>(this, "DebugAdrenaline");
             else
-                AdrenalineLogic.config = temp;
+                Utils.PrintDebug(eConsoleColors.RED, "DEBUG Settings not loaded, resetting to default");
 #endif
             try
             {
@@ -184,9 +187,6 @@ namespace Adrenaline
                 AddComponent<DanceHallHandler>("DANCEHALL");
 
                 AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)");
-                AddComponent<WindshieldHandler>("SATSUMA(557kg, 248)/Body/Windshield").CarName = "Satsuma";
-                AddComponent<WindshieldHandler>("GIFU(750/450psi)/LOD/WindshieldLeft").CarName = "Gifu";
-                AddComponent<WindshieldHandler>("HAYOSIKO(1500kg, 250)").CarName = "Hayosiko";
                 AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)");
             } catch
             {
@@ -197,15 +197,16 @@ namespace Adrenaline
             {
                 try
                 {
-                    GameObject obj = GameObject.Find(item.CarObject);
+                    GameObject obj = GameObject.Find(item);
                     if (obj == null)
-                        throw new MissingComponentException("Car with object name \"" + item.CarObject + "\" doesn't exists");
+                        throw new MissingComponentException("Car with object name \"" + item + "\" doesn't exists");
 
-                    obj.AddComponent<HighSpeedHandler>().CarName = item.CarName;
+                    obj.AddComponent<HighSpeedHandler>();
+                    obj.AddComponent<WindshieldHandler>();
                 }
                 catch
                 {
-                    Utils.PrintDebug(eConsoleColors.RED, "HighSpeedHandler loading error for {0}", item.CarObject);
+                    Utils.PrintDebug(eConsoleColors.RED, "HighSpeedHandler loading error for {0}", item);
                 }
             }
             
@@ -222,7 +223,7 @@ namespace Adrenaline
         public override void OnSave()
         {
 #if DEBUG
-            SaveLoad.SerializeSaveFile(this, AdrenalineLogic.config, "AdrenalineModConfiguration.json");
+            SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
 #endif
             SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
             {

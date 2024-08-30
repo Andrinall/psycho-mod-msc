@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using Harmony;
 
 namespace Adrenaline
 {
@@ -20,7 +21,7 @@ namespace Adrenaline
         {
             if (SpillPump?.ActiveStateName == "Spill grow" && IsCrime?.Value == true)
             {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.SPILL_SHIT);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPILL_SHIT").Value);
                 Utils.PrintDebug("Value increased by spill grow");
             }
         }

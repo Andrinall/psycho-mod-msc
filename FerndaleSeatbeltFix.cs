@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
+using System.Linq;
 
 namespace Adrenaline
 {
     internal class FerndaleSeatbeltFix : MonoBehaviour
     {
-        private bool forUse = true;
         private FsmBool SeatbeltLocked;
-        private Transform pivot;
+        private FsmBool IsBukled;
+        private FsmString PlayerCurrentVehicle;
 
         private void OnEnable()
         {
             try
             {
+                PlayerCurrentVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
                 SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
-                pivot = base.transform.Find("LOD/DriverHeadPivot/CameraPivot/Pivot");
+                IsBukled = base.transform.Find("LOD/Seatbelts/BuckleUp").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Use").FsmVariables.GetFsmBool("IsBuckled");
                 Utils.PrintDebug(eConsoleColors.GREEN, "FerndaleSeatbeltFix enabled");
             }
             catch
@@ -25,13 +27,8 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            if (pivot?.childCount > 0 && SeatbeltLocked?.Value == true && forUse)
-            {
+            if (PlayerCurrentVehicle.Value == "Ferndale" && !IsBukled.Value && SeatbeltLocked.Value)
                 SeatbeltLocked.Value = false;
-                forUse = false;
-            }
-            else if (base.transform.childCount == 0 && forUse)
-                forUse = true;
         }
     }
 }

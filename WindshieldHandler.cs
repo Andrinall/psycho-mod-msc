@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
+using Harmony;
+using System.Linq;
 
 namespace Adrenaline
 {
@@ -9,38 +11,58 @@ namespace Adrenaline
         private FsmBool Helmet;
         private FsmString PlayerVehicle;
         private Drivetrain drivetrain;
-        public string CarName;
+        private string CarName;
 
         private void OnEnable()
         {
             try
             {
-                if (base.GetComponents<Drivetrain>().Length != 0)
+                CarName = Utils.GetCarNameByObject(base.transform.gameObject);
+                
+                Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
+                PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
+
+                switch (CarName)
                 {
-                    drivetrain = base.GetComponent<Drivetrain>();
-                    Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
-                    Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
-                    Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled for hayosiko");
+                    case "Satsuma":
+                    {
+                        drivetrain = base.GetComponent<Drivetrain>();
+                        Damaged = base.transform.Find("Body/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        break;
+                    }
+                    case "Gifu":
+                    {
+                        drivetrain = base.GetComponent<Drivetrain>();
+                        Damaged = base.transform.Find("LOD/WindshieldLeft").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        break;
+                    }
+                    case "Hayosiko":
+                    {
+                        drivetrain = base.GetComponent<Drivetrain>();
+                        Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        break;
+                    }
+                    default:
+                    {
+                        Object.Destroy(this);
+                        return;
+                    }
                 }
-                else
-                {
-                    drivetrain = base.transform.parent.parent.GetComponent<Drivetrain>();
-                    Damaged = base.GetComponent<PlayMakerFSM>().FsmVariables?.GetFsmBool("Damaged");
-                    Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled");
-                }
+
+                Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled for " + CarName);
             }
             catch
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load WindshieldHandler");
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load WindshieldHandler for {0}", CarName);
             }
-            PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
         }
 
         private void FixedUpdate()
         {
             if (PlayerVehicle?.Value != CarName) return;
-            if (!Helmet.Value && Damaged?.Value == true && drivetrain?.differentialSpeed > AdrenalineLogic.config.REQUIRED_WINDSHIELD_SPEED)
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.BROKEN_WINDSHIELD_INCREASE);
+            var requiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_WINDSHIELD_SPEED").Value;
+            if (!Helmet.Value && Damaged?.Value == true && drivetrain?.differentialSpeed > requiredSpeed)
+                AdrenalineLogic.IncreaseTimed(requiredSpeed);
         }
     }
 }

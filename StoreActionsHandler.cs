@@ -1,13 +1,11 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 
 namespace Adrenaline
 {
     internal class StoreActionsHandler : MonoBehaviour
     {
-        private PlayMakerFSM StoreWindow;
-        private PlayMakerFSM PubWindow;
         private PlayMakerFSM TriggerPissOnTeimo;
-        private PlayMakerFSM TeimoSwears;
 
         private GameObject GFX_Store;
         private GameObject GFX_Pub;
@@ -20,6 +18,18 @@ namespace Adrenaline
                 GFX_Store = base.transform.FindChild("LOD/GFX_Store").gameObject;
                 GFX_Pub = base.transform.FindChild("LOD/GFX_Pub").gameObject;
                 _Teimo = base.transform.FindChild("TeimoInShop").gameObject;
+
+                var windowPub = GFX_Pub.transform.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
+                var windowStore = GFX_Store.transform.Find("BreakableWindows/BreakableWindow")?.gameObject;
+
+                if (windowPub != null)
+                    GameHook.InjectStateHook(windowPub, "Shatter", BreakWindow);
+
+                if (windowStore != null)
+                    GameHook.InjectStateHook(windowStore, "Shatter", BreakWindow);
+
+                GameHook.InjectStateHook(_Teimo.transform.Find("Pivot/Speak").gameObject, "Speak", "State 1", TeimoSwears);
+
                 Utils.PrintDebug(eConsoleColors.GREEN, "StoreActionsHandler enabled");
             } catch
             {
@@ -29,22 +39,22 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            Utils.CacheFSM(ref PubWindow, ref GFX_Pub, "BreakableWindowsPub/BreakableWindowPub", "Break");
-            Utils.CacheFSM(ref TeimoSwears, ref _Teimo, "Pivot/Speak", "Speak");
-            Utils.CacheFSM(ref StoreWindow, ref GFX_Store, "BreakableWindows/BreakableWindow", "Break");
             Utils.CacheFSM(ref TriggerPissOnTeimo, ref _Teimo, "Pivot/FacePissTrigger");
 
-            if (StoreWindow?.ActiveStateName == "Shatter")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
-
-            if (PubWindow?.ActiveStateName == "Shatter")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.WINDOW_BREAK_INCREASE);
-
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_PISS);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("TEIMO_PISS").Value);
+        }
 
-            if (TeimoSwears?.ActiveStateName == "State 1")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.TEIMO_SWEAR);
+        private void BreakWindow()
+        {
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("WINDOW_BREAK_INCREASE").Value);
+            Utils.PrintDebug(eConsoleColors.WHITE, "Adrenaline increased by shatter");
+        }
+
+        private void TeimoSwears()
+        {
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("TEIMO_SWEAR").Value);
+            Utils.PrintDebug(eConsoleColors.WHITE, "Adrenaline increased by teimo swears");
         }
     }
 }

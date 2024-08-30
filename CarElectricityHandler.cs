@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 
 namespace Adrenaline
 {
@@ -9,9 +10,9 @@ namespace Adrenaline
             try
             {
                 var fireel = base.transform.Find("Wiring").Find("FireElectric");
-                bool result = GameHook.InjectStateHook(fireel.gameObject, "Init", "Sparks", delegate
+                GameHook.InjectStateHook(fireel.gameObject, "Init", "Sparks", delegate
                 {
-                    AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.SPARKS_WIRING);
+                    AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("SPARKS_WIRING").Value);
                     Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by hit from electricity into satsuma");
                 });
                 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using UnityEngine;
+using Harmony;
 
 namespace Adrenaline
 {
@@ -10,17 +11,16 @@ namespace Adrenaline
         private List<string> FightStates =
             new List<string> { "State 1", "State 7", "State 9", "State 10" };
 
-        private PlayMakerFSM ClubGuard;
         private PlayMakerFSM ClubFighter;
 
         private void OnEnable()
         {
             try
             {
-                ClubGuard =
-                    base.transform.Find("Functions/GUARD/Guard").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "React");
-
-
+                var ClubGuard = base.transform.Find("Functions/GUARD/Guard")?.gameObject;
+                if (ClubGuard != null)
+                    GameHook.InjectStateHook(ClubGuard, "React", "Catch", GuardCatchingPlayer);
+                
                 ClubFighter =
                     base.transform.Find("Functions/FIGHTER/Fighter").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Hit");
 
@@ -34,17 +34,17 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            if (ClubGuard?.ActiveStateName == "Catch")
-            {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GUARD_CATCH);
-                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by ClubGuard try to catch player");
-            }
-
             if (FightStates.Contains(ClubFighter?.ActiveStateName ?? ""))
             {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.FIGHT_INCREASE);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("FIGHT_INCREASE").Value);
                 Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by fighting in Club");
             }
+        }
+
+        private void GuardCatchingPlayer()
+        {
+            AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("GUARD_CATCH").Value);
+            Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by ClubGuard try to catch player");
         }
     }
 }

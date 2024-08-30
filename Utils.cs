@@ -3,7 +3,6 @@ using System.Linq;
 
 using UnityEngine;
 using HutongGames.PlayMaker;
-using HutongGames.PlayMaker.Actions;
 
 #if DEBUG
 using MSCLoader;
@@ -20,6 +19,22 @@ namespace Adrenaline
         public static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
+        }
+
+        public static string GetCarNameByObject(GameObject obj)
+        {
+            if (obj.name == "FITTAN") return "Fittan"; // crutch
+
+            int idx = obj.name.IndexOf('(');
+            if (idx == -1) return "unknown";
+
+            var sub = obj.name.Substring(0, idx);
+            if (sub == "JONNEZ ES") sub = "JONEZZ"; // crutch
+
+            var arr = sub.ToLower().ToCharArray();
+            arr[0] = sub[0];
+
+            return new string(arr);
         }
 
         public static void CacheFSM(ref PlayMakerFSM obj, string path, string fsm = "")

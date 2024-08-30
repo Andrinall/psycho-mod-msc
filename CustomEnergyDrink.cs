@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
+using Harmony;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
@@ -47,7 +48,7 @@ namespace Adrenaline
                 prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
                 prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
 
-                SetDrinkPrice(AdrenalineLogic.config.PUB_PRICE);
+                SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE").Value);
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
             } catch
             {

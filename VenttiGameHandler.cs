@@ -1,27 +1,27 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 
 namespace Adrenaline
 {
     internal class VenttiGameHandler : MonoBehaviour
     {
-        private PlayMakerFSM VenttiGame;
-
         private void OnEnable()
         {
             try
             {
-                GameHook.InjectStateHook(base.gameObject, "Lose", delegate
-                {
-                    AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.VENTTI_WIN);
-                    Utils.PrintDebug("Value increased by losing in ventti game");
-                });
-                // VenttiGame = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Use");
-                Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler enabled");
+                var result = GameHook.InjectStateHook(base.gameObject, "Lose", VenttiWin);
+                Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler {0}", result ? "enabled" : "not loaded");
             }
             catch
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Unable to load VenttiGameHandler component");
             }
+        }
+
+        private void VenttiWin()
+        {
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("VENTTI_WIN").Value);
+            Utils.PrintDebug("Value increased by losing in ventti game");
         }
     }
 }

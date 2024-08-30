@@ -1,21 +1,17 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 
 namespace Adrenaline
 {
     internal class AmiksetHandler : MonoBehaviour
     {
-        private GameObject Janni;
-        private GameObject Petteri;
-
-        private PlayMakerFSM JanniHit;
-        private PlayMakerFSM PetteriHit;
-
         private void OnEnable()
         {
             try
             {
-                Janni = base.transform.FindChild("KYLAJANI")?.gameObject;
-                Petteri = base.transform.FindChild("AMIS2")?.gameObject;
+                GameHook.InjectStateHook(base.transform.Find("KYLAJANI/Driver/Animations").gameObject, "Logic", "Hit", NPC_Hit_Player);
+                GameHook.InjectStateHook(base.transform.FindChild("AMIS2/Passengers 3/Animations").gameObject, "Logic", "Hit", NPC_Hit_Player);
+
                 Utils.PrintDebug(eConsoleColors.GREEN, "AmiksetHandler enabled");
             } catch
             {
@@ -23,22 +19,10 @@ namespace Adrenaline
             }
         }
 
-        private void FixedUpdate()
+        private void NPC_Hit_Player()
         {
-            Utils.CacheFSM(ref JanniHit, ref Janni, "Driver/Animations", "Logic");
-            Utils.CacheFSM(ref PetteriHit, ref Petteri, "Passengers 3/Animations", "Logic");
-
-            if (JanniHit?.ActiveStateName == "Hit")
-            {
-                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
-                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by Janni hit player");
-            }
-
-            if (PetteriHit?.ActiveStateName == "Hit")
-            {
-                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.JANNI_PETTERI_HIT);
-                Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by Petteri hit player");
-            }
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("JANNI_PETTERI_HIT").Value);
+            Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by NPC hit player");
         }
     }
 }

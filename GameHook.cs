@@ -21,7 +21,7 @@ namespace Adrenaline
             }
         }
 
-        public static bool InjectStateHook(GameObject gameObject, string stateName, Action hook)
+        public static bool InjectStateHook(GameObject gameObject, string stateName, Action hook, bool placeLast = false)
         {
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, stateName);
             if (stateFromGameObject == null) return false;
@@ -29,14 +29,17 @@ namespace Adrenaline
             List<FsmStateAction> list = new List<FsmStateAction>(stateFromGameObject.Actions);
             FsmHookAction fsmHookAction = new FsmHookAction();
             fsmHookAction.hook = hook;
-            
-            list.Insert(0, fsmHookAction);
+
+            if (placeLast)
+                list.Add(fsmHookAction);
+            else
+                list.Insert(0, fsmHookAction);
             stateFromGameObject.Actions = list.ToArray();
             
             return true;
         }
 
-        public static bool InjectStateHook(GameObject gameObject, string FsmName, string stateName, Action hook)
+        public static bool InjectStateHook(GameObject gameObject, string FsmName, string stateName, Action hook, bool placeLast = false)
         {
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, FsmName, stateName);
             if (stateFromGameObject == null) return false;
@@ -45,7 +48,11 @@ namespace Adrenaline
             FsmHookAction fsmHookAction = new FsmHookAction();
             fsmHookAction.hook = hook;
 
-            list.Insert(0, fsmHookAction);
+            if (placeLast)
+                list.Add(fsmHookAction);
+            else
+                list.Insert(0, fsmHookAction);
+
             stateFromGameObject.Actions = list.ToArray();
 
             return true;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Steamworks;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Adrenaline
@@ -29,6 +30,11 @@ namespace Adrenaline
                 _struct.Add(t);
             }
         }
+
+        private void OnDestroy()
+        {
+            _struct.Clear();
+        }
         
         public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
@@ -56,7 +62,14 @@ namespace Adrenaline
 
         public bool IsElementExist(string name)
         {
-            return _struct.Exists(v => v.name == name);
+            return _struct.Exists(v => {
+                if (v == null)
+                {
+                    _struct.Remove(v);
+                    return false;
+                }
+                return v.name == name;
+            });
         }
 
         public GameObject GetElement(string name)

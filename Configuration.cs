@@ -1,38 +1,38 @@
 ﻿namespace Adrenaline
 {
-    public class Configuration
+    /*public class Configuration
     {
-        public float MIN_LOSS_RATE = 0.60000f;
-        public float MAX_LOSS_RATE = 1.40000f;
+        public ConfigItem MIN_LOSS_RATE = new ConfigItem { Value = 0.6f, maxValue = 0.9f };
+        public ConfigItem MAX_LOSS_RATE = new ConfigItem { Value = 1.4f, minValue = 0.6f, maxValue = 2f };
 
-        public float DEFAULT_DECREASE = 0.18f;
-        public float SPRINT_INCREASE = 0.3f;
-        public float HIGHSPEED_INCREASE = 0.35f;
-        public float BROKEN_WINDSHIELD_INCREASE = 0.35f;
-        public float FIGHT_INCREASE = 0.47f;
-        public float WINDOW_BREAK_INCREASE = 6f;
-        public float HOUSE_BURNING = 0.56f;
-        public float TEIMO_PISS = 2.5f;
-        public float GUARD_CATCH = 2.5f;
-        public float VENTTI_WIN = 11f;
-        public float JANNI_PETTERI_HIT = 45.5f;
-        public float TEIMO_SWEAR = 3f;
-        public float PISS_ON_DEVICES = 4f;
-        public float SPARKS_WIRING = 3f;
-        public float SPILL_SHIT = 1.1f;
-        public float RALLY_PLAYER = 1f;
-        public float MURDER_WALKING = 0.45f;
-        public float COFFEE_INCREASE = 11.3f;
+        public ConfigItem DEFAULT_DECREASE = new ConfigItem { Value = 0.18f, maxValue = 0.5f };
+        public ConfigItem SPRINT_INCREASE = new ConfigItem { Value = 0.3f, maxValue = 0.5f };
+        public ConfigItem HIGHSPEED_INCREASE = new ConfigItem { Value = 0.35f, maxValue = ;
+        public ConfigItem BROKEN_WINDSHIELD_INCREASE = new ConfigItem {0.35f;
+        public ConfigItem FIGHT_INCREASE = new ConfigItem {0.47f;
+        public ConfigItem WINDOW_BREAK_INCREASE = new ConfigItem {15f;
+        public ConfigItem HOUSE_BURNING = new ConfigItem {0.56f;
+        public ConfigItem TEIMO_PISS = new ConfigItem {2.5f;
+        public ConfigItem GUARD_CATCH = new ConfigItem {2.5f;
+        public ConfigItem VENTTI_WIN = new ConfigItem {11f;
+        public ConfigItem JANNI_PETTERI_HIT = new ConfigItem {45.5f;
+        public ConfigItem TEIMO_SWEAR = new ConfigItem {3f;
+        public ConfigItem PISS_ON_DEVICES = new ConfigItem {25f;
+        public ConfigItem SPARKS_WIRING = new ConfigItem {3f;
+        public ConfigItem SPILL_SHIT = new ConfigItem {1.1f;
+        public ConfigItem RALLY_PLAYER = new ConfigItem {1f;
+        public ConfigItem MURDER_WALKING = new ConfigItem {0.45f;
+        public ConfigItem COFFEE_INCREASE = new ConfigItem {11.3f;
 
-        public float PUB_PRICE = 14f;
+        public ConfigItem PUB_PRICE = new ConfigItem {14f;
 
-        public float REQUIRED_SPEED_Jonezz = 70f;
-        public float REQUIRED_SPEED_Satsuma = 120f;
-        public float REQUIRED_SPEED_Ferndale = 110f;
-        public float REQUIRED_SPEED_Hayosiko = 110f;
-        public float REQUIRED_SPEED_Fittan = 70f;
-        public float REQUIRED_SPEED_Gifu = 70f;
+        public ConfigItem REQUIRED_SPEED_Jonezz = new ConfigItem {70f;
+        public ConfigItem REQUIRED_SPEED_Satsuma = new ConfigItem {120f;
+        public ConfigItem REQUIRED_SPEED_Ferndale = new ConfigItem {110f;
+        public ConfigItem REQUIRED_SPEED_Hayosiko = new ConfigItem {110f;
+        public ConfigItem REQUIRED_SPEED_Fittan = new ConfigItem {70f;
+        public ConfigItem REQUIRED_SPEED_Gifu = new ConfigItem {70f;
 
-        public float REQUIRED_WINDSHIELD_SPEED = 45f;
-    }
+        public ConfigItem REQUIRED_WINDSHIELD_SPEED = new ConfigItem {45f;
+    }*/
 }
