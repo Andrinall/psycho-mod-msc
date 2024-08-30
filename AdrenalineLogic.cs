@@ -36,7 +36,7 @@ namespace Adrenaline
         public static Dictionary<string, ConfigItem> config = new Dictionary<string, ConfigItem>
         {
             // timed
-            ["LOSS_RATE_SPEED"]            = new ConfigItem { Value = 0.6f, minValue = 0.2f, maxValue = 1.8f },
+            ["LOSS_RATE_SPEED"]            = new ConfigItem { Value = 0.5f, minValue = 0.05f, maxValue = 1f },
             ["DEFAULT_DECREASE"]           = new ConfigItem { Value = 0.18f, minValue = 0.1f, maxValue = 0.5f },
             ["SPRINT_INCREASE"]            = new ConfigItem { Value = 0.30f, minValue = 0.1f, maxValue = 0.5f },
             ["HIGHSPEED_INCREASE"]         = new ConfigItem { Value = 0.35f, minValue = 0.2f, maxValue = 0.7f },
