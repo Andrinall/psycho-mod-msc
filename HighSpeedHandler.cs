@@ -33,10 +33,11 @@ namespace Adrenaline
         private void FixedUpdate()
         {
             if (PlayerVehicle.Value != CarName) return;
-            if (CarName == "Jonezz" && Helmet.Value) return;
+            if (CarName == "Jonnez" && Helmet.Value == true) return;
+            if (CarName != "Jonnez" && SeatbeltLocked.Value == true) return;
 
             var RequiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_SPEED_" + CarName).Value;
-            if (!SeatbeltLocked.Value && drivetrain.differentialSpeed > RequiredSpeed)
+            if (drivetrain.differentialSpeed >= RequiredSpeed)
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE").Value);
         }
     }

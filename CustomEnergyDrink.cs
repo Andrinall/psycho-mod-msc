@@ -100,7 +100,7 @@ namespace Adrenaline
             }
             catch
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to set texture for {0} prefab", name);
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to replace prefab {0}", name);
             }
         }
 
@@ -117,31 +117,15 @@ namespace Adrenaline
             }
             catch
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to set texture for {0} prefab", obj?.name.ToString());
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to replace prefab {0}", obj?.name.ToString());
             }
         }
         
         private void SetMaterial(Transform obj, bool isEmpty)
         {
-            if (obj == null)
-                return;
-
-            var renderer = obj?.GetComponent<MeshRenderer>();
-            if (renderer != null)
-            {
-                var mat = renderer.materials.ElementAt(0);
-                var filter = obj.GetComponent<MeshFilter>();
-
-                mat.name = "Energy";
-                mat.mainTexture = AdrenalineLogic.can_texture;
-                mat.mainTextureOffset = new Vector2(0f, 0f);
-                mat.mainTextureScale = new Vector2(1f, 1f);
-                
-                var mesh = (isEmpty ? AdrenalineLogic.empty_cup : AdrenalineLogic.coffee_cup);
-                filter.mesh = mesh;
-                filter.sharedMesh = mesh;
-            }
-
+            if (obj == null) return;
+            Utils.SetMaterial(obj.gameObject, 0, "Energy", AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
+            Utils.SetMesh(obj.gameObject, isEmpty ? AdrenalineLogic.empty_cup : AdrenalineLogic.coffee_cup);
         }
     }
 }

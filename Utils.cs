@@ -24,13 +24,12 @@ namespace Adrenaline
         public static string GetCarNameByObject(GameObject obj)
         {
             if (obj.name == "FITTAN") return "Fittan"; // crutch
+            if (obj.name == "JONNEZ ES(Clone)") return "Jonnez"; // crutch
 
             int idx = obj.name.IndexOf('(');
             if (idx == -1) return "unknown";
 
             var sub = obj.name.Substring(0, idx);
-            if (sub == "JONNEZ ES") sub = "JONEZZ"; // crutch
-
             var arr = sub.ToLower().ToCharArray();
             arr[0] = sub[0];
 
@@ -95,6 +94,27 @@ namespace Adrenaline
 #if DEBUG
             ModConsole.Print(string.Format(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), fmt), vars));
 #endif
+        }
+
+        public static void SetMesh(GameObject obj, Mesh mesh)
+        {
+            var filter = obj.GetComponent<MeshFilter>();
+            if (!filter) return;
+
+            filter.mesh = mesh;
+            filter.sharedMesh = mesh;
+        }
+
+        public static void SetMaterial(GameObject obj, int index, string name, Texture texture, Vector2 offset, Vector2 scale)
+        {
+            var renderer = obj.GetComponent<MeshRenderer>();
+            if (!renderer) return;
+
+            var material = renderer.materials.ElementAt(index);
+            material.name = name;
+            material.mainTexture = texture;
+            material.mainTextureOffset = offset;
+            material.mainTextureScale = scale;
         }
 
         private static string GetColor(eConsoleColors color)

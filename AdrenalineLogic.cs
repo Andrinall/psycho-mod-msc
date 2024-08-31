@@ -16,13 +16,13 @@ namespace Adrenaline
     public static class AdrenalineLogic
     {
         private static readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
-        private static readonly string PAPER_TEXT_EN = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
+        private static readonly string PAPER_TEXT_EN_MAX = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
+        private static readonly string PAPER_TEXT_EN_MIN = "Man found\ndead of\ncardiac arrest\nin region of\nAlivieska";
 
         public static readonly float MIN_ADRENALINE = 0f;
         public static readonly float MAX_ADRENALINE = 200f;
 
         private static bool _debug = false;
-        private static bool isDead = false;
         private static float _value = 100f;
         private static float _lossRate = 1.2f;
         private static bool  _lockDecrease = false;
@@ -33,6 +33,7 @@ namespace Adrenaline
         public static Texture atlas_texture = null;
         public static Mesh empty_cup = null;
         public static Mesh coffee_cup = null;
+        public static bool isDead = false;
 
         public static Dictionary<string, ConfigItem> config = new Dictionary<string, ConfigItem>
         {
@@ -64,7 +65,7 @@ namespace Adrenaline
             // any
             ["PUB_COFFEE_PRICE"]        = new ConfigItem { Value = 14f, minValue = 5f, maxValue = 40f },
 
-            ["REQUIRED_SPEED_Jonezz"]   = new ConfigItem { Value = 70f,  minValue = 50f, maxValue = 80f  },
+            ["REQUIRED_SPEED_Jonnez"]   = new ConfigItem { Value = 70f,  minValue = 50f, maxValue = 80f  },
             ["REQUIRED_SPEED_Satsuma"]  = new ConfigItem { Value = 120f, minValue = 80f, maxValue = 150f },
             ["REQUIRED_SPEED_Ferndale"] = new ConfigItem { Value = 110f, minValue = 70f, maxValue = 135f },
             ["REQUIRED_SPEED_Hayosiko"] = new ConfigItem { Value = 110f, minValue = 60f, maxValue = 120f },
@@ -78,15 +79,10 @@ namespace Adrenaline
             get { return _value; }
             set
             {
-                if ((value <= MIN_ADRENALINE || value >= MAX_ADRENALINE) && !isDead)
-                {
-                    if (ModLoader.IsModPresent("Health") && Health.damage(100f))
-                        Health.killCustom(PAPER_TEXT_EN, PAPER_TEXT_FI);
-                    else
-                        KillCustom(PAPER_TEXT_EN, PAPER_TEXT_FI);
-                    
-                    isDead = true;
-                }
+                if (value <= MIN_ADRENALINE && !isDead)
+                    KillCustom(PAPER_TEXT_EN_MIN, PAPER_TEXT_FI);
+                else if ((value >= MAX_ADRENALINE) && !isDead)
+                    KillCustom(PAPER_TEXT_EN_MAX, PAPER_TEXT_FI);
                 else if (_hud?.IsElementExist("Adrenaline") == true)
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 2f);
@@ -174,6 +170,13 @@ namespace Adrenaline
 
         private static void KillCustom(string en, string fi)
         {
+            isDead = true;
+            if (ModLoader.IsModPresent("Health"))
+            {
+                Health.killCustom(en, fi);
+                return;
+            }
+
             var death = GameObject.Find("Systems/Death");
             var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
             death.SetActive(true);

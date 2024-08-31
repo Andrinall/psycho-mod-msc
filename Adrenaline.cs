@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 
 using Harmony;
 using MSCLoader;
@@ -11,7 +12,7 @@ namespace Adrenaline
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
         public override string Author => "Andrinall,@racer";
-        public override string Version => "0.23.29";
+        public override string Version => "0.24.32";
         public override string Description => "";
 
         private readonly List<string> CARS = new List<string> {
@@ -86,6 +87,8 @@ namespace Adrenaline
             
             foreach (var element in AdrenalineLogic.config)
             {
+                if (element.Key == "PUB_COFFEE_PRICE") continue;
+
                 _sliders.Add(Settings.AddSlider(
                     mod: this,
                     settingID: element.Key.GetHashCode().ToString(),
@@ -146,6 +149,7 @@ namespace Adrenaline
                 AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE").Value - AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE").Value;
             
             AdrenalineLogic.Value = 100f;
+            AdrenalineLogic.isDead = false;
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
                 SaveLoad.DeleteValue(this, "Adrenaline");
@@ -153,6 +157,7 @@ namespace Adrenaline
 
         public override void OnLoad()
         {
+            AdrenalineLogic.isDead = false;
 #if DEBUG
             if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
                 AdrenalineLogic.config = SaveLoad.ReadValueAsDictionary<string, ConfigItem>(this, "DebugAdrenaline");
@@ -222,6 +227,9 @@ namespace Adrenaline
             }
             
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
+#if DEBUG
+            ConsoleCommand.Add(new DEBUG_COMMAND());
+#endif
         }
 
         private T AddComponent<T>(string obj) where T : Component
@@ -244,4 +252,32 @@ namespace Adrenaline
             });
         }
     }
+#if DEBUG
+    public class DEBUG_COMMAND : ConsoleCommand
+    {
+        public override string Name => "pills";
+        public override string Alias => "pll";
+
+        public override string Help => "Debug command for spawning pills";
+
+        public override void Run(string[] args)
+        {
+            var milk = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.name == "milk" && v.IsPrefab()).Last().gameObject;
+            var coffee = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.name == "Coffee" && v.IsPrefab()).Last().gameObject;
+
+            var fsm = coffee.GetComponent<PlayMakerFSM>();
+            var milk_fsm = milk.GetComponent<PlayMakerFSM>();
+            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Load"));
+            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Save"));
+            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Destroy"));
+
+            fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "SAVEGAME"));
+            fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "DESTROY"));
+
+            GameObject obj = Object.Instantiate(coffee);
+            obj.name = "pills(itemx)";
+            obj.transform.position = GameObject.Find("PLAYER").transform.position + new Vector3(0f, 1f, 0f);
+        }
+    }
+#endif
 }
