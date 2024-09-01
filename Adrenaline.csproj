@@ -83,6 +83,7 @@
     <Compile Include="AdrenalineLogic.cs" />
     <Compile Include="AmiksetHandler.cs" />
     <Compile Include="CarElectricityHandler.cs" />
+    <Compile Include="CrashHandler.cs" />
     <Compile Include="CustomEnergyDrink.cs" />
     <Compile Include="DanceHallHandler.cs" />
     <Compile Include="FerndaleSeatbeltFix.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="GameHook.cs" />
     <Compile Include="GlobalHandler.cs" />
     <Compile Include="HighSpeedHandler.cs" />
+    <Compile Include="DriveByHandler.cs" />
     <Compile Include="PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WindshieldHandler.cs" />

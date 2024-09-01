@@ -11,11 +11,11 @@ namespace Adrenaline
     {
         private FsmFloat PlayerMovementSpeed;
         private FsmBool HouseBurningState;
-        private FsmBool RallyPlayerOnStage;
 
         private PlayMakerFSM kiljuguy;
+        private Transform HouseFire;
 
-        private void Start()
+        private void Awake()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Adrenaline
             {
                 PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
                 HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
-                RallyPlayerOnStage = Utils.GetGlobalVariable<FsmBool>("RallyPlayerOnStage");
+                HouseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
 
                 var fpsCamera = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
                 var drink = fpsCamera.Find("Drink").gameObject;
@@ -80,20 +80,24 @@ namespace Adrenaline
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPRINT_INCREASE")); // increase adrenaline while player sprinting
 
             if (HouseBurningState?.Value == true)
-                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
+            {
+                if (Vector3.Distance(HouseFire.position, transform.position) > 6f) return;
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
+                return;
+            }
 
             if (kiljuguy?.ActiveStateName == "Walking") // for fix
+            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("MURDER_WALKING")); // ??
-
-            if (RallyPlayerOnStage?.Value == true) // for fix
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("RALLY_PLAYER"));
+                return;
+            }
         }
 
         private void IncreaseByEnergyDrink()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE"));
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("ENERGY_DRINK_INCREASE"));
             AdrenalineLogic.SetDecreaseLocked(true, 12000f);
-            if (ModLoader.IsModPresent("Health")) Health.editHp(-2f);
+            if (ModLoader.IsModPresent("Health")) Health.editHp(-4f);
         }
 
         private void IncreaseByCoffee()

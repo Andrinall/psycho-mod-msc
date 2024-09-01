@@ -64,7 +64,7 @@ namespace Adrenaline
                     Utils.PrintDebug("Failed to set texture for pub_desk");
                 }
 
-                    prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
+                prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
                 prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
 
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));

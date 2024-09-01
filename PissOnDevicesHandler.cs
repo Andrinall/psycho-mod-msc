@@ -11,8 +11,7 @@ namespace Adrenaline
         {
             try
             {
-                var trigger = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger").gameObject;
-                var result = GameHook.InjectStateHook(trigger, "Pouring", "State 14", PouringOnDevices, true);
+                var result = GameHook.InjectStateHook(base.gameObject, "Pouring", "State 14", PouringOnDevices, true);
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "PissOnDevicesHandler {0}", result ? "enabled" : "failed setup");
             }

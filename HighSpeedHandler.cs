@@ -9,6 +9,7 @@ namespace Adrenaline
         private string CarName;
         private Drivetrain drivetrain;
         private FsmString PlayerVehicle;
+        private FsmBool RallyPlayerOnStage;
         private FsmBool SeatbeltLocked;
         private FsmBool Helmet;
 
@@ -20,6 +21,7 @@ namespace Adrenaline
 
                 drivetrain = base.GetComponent<Drivetrain>();
                 PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
+                RallyPlayerOnStage = Utils.GetGlobalVariable<FsmBool>("RallyPlayerOnStage");
                 SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
                 Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
                 Utils.PrintDebug(eConsoleColors.GREEN, "HighSpeedHandler enabled for {0}", CarName);
@@ -36,9 +38,14 @@ namespace Adrenaline
             if (CarName == "Jonnez" && Helmet.Value == true) return;
             if (CarName != "Jonnez" && SeatbeltLocked.Value == true) return;
 
+            var rally = RallyPlayerOnStage?.Value == true;
             var RequiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_SPEED_" + CarName);
+            RequiredSpeed = (rally ? RequiredSpeed - 20f : RequiredSpeed);
             if (drivetrain?.differentialSpeed >= RequiredSpeed)
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE"));
+                AdrenalineLogic.IncreaseTimed(
+                    AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE") +
+                    ( rally ? AdrenalineLogic.config.GetValueSafe("RALLY_PLAYER") : 0f )
+                );
         }
     }
 }

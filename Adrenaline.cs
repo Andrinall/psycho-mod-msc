@@ -1,11 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Harmony;
 using MSCLoader;
 using UnityEngine;
-using UnityEngine.UI;
-using System.Xml.Linq;
 
 namespace Adrenaline
 {
@@ -37,14 +36,7 @@ namespace Adrenaline
         public override string Author => "Andrinall,@racer";
         public override string Version => "0.24.32";
         public override string Description => "";
-
-        private readonly List<string> CARS = new List<string> {
-            "JONNEZ ES(Clone)",
-            "SATSUMA(557kg, 248)",
-            "FERNDALE(1630kg)",
-            "HAYOSIKO(1500kg, 250)",
-            "GIFU(750/450psi)",
-        };
+        public override bool SecondPass => true;
 
         private string LastAddedComponent = "";
 
@@ -66,7 +58,7 @@ namespace Adrenaline
             ["BROKEN_WINDSHIELD_INCREASE"] = "Увеличение при езде без лобового стекла",
             ["FIGHT_INCREASE"] = "Увеличение во время драки",
             ["WINDOW_BREAK_INCREASE"] = "Увеличение за разбивание окон (магазин, паб)",
-            ["HOUSE_BURNING"] = "Увеличение во время пожара в доме (??)",
+            ["HOUSE_BURNING"] = "Увеличение во время пожара в доме",
             ["TEIMO_PISS"] = "Увеличение за обоссывание Теймо",
             ["GUARD_CATCH"] = "Увеличение при попытках охранника поймать игрока",
             ["VENTTI_WIN"] = "Увеличение адреналина при поражениях в игре со свином",
@@ -78,6 +70,9 @@ namespace Adrenaline
             ["RALLY_PLAYER"] = "Увеличение при участии в ралли (?)",
             ["MURDER_WALKING"] = "Увеличение при приследовании мужиком с топором",
             ["COFFEE_INCREASE"] = "Увеличение от употребления кофе",
+            ["ENERGY_DRINK_INCREASE"] = "Увеличение от употребления энергетика",
+            ["CRASH_INCREASE"] = "Увеличение за получение урона в аварии",
+            ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
@@ -86,13 +81,18 @@ namespace Adrenaline
             ["REQUIRED_SPEED_Fittan"] = "Мин.скорость для прибавки при езде в Fittan",
             ["REQUIRED_SPEED_Gifu"] = "Мин.скорость для прибавки при езде в Gifu",
 
+            ["REQUIRED_CRASH_SPEED"] = "Мин.скорость для прибавки от аварии",
             ["REQUIRED_WINDSHIELD_SPEED"] = "Мин.скорость для прибавки при езде без лобаша"
         };
 
         public override void ModSettings()
         {
             if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
-                AdrenalineLogic.config = SaveLoad.ReadValueAsDictionary<string, float>(this, "DebugAdrenaline");
+            {
+                var temp = SaveLoad.ReadValueAsDictionary<string, float>(this, "DebugAdrenaline");
+                foreach (var item in temp) // crutch
+                    AdrenalineLogic.config[item.Key] = item.Value;
+            }
             else
             {
                 Utils.PrintDebug(eConsoleColors.RED, "DEBUG Settings not loaded, remove and resetting to default");
@@ -176,7 +176,8 @@ namespace Adrenaline
 #if DEBUG
             ConsoleCommand.Add(new DEBUG_COMMAND());
 #endif
-
+            AdrenalineLogic.isDead = false;
+            AdrenalineLogic.Value = 100f;
             try
             {
                 var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
@@ -190,38 +191,40 @@ namespace Adrenaline
                 Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset from embedded resource (??!)");
             }
 
-            try
+            if (SaveLoad.ValueExists(this, "Adrenaline"))
             {
-                AdrenalineLogic.isDead = false;
-                AddComponent<GlobalHandler>("PLAYER");
-                if (SaveLoad.ValueExists(this, "Adrenaline"))
-                {
-                    var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
-                    var time = data.GetValueSafe("LossRateLockTime");
-                    var value = data.GetValueSafe("Value");
-                    AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 5f) ? 20f : value;
-                    AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
-                    AdrenalineLogic.SetDecreaseLocked(time > 0, time);
+                var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
+                var time = data.GetValueSafe("LossRateLockTime");
+                var value = data.GetValueSafe("Value");
+                AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 20f) ? 30f : value;
+                AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
+                AdrenalineLogic.SetDecreaseLocked(time > 0, time);
 
-                    Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
-                }
-                else
-                    ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
-
-                AddComponent<PissOnDevicesHandler>("PLAYER");
-                AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
-                AddComponent<AmiksetHandler>("NPC_CARS/Amikset");
-                AddComponent<StoreActionsHandler>("STORE");
-                AddComponent<CustomEnergyDrink>("STORE");
-                AddComponent<VenttiGameHandler>("CABIN/Cabin/Ventti/Table/GameManager");
-                AddComponent<DanceHallHandler>("DANCEHALL");
-
-                AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)");
-                AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)");
-            } catch
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load component {0}", LastAddedComponent);
+                Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
+            else
+                ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
+            
+            AddComponent<GlobalHandler>("PLAYER");
+            ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
+        }
+
+        public override void SecondPassOnLoad()
+        {
+            AddComponent<PissOnDevicesHandler>("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger");
+            AddComponent<AmiksetHandler>("NPC_CARS/Amikset");
+            AddComponent<StoreActionsHandler>("STORE");
+            AddComponent<CustomEnergyDrink>("STORE");
+            AddComponent<VenttiGameHandler>("CABIN/Cabin/Ventti/Table/GameManager");
+            AddComponent<DanceHallHandler>("DANCEHALL/Functions");
+
+            AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
+            AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)/Wiring");
+            AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)/LOD/Seatbelts/BuckleUp");
+            
+            var CARS = new List<string> {
+                "JONNEZ ES(Clone)", "SATSUMA(557kg, 248)", "FERNDALE(1630kg)",
+                "HAYOSIKO(1500kg, 250)", "GIFU(750/450psi)" };
 
             foreach (var item in CARS)
             {
@@ -239,15 +242,22 @@ namespace Adrenaline
                     Utils.PrintDebug(eConsoleColors.RED, "HighSpeedHandler loading error for {0}", item);
                 }
             }
-            
-            ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
-        }
 
+            var dynamics = Resources.FindObjectsOfTypeAll<CarDynamics>().Where(v => v.transform.parent == null);
+            foreach (var item in dynamics)
+                item.gameObject.AddComponent<CrashHandler>();
+
+            var humans = Resources.FindObjectsOfTypeAll<GameObject>().Where(v => v.name == "HumanTriggerCrime").ToArray();
+            Utils.PrintDebug("Humans count: " + humans.Length.ToString());
+            foreach (var item in humans)
+                item.AddComponent<DriveByHandler>();
+
+        }
         private T AddComponent<T>(string obj) where T : Component
         {
-            LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T).Name.ToString());
+            LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T)?.Name.ToString());
             Utils.PrintDebug(eConsoleColors.YELLOW, "Loading component " + LastAddedComponent);
-            return GameObject.Find(obj).AddComponent<T>();
+            return GameObject.Find(obj)?.AddComponent<T>() ?? null;
         }
 
         public override void OnSave()
@@ -300,7 +310,7 @@ namespace Adrenaline
             fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "SAVEGAME"));
             fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "DESTROY"));
 
-            GameObject obj = Object.Instantiate(coffee);
+            GameObject obj = UnityEngine.Object.Instantiate(coffee);
             obj.name = "pills(itemx)";
             obj.transform.position = GameObject.Find("PLAYER").transform.position + new Vector3(0f, 1f, 0f);
         }

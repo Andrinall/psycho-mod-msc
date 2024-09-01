@@ -51,20 +51,22 @@ namespace Adrenaline
             ["SPILL_SHIT"]                 = 1.1f,
             
             // once
-            ["WINDOW_BREAK_INCREASE"]      = 15.0f,
-            ["GUARD_CATCH"]                = 2.50f,
-            ["VENTTI_WIN"]                 = 11.0f,
-            ["JANNI_PETTERI_HIT"]          = 45.5f,
-            ["TEIMO_SWEAR"]                = 3.0f,
-            ["PISS_ON_DEVICES"]            = 25f,
-            ["SPARKS_WIRING"]              = 15f,
-            ["MURDER_WALKING"]             = 0.45f,
-            ["COFFEE_INCREASE"]            = 11.3f,
-            ["RALLY_PLAYER"]               = 1f,
+            ["WINDOW_BREAK_INCREASE"] = 15.0f,
+            ["GUARD_CATCH"]           = 2.50f,
+            ["VENTTI_WIN"]            = 11.0f,
+            ["JANNI_PETTERI_HIT"]     = 45.5f,
+            ["TEIMO_SWEAR"]           = 3.0f,
+            ["PISS_ON_DEVICES"]       = 25f,
+            ["SPARKS_WIRING"]         = 15f,
+            ["MURDER_WALKING"]        = 0.45f,
+            ["ENERGY_DRINK_INCREASE"] = 15f,
+            ["COFFEE_INCREASE"]       = 9.3f,
+            ["RALLY_PLAYER"]          = 1f,
+            ["DRIVEBY_INCREASE"]      = 5f,
+            ["CRASH_INCREASE"]        = 20f,
 
-            // any
+            // vars for check
             ["PUB_COFFEE_PRICE"]        = 14f,
-
             ["REQUIRED_SPEED_Jonnez"]   = 70f,
             ["REQUIRED_SPEED_Satsuma"]  = 120f,
             ["REQUIRED_SPEED_Ferndale"] = 110f,
@@ -72,6 +74,7 @@ namespace Adrenaline
             ["REQUIRED_SPEED_Fittan"]   = 70f,
             ["REQUIRED_SPEED_Gifu"]     = 70f,
 
+            ["REQUIRED_CRASH_SPEED"] = 30f,
             ["REQUIRED_WINDSHIELD_SPEED"] = 45f
         };
 
@@ -79,9 +82,12 @@ namespace Adrenaline
             get { return _value; }
             set
             {
-                if (value <= MIN_ADRENALINE && !isDead)
+                if (_hud == null) return;
+                _value = value;
+
+                if ((_value <= MIN_ADRENALINE) && !isDead)
                     KillCustom(PAPER_TEXT_EN_MIN, PAPER_TEXT_FI);
-                else if ((value >= MAX_ADRENALINE) && !isDead)
+                else if ((_value >= MAX_ADRENALINE) && !isDead)
                     KillCustom(PAPER_TEXT_EN_MAX, PAPER_TEXT_FI);
                 else if (_hud?.IsElementExist("Adrenaline") == true)
                 {
@@ -97,7 +103,6 @@ namespace Adrenaline
 
                     _hud.SetElementColor("Adrenaline", color);
                 }
-                _value = value;
             }
         }
 
@@ -170,18 +175,36 @@ namespace Adrenaline
 
         private static void KillCustom(string en, string fi)
         {
-            isDead = true;
-            if (ModLoader.IsModPresent("Health"))
+            if (isDead) return;
+
+            Utils.PrintDebug("KillCustom called!!");
+            try
             {
-                Health.killCustom(en, fi);
-                return;
+                isDead = true;
+                if (ModLoader.IsModPresent("Health"))
+                {
+                    Health.killCustom(en, fi);
+                    return;
+                }
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "error in health.killcustom");
             }
 
-            var death = GameObject.Find("Systems/Death");
-            var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
-            death.SetActive(true);
-            paper.Find("TextEN").GetComponent<TextMesh>().text = en;
-            paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
+            try
+            {
+                var death = GameObject.Find("Systems/Death");
+                if (death == null) return;
+                var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
+                death.SetActive(isDead);
+                paper.Find("TextEN").GetComponent<TextMesh>().text = en;
+                paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "error in custom method");
+            }
         }
     }
 }
