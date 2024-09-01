@@ -5,7 +5,7 @@ namespace Adrenaline
 {
     internal class AmiksetHandler : MonoBehaviour
     {
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -21,7 +21,7 @@ namespace Adrenaline
 
         private void NPC_Hit_Player()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("JANNI_PETTERI_HIT").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("JANNI_PETTERI_HIT"));
             Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by NPC hit player");
         }
     }

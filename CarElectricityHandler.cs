@@ -5,22 +5,23 @@ namespace Adrenaline
 {
     internal class CarElectricityHandler : MonoBehaviour
     {
-        private void OnEnable()
+        private void Start()
         {
             try
             {
-                var fireel = base.transform.Find("Wiring").Find("FireElectric");
-                GameHook.InjectStateHook(fireel.gameObject, "Init", "Sparks", delegate
-                {
-                    AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("SPARKS_WIRING").Value);
-                    Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by hit from electricity into satsuma");
-                });
+                GameHook.InjectStateHook(base.transform.Find("Wiring").gameObject, "Shock", "Reset", ShockHit);
                 
                 Utils.PrintDebug(eConsoleColors.GREEN, "CarElectricityHandler enabled");
             } catch
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Unable to load CarElecticityHandler component");
             }
+        }
+
+        private void ShockHit()
+        {
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("SPARKS_WIRING"));
+            Utils.PrintDebug(eConsoleColors.WHITE, "Value increased from shock hit by satsuma wiring");
         }
     }
 }

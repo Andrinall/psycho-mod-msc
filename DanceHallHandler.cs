@@ -13,7 +13,7 @@ namespace Adrenaline
 
         private PlayMakerFSM ClubFighter;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -34,16 +34,16 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            if (FightStates.Contains(ClubFighter?.ActiveStateName ?? ""))
+            if (FightStates.Contains(ClubFighter.ActiveStateName))
             {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("FIGHT_INCREASE").Value);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("FIGHT_INCREASE"));
                 Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by fighting in Club");
             }
         }
 
         private void GuardCatchingPlayer()
         {
-            AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("GUARD_CATCH").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("GUARD_CATCH"));
             Utils.PrintDebug(eConsoleColors.WHITE, "Value increased by ClubGuard try to catch player");
         }
     }

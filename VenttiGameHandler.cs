@@ -5,7 +5,7 @@ namespace Adrenaline
 {
     internal class VenttiGameHandler : MonoBehaviour
     {
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -20,8 +20,7 @@ namespace Adrenaline
 
         private void VenttiWin()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("VENTTI_WIN").Value);
-            Utils.PrintDebug("Value increased by losing in ventti game");
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("VENTTI_WIN"));
         }
     }
 }

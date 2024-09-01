@@ -12,7 +12,7 @@ namespace Adrenaline
         private FsmBool SeatbeltLocked;
         private FsmBool Helmet;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -36,9 +36,9 @@ namespace Adrenaline
             if (CarName == "Jonnez" && Helmet.Value == true) return;
             if (CarName != "Jonnez" && SeatbeltLocked.Value == true) return;
 
-            var RequiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_SPEED_" + CarName).Value;
-            if (drivetrain.differentialSpeed >= RequiredSpeed)
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE").Value);
+            var RequiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_SPEED_" + CarName);
+            if (drivetrain?.differentialSpeed >= RequiredSpeed)
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE"));
         }
     }
 }

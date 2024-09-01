@@ -10,7 +10,7 @@ namespace Adrenaline
         private PlayMakerFSM SpillPump;
         private FsmBool IsCrime;
 
-        private void OnEnable()
+        private void Start()
         {
             SpillPump = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "SpillPump");
             IsCrime = SpillPump.FsmVariables.GetFsmBool("Crime");
@@ -19,11 +19,10 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            if (SpillPump?.ActiveStateName == "Spill grow" && IsCrime?.Value == true)
-            {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPILL_SHIT").Value);
-                Utils.PrintDebug("Value increased by spill grow");
-            }
+            if (IsCrime?.Value == false) return;
+
+            if (SpillPump?.ActiveStateName == "Spill grow")
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPILL_SHIT"));
         }
     }
 }

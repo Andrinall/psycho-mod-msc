@@ -15,7 +15,7 @@ namespace Adrenaline
 
         private PlayMakerFSM kiljuguy;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -42,15 +42,8 @@ namespace Adrenaline
 
                 var fridge_paper = GameObject.Find("fridge_paper");
                 GameHook.InjectStateHook(fridge_paper, "Use", "Wait button", SetFridgePaperText, true);
-                
-                var renderer = fridge_paper?.GetComponent<MeshRenderer>();
-                if (renderer != null)
-                {
-                    var mat = renderer.materials.ElementAt(0);
 
-                    mat.name = "ATLAS_OFFICE(Clone)";
-                    mat.mainTexture = AdrenalineLogic.atlas_texture;
-                }
+                Utils.SetMaterial(fridge_paper, 0, "ATLAS_OFFICE(Clone)", AdrenalineLogic.atlas_texture, Vector2.zero, Vector2.one);
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             }
@@ -74,8 +67,7 @@ namespace Adrenaline
 
         private void OnDestroy()
         {
-            Object.Destroy(AdrenalineLogic._hud);
-            AdrenalineLogic._hud = null;
+            Destroy(AdrenalineLogic._hud);
         }
 
         private void FixedUpdate()
@@ -85,25 +77,28 @@ namespace Adrenaline
             Utils.CacheFSM(ref kiljuguy, "KILJUGUY/KiljuMurderer", "Move");
 
             if (PlayerMovementSpeed?.Value >= 3.5)
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPRINT_INCREASE").Value); // increase adrenaline while player sprinting
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPRINT_INCREASE")); // increase adrenaline while player sprinting
 
             if (HouseBurningState?.Value == true)
-                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING").Value); // increase adrenaline while house is burning
+                AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
 
-            if (kiljuguy?.ActiveStateName == "Walking")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("MURDER_WALKING").Value); // ??
+            if (kiljuguy?.ActiveStateName == "Walking") // for fix
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("MURDER_WALKING")); // ??
+
+            if (RallyPlayerOnStage?.Value == true) // for fix
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("RALLY_PLAYER"));
         }
 
         private void IncreaseByEnergyDrink()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE"));
             AdrenalineLogic.SetDecreaseLocked(true, 12000f);
             if (ModLoader.IsModPresent("Health")) Health.editHp(-2f);
         }
 
         private void IncreaseByCoffee()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("COFFEE_INCREASE"));
             AdrenalineLogic.SetDecreaseLocked(true, 12000f); // 1 minute
         }
 

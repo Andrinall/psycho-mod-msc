@@ -10,7 +10,7 @@ namespace Adrenaline
         private FsmBool IsBukled;
         private FsmString PlayerCurrentVehicle;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {

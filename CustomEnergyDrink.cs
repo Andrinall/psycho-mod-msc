@@ -32,7 +32,7 @@ namespace Adrenaline
         private List<Transform> prefabs;
         private FsmVariables OrderVars;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -67,7 +67,7 @@ namespace Adrenaline
                     prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
                 prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
 
-                SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE").Value);
+                SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
             } catch
             {

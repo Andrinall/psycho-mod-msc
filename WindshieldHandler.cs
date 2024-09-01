@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
 using Harmony;
-using System.Linq;
 
 namespace Adrenaline
 {
@@ -13,7 +12,7 @@ namespace Adrenaline
         private Drivetrain drivetrain;
         private string CarName;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -44,7 +43,7 @@ namespace Adrenaline
                     }
                     default:
                     {
-                        Object.Destroy(this);
+                        Destroy(this);
                         return;
                     }
                 }
@@ -60,9 +59,12 @@ namespace Adrenaline
         private void FixedUpdate()
         {
             if (PlayerVehicle?.Value != CarName) return;
-            var requiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_WINDSHIELD_SPEED").Value;
-            if (!Helmet.Value && Damaged?.Value == true && drivetrain?.differentialSpeed > requiredSpeed)
-                AdrenalineLogic.IncreaseTimed(requiredSpeed);
+            if (Damaged.Value == false) return;
+            if (Helmet.Value == true) return;
+
+            var requiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_WINDSHIELD_SPEED");
+            if (drivetrain?.differentialSpeed > requiredSpeed)
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("BROKEN_WINDSHIELD_INCREASE"));
         }
     }
 }

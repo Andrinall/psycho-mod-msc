@@ -11,7 +11,7 @@ namespace Adrenaline
         private GameObject GFX_Pub;
         private GameObject _Teimo;
 
-        private void OnEnable()
+        private void Start()
         {
             try
             {
@@ -42,18 +42,18 @@ namespace Adrenaline
             Utils.CacheFSM(ref TriggerPissOnTeimo, ref _Teimo, "Pivot/FacePissTrigger");
 
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("TEIMO_PISS").Value);
+                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("TEIMO_PISS"));
         }
 
         private void BreakWindow()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("WINDOW_BREAK_INCREASE").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("WINDOW_BREAK_INCREASE"));
             Utils.PrintDebug(eConsoleColors.WHITE, "Adrenaline increased by shatter");
         }
 
         private void TeimoSwears()
         {
-            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("TEIMO_SWEAR").Value);
+            AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("TEIMO_SWEAR"));
             Utils.PrintDebug(eConsoleColors.WHITE, "Adrenaline increased by teimo swears");
         }
     }

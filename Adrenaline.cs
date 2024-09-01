@@ -4,9 +4,32 @@ using System.Collections.Generic;
 using Harmony;
 using MSCLoader;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Xml.Linq;
 
 namespace Adrenaline
 {
+    public class VariableChanger
+    {
+        private string field;
+        private string ID;
+        private List<SettingsSlider> _sliders = null;
+
+        public VariableChanger(string name, ref List<SettingsSlider> t)
+        {
+            this.field = name;
+            this.ID = name.GetHashCode().ToString();
+            this._sliders = t;
+        }
+
+        public void ValueChanged()
+        {
+            var slider = _sliders.Find(v => v.Instance.ID == ID);
+            AdrenalineLogic.config[field] = slider.GetValue();
+            Utils.PrintDebug("Set value for " + field + " == " + slider.GetValue());
+        }
+    }
+
     public class Adrenaline : Mod
     {
         public override string ID => "com.adrenaline.mod";
@@ -56,7 +79,7 @@ namespace Adrenaline
             ["MURDER_WALKING"] = "Увеличение при приследовании мужиком с топором",
             ["COFFEE_INCREASE"] = "Увеличение от употребления кофе",
 
-            ["REQUIRED_SPEED_Jonezz"] = "Мин.скорость для прибавки при езде на Jonezz",
+            ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
             ["REQUIRED_SPEED_Ferndale"] = "Мин.скорость для прибавки при езде в Ferndale",
             ["REQUIRED_SPEED_Hayosiko"] = "Мин.скорость для прибавки при езде в Hayosiko",
@@ -68,17 +91,23 @@ namespace Adrenaline
 
         public override void ModSettings()
         {
+            if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
+                AdrenalineLogic.config = SaveLoad.ReadValueAsDictionary<string, float>(this, "DebugAdrenaline");
+            else
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "DEBUG Settings not loaded, remove and resetting to default");
+                SaveLoad.DeleteValue(this, "DebugAdrenaline");
+            }
+
             Settings.AddHeader(this, "DEBUG SETTINGS");
-            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 10f, 190f, AdrenalineLogic.Value, AdrenalineChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 5f, 195f, AdrenalineLogic.Value, AdrenalineChanged));
 
             var MIN_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
             var MAX_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE");
-            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", 
-                MIN_LOSS_RATE.Value, MAX_LOSS_RATE.Value, AdrenalineLogic.LossRate, LossRateChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", MIN_LOSS_RATE, MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
 
             var PUB_COFFEE_PRICE = AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE");
-            priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 
-                (int)PUB_COFFEE_PRICE.minValue, (int)PUB_COFFEE_PRICE.maxValue, (int)PUB_COFFEE_PRICE.Value, PubPriceChanged);
+            priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 0, 500, (int)PUB_COFFEE_PRICE, PubPriceChanged);
 
             lockbox = Settings.AddCheckBox(this, "adn_lock", "Заблокировать уменьшение адреналина", false, delegate {
                 var lock_ = lockbox.GetValue();
@@ -93,10 +122,10 @@ namespace Adrenaline
                     mod: this,
                     settingID: element.Key.GetHashCode().ToString(),
                     name: localization.GetValueSafe(element.Key),
-                    minValue: element.Value.minValue,
-                    maxValue: element.Value.maxValue,
-                    value: element.Value.Value,
-                    onValueChanged: OnValueChanged
+                    minValue: 0,
+                    maxValue: 250,
+                    value: element.Value,
+                    onValueChanged: new VariableChanger(element.Key, ref _sliders).ValueChanged
                 ));
             }
         }
@@ -118,27 +147,14 @@ namespace Adrenaline
                 ?.SetDrinkPrice((float)priceSlider.GetValue());
         }
 
-        private void OnValueChanged()
-        {
-            foreach (var element in AdrenalineLogic.config)
-            {
-                var slider = _sliders.Find(v => v.Instance.ID == element.Key.GetHashCode().ToString());
-                float value = slider.GetValue();
-                if (value == element.Value.Value) continue;
-                
-                element.Value.Value = value;
-                return;
-            }
-        }
-
         public override void FixedUpdate()
         {
             _sliders[0].Instance.Value = AdrenalineLogic.Value;
 
             var slider1 = _sliders[1].Instance;
             slider1.Value = AdrenalineLogic.LossRate;
-            slider1.Vals[0] = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE").Value;
-            slider1.Vals[1] = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE").Value;
+            slider1.Vals[0] = AdrenalineLogic.config["MIN_LOSS_RATE"];
+            slider1.Vals[1] = AdrenalineLogic.config["MAX_LOSS_RATE"];
             lockbox.SetValue(AdrenalineLogic.IsDecreaseLocked());
         }
 #endif
@@ -146,7 +162,7 @@ namespace Adrenaline
         public override void OnNewGame()
         {
             AdrenalineLogic.LossRate =
-                AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE").Value - AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE").Value;
+                AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE") - AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
             
             AdrenalineLogic.Value = 100f;
             AdrenalineLogic.isDead = false;
@@ -157,13 +173,10 @@ namespace Adrenaline
 
         public override void OnLoad()
         {
-            AdrenalineLogic.isDead = false;
 #if DEBUG
-            if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
-                AdrenalineLogic.config = SaveLoad.ReadValueAsDictionary<string, ConfigItem>(this, "DebugAdrenaline");
-            else
-                Utils.PrintDebug(eConsoleColors.RED, "DEBUG Settings not loaded, resetting to default");
+            ConsoleCommand.Add(new DEBUG_COMMAND());
 #endif
+
             try
             {
                 var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
@@ -179,6 +192,7 @@ namespace Adrenaline
 
             try
             {
+                AdrenalineLogic.isDead = false;
                 AddComponent<GlobalHandler>("PLAYER");
                 if (SaveLoad.ValueExists(this, "Adrenaline"))
                 {
@@ -227,9 +241,6 @@ namespace Adrenaline
             }
             
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
-#if DEBUG
-            ConsoleCommand.Add(new DEBUG_COMMAND());
-#endif
         }
 
         private T AddComponent<T>(string obj) where T : Component
@@ -242,14 +253,29 @@ namespace Adrenaline
         public override void OnSave()
         {
 #if DEBUG
-            SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
-#endif
-            SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
+            try
             {
-                ["Value"] = AdrenalineLogic.Value,
-                ["LossRate"] = AdrenalineLogic.LossRate,
-                ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime()
-            });
+                if (SaveLoad.ValueExists(this, "DebugAdrenaline")) SaveLoad.DeleteValue(this, "DebugAdrenaline");
+                SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
+            }
+            catch
+            {
+                throw new UnassignedReferenceException("Unable to save DEBUG settings!");
+            }
+#endif
+            try
+            {
+                SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
+                {
+                    ["Value"] = AdrenalineLogic.Value,
+                    ["LossRate"] = AdrenalineLogic.LossRate,
+                    ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime()
+                });
+            }
+            catch
+            {
+                throw new UnassignedReferenceException("Unable to save MAIN settings!");
+            }
         }
     }
 #if DEBUG
