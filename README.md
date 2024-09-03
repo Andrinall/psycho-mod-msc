@@ -1,6 +1,6 @@
 # Adrenaline
 
-[ RU | [EN](README_EN.md) ]
+[ [RU](README_RU.md) | EN ]
 
 This modification, adding the need for adrenaline, will diversify your gameplay, making it more dynamic and risky.
 Prolonged inactivity is devastating to your character, but excessive risk-taking can also backfire on you.
