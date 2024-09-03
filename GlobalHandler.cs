@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using HutongGames.PlayMaker;
-using System.Linq;
-using MSCLoader;
+﻿using System.Linq;
+
 using Harmony;
+using MSCLoader;
 using HealthMod;
+using UnityEngine;
+using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {

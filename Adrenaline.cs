@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Harmony;
 using MSCLoader;
 using UnityEngine;
+using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
@@ -73,6 +74,7 @@ namespace Adrenaline
             ["ENERGY_DRINK_INCREASE"] = "Увеличение от употребления энергетика",
             ["CRASH_INCREASE"] = "Увеличение за получение урона в аварии",
             ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
+            ["PILLS_DECREASE"] = "Уменьшение адреналина после принятия таблеток",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
@@ -178,18 +180,15 @@ namespace Adrenaline
 #endif
             AdrenalineLogic.isDead = false;
             AdrenalineLogic.Value = 100f;
-            try
-            {
-                var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
-                AdrenalineLogic.can_texture = asset.LoadAsset<Texture>("energy.png");
-                AdrenalineLogic.atlas_texture = asset.LoadAsset<Texture>("ATLAS_OFFICE.png");
-                AdrenalineLogic.empty_cup = asset.LoadAsset<Mesh>("coffee_cup_bar.mesh.obj");
-                AdrenalineLogic.coffee_cup = asset.LoadAsset<Mesh>("coffee_cup_bar_coffee.mesh.obj");
-                asset.Unload(false);
-            } catch
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset from embedded resource (??!)");
-            }
+            
+            var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
+            asset.GetAllAssetNames().All(v => Utils.PrintDebug(eConsoleColors.WHITE, v) && true);
+            AdrenalineLogic.can_texture = LoadAsset<Texture>(asset, "assets/textures/Energy.png");
+            AdrenalineLogic.atlas_texture = LoadAsset<Texture>(asset, "assets/textures/ATLAS_OFFICE.png");
+            AdrenalineLogic.coffee_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar_coffee.mesh.obj");
+            AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
+            AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
+            asset.Unload(false);
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
             {
@@ -252,12 +251,28 @@ namespace Adrenaline
             foreach (var item in humans)
                 item.AddComponent<DriveByHandler>();
 
+            new PillsItem();
         }
         private T AddComponent<T>(string obj) where T : Component
         {
             LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T)?.Name.ToString());
             Utils.PrintDebug(eConsoleColors.YELLOW, "Loading component " + LastAddedComponent);
             return GameObject.Find(obj)?.AddComponent<T>() ?? null;
+        }
+
+        private T LoadAsset<T>(AssetBundle storage, string path) where T : UnityEngine.Object
+        {
+            try
+            {
+                var asset = storage.LoadAsset<T>(path);
+                if (asset == null) throw new NullReferenceException();
+                return asset;
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset {0} from embedded resource (??!)", path);
+                return null;
+            }
         }
 
         public override void OnSave()
@@ -288,31 +303,40 @@ namespace Adrenaline
             }
         }
     }
+
 #if DEBUG
-    public class DEBUG_COMMAND : ConsoleCommand
+    internal class DEBUG_COMMAND : ConsoleCommand
     {
-        public override string Name => "pills";
+        public override string Name => "plls";
         public override string Alias => "pll";
 
         public override string Help => "Debug command for spawning pills";
 
         public override void Run(string[] args)
         {
-            var milk = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.name == "milk" && v.IsPrefab()).Last().gameObject;
-            var coffee = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v.name == "Coffee" && v.IsPrefab()).Last().gameObject;
+            new PillsItem();
+        }
+    }
 
-            var fsm = coffee.GetComponent<PlayMakerFSM>();
-            var milk_fsm = milk.GetComponent<PlayMakerFSM>();
-            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Load"));
-            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Save"));
-            fsm.FsmStates.Add(milk_fsm.FsmStates.First(v => v.Name == "Destroy"));
+    internal class PillsItemBehaviour : MonoBehaviour
+    {
+        private Camera cam;
+        private FsmBool guiUse;
+        private FsmString guiSubtitle;
 
-            fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "SAVEGAME"));
-            fsm.FsmEvents.Add(milk_fsm.FsmEvents.First(v => v.Name == "DESTROY"));
+        private void Start()
+        {
+            cam = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").GetComponent<Camera>();
+            guiUse = Utils.GetGlobalVariable<FsmBool>("GUIUse");
+            guiSubtitle = Utils.GetGlobalVariable<FsmString>("GUIText");
+        }
 
-            GameObject obj = UnityEngine.Object.Instantiate(coffee);
-            obj.name = "pills(itemx)";
-            obj.transform.position = GameObject.Find("PLAYER").transform.position + new Vector3(0f, 1f, 0f);
+        private void Update()
+        {
+            if (!Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out var hit, 1f)) return;
+            if (hit.collider.gameObject != this.gameObject) return;
+
+            bool useActionPressed = cInput.GetButtonDown("Use");
         }
     }
 #endif

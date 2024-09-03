@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+
+using UnityEngine;
 using HutongGames.PlayMaker;
-using System.Linq;
 
 namespace Adrenaline
 {

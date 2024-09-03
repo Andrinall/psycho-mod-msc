@@ -1,7 +1,8 @@
 ﻿using System.Linq;
+
+using Harmony;
 using UnityEngine;
 using HutongGames.PlayMaker;
-using Harmony;
 
 namespace Adrenaline
 {

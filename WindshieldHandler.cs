@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Harmony;
+using UnityEngine;
 using HutongGames.PlayMaker;
-using Harmony;
 
 namespace Adrenaline
 {

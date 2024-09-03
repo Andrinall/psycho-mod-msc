@@ -1,6 +1,6 @@
 ﻿using System.Linq;
+
 using Harmony;
-using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline

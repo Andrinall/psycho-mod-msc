@@ -1,7 +1,8 @@
-﻿using Harmony;
+﻿using System.Collections.Generic;
+
+using Harmony;
 using HealthMod;
 using MSCLoader;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Adrenaline
@@ -29,6 +30,7 @@ namespace Adrenaline
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
         internal static FixedHUD _hud;
+        public static GameObject pills = null;
         public static Texture can_texture = null;
         public static Texture atlas_texture = null;
         public static Mesh empty_cup = null;
@@ -64,6 +66,7 @@ namespace Adrenaline
             ["RALLY_PLAYER"]          = 1f,
             ["DRIVEBY_INCREASE"]      = 5f,
             ["CRASH_INCREASE"]        = 20f,
+            ["PILLS_DECREASE"]        = 50f,
 
             // vars for check
             ["PUB_COFFEE_PRICE"]        = 14f,

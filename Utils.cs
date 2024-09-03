@@ -1,12 +1,12 @@
 ﻿#define SILENT
 using System.Linq;
 
-using UnityEngine;
-using HutongGames.PlayMaker;
-
 #if DEBUG
 using MSCLoader;
 #endif
+using UnityEngine;
+using HutongGames.PlayMaker;
+
 
 
 namespace Adrenaline
@@ -16,12 +16,12 @@ namespace Adrenaline
     {
         private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
 
-        public static T GetGlobalVariable<T>(string name) where T : NamedVariable
+        internal static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
         }
 
-        public static string GetCarNameByObject(GameObject obj)
+        internal static string GetCarNameByObject(GameObject obj)
         {
             if (obj.name == "FITTAN") return "Fittan"; // crutch
             if (obj.name == "JONNEZ ES(Clone)") return "Jonnez"; // crutch
@@ -36,7 +36,7 @@ namespace Adrenaline
             return new string(arr);
         }
 
-        public static void CacheFSM(ref PlayMakerFSM obj, string path, string fsm = "")
+        internal static void CacheFSM(ref PlayMakerFSM obj, string path, string fsm = "")
         {
             if (obj?.gameObject != null) return;
 
@@ -51,7 +51,7 @@ namespace Adrenaline
 #endif
         }
 
-        public static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
+        internal static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
         {
             if (var?.gameObject != null) return;
             if (obj == null) return;
@@ -68,35 +68,42 @@ namespace Adrenaline
         }
 
 
-        public static void PrintDebug(string msg)
+        internal static void PrintDebug(string msg)
         {
 #if DEBUG
             ModConsole.Print(DBG_STRING + msg);
 #endif
         }
 
-        public static void PrintDebug(eConsoleColors color, string msg)
+        internal static bool PrintDebug(eConsoleColors color, string msg)
         {
 #if DEBUG
             ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), msg));
+            return true;
 #endif
         }
 
-        public static void PrintDebug(string fmt, params object[] vars)
+        internal static void PrintDebug(string fmt, params object[] vars)
         {
 #if DEBUG
             ModConsole.Print(string.Format(DBG_STRING + fmt, vars));
 #endif
         }
 
-        public static void PrintDebug(eConsoleColors color, string fmt, params object[] vars)
+        internal static void PrintDebug(eConsoleColors color, string fmt, params object[] vars)
         {
 #if DEBUG
             ModConsole.Print(string.Format(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), fmt), vars));
 #endif
         }
 
-        public static void SetMesh(GameObject obj, Mesh mesh)
+        internal static void ChangeMesh(GameObject obj, Mesh mesh, Texture texture, Vector2 offset, Vector2 scale)
+        {
+            SetMesh(obj, mesh);
+            SetMaterial(obj, 0, texture.name, texture, offset, scale);
+        }
+
+        internal static void SetMesh(GameObject obj, Mesh mesh)
         {
             var filter = obj.GetComponent<MeshFilter>();
             if (!filter) return;
@@ -105,7 +112,7 @@ namespace Adrenaline
             filter.sharedMesh = mesh;
         }
 
-        public static void SetMaterial(GameObject obj, int index, string name, Texture texture, Vector2 offset, Vector2 scale)
+        internal static void SetMaterial(GameObject obj, int index, string name, Texture texture, Vector2 offset, Vector2 scale)
         {
             var renderer = obj.GetComponent<MeshRenderer>();
             if (!renderer) return;

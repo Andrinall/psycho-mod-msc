@@ -9,24 +9,18 @@ namespace Adrenaline
 {
     internal class ItemRenamer : MonoBehaviour
     {
+        public string TargetName = "";
+        public string FinalName;
+
         private void Update()
         {
-            if (base.gameObject.name == "coffee(itemx)")
-            {
-                base.gameObject.name = "energy drunk(itemx)";
-                Destroy(this);
-                return;
-            }
-
-            if (base.gameObject.name == "empty cup(Clone)")
-            {
-                base.gameObject.name = "empty can(Clone)";
-                Destroy(this);
-                return;
-            }
+            if (base.gameObject.name != TargetName) return;
+            
+            base.gameObject.name = FinalName;
+            Destroy(this);
         }
     }
-    
+
     internal class CustomEnergyDrink : MonoBehaviour
     {
         private List<Transform> prefabs;
@@ -64,8 +58,13 @@ namespace Adrenaline
                     Utils.PrintDebug("Failed to set texture for pub_desk");
                 }
 
-                prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
-                prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
+                var cren = prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
+                cren.TargetName = "coffee(itemx)";
+                cren.FinalName = "energy drunk(itemx)";
+
+                var cfren = prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
+                cfren.TargetName = "empty cup(Clone)";
+                cfren.FinalName = "empty can(Clone)";
 
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
@@ -90,13 +89,7 @@ namespace Adrenaline
             try
             {
                 var prefab = prefabs.Find(v => v.name == name);
-                if (prefab == null)
-                    Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab({0},bool) | prefab is null!", name);
-
-                SetMaterial(prefab, isEmpty);
-
-                if (prefab.childCount > 0)
-                    SetMaterial(prefab.GetChild(0), isEmpty);
+                ReplacePrefab(prefab, isEmpty);
             }
             catch
             {
@@ -108,12 +101,7 @@ namespace Adrenaline
         {
             try
             {
-                if (obj == null)
-                    Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab(Transform,bool) | prefab is null");
-
-                SetMaterial(obj, isEmpty);
-                if (obj.childCount > 0)
-                    SetMaterial(obj.GetChild(0), isEmpty);
+                ReplacePrefab(obj, isEmpty);
             }
             catch
             {
@@ -121,11 +109,16 @@ namespace Adrenaline
             }
         }
         
-        private void SetMaterial(Transform obj, bool isEmpty)
+        private void ReplacePrefab(Transform obj, bool isEmpty)
         {
-            if (obj == null) return;
-            Utils.SetMaterial(obj.gameObject, 0, "Energy", AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
-            Utils.SetMesh(obj.gameObject, isEmpty ? AdrenalineLogic.empty_cup : AdrenalineLogic.coffee_cup);
+            if (obj == null)
+                Utils.PrintDebug(eConsoleColors.RED, "ReplacePrefab(obj,bool) | base prefab is null");
+
+            var mesh = isEmpty ? AdrenalineLogic.empty_cup : AdrenalineLogic.coffee_cup;
+            Utils.ChangeMesh(obj.gameObject, mesh, AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
+            
+            if (obj.childCount == 0) return;
+            Utils.ChangeMesh(obj.GetChild(0).gameObject, mesh, AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
         }
     }
 }
