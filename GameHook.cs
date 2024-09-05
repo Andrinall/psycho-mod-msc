@@ -26,24 +26,19 @@ namespace Adrenaline
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, stateName);
             if (stateFromGameObject == null) return false;
 
-            List<FsmStateAction> list = new List<FsmStateAction>(stateFromGameObject.Actions);
-            FsmHookAction fsmHookAction = new FsmHookAction();
-            fsmHookAction.hook = hook;
-
-            if (placeLast)
-                list.Add(fsmHookAction);
-            else
-                list.Insert(0, fsmHookAction);
-            stateFromGameObject.Actions = list.ToArray();
-            
-            return true;
+            return InjectStateHook_internal(stateFromGameObject, hook, placeLast);
         }
 
         public static bool InjectStateHook(GameObject gameObject, string FsmName, string stateName, Action hook, bool placeLast = false)
         {
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, FsmName, stateName);
             if (stateFromGameObject == null) return false;
-            
+
+            return InjectStateHook_internal(stateFromGameObject, hook, placeLast);
+        }
+
+        private static bool InjectStateHook_internal(FsmState stateFromGameObject, Action hook, bool placeLast = false)
+        {
             List<FsmStateAction> list = new List<FsmStateAction>(stateFromGameObject.Actions);
             FsmHookAction fsmHookAction = new FsmHookAction();
             fsmHookAction.hook = hook;

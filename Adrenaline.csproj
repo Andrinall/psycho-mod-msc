@@ -92,6 +92,7 @@
     <Compile Include="GlobalHandler.cs" />
     <Compile Include="HighSpeedHandler.cs" />
     <Compile Include="DriveByHandler.cs" />
+    <Compile Include="MailBoxEnvelope.cs" />
     <Compile Include="PillsItem.cs" />
     <Compile Include="PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

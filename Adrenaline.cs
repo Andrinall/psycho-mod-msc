@@ -220,6 +220,7 @@ namespace Adrenaline
             AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
             AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)/Wiring");
             AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)/LOD/Seatbelts/BuckleUp");
+            AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox");
             
             var CARS = new List<string> {
                 "JONNEZ ES(Clone)", "SATSUMA(557kg, 248)", "FERNDALE(1630kg)",

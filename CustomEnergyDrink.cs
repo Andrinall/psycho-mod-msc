@@ -65,7 +65,6 @@ namespace Adrenaline
                 var cfren = prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
                 cfren.TargetName = "empty cup(Clone)";
                 cfren.FinalName = "empty can(Clone)";
-
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
             } catch

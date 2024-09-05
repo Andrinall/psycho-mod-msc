@@ -37,7 +37,7 @@ namespace Adrenaline
             collider.name = pcoll.name;
             collider.size = pcoll.size;
 
-            var fsm = self.GetPlayMaker("Use");
+            fsm = self.GetPlayMaker("Use");
             var state_eat = PlayMakerExtensions.GetState(fsm, "Eat");
             List<FsmStateAction> list = new List<FsmStateAction>(state_eat.Actions);
             list.RemoveRange(6, 3);
@@ -58,8 +58,9 @@ namespace Adrenaline
             if (AdrenalineLogic.Value <= dec)
             {
                 var state = fsm.FsmStates.First(v => v.Name == "Eat");
-                fsm.SendEvent("STOP");
                 state.FinishAction(state.Actions[0]);
+                fsm.SendEvent("STOP");
+                fsm.SendEvent("STOP");
 
                 Utils.PrintDebug(eConsoleColors.YELLOW, "EatState: state: {0}", state.Name);
                 return;

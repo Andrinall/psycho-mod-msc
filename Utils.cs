@@ -15,6 +15,7 @@ namespace Adrenaline
     internal static class Utils
     {
         private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
+        private static int GlobalDay_cached = -1;
 
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
@@ -112,6 +113,9 @@ namespace Adrenaline
             filter.sharedMesh = mesh;
         }
 
+        /// <summary>
+        /// Sets object material with texture & uv offsets
+        /// </summary>
         internal static void SetMaterial(GameObject obj, int index, string name, Texture texture, Vector2 offset, Vector2 scale)
         {
             var renderer = obj.GetComponent<MeshRenderer>();
@@ -124,6 +128,46 @@ namespace Adrenaline
             material.mainTextureScale = scale;
         }
 
+        /// <summary>
+        /// Gets a game hours in 12 hours format (am/pm)
+        /// </summary>
+        internal static float GetHours12()
+        {
+            var hours = 24f / (360f / GetGlobalVariable<FsmFloat>("TimeRotationHour").Value);
+            return (hours > 12 ? hours / 2 : hours);
+        }
+
+        /// <summary>
+        /// Gets a game minutes
+        /// </summary>
+        internal static float GetMinutes()
+        {
+            return 60f / (360f / GetGlobalVariable<FsmFloat>("TimeRotationMinute").Value);
+        }
+
+        /// <summary>
+        /// Returns true if game day is changed, else returns false
+        /// </summary>
+        internal static bool IsDayChanged()
+        {
+            FsmInt GlobalDays = GetGlobalVariable<FsmInt>("GlobalDays");
+
+            if (GlobalDay_cached == -1)
+            {
+                GlobalDay_cached = GlobalDays.Value;
+                return false;
+            }
+
+            if (GlobalDay_cached == GlobalDays.Value)
+                return false;
+
+            GlobalDay_cached = GlobalDays.Value;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns a string console color from enum implementation
+        /// </summary>
         private static string GetColor(eConsoleColors color)
         {
             switch (color)
