@@ -188,6 +188,7 @@ namespace Adrenaline
             AdrenalineLogic.coffee_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar_coffee.mesh.obj");
             AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
             AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
+            AdrenalineLogic.poster = LoadAsset<GameObject>(asset, "assets/prefabs/Poster.prefab");
             asset.Unload(false);
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
@@ -221,7 +222,12 @@ namespace Adrenaline
             AddComponent<CarElectricityHandler>("SATSUMA(557kg, 248)/Wiring");
             AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)/LOD/Seatbelts/BuckleUp");
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox");
-            
+
+            var poster = PrefabManager.Instantiate(AdrenalineLogic.poster);
+            poster.gameObject.name = "AdrenalineADV_Poster";
+            poster.transform.position = new Vector3(-18.982f, 1.123788f, 4.68906f);
+            poster.transform.rotation = Quaternion.Euler(90f, 90f, 0f);
+
             var CARS = new List<string> {
                 "JONNEZ ES(Clone)", "SATSUMA(557kg, 248)", "FERNDALE(1630kg)",
                 "HAYOSIKO(1500kg, 250)", "GIFU(750/450psi)" };

@@ -29,13 +29,16 @@ namespace Adrenaline
         private static bool  _lockDecrease = false;
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
+        public static bool isDead = false;
+
         internal static FixedHUD _hud;
         public static GameObject pills = null;
+        public static GameObject poster = null;
         public static Texture can_texture = null;
         public static Texture atlas_texture = null;
         public static Mesh empty_cup = null;
         public static Mesh coffee_cup = null;
-        public static bool isDead = false;
+
 
         public static Dictionary<string, float> config = new Dictionary<string, float>
         {
