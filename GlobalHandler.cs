@@ -64,6 +64,40 @@ namespace Adrenaline
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Unable to load HighSpeedHandler component for FITTAN");
             }
+
+            try
+            {
+                Utils.PrintDebug(eConsoleColors.YELLOW, "Loading AUDIO loops");
+
+                var player = GameObject.Find("PLAYER");
+                foreach (var clip in AdrenalineLogic.clips)
+                {
+                    if (clip.name == "heart_stop")
+                    {
+                        var src = GameObject.Find("Systems").AddComponent<AudioSource>();
+                        src.clip = clip;
+                        src.loop = false;
+                        src.volume = 1.75f;
+                        src.priority = 0;
+                        AdrenalineLogic.audios.Add(src);
+                        Utils.PrintDebug(eConsoleColors.GREEN, "AudioSource {0} created", src.clip.name);
+                        continue;
+                    }
+
+                    var source = player.AddComponent<AudioSource>();
+                    source.clip = clip;
+                    source.loop = true;
+                    source.volume = 2f;
+                    AdrenalineLogic.audios.Add(source);
+                    Utils.PrintDebug(eConsoleColors.GREEN, "AudioSource {0} created", source.clip.name);
+                }
+
+                Utils.PrintDebug("AUDIO loop loaded & started");
+            }
+            catch (System.Exception e)
+            {
+                Utils.PrintDebug("AUDIO loop loading failed: {0}", e.GetFullMessage());
+            }
         }
 
         private void OnDestroy()

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 using Harmony;
 using HealthMod;
 using MSCLoader;
@@ -7,13 +7,6 @@ using UnityEngine;
 
 namespace Adrenaline
 {
-    public class ConfigItem
-    {
-        public float Value;
-        public float minValue = 0f;
-        public float maxValue = 1f;
-    }
-
     public static class AdrenalineLogic
     {
         private static readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
@@ -30,8 +23,11 @@ namespace Adrenaline
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
         public static bool isDead = false;
+        public static bool loopAudio = false;
 
         internal static FixedHUD _hud;
+        public static List<AudioClip> clips;
+        public static List<AudioSource> audios = new List<AudioSource>{ };
         public static GameObject pills = null;
         public static GameObject poster = null;
         public static Texture can_texture = null;
@@ -89,23 +85,39 @@ namespace Adrenaline
             set
             {
                 if (_hud == null) return;
+                if (isDead) return;
+
                 _value = value;
 
-                if ((_value <= MIN_ADRENALINE) && !isDead)
+                if (_value <= MIN_ADRENALINE)
                     KillCustom(PAPER_TEXT_EN_MIN, PAPER_TEXT_FI);
-                else if ((_value >= MAX_ADRENALINE) && !isDead)
+                else if (_value >= MAX_ADRENALINE)
                     KillCustom(PAPER_TEXT_EN_MAX, PAPER_TEXT_FI);
                 else if (_hud?.IsElementExist("Adrenaline") == true)
                 {
                     var clamped = Mathf.Clamp(value / 100f, 0f, 2f);
 
                     _hud.SetElementScale("Adrenaline", new Vector3(Mathf.Clamp(value / 200f, 0f, 1f), 1f));
-                    
-                    var color = Color.white;
+
+                    Color color;
+                    ASIndex index;
                     if (clamped <= 0.15f || clamped >= 1.75f)
+                    {
                         color = Color.red;
+                        index = (clamped <= 0.15f) ? ASIndex.HEART10 : ASIndex.HEART50;
+                    }
                     else if (clamped >= 0.75f && clamped <= 1.55f)
+                    {
                         color = Color.green;
+                        index = ASIndex.HEART30;
+                    }
+                    else
+                    {
+                        color = Color.white;
+                        index = ASIndex.HEART30;
+                    }
+
+                    Utils.PlaySound(clamped >= 1.9f ? ASIndex.HEARTBUST : index);
 
                     _hud.SetElementColor("Adrenaline", color);
                 }
@@ -183,12 +195,13 @@ namespace Adrenaline
         {
             if (isDead) return;
 
+            isDead = true;
             Utils.PrintDebug("KillCustom called!!");
             try
             {
-                isDead = true;
                 if (ModLoader.IsModPresent("Health"))
                 {
+                    Utils.PlayDeathSound();
                     Health.killCustom(en, fi);
                     return;
                 }
@@ -200,12 +213,13 @@ namespace Adrenaline
 
             try
             {
+                Utils.PlayDeathSound();
                 var death = GameObject.Find("Systems/Death");
                 if (death == null) return;
                 var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
-                death.SetActive(isDead);
                 paper.Find("TextEN").GetComponent<TextMesh>().text = en;
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
+                death.SetActive(isDead);
             }
             catch
             {

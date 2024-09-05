@@ -6,6 +6,7 @@ using Harmony;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using HutongGames.PlayMaker.Actions;
 
 namespace Adrenaline
 {
@@ -189,6 +190,13 @@ namespace Adrenaline
             AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
             AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
             AdrenalineLogic.poster = LoadAsset<GameObject>(asset, "assets/prefabs/Poster.prefab");
+            AdrenalineLogic.clips = new List<AudioClip> {
+                LoadAsset<AudioClip>(asset, "assets/audio/heart_10.wav"),
+                LoadAsset<AudioClip>(asset, "assets/audio/heart_30.wav"),
+                LoadAsset<AudioClip>(asset, "assets/audio/heart_50.wav"),
+                LoadAsset<AudioClip>(asset, "assets/audio/heart_bust.wav"),
+                LoadAsset<AudioClip>(asset, "assets/audio/heart_stop.wav")
+            };
             asset.Unload(false);
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
@@ -314,14 +322,14 @@ namespace Adrenaline
 #if DEBUG
     internal class DEBUG_COMMAND : ConsoleCommand
     {
-        public override string Name => "plls";
-        public override string Alias => "pll";
+        public override string Name => "audio";
+        public override string Alias => "aud";
 
         public override string Help => "Debug command for spawning pills";
 
         public override void Run(string[] args)
         {
-            new PillsItem();
+            new PillsItem();            
         }
     }
 

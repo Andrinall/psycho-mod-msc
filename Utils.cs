@@ -11,11 +11,37 @@ using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
-    internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN };
+    internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
+    internal enum ASIndex : int { HEART10, HEART30, HEART50, HEARTBUST, HEARTSTOP }
+
     internal static class Utils
     {
         private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
         private static int GlobalDay_cached = -1;
+
+        internal static void PlaySound(ASIndex index)
+        {
+            StopAllAudios((int)index);
+            var item = AdrenalineLogic.audios.ElementAt((int)index);
+            if (item.isPlaying) return;
+            item.Play();
+        }
+
+        internal static void PlayDeathSound()
+        {
+            AdrenalineLogic.audios.ElementAt((int)ASIndex.HEARTSTOP)
+                .gameObject.transform.position = GameObject.Find("PLAYER").transform.position;
+
+            PlaySound(ASIndex.HEARTSTOP);
+        }
+
+        internal static void StopAllAudios(int index = -1)
+        {
+            var blacklist = AdrenalineLogic.audios.ElementAtOrDefault(index);
+            var list = AdrenalineLogic.audios.Where(v => v.isPlaying && v.clip.name != blacklist.clip.name);
+            
+            foreach (var item in list) item.Stop();
+        }
 
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
