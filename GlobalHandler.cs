@@ -10,10 +10,10 @@ namespace Adrenaline
 {
     internal class GlobalHandler : MonoBehaviour
     {
+        private GameObject kiljuguy;
+
         private FsmFloat PlayerMovementSpeed;
         private FsmBool HouseBurningState;
-
-        private PlayMakerFSM kiljuguy;
         private Transform HouseFire;
 
         private void Awake()
@@ -34,18 +34,20 @@ namespace Adrenaline
                 PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
                 HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
                 HouseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
+                kiljuguy = GameObject.Find("KILJUGUY");
 
+                if (kiljuguy.transform.childCount > 3)
+                    kiljuguy.transform.Find("KiljuMurderer").gameObject.AddComponent<KiljuMurdererHandler>();
+
+                var fridge_paper = GameObject.Find("fridge_paper");
                 var fpsCamera = base.transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
                 var drink = fpsCamera.Find("Drink").gameObject;
                 GameHook.InjectStateHook(drink, "Activate 5", IncreaseByEnergyDrink);
                 GameHook.InjectStateHook(drink, "Activate 7", IncreaseByCoffee);
                 GameHook.InjectStateHook(drink, "HomeCoffee", IncreaseByCoffee);
-
-                var fridge_paper = GameObject.Find("fridge_paper");
                 GameHook.InjectStateHook(fridge_paper, "Use", "Wait button", SetFridgePaperText, true);
 
                 Utils.SetMaterial(fridge_paper, 0, "ATLAS_OFFICE(Clone)", AdrenalineLogic.atlas_texture, Vector2.zero, Vector2.one);
-
                 Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             }
             catch
@@ -109,8 +111,6 @@ namespace Adrenaline
         {
             AdrenalineLogic.Tick();
 
-            Utils.CacheFSM(ref kiljuguy, "KILJUGUY/KiljuMurderer", "Move");
-
             if (PlayerMovementSpeed?.Value >= 3.5)
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("SPRINT_INCREASE")); // increase adrenaline while player sprinting
 
@@ -118,12 +118,6 @@ namespace Adrenaline
             {
                 if (Vector3.Distance(HouseFire.position, transform.position) > 6f) return;
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
-                return;
-            }
-
-            if (kiljuguy?.ActiveStateName == "Walking") // for fix
-            {
-                AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("MURDER_WALKING")); // ??
                 return;
             }
         }

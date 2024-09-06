@@ -76,6 +76,8 @@ namespace Adrenaline
             ["CRASH_INCREASE"] = "Увеличение за получение урона в аварии",
             ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
             ["PILLS_DECREASE"] = "Уменьшение адреналина после принятия таблеток",
+            ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
+            ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",

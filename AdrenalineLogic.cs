@@ -52,6 +52,8 @@ namespace Adrenaline
             ["SPILL_SHIT"]                 = 1.1f,
             
             // once
+            ["MURDERER_THREAT"]       = 30f,
+            ["MURDERER_HIT"]          = 15f,
             ["WINDOW_BREAK_INCREASE"] = 15.0f,
             ["GUARD_CATCH"]           = 2.50f,
             ["VENTTI_WIN"]            = 11.0f,
@@ -59,7 +61,6 @@ namespace Adrenaline
             ["TEIMO_SWEAR"]           = 3.0f,
             ["PISS_ON_DEVICES"]       = 25f,
             ["SPARKS_WIRING"]         = 15f,
-            ["MURDER_WALKING"]        = 0.45f,
             ["ENERGY_DRINK_INCREASE"] = 15f,
             ["COFFEE_INCREASE"]       = 9.3f,
             ["RALLY_PLAYER"]          = 1f,
