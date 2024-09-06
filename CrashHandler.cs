@@ -19,7 +19,7 @@ namespace Adrenaline
             death = GameObject.Find("Systems/Death");
             PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
         }
-
+        
         private void OnCollisionEnter(Collision col)
         {
             if (PlayerVehicle.Value == "") return;
@@ -48,5 +48,4 @@ namespace Adrenaline
             return AdrenalineLogic.config.GetValueSafe("REQUIRED_CRASH_SPEED") * 5f / 18f;
         }
     }
-
 }

@@ -35,6 +35,16 @@ namespace Adrenaline
             PlaySound(ASIndex.HEARTSTOP);
         }
 
+        internal static void CreatePoster(int textureIndex, Vector3 position, Quaternion rotation)
+        {
+            var poster = PrefabManager.Instantiate(AdrenalineLogic.poster);
+            poster.gameObject.name = "AdrenalineADV_Poster";
+            poster.transform.position = position;
+            poster.transform.rotation = rotation;
+            poster.GetComponent<MeshRenderer>().material
+                .SetTexture("_MainTex", AdrenalineLogic.poster_textures.ElementAtOrDefault(textureIndex));
+        }
+
         internal static void StopAllAudios(int index = -1)
         {
             var blacklist = AdrenalineLogic.audios.ElementAtOrDefault(index);

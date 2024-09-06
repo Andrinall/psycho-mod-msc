@@ -7,20 +7,6 @@ using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
-    internal class ItemRenamer : MonoBehaviour
-    {
-        public string TargetName = "";
-        public string FinalName;
-
-        private void Update()
-        {
-            if (base.gameObject.name != TargetName) return;
-            
-            base.gameObject.name = FinalName;
-            Destroy(this);
-        }
-    }
-
     internal class CustomEnergyDrink : MonoBehaviour
     {
         private List<Transform> prefabs;

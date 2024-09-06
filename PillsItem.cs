@@ -10,17 +10,30 @@ namespace Adrenaline
 {
     internal class PillsItem
     {
-        private GameObject self;
+        public GameObject self;
         private PlayMakerFSM fsm;
+        private Vector3 position;
 
         public PillsItem()
-        {            
+        {
             Transform player = GameObject.Find("PLAYER").transform;
+            position = player.position;
+            CreatePillsItem();
+        }
+
+        public PillsItem(Vector3 position)
+        {
+            this.position = position;
+            CreatePillsItem();
+        }
+
+        private void CreatePillsItem()
+        {
             var chips = Resources.FindObjectsOfTypeAll<Transform>().First(v => v.gameObject.name == "potato chips" && v.IsPrefab());
 
             self = Object.Instantiate(chips.gameObject);
-            self.name = "pills";
-            self.transform.position = player.position;
+            self.name = "pills(itemx)";
+            self.transform.position = position;
 
             var ren = self.AddComponent<ItemRenamer>();
             ren.TargetName = "potato chips(itemx)";
@@ -50,6 +63,8 @@ namespace Adrenaline
             dlist.Clear();
             state_destroy.Actions = dlist.ToArray();
             GameHook.InjectStateHook(self, "Use", "Destroy", DestroyState, true);
+
+            self.SetActive(true);
         }
 
         private void EatState()

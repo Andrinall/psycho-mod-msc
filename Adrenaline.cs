@@ -5,32 +5,9 @@ using System.Collections.Generic;
 using Harmony;
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
-using HutongGames.PlayMaker.Actions;
 
 namespace Adrenaline
 {
-    public class VariableChanger
-    {
-        private string field;
-        private string ID;
-        private List<SettingsSlider> _sliders = null;
-
-        public VariableChanger(string name, ref List<SettingsSlider> t)
-        {
-            this.field = name;
-            this.ID = name.GetHashCode().ToString();
-            this._sliders = t;
-        }
-
-        public void ValueChanged()
-        {
-            var slider = _sliders.Find(v => v.Instance.ID == ID);
-            AdrenalineLogic.config[field] = slider.GetValue();
-            Utils.PrintDebug("Set value for " + field + " == " + slider.GetValue());
-        }
-    }
-
     public class Adrenaline : Mod
     {
         public override string ID => "com.adrenaline.mod";
@@ -179,7 +156,7 @@ namespace Adrenaline
         public override void OnLoad()
         {
 #if DEBUG
-            ConsoleCommand.Add(new DEBUG_COMMAND());
+            ConsoleCommand.Add(new CREATE_PILLS());
 #endif
             AdrenalineLogic.isDead = false;
             AdrenalineLogic.Value = 100f;
@@ -192,6 +169,12 @@ namespace Adrenaline
             AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
             AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
             AdrenalineLogic.poster = LoadAsset<GameObject>(asset, "assets/prefabs/Poster.prefab");
+            
+            AdrenalineLogic.poster_textures = new List<Texture> {
+                LoadAsset<Texture>(asset, "assets/textures/poster1.png"),
+                LoadAsset<Texture>(asset, "assets/textures/poster2.png")
+            };
+
             AdrenalineLogic.clips = new List<AudioClip> {
                 LoadAsset<AudioClip>(asset, "assets/audio/heart_10.wav"),
                 LoadAsset<AudioClip>(asset, "assets/audio/heart_30.wav"),
@@ -233,10 +216,9 @@ namespace Adrenaline
             AddComponent<FerndaleSeatbeltFix>("FERNDALE(1630kg)/LOD/Seatbelts/BuckleUp");
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox");
 
-            var poster = PrefabManager.Instantiate(AdrenalineLogic.poster);
-            poster.gameObject.name = "AdrenalineADV_Poster";
-            poster.transform.position = new Vector3(-18.982f, 1.123788f, 4.68906f);
-            poster.transform.rotation = Quaternion.Euler(90f, 90f, 0f);
+            Utils.CreatePoster(0, new Vector3(-18.982f, 1.123788f, 4.68906f), Quaternion.Euler(90f, 90f, 0f));
+            Utils.CreatePoster(0, new Vector3(1553.545f, 6.4f, 733.9846f), Quaternion.Euler(90f, 245.15f, 0f));
+            Utils.CreatePoster(1, new Vector3(-1545.73f, 5.45f, 1184.253f), Quaternion.Euler(90f, 57.42f, 0f));
 
             var CARS = new List<string> {
                 "JONNEZ ES(Clone)", "SATSUMA(557kg, 248)", "FERNDALE(1630kg)",
@@ -267,9 +249,8 @@ namespace Adrenaline
             Utils.PrintDebug("Humans count: " + humans.Length.ToString());
             foreach (var item in humans)
                 item.AddComponent<DriveByHandler>();
-
-            new PillsItem();
         }
+
         private T AddComponent<T>(string obj) where T : Component
         {
             LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T)?.Name.ToString());
@@ -322,38 +303,16 @@ namespace Adrenaline
     }
 
 #if DEBUG
-    internal class DEBUG_COMMAND : ConsoleCommand
+    internal class CREATE_PILLS : ConsoleCommand
     {
-        public override string Name => "audio";
-        public override string Alias => "aud";
+        public override string Name => "pills";
+        public override string Alias => "pl";
 
         public override string Help => "Debug command for spawning pills";
 
         public override void Run(string[] args)
         {
             new PillsItem();            
-        }
-    }
-
-    internal class PillsItemBehaviour : MonoBehaviour
-    {
-        private Camera cam;
-        private FsmBool guiUse;
-        private FsmString guiSubtitle;
-
-        private void Start()
-        {
-            cam = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").GetComponent<Camera>();
-            guiUse = Utils.GetGlobalVariable<FsmBool>("GUIUse");
-            guiSubtitle = Utils.GetGlobalVariable<FsmString>("GUIText");
-        }
-
-        private void Update()
-        {
-            if (!Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out var hit, 1f)) return;
-            if (hit.collider.gameObject != this.gameObject) return;
-
-            bool useActionPressed = cInput.GetButtonDown("Use");
         }
     }
 #endif

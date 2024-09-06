@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+
 using Harmony;
 using HealthMod;
 using MSCLoader;
@@ -19,15 +19,17 @@ namespace Adrenaline
         private static bool _debug = false;
         private static float _value = 100f;
         private static float _lossRate = 1.2f;
-        private static bool  _lockDecrease = false;
+        private static bool _lockDecrease = false;
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
         public static bool isDead = false;
         public static bool loopAudio = false;
 
         internal static FixedHUD _hud;
+        public static List<GameObject> pills_list = new List<GameObject>{ };
         public static List<AudioClip> clips;
         public static List<AudioSource> audios = new List<AudioSource>{ };
+        public static List<Texture> poster_textures;
         public static GameObject pills = null;
         public static GameObject poster = null;
         public static Texture can_texture = null;
