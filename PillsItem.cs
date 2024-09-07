@@ -69,19 +69,7 @@ namespace Adrenaline
 
         private void EatState()
         {
-            var dec = AdrenalineLogic.config.GetValueSafe("PILLS_DECREASE");
-            if (AdrenalineLogic.Value <= dec)
-            {
-                var state = fsm.FsmStates.First(v => v.Name == "Eat");
-                state.FinishAction(state.Actions[0]);
-                fsm.SendEvent("STOP");
-                fsm.SendEvent("STOP");
-
-                Utils.PrintDebug(eConsoleColors.YELLOW, "EatState: state: {0}", state.Name);
-                return;
-            }
-            
-            AdrenalineLogic.Value -= dec;
+            AdrenalineLogic.Value += AdrenalineLogic.config.GetValueSafe("PILLS_DECREASE");
         }
 
         private void DestroyState()
