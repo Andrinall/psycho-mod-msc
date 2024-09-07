@@ -169,6 +169,7 @@ namespace Adrenaline
             AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
             AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
             AdrenalineLogic.poster = LoadAsset<GameObject>(asset, "assets/prefabs/Poster.prefab");
+            AdrenalineLogic.background = LoadAsset<GameObject>(asset, "assets/prefabs/Background.prefab");
             
             AdrenalineLogic.poster_textures = new List<Texture> {
                 LoadAsset<Texture>(asset, "assets/textures/poster1.png"),

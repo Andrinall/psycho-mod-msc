@@ -31,6 +31,7 @@ namespace Adrenaline
         public static List<AudioClip> clips;
         public static List<AudioSource> audios = new List<AudioSource>{ };
         public static List<Texture> poster_textures;
+        public static GameObject background = null;
         public static GameObject pills = null;
         public static GameObject poster = null;
         public static Texture can_texture = null;

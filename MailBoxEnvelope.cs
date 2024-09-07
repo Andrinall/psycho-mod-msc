@@ -26,8 +26,19 @@ namespace Adrenaline
 
                 var sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
                 envelopeSheet = Instantiate(sheets.transform.Find("InspectionAD").gameObject);
-                envelopeSheet.gameObject.name = "DoctorMail";
-                envelopeSheet.transform.SetParent(GameObject.Find("Sheets").transform, worldPositionStays: false);
+                envelopeSheet.name = "DoctorMail";
+                envelopeSheet.transform.SetParent(sheets.transform, worldPositionStays: false);
+
+                var old_back = envelopeSheet.transform.GetChild(1);
+                Destroy(old_back.gameObject);
+
+                var _background = Instantiate(AdrenalineLogic.background);
+                _background.transform.SetParent(envelopeSheet.transform, worldPositionStays: false);
+                _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
+                _background.name = "Background";
+                _background.layer = 14;
+
+                _background.transform.GetChild(0).gameObject.layer = 14;
 
                 mailboxEnvelope.SetActive(true);
                 Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
