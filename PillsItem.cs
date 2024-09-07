@@ -29,11 +29,13 @@ namespace Adrenaline
 
         private void CreatePillsItem()
         {
-            var chips = Resources.FindObjectsOfTypeAll<Transform>().First(v => v.gameObject.name == "potato chips" && v.IsPrefab());
+            var chips = Resources.FindObjectsOfTypeAll<Transform>()
+                .First(v => v.gameObject.name == "potato chips" && v.IsPrefab());
 
             self = Object.Instantiate(chips.gameObject);
             self.name = "pills(itemx)";
             self.transform.position = position;
+            self.transform.SetParent(GameObject.Find("ITEMS").transform);
 
             var ren = self.AddComponent<ItemRenamer>();
             ren.TargetName = "potato chips(itemx)";
@@ -64,7 +66,6 @@ namespace Adrenaline
             state_destroy.Actions = dlist.ToArray();
             GameHook.InjectStateHook(self, "Use", "Destroy", DestroyState, true);
 
-            self.SetActive(true);
         }
 
         private void EatState()

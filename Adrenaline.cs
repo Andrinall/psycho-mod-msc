@@ -12,8 +12,8 @@ namespace Adrenaline
     {
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
-        public override string Author => "Andrinall,@racer";
-        public override string Version => "0.24.32";
+        public override string Author => "LUAR,Andrinall,@racer";
+        public override string Version => "0.4.41";
         public override string Description => "";
         public override bool SecondPass => true;
 
@@ -157,6 +157,7 @@ namespace Adrenaline
         {
 #if DEBUG
             ConsoleCommand.Add(new CREATE_PILLS());
+            ConsoleCommand.Add(new TP_COMMAND());
 #endif
             AdrenalineLogic.isDead = false;
             AdrenalineLogic.Value = 100f;
@@ -316,6 +317,66 @@ namespace Adrenaline
         public override void Run(string[] args)
         {
             new PillsItem();            
+        }
+    }
+
+    internal class TP_COMMAND : ConsoleCommand
+    {
+        public override string Name => "atp";
+        public override string Help => "Телепортирует игрока к позиции таблеток";
+
+        public override void Run(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                ShowHelpInfo();
+                return;
+            }
+
+            if (args[0].Length == 0)
+            {
+                ShowHelpInfo();
+                return;
+            }
+
+            if (args[0] == "help")
+            {
+                ShowHelpInfo();
+                return;
+            }
+
+
+            if (!Int32.TryParse(args[0], out var index))
+            {
+                ShowHelpInfo();
+                return;
+            }
+
+            if (index <= 0 || index > AdrenalineLogic.pills_positions.Count)
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Указан неверный индекс!");
+                ShowHelpInfo();
+                return;
+            }
+
+            AdrenalineLogic.pills_list.ForEach(v => UnityEngine.Object.Destroy(v));
+            AdrenalineLogic.pills_list.Clear();
+
+            var item = new PillsItem(AdrenalineLogic.pills_positions.ElementAt(index - 1));
+            AdrenalineLogic.pills_list.Add(item.self);
+
+            var targetPosition = item.self.transform.position;
+            targetPosition.y -= 0.05f;
+            GameObject.Find("PLAYER").transform.position = targetPosition;
+            Utils.PrintDebug("Вы успешно телепортированы к ID:{0}", index);
+        }
+
+        private void ShowHelpInfo()
+        {
+            Utils.PrintDebug(eConsoleColors.YELLOW, "====== Adrenaline TP ======");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Пример использования: atp 1");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Минимум: 1, Максимум: {0}", AdrenalineLogic.pills_positions.Count);
+            Utils.PrintDebug(eConsoleColors.YELLOW, "===========================");
         }
     }
 #endif

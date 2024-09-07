@@ -27,9 +27,10 @@ namespace Adrenaline
         public static bool loopAudio = false;
 
         internal static FixedHUD _hud;
+        public static List<Vector3> pills_positions;
         public static List<GameObject> pills_list = new List<GameObject>{ };
-        public static List<AudioClip> clips;
         public static List<AudioSource> audios = new List<AudioSource>{ };
+        public static List<AudioClip> clips;
         public static List<Texture> poster_textures;
         public static GameObject background = null;
         public static GameObject pills = null;

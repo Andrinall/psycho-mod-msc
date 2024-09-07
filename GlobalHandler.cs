@@ -175,7 +175,7 @@ namespace Adrenaline
 
         private void SpawnAllPills()
         {
-            var list = new List<Vector3>
+            AdrenalineLogic.pills_positions = new List<Vector3>
             {
                 new Vector3(462.2887f, 9.311339f, 1320.133f),
                 new Vector3(1353.568f, 5.9235f, 821.1407f),
@@ -227,11 +227,11 @@ namespace Adrenaline
                 new Vector3(1426.629f, -4.249069f, 751.5843f)
             };
 
-            list.ForEach(v => {
+            /*list.ForEach(v => {
                 var item = new PillsItem(v).self;
                 AdrenalineLogic.pills_list.Add(item);
                 item.SetActive(false);
-            });
+            });*/
         }
     }
 }
