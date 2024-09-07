@@ -14,7 +14,7 @@ namespace Adrenaline
         public override string Name => "Adrenaline";
         public override string Author => "LUAR,Andrinall,@racer";
         public override string Version => "0.4.41";
-        public override string Description => "";
+        public override string Description => "Adds a character's need for adrenaline";
         public override bool SecondPass => true;
 
         private string LastAddedComponent = "";
