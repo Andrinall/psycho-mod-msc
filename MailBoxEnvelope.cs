@@ -13,23 +13,6 @@ namespace Adrenaline
         private GameObject mailboxEnvelope;
         private GameObject envelopeSheet;
 
-        private void Start()
-        {
-            var fsm = mailboxEnvelope.GetPlayMaker("Use");
-            var state2 = fsm.GetState("State 2");
-            (state2.Actions.ElementAt(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
-
-            var openad = fsm.GetState("Open ad");
-            var action = (openad.Actions.ElementAt(1) as ActivateGameObject);
-            action.gameObject.GameObject.Value = envelopeSheet;
-            action.Owner = envelopeSheet;
-
-            fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
-            GameHook.InjectStateHook(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false));
-
-            mailboxEnvelope.SetActive(false);
-            envelopeSheet.SetActive(false);
-        }
 
         private void Awake()
         {
@@ -55,5 +38,22 @@ namespace Adrenaline
             }
         }
 
+        private void Start()
+        {
+            var fsm = mailboxEnvelope.GetPlayMaker("Use");
+            var state2 = fsm.GetState("State 2");
+            (state2.Actions.ElementAt(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
+
+            var openad = fsm.GetState("Open ad");
+            var action = (openad.Actions.ElementAt(1) as ActivateGameObject);
+            action.gameObject.GameObject.Value = envelopeSheet;
+            action.Owner = envelopeSheet;
+
+            fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
+            GameHook.InjectStateHook(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false));
+
+            mailboxEnvelope.SetActive(false);
+            envelopeSheet.SetActive(false);
+        }
     }
 }

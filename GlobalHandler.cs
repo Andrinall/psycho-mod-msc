@@ -12,10 +12,11 @@ namespace Adrenaline
     internal class GlobalHandler : MonoBehaviour
     {
         private GameObject kiljuguy;
+        private Transform HouseFire;
 
         private FsmFloat PlayerMovementSpeed;
         private FsmBool HouseBurningState;
-        private Transform HouseFire;
+        private FsmInt GlobalDay;
 
         private void Awake()
         {
@@ -34,6 +35,7 @@ namespace Adrenaline
             {
                 PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
                 HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
+                GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
                 HouseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
                 kiljuguy = GameObject.Find("KILJUGUY");
 
@@ -95,11 +97,11 @@ namespace Adrenaline
                     Utils.PrintDebug(eConsoleColors.GREEN, "AudioSource {0} created", source.clip.name);
                 }
 
-                Utils.PrintDebug("AUDIO loop loaded & started");
+                Utils.PrintDebug("AUDIO loops loaded & started");
             }
             catch (System.Exception e)
             {
-                Utils.PrintDebug("AUDIO loop loading failed: {0}", e.GetFullMessage());
+                Utils.PrintDebug("AUDIO loops loading failed: {0}", e.GetFullMessage());
             }
 
             try
@@ -111,6 +113,9 @@ namespace Adrenaline
             {
                 Utils.PrintDebug("Unable to spawn pills");
             }
+
+            if (AdrenalineLogic.LastDayUpdated == -1)
+                AdrenalineLogic.LastDayUpdated = GlobalDay.Value;
         }
 
         private void OnDestroy()
@@ -130,6 +135,23 @@ namespace Adrenaline
                 if (Vector3.Distance(HouseFire.position, transform.position) > 6f) return;
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
                 return;
+            }
+
+            if (GlobalDay.Value != AdrenalineLogic.LastDayUpdated)
+            {
+            TryRandom:
+                var disabled = AdrenalineLogic.pills_list.Where(v => !v.activeSelf).ToList();
+                var idx = Random.Range(0, disabled.Count);
+                var element = disabled.ElementAtOrDefault(idx);
+                if (element.activeSelf) goto TryRandom;
+                element.SetActive(true);
+
+                var mailFromDoctor = GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor");
+                mailFromDoctor.SetActive(true);
+                mailFromDoctor.GetComponent<PlayMakerFSM>().enabled = true;
+
+                Utils.PrintDebug("Day updated from {0} to {1}", AdrenalineLogic.LastDayUpdated, GlobalDay.Value);
+                AdrenalineLogic.LastDayUpdated = GlobalDay.Value;
             }
         }
 
@@ -205,11 +227,11 @@ namespace Adrenaline
                 new Vector3(1426.629f, -4.249069f, 751.5843f)
             };
 
-            /*list.ForEach(v => {
+            list.ForEach(v => {
                 var item = new PillsItem(v).self;
                 AdrenalineLogic.pills_list.Add(item);
                 item.SetActive(false);
-            });*/
+            });
         }
     }
 }

@@ -190,6 +190,7 @@ namespace Adrenaline
                 var time = data.GetValueSafe("LossRateLockTime");
                 var value = data.GetValueSafe("Value");
                 AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 20f) ? 30f : value;
+                AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(data.GetValueSafe("LastDayUpdated"));
                 AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
                 AdrenalineLogic.SetDecreaseLocked(time > 0, time);
 
@@ -292,7 +293,8 @@ namespace Adrenaline
                 {
                     ["Value"] = AdrenalineLogic.Value,
                     ["LossRate"] = AdrenalineLogic.LossRate,
-                    ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime()
+                    ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime(),
+                    ["LastDayUpdated"] = AdrenalineLogic.LastDayUpdated
                 });
             }
             catch

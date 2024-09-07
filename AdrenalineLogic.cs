@@ -22,6 +22,7 @@ namespace Adrenaline
         private static bool _lockDecrease = false;
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
+        public static int LastDayUpdated = -1;
         public static bool isDead = false;
         public static bool loopAudio = false;
 
