@@ -30,14 +30,7 @@ namespace Adrenaline
                     var prefab = base.transform.Find("LOD/GFX_Pub/paper_stand");
                     if (prefab == null) Utils.PrintDebug(eConsoleColors.RED, "TryReplacePrefab(pub_desk,bool) | prefab is null!");
 
-                    var renderer = prefab?.GetComponent<MeshRenderer>();
-                    if (renderer != null)
-                    {
-                        var mat = renderer.materials.ElementAt(0);
-
-                        mat.name = "ATLAS_OFFICE(Clone)";
-                        mat.mainTexture = AdrenalineLogic.atlas_texture;
-                    }
+                    Utils.SetMaterial(prefab.gameObject, 0, "ATLAS_OFFICE(Clone)", Globals.atlas_texture, Vector2.zero, Vector2.one);
                 }
                 catch
                 {
@@ -51,6 +44,7 @@ namespace Adrenaline
                 var cfren = prefabs.Find(v => v.name == "CoffeeFly").gameObject.AddComponent<ItemRenamer>();
                 cfren.TargetName = "empty cup(Clone)";
                 cfren.FinalName = "empty can(Clone)";
+
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
             } catch
@@ -59,7 +53,7 @@ namespace Adrenaline
             }
         }
 
-        public void SetDrinkPrice(float price)
+        internal void SetDrinkPrice(float price)
         {
             var OrderCoffee = base.transform.Find("LOD/ActivateBar/OrderList/4")
                 .GetComponents<PlayMakerFSM>().First(v => v.FsmName == "Buy");
@@ -71,39 +65,33 @@ namespace Adrenaline
 
         private void TryReplacePrefab(string name, bool isEmpty = false)
         {
-            try
-            {
-                var prefab = prefabs.Find(v => v.name == name);
-                ReplacePrefab(prefab, isEmpty);
-            }
-            catch
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to replace prefab {0}", name);
-            }
+            var prefab = prefabs.Find(v => v.name == name);
+            ReplacePrefab(prefab, isEmpty);
         }
-
+        
         private void TryReplacePrefab(Transform obj, bool isEmpty = false)
         {
+            ReplacePrefab(obj, isEmpty);
+        }
+
+        private void ReplacePrefab(Transform obj, bool isEmpty)
+        {
+
+            if (obj == null)
+                Utils.PrintDebug(eConsoleColors.RED, "ReplacePrefab(obj,bool) | base prefab is null");
+
             try
             {
-                ReplacePrefab(obj, isEmpty);
+                var mesh = isEmpty ? Globals.empty_cup : Globals.coffee_cup;
+                Utils.ChangeMesh(obj.gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
+
+                if (obj.childCount == 0) return;
+                Utils.ChangeMesh(obj.GetChild(0).gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
             }
             catch
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Unable to replace prefab {0}", obj?.name.ToString());
             }
-        }
-        
-        private void ReplacePrefab(Transform obj, bool isEmpty)
-        {
-            if (obj == null)
-                Utils.PrintDebug(eConsoleColors.RED, "ReplacePrefab(obj,bool) | base prefab is null");
-
-            var mesh = isEmpty ? AdrenalineLogic.empty_cup : AdrenalineLogic.coffee_cup;
-            Utils.ChangeMesh(obj.gameObject, mesh, AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
-            
-            if (obj.childCount == 0) return;
-            Utils.ChangeMesh(obj.GetChild(0).gameObject, mesh, AdrenalineLogic.can_texture, Vector2.zero, Vector2.one);
         }
     }
 }

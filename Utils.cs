@@ -8,7 +8,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 
-
 namespace Adrenaline
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
@@ -17,19 +16,31 @@ namespace Adrenaline
     internal static class Utils
     {
         private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
-        private static int GlobalDay_cached = -1;
+
+        internal static void CreateRandomPills()
+        {
+        Generate:
+            var idx = Random.Range(0, Globals.pills_positions.Count);
+            if (Globals.pills_list.Any(v => v.index == idx)) goto Generate;
+            Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAtOrDefault(idx)));
+
+            var Image = GameObject.FindObjectsOfType<GameObject>().First(v => v.name == "Sheets")
+                .transform.Find("DoctorMail/Background/Image");
+            var texture = Globals.mailScreens.ElementAtOrDefault(idx);
+            Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
+        }
 
         internal static void PlaySound(ASIndex index)
         {
             StopAllAudios((int)index);
-            var item = AdrenalineLogic.audios.ElementAt((int)index);
+            var item = Globals.audios.ElementAt((int)index);
             if (item.isPlaying) return;
             item.Play();
         }
 
         internal static void PlayDeathSound()
         {
-            AdrenalineLogic.audios.ElementAt((int)ASIndex.HEARTSTOP)
+            Globals.audios.ElementAt((int)ASIndex.HEARTSTOP)
                 .gameObject.transform.position = GameObject.Find("PLAYER").transform.position;
 
             PlaySound(ASIndex.HEARTSTOP);
@@ -37,18 +48,18 @@ namespace Adrenaline
 
         internal static void CreatePoster(int textureIndex, Vector3 position, Quaternion rotation)
         {
-            var poster = PrefabManager.Instantiate(AdrenalineLogic.poster);
+            var poster = PrefabManager.Instantiate(Globals.poster);
             poster.gameObject.name = "AdrenalineADV_Poster";
             poster.transform.position = position;
             poster.transform.rotation = rotation;
             poster.GetComponent<MeshRenderer>().material
-                .SetTexture("_MainTex", AdrenalineLogic.poster_textures.ElementAtOrDefault(textureIndex));
+                .SetTexture("_MainTex", Globals.poster_textures.ElementAtOrDefault(textureIndex));
         }
 
         internal static void StopAllAudios(int index = -1)
         {
-            var blacklist = AdrenalineLogic.audios.ElementAtOrDefault(index);
-            var list = AdrenalineLogic.audios.Where(v => v.isPlaying && v.clip.name != blacklist.clip.name);
+            var blacklist = Globals.audios.ElementAtOrDefault(index);
+            var list = Globals.audios.Where(v => v.isPlaying && v.clip.name != blacklist.clip.name);
             
             foreach (var item in list) item.Stop();
         }
@@ -103,7 +114,6 @@ namespace Adrenaline
             else PrintDebug(string.Format("Failed to cache FSM: {0}/{1} | {2}", obj.name, path, fsm));
 #endif
         }
-
 
         internal static void PrintDebug(string msg)
         {
@@ -162,43 +172,6 @@ namespace Adrenaline
             material.mainTexture = texture;
             material.mainTextureOffset = offset;
             material.mainTextureScale = scale;
-        }
-
-        /// <summary>
-        /// Gets a game hours in 12 hours format (am/pm)
-        /// </summary>
-        internal static float GetHours12()
-        {
-            var hours = 24f / (360f / GetGlobalVariable<FsmFloat>("TimeRotationHour").Value);
-            return (hours > 12 ? hours / 2 : hours);
-        }
-
-        /// <summary>
-        /// Gets a game minutes
-        /// </summary>
-        internal static float GetMinutes()
-        {
-            return 60f / (360f / GetGlobalVariable<FsmFloat>("TimeRotationMinute").Value);
-        }
-
-        /// <summary>
-        /// Returns true if game day is changed, else returns false
-        /// </summary>
-        internal static bool IsDayChanged()
-        {
-            FsmInt GlobalDays = GetGlobalVariable<FsmInt>("GlobalDays");
-
-            if (GlobalDay_cached == -1)
-            {
-                GlobalDay_cached = GlobalDays.Value;
-                return false;
-            }
-
-            if (GlobalDay_cached == GlobalDays.Value)
-                return false;
-
-            GlobalDay_cached = GlobalDays.Value;
-            return true;
         }
 
         /// <summary>

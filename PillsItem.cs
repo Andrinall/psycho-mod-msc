@@ -1,30 +1,35 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 
-using Harmony;
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
     internal class PillsItem
     {
-        public GameObject self;
+        internal GameObject self;
+        internal int index;
         private PlayMakerFSM fsm;
         private Vector3 position;
 
-        public PillsItem()
-        {
-            Transform player = GameObject.Find("PLAYER").transform;
-            position = player.position;
-            CreatePillsItem();
-        }
-
-        public PillsItem(Vector3 position)
+        internal PillsItem(int index, Vector3 position)
         {
             this.position = position;
-            CreatePillsItem();
+            this.index = index;
+            try
+            {
+                CreatePillsItem();
+                Utils.PrintDebug("PillsItem created with idx: {0} & position: {1}", index, position);
+            }
+            catch
+            {
+                Utils.PrintDebug("Unable to create PillsItem");
+            }
+        }
+
+        ~PillsItem()
+        {
+            Object.Destroy(self);
         }
 
         private void CreatePillsItem()
@@ -41,12 +46,13 @@ namespace Adrenaline
             ren.TargetName = "potato chips(itemx)";
             ren.FinalName = "pills(itemx)";
 
-            var mesh = AdrenalineLogic.pills.GetComponent<MeshFilter>().mesh;
-            var texture = AdrenalineLogic.pills.GetComponent<MeshRenderer>().material.mainTexture;
-            Utils.ChangeMesh(self, mesh, texture, Vector2.zero, Vector2.one);
+            Utils.ChangeMesh(self,
+                Globals.pills.GetComponent<MeshFilter>().mesh,
+                Globals.pills.GetComponent<MeshRenderer>().material.mainTexture,
+                Vector2.zero, Vector2.one);
 
             var collider = self.GetComponent<BoxCollider>();
-            var pcoll = AdrenalineLogic.pills.GetComponent<BoxCollider>();
+            var pcoll = Globals.pills.GetComponent<BoxCollider>();
             collider.contactOffset = pcoll.contactOffset;
             collider.center = pcoll.center;
             collider.name = pcoll.name;
@@ -54,23 +60,21 @@ namespace Adrenaline
 
             fsm = self.GetPlayMaker("Use");
             var state_eat = PlayMakerExtensions.GetState(fsm, "Eat");
-            List<FsmStateAction> list = new List<FsmStateAction>(state_eat.Actions);
+            var list = state_eat.Actions.ToList();
             list.RemoveRange(6, 3);
             state_eat.Actions = list.ToArray();
-
             GameHook.InjectStateHook(self, "Use", "Eat", EatState);
 
             var state_destroy = PlayMakerExtensions.GetState(fsm, "Destroy");
-            var dlist = new List<FsmStateAction>(state_destroy.Actions);
+            var dlist = state_destroy.Actions.ToList();
             dlist.Clear();
             state_destroy.Actions = dlist.ToArray();
             GameHook.InjectStateHook(self, "Use", "Destroy", DestroyState, true);
-
         }
 
-        private void EatState()
+        private static void EatState()
         {
-            AdrenalineLogic.Value += AdrenalineLogic.config.GetValueSafe("PILLS_DECREASE");
+            AdrenalineLogic.UpdateLossRatePerDay();
         }
 
         private void DestroyState()

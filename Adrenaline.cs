@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Harmony;
 using MSCLoader;
 using UnityEngine;
+using System.Xml.Linq;
 
 namespace Adrenaline
 {
@@ -12,9 +13,10 @@ namespace Adrenaline
     {
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
-        public override string Author => "LUAR,Andrinall,@racer";
-        public override string Version => "0.4.41";
+        public override string Author => "LUAR, Andrinall, @racer";
+        public override string Version => "0.5.4";
         public override string Description => "Adds a character's need for adrenaline";
+        public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
 
         private string LastAddedComponent = "";
@@ -25,47 +27,6 @@ namespace Adrenaline
         private List<SettingsSlider> _sliders = new List<SettingsSlider>();
         private List<string> _highValues =
             new List<string> { "JANNI_PETTERI_HIT", "VENTTI_WIN", "PISS_ON_DEVICES", "SPARK_WIRING", "COFFEE_INCREASE", "PUB_PRICE" };
-
-        private Dictionary<string, string> localization = new Dictionary<string, string>
-        {
-            ["MIN_LOSS_RATE"] = "Мин.значение пассивного уменьшения",
-            ["MAX_LOSS_RATE"] = "Макс.значение пассивного уменьшения",
-            ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
-            ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
-            ["SPRINT_INCREASE"] = "Увеличение от бега",
-            ["HIGHSPEED_INCREASE"] = "Увеличение от езды на большой скорости",
-            ["BROKEN_WINDSHIELD_INCREASE"] = "Увеличение при езде без лобового стекла",
-            ["FIGHT_INCREASE"] = "Увеличение во время драки",
-            ["WINDOW_BREAK_INCREASE"] = "Увеличение за разбивание окон (магазин, паб)",
-            ["HOUSE_BURNING"] = "Увеличение во время пожара в доме",
-            ["TEIMO_PISS"] = "Увеличение за обоссывание Теймо",
-            ["GUARD_CATCH"] = "Увеличение при попытках охранника поймать игрока",
-            ["VENTTI_WIN"] = "Увеличение адреналина при поражениях в игре со свином",
-            ["JANNI_PETTERI_HIT"] = "Увеличение за накаут от NPC (Janni и Petteri)",
-            ["TEIMO_SWEAR"] = "Увеличение при ругани Теймо на персонажа",
-            ["PISS_ON_DEVICES"] = "Увеличение за обоссывание приборов в доме(TV)",
-            ["SPARKS_WIRING"] = "Увеличение при замыкании проводки Satsuma",
-            ["SPILL_SHIT"] = "Увеличение при сливе говна в неположенном месте (crime)",
-            ["RALLY_PLAYER"] = "Увеличение при участии в ралли (?)",
-            ["MURDER_WALKING"] = "Увеличение при приследовании мужиком с топором",
-            ["COFFEE_INCREASE"] = "Увеличение от употребления кофе",
-            ["ENERGY_DRINK_INCREASE"] = "Увеличение от употребления энергетика",
-            ["CRASH_INCREASE"] = "Увеличение за получение урона в аварии",
-            ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
-            ["PILLS_DECREASE"] = "Уменьшение адреналина после принятия таблеток",
-            ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
-            ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
-
-            ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
-            ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
-            ["REQUIRED_SPEED_Ferndale"] = "Мин.скорость для прибавки при езде в Ferndale",
-            ["REQUIRED_SPEED_Hayosiko"] = "Мин.скорость для прибавки при езде в Hayosiko",
-            ["REQUIRED_SPEED_Fittan"] = "Мин.скорость для прибавки при езде в Fittan",
-            ["REQUIRED_SPEED_Gifu"] = "Мин.скорость для прибавки при езде в Gifu",
-
-            ["REQUIRED_CRASH_SPEED"] = "Мин.скорость для прибавки от аварии",
-            ["REQUIRED_WINDSHIELD_SPEED"] = "Мин.скорость для прибавки при езде без лобаша"
-        };
 
         public override void ModSettings()
         {
@@ -81,7 +42,7 @@ namespace Adrenaline
                 SaveLoad.DeleteValue(this, "DebugAdrenaline");
             }
 
-            Settings.AddHeader(this, "DEBUG SETTINGS");
+            //Settings.AddHeader(this, "Debug ", true);
             _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 5f, 195f, AdrenalineLogic.Value, AdrenalineChanged));
 
             var MIN_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
@@ -95,21 +56,46 @@ namespace Adrenaline
                 var lock_ = lockbox.GetValue();
                 AdrenalineLogic.SetDecreaseLocked(lock_, 2_000_000_000f, lock_);
             });
-            
-            foreach (var element in AdrenalineLogic.config)
-            {
-                if (element.Key == "PUB_COFFEE_PRICE") continue;
 
-                _sliders.Add(Settings.AddSlider(
-                    mod: this,
-                    settingID: element.Key.GetHashCode().ToString(),
-                    name: localization.GetValueSafe(element.Key),
-                    minValue: 0,
-                    maxValue: 250,
-                    value: element.Value,
-                    onValueChanged: new VariableChanger(element.Key, ref _sliders).ValueChanged
-                ));
+            foreach (var item in AdrenalineLogic.config)
+            {
+                if (item.Key.Contains("LOSS_RATE")) continue;
+                if (item.Key == "PUB_COFFEE_PRICE") continue;
+                AddSlider(item);
             }
+
+            /*Settings.AddHeader(this, "Значения, для всего времени действия", true);
+            for (var i = 1; i < 11; i++)
+            {
+                var element = AdrenalineLogic.config.ElementAtOrDefault(i);
+                if (element.Key.Contains("LOSS_RATE")) continue;
+                AddSlider(element);
+            }
+
+            Settings.AddHeader(this, "Значения, для +/- 1 раз за действие", true);
+            for (var i = 11; i < 26; i++)
+            {
+                var element = AdrenalineLogic.config.ElementAtOrDefault(i);
+                if (element.Key == "PUB_COFFEE_PRICE") continue;
+                AddSlider(element);
+            }
+
+            Settings.AddHeader(this, "Минимальные значения", true);
+            for (var i = 26; i < 34; i++)
+                AddSlider(AdrenalineLogic.config.ElementAtOrDefault(i));*/
+        }
+
+        private void AddSlider(KeyValuePair<string, float> element)
+        {
+            _sliders.Add(Settings.AddSlider(
+                mod: this,
+                settingID: element.Key.GetHashCode().ToString(),
+                name: Globals.localization.GetValueSafe(element.Key),
+                minValue: 0,
+                maxValue: 250,
+                value: element.Value,
+                onValueChanged: new VariableChanger(element.Key, ref _sliders).ValueChanged
+            ));
         }
 
         private void AdrenalineChanged()
@@ -143,11 +129,10 @@ namespace Adrenaline
 
         public override void OnNewGame()
         {
-            AdrenalineLogic.LossRate =
-                AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE") - AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
-            
-            AdrenalineLogic.Value = 100f;
             AdrenalineLogic.isDead = false;
+            AdrenalineLogic.Value = 100f;
+            AdrenalineLogic.LastDayUpdated = 1;
+            AdrenalineLogic.UpdateLossRatePerDay();
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
                 SaveLoad.DeleteValue(this, "Adrenaline");
@@ -156,35 +141,24 @@ namespace Adrenaline
         public override void OnLoad()
         {
 #if DEBUG
-            ConsoleCommand.Add(new CREATE_PILLS());
             ConsoleCommand.Add(new TP_COMMAND());
 #endif
             AdrenalineLogic.isDead = false;
             AdrenalineLogic.Value = 100f;
             
-            var asset = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
-            asset.GetAllAssetNames().All(v => Utils.PrintDebug(eConsoleColors.WHITE, v) && true);
-            AdrenalineLogic.can_texture = LoadAsset<Texture>(asset, "assets/textures/Energy.png");
-            AdrenalineLogic.atlas_texture = LoadAsset<Texture>(asset, "assets/textures/ATLAS_OFFICE.png");
-            AdrenalineLogic.coffee_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar_coffee.mesh.obj");
-            AdrenalineLogic.empty_cup = LoadAsset<Mesh>(asset, "assets/meshes/coffee_cup_bar.mesh.obj");
-            AdrenalineLogic.pills = LoadAsset<GameObject>(asset, "assets/prefabs/Pills.prefab");
-            AdrenalineLogic.poster = LoadAsset<GameObject>(asset, "assets/prefabs/Poster.prefab");
-            AdrenalineLogic.background = LoadAsset<GameObject>(asset, "assets/prefabs/Background.prefab");
-            
-            AdrenalineLogic.poster_textures = new List<Texture> {
-                LoadAsset<Texture>(asset, "assets/textures/poster1.png"),
-                LoadAsset<Texture>(asset, "assets/textures/poster2.png")
-            };
+            var bundle = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
+            Globals.can_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/Energy.png");
+            Globals.atlas_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/ATLAS_OFFICE.png");
+            Globals.coffee_cup = Globals.LoadAsset<Mesh>(bundle, "assets/meshes/coffee_cup_bar_coffee.mesh.obj");
+            Globals.empty_cup = Globals.LoadAsset<Mesh>(bundle, "assets/meshes/coffee_cup_bar.mesh.obj");
+            Globals.pills = Globals.LoadAsset<GameObject>(bundle, "assets/prefabs/Pills.prefab");
+            Globals.poster = Globals.LoadAsset<GameObject>(bundle, "assets/prefabs/Poster.prefab");
+            Globals.background = Globals.LoadAsset<GameObject>(bundle, "assets/prefabs/Background.prefab");
 
-            AdrenalineLogic.clips = new List<AudioClip> {
-                LoadAsset<AudioClip>(asset, "assets/audio/heart_10.wav"),
-                LoadAsset<AudioClip>(asset, "assets/audio/heart_30.wav"),
-                LoadAsset<AudioClip>(asset, "assets/audio/heart_50.wav"),
-                LoadAsset<AudioClip>(asset, "assets/audio/heart_bust.wav"),
-                LoadAsset<AudioClip>(asset, "assets/audio/heart_stop.wav")
-            };
-            asset.Unload(false);
+            Globals.LoadAllPosters(bundle);
+            Globals.LoadAllScreens(bundle);
+            Globals.LoadAllSounds(bundle);
+            bundle.Unload(false);
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
             {
@@ -261,21 +235,6 @@ namespace Adrenaline
             return GameObject.Find(obj)?.AddComponent<T>() ?? null;
         }
 
-        private T LoadAsset<T>(AssetBundle storage, string path) where T : UnityEngine.Object
-        {
-            try
-            {
-                var asset = storage.LoadAsset<T>(path);
-                if (asset == null) throw new NullReferenceException();
-                return asset;
-            }
-            catch
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset {0} from embedded resource (??!)", path);
-                return null;
-            }
-        }
-
         public override void OnSave()
         {
 #if DEBUG
@@ -307,19 +266,6 @@ namespace Adrenaline
     }
 
 #if DEBUG
-    internal class CREATE_PILLS : ConsoleCommand
-    {
-        public override string Name => "pills";
-        public override string Alias => "pl";
-
-        public override string Help => "Debug command for spawning pills";
-
-        public override void Run(string[] args)
-        {
-            new PillsItem();            
-        }
-    }
-
     internal class TP_COMMAND : ConsoleCommand
     {
         public override string Name => "atp";
@@ -327,13 +273,7 @@ namespace Adrenaline
 
         public override void Run(string[] args)
         {
-            if (args.Length == 0)
-            {
-                ShowHelpInfo();
-                return;
-            }
-
-            if (args[0].Length == 0)
+            if (string.IsNullOrEmpty(args[0]))
             {
                 ShowHelpInfo();
                 return;
@@ -352,18 +292,18 @@ namespace Adrenaline
                 return;
             }
 
-            if (index <= 0 || index > AdrenalineLogic.pills_positions.Count)
+            if (index <= 0 || index > Globals.pills_positions.Count)
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Указан неверный индекс!");
                 ShowHelpInfo();
                 return;
             }
 
-            AdrenalineLogic.pills_list.ForEach(v => UnityEngine.Object.Destroy(v));
-            AdrenalineLogic.pills_list.Clear();
+            Globals.pills_list.ForEach(v => UnityEngine.Object.Destroy(v.self));
+            Globals.pills_list.Clear();
 
-            var item = new PillsItem(AdrenalineLogic.pills_positions.ElementAt(index - 1));
-            AdrenalineLogic.pills_list.Add(item.self);
+            var item = new PillsItem(index - 1, Globals.pills_positions.ElementAt(index - 1));
+            Globals.pills_list.Add(item);
 
             var targetPosition = item.self.transform.position;
             targetPosition.y -= 0.05f;
@@ -375,7 +315,7 @@ namespace Adrenaline
         {
             Utils.PrintDebug(eConsoleColors.YELLOW, "====== Adrenaline TP ======");
             Utils.PrintDebug(eConsoleColors.YELLOW, "Пример использования: atp 1");
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Минимум: 1, Максимум: {0}", AdrenalineLogic.pills_positions.Count);
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Минимум: 1, Максимум: {0}", Globals.pills_positions.Count);
             Utils.PrintDebug(eConsoleColors.YELLOW, "===========================");
         }
     }

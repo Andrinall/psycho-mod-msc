@@ -21,7 +21,7 @@ namespace Adrenaline
             }
         }
 
-        public static bool InjectStateHook(GameObject gameObject, string stateName, Action hook, bool placeLast = false)
+        internal static bool InjectStateHook(GameObject gameObject, string stateName, Action hook, bool placeLast = false)
         {
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, stateName);
             if (stateFromGameObject == null) return false;
@@ -29,7 +29,7 @@ namespace Adrenaline
             return InjectStateHook_internal(stateFromGameObject, hook, placeLast);
         }
 
-        public static bool InjectStateHook(GameObject gameObject, string FsmName, string stateName, Action hook, bool placeLast = false)
+        internal static bool InjectStateHook(GameObject gameObject, string FsmName, string stateName, Action hook, bool placeLast = false)
         {
             FsmState stateFromGameObject = GetStateFromGameObject(gameObject, FsmName, stateName);
             if (stateFromGameObject == null) return false;

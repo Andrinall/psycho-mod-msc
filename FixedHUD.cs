@@ -36,7 +36,7 @@ namespace Adrenaline
             _struct.Clear();
         }
         
-        public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
+        internal void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
@@ -55,29 +55,26 @@ namespace Adrenaline
             else
                 _struct.Add(hudElement);
 
-            //Utils.PrintDebug("Element {0} inserted into _struct with index {1}", hudElement.name, index);
-
             Structurize();
         }
 
-        public bool IsElementExist(string name)
+        internal bool IsElementExist(string name)
         {
             return _struct.Exists(v => {
-                if (v == null)
-                {
-                    _struct.Remove(v);
-                    return false;
-                }
-                return v.name == name;
+                if (v != null)
+                    return v.name == name;
+
+                _struct.Remove(v);
+                return false;
             });
         }
 
-        public GameObject GetElement(string name)
+        internal GameObject GetElement(string name)
         {
             return base.transform.Find(name)?.gameObject;
         }
 
-        public void MoveElement(string name, int index)
+        internal void MoveElement(string name, int index)
         {
             if (index < 0 || index > _struct.Capacity) return;
             if (!IsElementExist(name)) return;
@@ -90,7 +87,7 @@ namespace Adrenaline
             Structurize();
         }
 
-        public void RemoveElement(string name)
+        internal void RemoveElement(string name)
         {
             if (!IsElementExist(name)) return;
             GameObject element = _struct.Find(v => v.name == name);
@@ -99,13 +96,13 @@ namespace Adrenaline
             Structurize();
         }
 
-        public void HideElement(string name, bool hide)
+        internal void HideElement(string name, bool hide)
         {
             if (!IsElementExist(name)) return;
             _struct.Find(v => v.name == name).SetActive(!hide);
         }
 
-        public void SetElementText(string name, string text)
+        internal void SetElementText(string name, string text)
         {
             if (!IsElementExist(name)) return;
             Transform label = _struct.Find(v => v.name == name).transform.Find("HUDLabel");
@@ -113,7 +110,7 @@ namespace Adrenaline
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
         }
 
-        public void SetElementColor(string name, Color color)
+        internal void SetElementColor(string name, Color color)
         {
             if (!IsElementExist(name)) return;
             base.transform.Find(name + "/Pivot/HUDBar")
@@ -121,13 +118,13 @@ namespace Adrenaline
                 .material.color = color;
         }
 
-        public void SetElementScale(string name, Vector3 scale)
+        internal void SetElementScale(string name, Vector3 scale)
         {
             if (!IsElementExist(name)) return;
             base.transform.Find(name + "/Pivot").localScale = scale;
         }
 
-        public int GetIndexByName(string name)
+        internal int GetIndexByName(string name)
         {
             return _struct.FindIndex(v => v.name == name);
         }

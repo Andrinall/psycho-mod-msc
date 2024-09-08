@@ -7,46 +7,33 @@ using UnityEngine;
 
 namespace Adrenaline
 {
-    public static class AdrenalineLogic
+    internal static class AdrenalineLogic
     {
         private static readonly string PAPER_TEXT_FI = "Mies kuoli\nsydänkohtaukseen";
         private static readonly string PAPER_TEXT_EN_MAX = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
         private static readonly string PAPER_TEXT_EN_MIN = "Man found\ndead of\ncardiac arrest\nin region of\nAlivieska";
 
-        public static readonly float MIN_ADRENALINE = 0f;
-        public static readonly float MAX_ADRENALINE = 200f;
-
         private static bool _debug = false;
         private static float _value = 100f;
-        private static float _lossRate = 1.2f;
+        private static float _lossRate = 0f;
         private static bool _lockDecrease = false;
         private static float _lockCooldown = 0f; // 12000 == 1 minute
 
-        public static int LastDayUpdated = -1;
-        public static bool isDead = false;
-        public static bool loopAudio = false;
+        internal static readonly float MIN_ADRENALINE = 0f;
+        internal static readonly float MAX_ADRENALINE = 200f;
+
+        internal static int LastDayUpdated = 1;
+        internal static bool isDead = false;
+        internal static bool loopAudio = false;
 
         internal static FixedHUD _hud;
-        public static List<Vector3> pills_positions;
-        public static List<GameObject> pills_list = new List<GameObject>{ };
-        public static List<AudioSource> audios = new List<AudioSource>{ };
-        public static List<AudioClip> clips;
-        public static List<Texture> poster_textures;
-        public static GameObject background = null;
-        public static GameObject pills = null;
-        public static GameObject poster = null;
-        public static Texture can_texture = null;
-        public static Texture atlas_texture = null;
-        public static Mesh empty_cup = null;
-        public static Mesh coffee_cup = null;
 
-
-        public static Dictionary<string, float> config = new Dictionary<string, float>
+        internal static Dictionary<string, float> config = new Dictionary<string, float>
         {
             // timed
-            ["LOSS_RATE_SPEED"]            = 0.50f,
-            ["MIN_LOSS_RATE"]              = 0.40f,
-            ["MAX_LOSS_RATE"]              = 1.4f,
+            ["LOSS_RATE_SPEED"]            = 0.0006f,
+            ["MIN_LOSS_RATE"]              = 0.0f,
+            ["MAX_LOSS_RATE"]              = 3.0f,
             ["DEFAULT_DECREASE"]           = 0.18f,
             ["SPRINT_INCREASE"]            = 0.30f,
             ["HIGHSPEED_INCREASE"]         = 0.35f,
@@ -71,10 +58,9 @@ namespace Adrenaline
             ["RALLY_PLAYER"]          = 1f,
             ["DRIVEBY_INCREASE"]      = 5f,
             ["CRASH_INCREASE"]        = 20f,
-            ["PILLS_DECREASE"]        = 50f,
+            ["PUB_COFFEE_PRICE"]      = 14f,
 
             // vars for check
-            ["PUB_COFFEE_PRICE"]        = 14f,
             ["REQUIRED_SPEED_Jonnez"]   = 70f,
             ["REQUIRED_SPEED_Satsuma"]  = 120f,
             ["REQUIRED_SPEED_Ferndale"] = 110f,
@@ -86,7 +72,7 @@ namespace Adrenaline
             ["REQUIRED_WINDSHIELD_SPEED"] = 45f
         };
 
-        public static float Value {
+        internal static float Value {
             get { return _value; }
             set
             {
@@ -130,7 +116,7 @@ namespace Adrenaline
             }
         }
 
-        public static float LossRate
+        internal static float LossRate
         {
             get { return _lossRate; }
             set {
@@ -141,32 +127,36 @@ namespace Adrenaline
             }
         }
 
-        public static void Tick()
+        internal static void Tick()
         {
-            if (ModLoader.IsModPresent("Health"))
-            {
-                var lossSpeed = config.GetValueSafe("LOSS_RATE_SPEED");
-                if (Health.hp < 30)
-                    LossRate -= lossSpeed * Time.fixedDeltaTime;
-                if (Health.hp > 80)
-                    LossRate += lossSpeed * Time.fixedDeltaTime;
-            }
+            var lossSpeed = config.GetValueSafe("LOSS_RATE_SPEED");
+            LossRate += lossSpeed * Time.fixedDeltaTime;
 
             if (IsDecreaseLocked() && _debug) return;
             Value -= config.GetValueSafe("DEFAULT_DECREASE") * LossRate * Time.fixedDeltaTime; // basic decrease adrenaline
         }
 
-        public static void IncreaseTimed(float val)
+        internal static void IncreaseTimed(float val)
         {
             Value += val * Time.fixedDeltaTime;
         }
 
-        public static void IncreaseOnce(float val)
+        internal static void IncreaseOnce(float val)
         {
             Value += val;
         }
 
-        public static void SetDecreaseLocked(bool state, float time = 12000f, bool debug = false)
+        internal static void UpdateLossRatePerDay()
+        {
+            LossRate = 0.2f * ((float)LastDayUpdated / 4);
+        }
+
+        internal static void UpdateLossRatePerDay(int day)
+        {
+            LossRate = 0.2f * ((float)day / 4);
+        }
+
+        internal static void SetDecreaseLocked(bool state, float time = 12000f, bool debug = false)
         {
             if (state == _lockDecrease) return;
             _lockDecrease = state;
@@ -174,12 +164,12 @@ namespace Adrenaline
             _debug = debug;
         }
 
-        public static float GetDecreaseLockTime()
+        internal static float GetDecreaseLockTime()
         {
             return (_lockDecrease && _lockCooldown > 0) ? _lockCooldown : 0f;
         }
 
-        public static bool IsDecreaseLocked()
+        internal static bool IsDecreaseLocked()
         {
             if (_lockCooldown > 0)
                 _lockCooldown -= Time.fixedDeltaTime;
@@ -188,7 +178,7 @@ namespace Adrenaline
             return (_lockDecrease && _lockCooldown > 0);
         }
 
-        public static bool IsPrefab(this Transform tempTrans)
+        internal static bool IsPrefab(this Transform tempTrans)
         {
             if (!tempTrans.gameObject.activeInHierarchy && tempTrans.gameObject.activeSelf)
             {

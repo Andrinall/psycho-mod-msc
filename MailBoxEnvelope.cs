@@ -13,7 +13,6 @@ namespace Adrenaline
         private GameObject mailboxEnvelope;
         private GameObject envelopeSheet;
 
-
         private void Awake()
         {
             try
@@ -30,9 +29,10 @@ namespace Adrenaline
                 envelopeSheet.transform.SetParent(sheets.transform, worldPositionStays: false);
 
                 var old_back = envelopeSheet.transform.GetChild(1);
+                old_back.parent = null;
                 Destroy(old_back.gameObject);
 
-                var _background = Instantiate(AdrenalineLogic.background);
+                var _background = Instantiate(Globals.background);
                 _background.transform.SetParent(envelopeSheet.transform, worldPositionStays: false);
                 _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
                 _background.name = "Background";
@@ -41,6 +41,7 @@ namespace Adrenaline
                 _background.transform.GetChild(0).gameObject.layer = 14;
 
                 mailboxEnvelope.SetActive(true);
+                mailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
                 Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
             }
             catch
@@ -54,14 +55,16 @@ namespace Adrenaline
             var fsm = mailboxEnvelope.GetPlayMaker("Use");
             var state2 = fsm.GetState("State 2");
             (state2.Actions.ElementAt(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
-
+            
             var openad = fsm.GetState("Open ad");
-            var action = (openad.Actions.ElementAt(1) as ActivateGameObject);
+            var action = openad.Actions.ElementAt(1) as ActivateGameObject;
             action.gameObject.GameObject.Value = envelopeSheet;
             action.Owner = envelopeSheet;
 
+            GameHook.InjectStateHook(mailboxEnvelope, "Use", "Open ad", Utils.CreateRandomPills);
+
             fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
-            GameHook.InjectStateHook(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false));
+            GameHook.InjectStateHook(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false), true);
 
             mailboxEnvelope.SetActive(false);
             envelopeSheet.SetActive(false);

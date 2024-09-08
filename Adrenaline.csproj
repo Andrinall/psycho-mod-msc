@@ -90,6 +90,7 @@
     <Compile Include="FixedHUD.cs" />
     <Compile Include="GameHook.cs" />
     <Compile Include="GlobalHandler.cs" />
+    <Compile Include="Globals.cs" />
     <Compile Include="HighSpeedHandler.cs" />
     <Compile Include="DriveByHandler.cs" />
     <Compile Include="ItemRenamer.cs" />
