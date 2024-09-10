@@ -79,10 +79,11 @@ namespace Adrenaline
             get { return _value; }
             set
             {
+                _value = value;
+
                 if (_hud == null) return;
                 if (isDead) return;
-
-                _value = value;
+                
 
                 if (_value <= MIN_ADRENALINE)
                     KillCustom(PAPER_TEXT_EN_MIN, PAPER_TEXT_FI);
@@ -123,6 +124,7 @@ namespace Adrenaline
         {
             get { return _lossRate; }
             set {
+                Utils.PrintDebug("_lossRate setted + {0}", IsDecreaseLocked());
                 if (IsDecreaseLocked()) return;
                 _lossRate = Mathf.Clamp(value, 0f, 50f);
             }
@@ -149,12 +151,12 @@ namespace Adrenaline
 
         internal static void UpdateLossRatePerDay()
         {
-            LossRate = 0.2f * ((float)LastDayUpdated / 4);
+            LossRate = 0.2f * ((float)LastDayUpdated / 4f);
         }
 
         internal static void UpdateLossRatePerDay(int day)
         {
-            LossRate = 0.2f * ((float)day / 4);
+            LossRate = 0.2f * ((float)day / 4f);
         }
 
         internal static void SetDecreaseLocked(bool state, float time = 12000f, bool debug = false)

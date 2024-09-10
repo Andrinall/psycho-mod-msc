@@ -95,6 +95,7 @@ namespace Adrenaline
         public override void FixedUpdate()
         {
             _sliders[0].Instance.Value = AdrenalineLogic.Value;
+            _sliders[1].Instance.Value = AdrenalineLogic.LossRate;
             lockbox.SetValue(AdrenalineLogic.IsDecreaseLocked());
         }
 #endif
@@ -113,7 +114,7 @@ namespace Adrenaline
             AdrenalineLogic.Value = 100f;
             AdrenalineLogic.LastDayUpdated = Utils.GetGlobalVariable<FsmInt>("GlobalDay").Value;
             AdrenalineLogic.UpdateLossRatePerDay(AdrenalineLogic.LastDayUpdated);
-            AdrenalineLogic.SetDecreaseLocked(false);
+            AdrenalineLogic.SetDecreaseLocked(false, 0);
         }
 
         public override void OnLoad()
@@ -135,13 +136,22 @@ namespace Adrenaline
             if (SaveLoad.ValueExists(this, "Adrenaline"))
             {
                 savedata = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
+                if (savedata == null) return;
+
                 var time = savedata.GetValueSafe("LossRateLockTime");
                 var value = savedata.GetValueSafe("Value");
-                AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 20f) ? 30f : value;
+                AdrenalineLogic.Value = (value <= 20f) ? 30f : value;
                 AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(savedata.GetValueSafe("LastDayUpdated"));
                 AdrenalineLogic.LossRate = savedata.GetValueSafe("LossRate");
-                AdrenalineLogic.SetDecreaseLocked(time > 0, time);
+                AdrenalineLogic.SetDecreaseLocked(time > 50f, time);
+                if (AdrenalineLogic.isDead)
+                {
+                    AdrenalineLogic.isDead = false;
+                    if (AdrenalineLogic.LossRate >= 3.5f)
+                        AdrenalineLogic.UpdateLossRatePerDay();
+                }
 
+                Utils.PrintDebug("Value:{0}; time:{1}, day:{2}, loss:{3}", value, time, AdrenalineLogic.LastDayUpdated, AdrenalineLogic.LossRate);
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             else
