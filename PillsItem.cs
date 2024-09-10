@@ -63,13 +63,13 @@ namespace Adrenaline
             var list = state_eat.Actions.ToList();
             list.RemoveRange(6, 3);
             state_eat.Actions = list.ToArray();
-            GameHook.InjectStateHook(self, "Use", "Eat", EatState);
+            StateHook.Inject(self, "Use", "Eat", EatState);
 
             var state_destroy = PlayMakerExtensions.GetState(fsm, "Destroy");
             var dlist = state_destroy.Actions.ToList();
             dlist.Clear();
             state_destroy.Actions = dlist.ToArray();
-            GameHook.InjectStateHook(self, "Use", "Destroy", DestroyState, true);
+            StateHook.Inject(self, "Use", "Destroy", -1,DestroyState);
         }
 
         private static void EatState()

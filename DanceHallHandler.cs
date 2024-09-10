@@ -19,7 +19,7 @@ namespace Adrenaline
             {
                 var ClubGuard = base.transform.Find("GUARD/Guard")?.gameObject;
                 if (ClubGuard != null)
-                    GameHook.InjectStateHook(ClubGuard, "React", "Catch", GuardCatchingPlayer);
+                    StateHook.Inject(ClubGuard, "React", "Catch", GuardCatchingPlayer);
                 
                 ClubFighter =
                     base.transform.Find("FIGHTER/Fighter").GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Hit");

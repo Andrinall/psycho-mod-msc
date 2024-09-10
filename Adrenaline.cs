@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
 using Harmony;
 using MSCLoader;
 using UnityEngine;
-using System.Xml.Linq;
+using HutongGames.PlayMaker;
 
 namespace Adrenaline
 {
@@ -20,6 +19,8 @@ namespace Adrenaline
         public override bool SecondPass => true;
 
         private string LastAddedComponent = "";
+
+        private Dictionary<string, float> savedata = new Dictionary<string, float>();
 
 #if DEBUG
         private SettingsCheckBox lockbox;
@@ -42,12 +43,8 @@ namespace Adrenaline
                 SaveLoad.DeleteValue(this, "DebugAdrenaline");
             }
 
-            //Settings.AddHeader(this, "Debug ", true);
             _sliders.Add(Settings.AddSlider(this, "adn_Value", "Текущее значение", 5f, 195f, AdrenalineLogic.Value, AdrenalineChanged));
-
-            var MIN_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MIN_LOSS_RATE");
-            var MAX_LOSS_RATE = AdrenalineLogic.config.GetValueSafe("MAX_LOSS_RATE");
-            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", MIN_LOSS_RATE, MAX_LOSS_RATE, AdrenalineLogic.LossRate, LossRateChanged));
+            _sliders.Add(Settings.AddSlider(this, "adn_loss", "Скорость пассивного уменьшения", 0f, 8f, AdrenalineLogic.LossRate, LossRateChanged));
 
             var PUB_COFFEE_PRICE = AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE");
             priceSlider = Settings.AddSlider(this, "adn_price", "Стоимость энергетика в пабе", 0, 500, (int)PUB_COFFEE_PRICE, PubPriceChanged);
@@ -63,26 +60,6 @@ namespace Adrenaline
                 if (item.Key == "PUB_COFFEE_PRICE") continue;
                 AddSlider(item);
             }
-
-            /*Settings.AddHeader(this, "Значения, для всего времени действия", true);
-            for (var i = 1; i < 11; i++)
-            {
-                var element = AdrenalineLogic.config.ElementAtOrDefault(i);
-                if (element.Key.Contains("LOSS_RATE")) continue;
-                AddSlider(element);
-            }
-
-            Settings.AddHeader(this, "Значения, для +/- 1 раз за действие", true);
-            for (var i = 11; i < 26; i++)
-            {
-                var element = AdrenalineLogic.config.ElementAtOrDefault(i);
-                if (element.Key == "PUB_COFFEE_PRICE") continue;
-                AddSlider(element);
-            }
-
-            Settings.AddHeader(this, "Минимальные значения", true);
-            for (var i = 26; i < 34; i++)
-                AddSlider(AdrenalineLogic.config.ElementAtOrDefault(i));*/
         }
 
         private void AddSlider(KeyValuePair<string, float> element)
@@ -118,34 +95,29 @@ namespace Adrenaline
         public override void FixedUpdate()
         {
             _sliders[0].Instance.Value = AdrenalineLogic.Value;
-
-            var slider1 = _sliders[1].Instance;
-            slider1.Value = AdrenalineLogic.LossRate;
-            slider1.Vals[0] = AdrenalineLogic.config["MIN_LOSS_RATE"];
-            slider1.Vals[1] = AdrenalineLogic.config["MAX_LOSS_RATE"];
             lockbox.SetValue(AdrenalineLogic.IsDecreaseLocked());
         }
 #endif
 
         public override void OnNewGame()
         {
-            AdrenalineLogic.isDead = false;
-            AdrenalineLogic.Value = 100f;
-            AdrenalineLogic.LastDayUpdated = 1;
-            AdrenalineLogic.UpdateLossRatePerDay();
+            SetDefaultValuesForLogic();
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
                 SaveLoad.DeleteValue(this, "Adrenaline");
         }
 
-        public override void OnLoad()
+        private void SetDefaultValuesForLogic()
         {
-#if DEBUG
-            ConsoleCommand.Add(new TP_COMMAND());
-#endif
             AdrenalineLogic.isDead = false;
             AdrenalineLogic.Value = 100f;
-            
+            AdrenalineLogic.LastDayUpdated = Utils.GetGlobalVariable<FsmInt>("GlobalDay").Value;
+            AdrenalineLogic.UpdateLossRatePerDay(AdrenalineLogic.LastDayUpdated);
+            AdrenalineLogic.SetDecreaseLocked(false);
+        }
+
+        public override void OnLoad()
+        {
             var bundle = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
             Globals.can_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/Energy.png");
             Globals.atlas_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/ATLAS_OFFICE.png");
@@ -162,18 +134,21 @@ namespace Adrenaline
 
             if (SaveLoad.ValueExists(this, "Adrenaline"))
             {
-                var data = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
-                var time = data.GetValueSafe("LossRateLockTime");
-                var value = data.GetValueSafe("Value");
+                savedata = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
+                var time = savedata.GetValueSafe("LossRateLockTime");
+                var value = savedata.GetValueSafe("Value");
                 AdrenalineLogic.Value = (value <= AdrenalineLogic.MIN_ADRENALINE + 20f) ? 30f : value;
-                AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(data.GetValueSafe("LastDayUpdated"));
-                AdrenalineLogic.LossRate = data.GetValueSafe("LossRate");
+                AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(savedata.GetValueSafe("LastDayUpdated"));
+                AdrenalineLogic.LossRate = savedata.GetValueSafe("LossRate");
                 AdrenalineLogic.SetDecreaseLocked(time > 0, time);
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             else
+            {
                 ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
+                SetDefaultValuesForLogic();
+            }
             
             AddComponent<GlobalHandler>("PLAYER");
             ModConsole.Print("[Adrenaline]: <color=green>Successfully loaded!</color>");
@@ -222,10 +197,13 @@ namespace Adrenaline
             foreach (var item in dynamics)
                 item.gameObject.AddComponent<CrashHandler>();
 
-            var humans = Resources.FindObjectsOfTypeAll<GameObject>().Where(v => v.name == "HumanTriggerCrime").ToArray();
-            Utils.PrintDebug("Humans count: " + humans.Length.ToString());
+            var humans = Resources.FindObjectsOfTypeAll<GameObject>().Where(v => v.name == "HumanTriggerCrime");
+            Utils.PrintDebug("Humans count: " + humans.Count());
             foreach (var item in humans)
                 item.AddComponent<DriveByHandler>();
+
+            GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor")
+                .SetActive(savedata.GetValueSafe("DoctorMailSpawned") == 1f);
         }
 
         private T AddComponent<T>(string obj) where T : Component
@@ -240,7 +218,9 @@ namespace Adrenaline
 #if DEBUG
             try
             {
-                if (SaveLoad.ValueExists(this, "DebugAdrenaline")) SaveLoad.DeleteValue(this, "DebugAdrenaline");
+                if (SaveLoad.ValueExists(this, "DebugAdrenaline"))
+                    SaveLoad.DeleteValue(this, "DebugAdrenaline");
+
                 SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
             }
             catch
@@ -248,75 +228,36 @@ namespace Adrenaline
                 throw new UnassignedReferenceException("Unable to save DEBUG settings!");
             }
 #endif
-            try
+            SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
             {
-                SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
-                {
-                    ["Value"] = AdrenalineLogic.Value,
-                    ["LossRate"] = AdrenalineLogic.LossRate,
-                    ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime(),
-                    ["LastDayUpdated"] = AdrenalineLogic.LastDayUpdated
-                });
-            }
-            catch
-            {
-                throw new UnassignedReferenceException("Unable to save MAIN settings!");
-            }
+                ["Value"] = AdrenalineLogic.Value,
+                ["LossRate"] = AdrenalineLogic.LossRate,
+                ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime(),
+                ["LastDayUpdated"] = AdrenalineLogic.LastDayUpdated,
+                ["DoctorMailSpawned"] = GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor").activeSelf ? 1f : 0f
+            });
         }
     }
 
 #if DEBUG
-    internal class TP_COMMAND : ConsoleCommand
+    internal class VariableChanger
     {
-        public override string Name => "atp";
-        public override string Help => "Телепортирует игрока к позиции таблеток";
+        private string field;
+        private string ID;
+        private List<SettingsSlider> _sliders = null;
 
-        public override void Run(string[] args)
+        internal VariableChanger(string name, ref List<SettingsSlider> t)
         {
-            if (string.IsNullOrEmpty(args[0]))
-            {
-                ShowHelpInfo();
-                return;
-            }
-
-            if (args[0] == "help")
-            {
-                ShowHelpInfo();
-                return;
-            }
-
-
-            if (!Int32.TryParse(args[0], out var index))
-            {
-                ShowHelpInfo();
-                return;
-            }
-
-            if (index <= 0 || index > Globals.pills_positions.Count)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Указан неверный индекс!");
-                ShowHelpInfo();
-                return;
-            }
-
-            Globals.pills_list.ForEach(v => UnityEngine.Object.Destroy(v.self));
-            Globals.pills_list.Clear();
-
-            var item = new PillsItem(index - 1, Globals.pills_positions.ElementAt(index - 1));
-            Globals.pills_list.Add(item);
-
-            var targetPosition = item.self.transform.position;
-            targetPosition.y -= 0.05f;
-            GameObject.Find("PLAYER").transform.position = targetPosition;
-            Utils.PrintDebug("Вы успешно телепортированы к ID:{0}", index);
+            this.field = name;
+            this.ID = name.GetHashCode().ToString();
+            this._sliders = t;
         }
 
-        private void ShowHelpInfo()
+        internal void ValueChanged()
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, "====== Adrenaline TP ======");
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Пример использования: atp 1");
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Минимум: 1, Максимум: {0}", Globals.pills_positions.Count);
-            Utils.PrintDebug(eConsoleColors.YELLOW, "===========================");
+            var slider = _sliders.Find(v => v.Instance.ID == ID);
+            AdrenalineLogic.config[field] = slider.GetValue();
+            Utils.PrintDebug("Set value for " + field + " == " + slider.GetValue());
         }
     }
 #endif

@@ -11,9 +11,9 @@ namespace Adrenaline
         {
             try
             {
-                var result = GameHook.InjectStateHook(base.gameObject, "Pouring", "State 14", PouringOnDevices, true);
+                StateHook.Inject(base.gameObject, "Pouring", "State 14", -1,PouringOnDevices);
 
-                Utils.PrintDebug(eConsoleColors.GREEN, "PissOnDevicesHandler {0}", result ? "enabled" : "failed setup");
+                Utils.PrintDebug(eConsoleColors.GREEN, "PissOnDevicesHandler enabled");
             }
             catch
             {

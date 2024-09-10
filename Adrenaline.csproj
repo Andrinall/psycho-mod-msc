@@ -88,7 +88,6 @@
     <Compile Include="DanceHallHandler.cs" />
     <Compile Include="FerndaleSeatbeltFix.cs" />
     <Compile Include="FixedHUD.cs" />
-    <Compile Include="GameHook.cs" />
     <Compile Include="GlobalHandler.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="HighSpeedHandler.cs" />
@@ -99,7 +98,7 @@
     <Compile Include="PillsItem.cs" />
     <Compile Include="PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VariableChanger.cs" />
+    <Compile Include="StateHook.cs" />
     <Compile Include="WindshieldHandler.cs" />
     <Compile Include="SpillHandler.cs" />
     <Compile Include="StoreActionsHandler.cs" />

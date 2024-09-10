@@ -24,8 +24,10 @@ namespace Adrenaline
             if (Globals.pills_list.Any(v => v.index == idx)) goto Generate;
             Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAtOrDefault(idx)));
 
-            var Image = GameObject.FindObjectsOfType<GameObject>().First(v => v.name == "Sheets")
-                .transform.Find("DoctorMail/Background/Image");
+            var Image = Resources.FindObjectsOfTypeAll<GameObject>()
+                .First(v => v.name == "Sheets").transform
+                .Find("DoctorMail/Background/Image");
+
             var texture = Globals.mailScreens.ElementAtOrDefault(idx);
             Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
         }
@@ -82,21 +84,6 @@ namespace Adrenaline
             arr[0] = sub[0];
 
             return new string(arr);
-        }
-
-        internal static void CacheFSM(ref PlayMakerFSM obj, string path, string fsm = "")
-        {
-            if (obj?.gameObject != null) return;
-
-            if (fsm.Length == 0)
-                obj = GameObject.Find(path)?.GetComponent<PlayMakerFSM>();
-            else
-                obj = GameObject.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
-
-#if !SILENT
-            if (obj?.gameObject != null) PrintDebug(string.Format("Cached FSM: {0} | {1}", path, fsm));
-            else PrintDebug(string.Format("Failed to cache FSM: {0} | {1}", path, fsm));
-#endif
         }
 
         internal static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")

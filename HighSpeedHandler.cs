@@ -35,17 +35,33 @@ namespace Adrenaline
         private void FixedUpdate()
         {
             if (PlayerVehicle.Value != CarName) return;
-            if (CarName == "Jonnez" && Helmet.Value == true) return;
-            if (CarName != "Jonnez" && SeatbeltLocked.Value == true) return;
-
-            var rally = RallyPlayerOnStage?.Value == true;
+            
+            var rally = RallyPlayerOnStage?.Value == true && CarName == "Satsuma";
             var RequiredSpeed = AdrenalineLogic.config.GetValueSafe("REQUIRED_SPEED_" + CarName);
             RequiredSpeed = (rally ? RequiredSpeed - 20f : RequiredSpeed);
-            if (drivetrain?.differentialSpeed >= RequiredSpeed)
-                AdrenalineLogic.IncreaseTimed(
-                    AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE") +
-                    ( rally ? AdrenalineLogic.config.GetValueSafe("RALLY_PLAYER") : 0f )
-                );
+            if (drivetrain.differentialSpeed <= RequiredSpeed) return;
+
+            var value = AdrenalineLogic.config.GetValueSafe("HIGHSPEED_INCREASE");
+            var helmet_debuff = AdrenalineLogic.config.GetValueSafe("HELMET_DECREASE");
+            if (CarName == "Jonnez")
+            {
+                value += (Helmet.Value ? -helmet_debuff : helmet_debuff);
+                AdrenalineLogic.IncreaseTimed(value);
+                Utils.PrintDebug("HighSpeed:: car:{0}, helmet:{1}, speed:{2}",
+                    CarName, Helmet.Value, drivetrain.differentialSpeed);
+
+                return;
+            }
+
+            var seatbelt_debuff = AdrenalineLogic.config.GetValueSafe("SEATBELT_DECREASE");
+            var rallybuff = AdrenalineLogic.config.GetValueSafe("RALLY_PLAYER");
+            value += (SeatbeltLocked.Value ? -seatbelt_debuff : seatbelt_debuff);
+            value += (Helmet.Value ? -helmet_debuff : helmet_debuff);
+            value += (rally ? rallybuff : 0f);
+
+            AdrenalineLogic.IncreaseTimed(value);
+            Utils.PrintDebug("HighSpeed:: car:{0}, seatbelt:{1}, rally:{2}, speed:{3}",
+                CarName, SeatbeltLocked.Value, rally, drivetrain.differentialSpeed);
         }
     }
 }

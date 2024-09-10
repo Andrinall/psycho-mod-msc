@@ -1,6 +1,7 @@
-﻿using MSCLoader;
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -74,8 +75,6 @@ namespace Adrenaline
 
         internal static Dictionary<string, string> localization = new Dictionary<string, string>
         {
-            ["MIN_LOSS_RATE"] = "Мин.значение пассивного уменьшения",
-            ["MAX_LOSS_RATE"] = "Макс.значение пассивного уменьшения",
             ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
             ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
             ["SPRINT_INCREASE"] = "Увеличение от бега",
@@ -100,7 +99,8 @@ namespace Adrenaline
             ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
             ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
             ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
-            ["SLEEP_DECREASE"] = "Уменьшение адреналина при сне (при засыпании)",
+            ["SLEEP_DECREASE"] = "Уменьшение адреналина при сне",
+            ["HELMET_DECREASE"] = "Дебафф при езде на скорости от <b>шлема</b>",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",

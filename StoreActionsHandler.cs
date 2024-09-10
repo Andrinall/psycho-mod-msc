@@ -23,13 +23,12 @@ namespace Adrenaline
                 var windowStore = GFX_Store.transform.Find("BreakableWindows/BreakableWindow")?.gameObject;
 
                 if (windowPub != null)
-                    GameHook.InjectStateHook(windowPub, "Shatter", BreakWindow);
+                    StateHook.Inject(windowPub, "Shatter", BreakWindow);
 
                 if (windowStore != null)
-                    GameHook.InjectStateHook(windowStore, "Shatter", BreakWindow);
+                    StateHook.Inject(windowStore, "Shatter", BreakWindow);
 
-                GameHook.InjectStateHook(_Teimo.transform.Find("Pivot/Speak").gameObject, "Speak", "State 1", TeimoSwears);
-
+                StateHook.Inject(_Teimo.transform.Find("Pivot/Speak").gameObject, "Speak", "State 1", TeimoSwears);
                 Utils.PrintDebug(eConsoleColors.GREEN, "StoreActionsHandler enabled");
             } catch
             {

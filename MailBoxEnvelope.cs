@@ -12,6 +12,7 @@ namespace Adrenaline
     {
         private GameObject mailboxEnvelope;
         private GameObject envelopeSheet;
+        private bool installed = false;
 
         private void Awake()
         {
@@ -27,6 +28,7 @@ namespace Adrenaline
                 envelopeSheet = Instantiate(sheets.transform.Find("InspectionAD").gameObject);
                 envelopeSheet.name = "DoctorMail";
                 envelopeSheet.transform.SetParent(sheets.transform, worldPositionStays: false);
+                envelopeSheet.SetActive(true);
 
                 var old_back = envelopeSheet.transform.GetChild(1);
                 old_back.parent = null;
@@ -37,7 +39,6 @@ namespace Adrenaline
                 _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
                 _background.name = "Background";
                 _background.layer = 14;
-
                 _background.transform.GetChild(0).gameObject.layer = 14;
 
                 mailboxEnvelope.SetActive(true);
@@ -61,13 +62,19 @@ namespace Adrenaline
             action.gameObject.GameObject.Value = envelopeSheet;
             action.Owner = envelopeSheet;
 
-            GameHook.InjectStateHook(mailboxEnvelope, "Use", "Open ad", Utils.CreateRandomPills);
-
             fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
-            GameHook.InjectStateHook(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false), true);
-
             mailboxEnvelope.SetActive(false);
+        }
+
+        private void OnEnable()
+        {
+            if (installed) return;
+
+            StateHook.Inject(mailboxEnvelope, "Use", "Open ad", Utils.CreateRandomPills);
+            StateHook.Inject(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false));
             envelopeSheet.SetActive(false);
+            installed = true;
+            Utils.PrintDebug(eConsoleColors.YELLOW, "MailBoxEnvelope enabled");
         }
     }
 }

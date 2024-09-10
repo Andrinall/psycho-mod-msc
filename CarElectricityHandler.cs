@@ -9,7 +9,7 @@ namespace Adrenaline
         {
             try
             {
-                GameHook.InjectStateHook(base.gameObject, "Shock", "Reset", ShockHit);
+                StateHook.Inject(base.gameObject, "Shock", "Reset", ShockHit);
                 Utils.PrintDebug(eConsoleColors.GREEN, "CarElectricityHandler enabled");
             } catch
             {

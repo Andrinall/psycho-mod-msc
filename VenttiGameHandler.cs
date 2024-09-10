@@ -9,8 +9,8 @@ namespace Adrenaline
         {
             try
             {
-                var result = GameHook.InjectStateHook(base.gameObject, "Lose", VenttiWin);
-                Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler {0}", result ? "enabled" : "not loaded");
+                StateHook.Inject(base.gameObject, "Lose", VenttiWin);
+                Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler enabled");
             }
             catch
             {

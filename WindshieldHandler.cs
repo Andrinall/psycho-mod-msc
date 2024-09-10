@@ -25,20 +25,20 @@ namespace Adrenaline
                 {
                     case "Satsuma":
                     {
-                        drivetrain = base.GetComponent<Drivetrain>();
-                        Damaged = base.transform.Find("Body/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        Damaged = base.transform.Find("Body/Windshield")
+                            .GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
                         break;
                     }
                     case "Gifu":
                     {
-                        drivetrain = base.GetComponent<Drivetrain>();
-                        Damaged = base.transform.Find("LOD/WindshieldLeft").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        Damaged = base.transform.Find("LOD/WindshieldLeft")
+                            .GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
                         break;
                     }
                     case "Hayosiko":
                     {
-                        drivetrain = base.GetComponent<Drivetrain>();
-                        Damaged = base.transform.Find("LOD/Windshield").GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
+                        Damaged = base.transform.Find("LOD/Windshield")
+                            .GetComponent<PlayMakerFSM>().FsmVariables.GetFsmBool("Damaged");
                         break;
                     }
                     default:
@@ -48,6 +48,7 @@ namespace Adrenaline
                     }
                 }
 
+                drivetrain = base.GetComponent<Drivetrain>();
                 Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled for " + CarName);
             }
             catch
