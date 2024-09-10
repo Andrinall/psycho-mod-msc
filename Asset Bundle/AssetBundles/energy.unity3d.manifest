@@ -1,0 +1,111 @@
+ManifestFileVersion: 0
+CRC: 2818375867
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: ddbcc3d89a734ab237bd24ab068762e1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: e15de17c3a1291a4bb1e5e8335113294
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+Assets:
+- Assets/Screens/42.png
+- Assets/Screens/17.png
+- Assets/Materials/PinsMat.mat
+- Assets/Textures/poster2.png
+- Assets/Screens/29.png
+- Assets/Meshes/coffee_cup_bar.mesh.obj
+- Assets/Screens/12.png
+- Assets/Screens/3.png
+- Assets/Audio/heart_stop.wav
+- Assets/Screens/32.png
+- Assets/Screens/33.png
+- Assets/Screens/6.png
+- Assets/Screens/7.png
+- Assets/Screens/19.png
+- Assets/Screens/39.png
+- Assets/Screens/38.png
+- Assets/Meshes/Pins.obj
+- Assets/Screens/35.png
+- Assets/Meshes/Pills.obj
+- Assets/Screens/34.png
+- Assets/Audio/heart_bust.wav
+- Assets/Screens/5.png
+- Assets/Screens/45.png
+- Assets/Materials/PosterMat.mat
+- Assets/Screens/24.png
+- Assets/Textures/Pills_Texture.png
+- Assets/Screens/15.png
+- Assets/Screens/21.png
+- Assets/Materials/MailPhoto.mat
+- Assets/Textures/Pismo.png
+- Assets/Screens/4.png
+- Assets/Screens/13.png
+- Assets/Screens/28.png
+- Assets/Screens/8.png
+- Assets/Audio/heart_10.wav
+- Assets/Screens/31.png
+- Assets/Screens/14.png
+- Assets/Screens/36.png
+- Assets/Screens/26.png
+- Assets/Screens/11.png
+- Assets/Meshes/coffee_cup_bar_coffee.mesh.obj
+- Assets/Prefabs/Poster.prefab
+- Assets/Textures/metal-5-4.png
+- Assets/Prefabs/Background.prefab
+- Assets/Textures/ATLAS_OFFICE.png
+- Assets/Screens/18.png
+- Assets/Textures/Energy.png
+- Assets/Audio/heart_50.wav
+- Assets/Screens/44.png
+- Assets/Materials/EnergyCan.mat
+- Assets/Screens/41.png
+- Assets/Screens/46.png
+- Assets/Screens/20.png
+- Assets/Screens/37.png
+- Assets/Textures/poster1.png
+- Assets/Screens/23.png
+- Assets/Audio/heart_30.wav
+- Assets/Screens/10.png
+- Assets/Prefabs/Pills.prefab
+- Assets/Screens/47.png
+- Assets/Screens/30.png
+- Assets/Screens/40.png
+- Assets/Screens/22.png
+- Assets/Materials/MailBackground.mat
+- Assets/Screens/25.png
+- Assets/Screens/2.png
+- Assets/Materials/PillsMat.mat
+- Assets/Screens/43.png
+- Assets/Meshes/Poster.obj
+- Assets/Screens/16.png
+- Assets/Screens/0.png
+- Assets/Screens/9.png
+- Assets/Screens/27.png
+- Assets/Screens/1.png
+Dependencies: []
