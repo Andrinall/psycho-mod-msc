@@ -100,6 +100,7 @@ namespace Adrenaline
             ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
             ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
             ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
+            ["SLEEP_DECREASE"] = "Уменьшение адреналина при сне (при засыпании)",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",

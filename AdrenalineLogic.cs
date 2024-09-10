@@ -59,6 +59,7 @@ namespace Adrenaline
             ["DRIVEBY_INCREASE"]      = 5f,
             ["CRASH_INCREASE"]        = 20f,
             ["PUB_COFFEE_PRICE"]      = 14f,
+            ["SLEEP_DECREASE"]        = 20f,
 
             // vars for check
             ["REQUIRED_SPEED_Jonnez"]   = 70f,
@@ -121,9 +122,7 @@ namespace Adrenaline
             get { return _lossRate; }
             set {
                 if (IsDecreaseLocked()) return;
-                var MIN_LOSS_RATE = config.GetValueSafe("MIN_LOSS_RATE");
-                var MAX_LOSS_RATE = config.GetValueSafe("MAX_LOSS_RATE");
-                _lossRate = Mathf.Clamp(value, MIN_LOSS_RATE, MAX_LOSS_RATE);
+                _lossRate = Mathf.Clamp(value, 0f, 50f);
             }
         }
 
