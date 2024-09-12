@@ -13,6 +13,7 @@ namespace Adrenaline
         private GameObject kiljuguy;
         private Transform HouseFire;
 
+        private PlayMakerFSM SmokingFSM;
         private FsmFloat PlayerMovementSpeed;
         private FsmBool HouseBurningState;
         private FsmInt GlobalDay;
@@ -46,6 +47,8 @@ namespace Adrenaline
                 .Where(v => v.GetComponents<PlayMakerFSM>().Length == 4).ToArray()[0].gameObject
                 .AddComponent<HighSpeedHandler>();
 
+            SmokingFSM = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Smoking").GetPlayMaker("Start");
+
             if (AdrenalineLogic.LastDayUpdated == 1)
                 AdrenalineLogic.LastDayUpdated = GlobalDay.Value;           
 
@@ -70,6 +73,9 @@ namespace Adrenaline
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("HOUSE_BURNING")); // increase adrenaline while house is burning
                 return;
             }
+
+            if (SmokingFSM.ActiveStateName == "Outhale")
+                AdrenalineLogic.IncreaseTimed(-AdrenalineLogic.config.GetValueSafe("SMOKING_DECREASE"));
 
             if (GlobalDay.Value != AdrenalineLogic.LastDayUpdated)
             {

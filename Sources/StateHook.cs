@@ -55,10 +55,14 @@ namespace Adrenaline
             try
             {
                 PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
-                if (playMaker == null) throw new NullReferenceException();
+                if (playMaker == null)
+                    return;
+                    //throw new NullReferenceException($"Doesn't find FSM {fsmName} in object {gameObject.name}");
 
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
-                if (playMakerState == null) throw new NullReferenceException();
+                if (playMakerState == null)
+                    return;
+                    //throw new NullReferenceException($"Doesn't find state {stateName} in FSM {fsmName} in object {gameObject.name}");
 
                 List<FsmStateAction> list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookAction item = new FsmHookAction { hook = hook };

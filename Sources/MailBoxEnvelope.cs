@@ -53,17 +53,24 @@ namespace Adrenaline
 
         private void Start()
         {
-            var fsm = mailboxEnvelope.GetPlayMaker("Use");
-            var state2 = fsm.GetState("State 2");
-            (state2.Actions.ElementAt(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
-            
-            var openad = fsm.GetState("Open ad");
-            var action = openad.Actions.ElementAt(1) as ActivateGameObject;
-            action.gameObject.GameObject.Value = envelopeSheet;
-            action.Owner = envelopeSheet;
+            try
+            {
+                var fsm = mailboxEnvelope.GetPlayMaker("Use");
+                var state2 = fsm.GetState("State 2");
+                (state2.Actions.ElementAtOrDefault(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
 
-            fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
-            mailboxEnvelope.SetActive(false);
+                var openad = fsm.GetState("Open ad");
+                var action = openad.Actions.Last() as ActivateGameObject;
+                action.gameObject.GameObject.Value = envelopeSheet;
+                action.Owner = envelopeSheet;
+
+                fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
+                mailboxEnvelope.SetActive(false);
+            }
+            catch
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "error in MailBoxEnvelope:Start()");
+            }
         }
 
         private void OnEnable()

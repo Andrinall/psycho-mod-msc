@@ -82,6 +82,9 @@ namespace Adrenaline
             foreach (var item in list) item.Stop();
         }
 
+        /// <summary>
+        /// Easy gets a fsm global variable by type & name
+        /// </summary>
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
@@ -104,17 +107,6 @@ namespace Adrenaline
             arr[0] = sub[0];
 
             return new string(arr);
-        }
-
-        internal static void CacheFSM(ref PlayMakerFSM var, ref GameObject obj, string path, string fsm = "")
-        {
-            if (var?.gameObject != null) return;
-            if (obj == null) return;
-
-            if (fsm.Length == 0)
-                var = obj.transform.Find(path)?.GetComponent<PlayMakerFSM>();
-            else
-                var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
         }
 
         /// <summary>
@@ -189,6 +181,9 @@ namespace Adrenaline
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         internal static bool IsPrefab(this Transform tempTrans)
         {
             if (!tempTrans.gameObject.activeInHierarchy && tempTrans.gameObject.activeSelf)

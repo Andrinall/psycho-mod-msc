@@ -100,7 +100,9 @@ namespace Adrenaline
             ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
             ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
             ["SLEEP_DECREASE"] = "Уменьшение адреналина при сне",
-            ["HELMET_DECREASE"] = "Дебафф при езде на скорости от <b>шлема</b>",
+            ["HELMET_DECREASE"] = "Дебафф при езде на скорости со <b>шлемом</b>",
+            ["SEATBELT_DECREASE"] = "Дебафф при езде с пристёгнутым ремнём",
+            ["SMOKING_DECREASE"] = "Уменьшение от курения",
 
             ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
             ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",

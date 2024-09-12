@@ -40,10 +40,21 @@ namespace Adrenaline
 
         private void FixedUpdate()
         {
-            Utils.CacheFSM(ref TriggerPissOnTeimo, ref _Teimo, "Pivot/FacePissTrigger");
+            try
+            {
+                if (TriggerPissOnTeimo == null)
+                {
+                    var obj = _Teimo.transform.Find("Pivot/FacePissTrigger");
+                    if (obj == null || obj.gameObject == null) return;
+                    TriggerPissOnTeimo = obj.gameObject.GetPlayMaker("Reaction");
+                }
+            } catch {}
 
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
+            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("TEIMO_PISS"));
+                Utils.PrintDebug(eConsoleColors.GREEN, "Value increased by pissing on teimo");
+            }
         }
 
         private void BreakWindow()

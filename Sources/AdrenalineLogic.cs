@@ -43,8 +43,10 @@ namespace Adrenaline
             ["SEATBELT_DECREASE"] = 0.08f,
             ["FIGHT_INCREASE"] = 0.47f,
             ["HOUSE_BURNING"] = 0.56f,
-            ["TEIMO_PISS"] = 1.50f,
+            ["TEIMO_PISS"] = 1.0f,
             ["SPILL_SHIT"] = 1.1f,
+            ["RALLY_PLAYER"] = 1f,
+            ["SMOKING_DECREASE"] = 0.3f,
 
             // once
             ["MURDERER_THREAT"] = 30f,
@@ -53,18 +55,17 @@ namespace Adrenaline
             ["GUARD_CATCH"] = 2.50f,
             ["VENTTI_WIN"] = 11.0f,
             ["JANNI_PETTERI_HIT"] = 45.5f,
-            ["TEIMO_SWEAR"] = 3.0f,
+            ["TEIMO_SWEAR"] = 0.9f,
             ["PISS_ON_DEVICES"] = 25f,
             ["SPARKS_WIRING"] = 15f,
             ["ENERGY_DRINK_INCREASE"] = 15f,
             ["COFFEE_INCREASE"] = 9.3f,
-            ["RALLY_PLAYER"] = 1f,
             ["DRIVEBY_INCREASE"] = 5f,
             ["CRASH_INCREASE"] = 20f,
-            ["PUB_COFFEE_PRICE"] = 14f,
             ["SLEEP_DECREASE"] = 20f,
 
             // vars for check
+            ["PUB_COFFEE_PRICE"] = 250f,
             ["REQUIRED_SPEED_Jonnez"] = 70f,
             ["REQUIRED_SPEED_Satsuma"] = 120f,
             ["REQUIRED_SPEED_Ferndale"] = 110f,
@@ -80,6 +81,8 @@ namespace Adrenaline
             get { return _value; }
             set
             {
+                if (IsDecreaseLocked() && _debug) return;
+
                 _value = value;
 
                 if (_hud == null) return;
@@ -128,15 +131,13 @@ namespace Adrenaline
         {
             get { return _lossRate; }
             set {
-                Utils.PrintDebug($"_lossRate setted + {IsDecreaseLocked()}");
                 if (IsDecreaseLocked()) return;
                 _lossRate = Mathf.Clamp(value, 0f, 50f);
             }
         }
 
         /// <summary>
-        /// Increase lossRate & decrease adrenaline value
-        /// Called per FixedUpdate from GlobalHandler
+        /// Increase lossRate & decrease adrenaline value. Called per FixedUpdate from GlobalHandler.
         /// </summary>
         internal static void Tick()
         {
@@ -218,7 +219,6 @@ namespace Adrenaline
         {
             if (isDead) return;
 
-            isDead = true;
             Utils.PrintDebug("KillCustom called!!");
             try
             {
@@ -226,6 +226,7 @@ namespace Adrenaline
                 {
                     Utils.PlayDeathSound();
                     Health.killCustom(en, fi);
+                    isDead = true;
                     return;
                 }
             }
@@ -242,7 +243,8 @@ namespace Adrenaline
                 var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
                 paper.Find("TextEN").GetComponent<TextMesh>().text = en;
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
-                death.SetActive(isDead);
+                death.SetActive(true);
+                isDead = true;
             }
             catch (Exception e)
             {

@@ -54,22 +54,43 @@ namespace Adrenaline
                 AdrenalineLogic.SetDecreaseLocked(lock_, 2_000_000_000f, lock_);
             });
 
+            var i = 0;
+            var _lossRateItems = AdrenalineLogic.config.Count(v => v.Key.Contains("LOSS_RATE"));
+            var max_value = 250f;
             foreach (var item in AdrenalineLogic.config)
             {
                 if (item.Key.Contains("LOSS_RATE")) continue;
                 if (item.Key == "PUB_COFFEE_PRICE") continue;
-                AddSlider(item);
+
+                if (i == 0)
+                {
+                    Settings.AddText(this, "<color=red>=========================== Timed ============================</color>");
+                    max_value = 2f;
+                }
+                else if (i == 13 - _lossRateItems + 2)
+                {
+                    Settings.AddText(this, "<color=red>===========================  Once  ============================</color>");
+                    max_value = 50f;
+                }
+                else if (i == 29 - _lossRateItems)
+                {
+                    Settings.AddText(this, "<color=red>=========================  Min.vars  ===========================</color>");
+                    max_value = 250f;
+                }
+
+                AddSlider(item, max_value);
+                i++;
             }
         }
 
-        private void AddSlider(KeyValuePair<string, float> element)
+        private void AddSlider(KeyValuePair<string, float> element, float maxValue = 250f)
         {
             _sliders.Add(Settings.AddSlider(
                 mod: this,
                 settingID: element.Key.GetHashCode().ToString(),
                 name: Globals.localization.GetValueSafe(element.Key),
-                minValue: 0,
-                maxValue: 250,
+                minValue: 0f,
+                maxValue: maxValue,
                 value: element.Value,
                 onValueChanged: new VariableChanger(element.Key, ref _sliders).ValueChanged
             ));
@@ -140,6 +161,7 @@ namespace Adrenaline
 
                 var time = savedata.GetValueSafe("LossRateLockTime");
                 var value = savedata.GetValueSafe("Value");
+                AdrenalineLogic.isDead = savedata.GetValueSafe("IsDead") == 1f;
                 AdrenalineLogic.Value = (value <= 20f) ? 30f : value;
                 AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(savedata.GetValueSafe("LastDayUpdated"));
                 AdrenalineLogic.LossRate = savedata.GetValueSafe("LossRate");
@@ -150,8 +172,9 @@ namespace Adrenaline
                     if (AdrenalineLogic.LossRate >= 3.5f)
                         AdrenalineLogic.UpdateLossRatePerDay();
                 }
+                
 
-                Utils.PrintDebug($"Value:{value}; time:{time}, day:{AdrenalineLogic.LastDayUpdated}, loss:{AdrenalineLogic.LossRate}");
+                Utils.PrintDebug($"Value:{AdrenalineLogic.Value}; time:{time}, day:{AdrenalineLogic.LastDayUpdated}, loss:{AdrenalineLogic.LossRate}");
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             else
@@ -172,7 +195,8 @@ namespace Adrenaline
 #endif
 
             AddComponent<PissOnDevicesHandler>("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger");
-            AddComponent<AmiksetHandler>("NPC_CARS/Amikset");
+            AddComponent<AmiksetHandler>("NPC_CARS/Amikset/KYLAJANI/Driver/Animations");
+            AddComponent<AmiksetHandler>("NPC_CARS/Amikset/AMIS2/Passengers 3/Animations");
             AddComponent<StoreActionsHandler>("STORE");
             AddComponent<CustomEnergyDrink>("STORE");
             AddComponent<VenttiGameHandler>("CABIN/Cabin/Ventti/Table/GameManager");
@@ -246,6 +270,7 @@ namespace Adrenaline
 
             SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
             {
+                ["IsDead"] = AdrenalineLogic.isDead ? 1f : 0f,
                 ["Value"] = AdrenalineLogic.Value,
                 ["LossRate"] = AdrenalineLogic.LossRate,
                 ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime(),
