@@ -13,7 +13,7 @@ namespace Adrenaline
         public override string ID => "com.adrenaline.mod";
         public override string Name => "Adrenaline";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.63.25";
+        public override string Version => "0.63.26";
         public override string Description => "Adds a character's need for adrenaline";
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;

@@ -19,7 +19,7 @@ namespace Adrenaline
         {
             thisRb = GetComponent<Rigidbody>();
             death = GameObject.Find("Systems/Death");
-            name = base.gameObject.name.ToUpper();
+            upName = base.gameObject.name.ToUpper();
             PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
         }
         
