@@ -8,20 +8,20 @@ namespace Adrenaline
     {
         private PlayMakerFSM TriggerPissOnTeimo;
 
-        private GameObject GFX_Store;
-        private GameObject GFX_Pub;
-        private GameObject _Teimo;
+        private Transform GFX_Store;
+        private Transform GFX_Pub;
+        private Transform _Teimo;
 
         private void Start()
         {
             try
             {
-                GFX_Store = base.transform.FindChild("LOD/GFX_Store").gameObject;
-                GFX_Pub = base.transform.FindChild("LOD/GFX_Pub").gameObject;
-                _Teimo = base.transform.FindChild("TeimoInShop").gameObject;
+                GFX_Store = base.transform.FindChild("LOD/GFX_Store");
+                GFX_Pub = base.transform.FindChild("LOD/GFX_Pub");
+                _Teimo = base.transform.FindChild("TeimoInShop");
 
-                var windowPub = GFX_Pub.transform.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
-                var windowStore = GFX_Store.transform.Find("BreakableWindows/BreakableWindow")?.gameObject;
+                var windowPub = GFX_Pub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
+                var windowStore = GFX_Store.Find("BreakableWindows/BreakableWindow")?.gameObject;
 
                 if (windowPub != null)
                     StateHook.Inject(windowPub, "Shatter", BreakWindow);
@@ -44,17 +44,14 @@ namespace Adrenaline
             {
                 if (TriggerPissOnTeimo == null)
                 {
-                    var obj = _Teimo.transform.Find("Pivot/FacePissTrigger");
+                    var obj = _Teimo.Find("Pivot/FacePissTrigger");
                     if (obj == null || obj.gameObject == null) return;
                     TriggerPissOnTeimo = obj.gameObject.GetPlayMaker("Reaction");
                 }
             } catch {}
 
             if (TriggerPissOnTeimo?.ActiveStateName == "State 2")
-            {
                 AdrenalineLogic.IncreaseTimed(AdrenalineLogic.config.GetValueSafe("TEIMO_PISS"));
-                Utils.PrintDebug(eConsoleColors.GREEN, "Value increased by pissing on teimo");
-            }
         }
 
         private void BreakWindow()

@@ -25,7 +25,7 @@ namespace Adrenaline
 
             foreach(string element in _default)
             {
-                GameObject t = base.transform.Find(element)?.gameObject;
+                var t = base.transform.Find(element)?.gameObject;
                 if (t == null) continue;
                 _struct.Add(t);
             }
@@ -35,16 +35,26 @@ namespace Adrenaline
         {
             _struct.Clear();
         }
+
+        private GameObject GetElement(string name)
+        {
+            return base.transform.Find(name)?.gameObject;
+        }
+
+        private GameObject GetElementLocal(string name)
+        {
+            return _struct.Find(v => v.name == name);
+        }
         
         internal void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
 
-            GameObject hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
+            var hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
             hudElement.name = name;
 
-            Transform label = hudElement.transform.Find("HUDLabel");
+            var label = hudElement.transform.Find("HUDLabel");
             label.GetComponent<TextMesh>().text = name;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
             Destroy(hudElement.GetComponentInChildren<PlayMakerFSM>());
@@ -69,28 +79,24 @@ namespace Adrenaline
             });
         }
 
-        internal GameObject GetElement(string name)
-        {
-            return base.transform.Find(name)?.gameObject;
-        }
-
         internal void MoveElement(string name, int index)
         {
             if (index < 0 || index > _struct.Capacity) return;
             if (!IsElementExist(name)) return;
 
-            GameObject temp = _struct.Find(v => v.name == name);
-            if (temp?.gameObject == null) return;
+            var element = GetElementLocal(name);
+            if (element == null) return;
 
-            _struct.Remove(temp);
-            _struct.Insert(index, temp);
+            _struct.Remove(element);
+            _struct.Insert(index, element);
             Structurize();
         }
 
         internal void RemoveElement(string name)
         {
             if (!IsElementExist(name)) return;
-            GameObject element = _struct.Find(v => v.name == name);
+
+            var element = GetElementLocal(name);
             _struct.Remove(element);
             Destroy(element);
             Structurize();
@@ -99,13 +105,13 @@ namespace Adrenaline
         internal void HideElement(string name, bool hide)
         {
             if (!IsElementExist(name)) return;
-            _struct.Find(v => v.name == name).SetActive(!hide);
+            GetElementLocal(name).SetActive(!hide);
         }
 
         internal void SetElementText(string name, string text)
         {
             if (!IsElementExist(name)) return;
-            Transform label = _struct.Find(v => v.name == name).transform.Find("HUDLabel");
+            Transform label = GetElement($"{name}/HUDLabel").transform;
             label.GetComponent<TextMesh>().text = text;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
         }
@@ -113,7 +119,7 @@ namespace Adrenaline
         internal void SetElementColor(string name, Color color)
         {
             if (!IsElementExist(name)) return;
-            base.transform.Find(name + "/Pivot/HUDBar")
+            GetElement($"{name}/Pivot/HUDBar")
                 .GetComponent<MeshRenderer>()
                 .material.color = color;
         }
@@ -121,7 +127,7 @@ namespace Adrenaline
         internal void SetElementScale(string name, Vector3 scale)
         {
             if (!IsElementExist(name)) return;
-            base.transform.Find(name + "/Pivot").localScale = scale;
+            GetElement($"{name}/Pivot").transform.localScale = scale;
         }
 
         internal int GetIndexByName(string name)

@@ -7,16 +7,19 @@ namespace Adrenaline
     internal class CrashHandler : MonoBehaviour
     {
         private Rigidbody thisRb;
-        private Vector3 velo;
-        private float cooldown = 0f;
-
         private GameObject death;
         private FsmString PlayerVehicle;
+
+        private Vector3 velo;
+        private float cooldown = 0f;
+        private string upName;
+
 
         private void Start()
         {
             thisRb = GetComponent<Rigidbody>();
             death = GameObject.Find("Systems/Death");
+            name = base.gameObject.name.ToUpper();
             PlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
         }
         
@@ -29,7 +32,7 @@ namespace Adrenaline
             if (num < GetCrashMin()) return;
             
             cooldown = num;
-            if (base.gameObject.name.ToUpper().Contains(PlayerVehicle.Value.ToUpper()))
+            if (upName.Contains(PlayerVehicle.Value.ToUpper()))
             {
                 AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("CRASH_INCREASE"));
                 Utils.PrintDebug("Value increased by crash on vehicle " + PlayerVehicle.Value);

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using UnityEngine;
+﻿using UnityEngine;
 using HutongGames.PlayMaker;
 using MSCLoader;
 
@@ -18,8 +16,7 @@ namespace Adrenaline
             {
                 PlayerCurrentVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
                 SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
-                IsBukled = base.GetComponents<PlayMakerFSM>()
-                    .FirstOrDefault(v => v.FsmName == "Use").FsmVariables.GetFsmBool("IsBuckled");
+                IsBukled = base.gameObject.GetPlayMaker("Use").FsmVariables.GetFsmBool("IsBuckled");
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "FerndaleSeatbeltFix enabled");
             }

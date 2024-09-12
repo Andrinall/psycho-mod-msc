@@ -57,9 +57,7 @@ namespace Adrenaline
 
         internal void SetDrinkPrice(float price)
         {
-            var OrderCoffee = base.transform.Find("LOD/ActivateBar/OrderList/4")
-                .GetComponents<PlayMakerFSM>().First(v => v.FsmName == "Buy");
-
+            var OrderCoffee = base.transform.Find("LOD/ActivateBar/OrderList/4").GetPlayMaker("Buy");
             OrderVars = OrderCoffee.FsmVariables;
             OrderVars.GetFsmString("Notification").Value = string.Format("ENERGY DRINK {0} MK", price);
             OrderVars.GetFsmFloat("Price").Value = price;
