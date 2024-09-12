@@ -79,31 +79,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adrenaline.cs" />
-    <Compile Include="AdrenalineLogic.cs" />
-    <Compile Include="AmiksetHandler.cs" />
-    <Compile Include="CarElectricityHandler.cs" />
-    <Compile Include="CrashHandler.cs" />
-    <Compile Include="CustomEnergyDrink.cs" />
-    <Compile Include="DanceHallHandler.cs" />
-    <Compile Include="FerndaleSeatbeltFix.cs" />
-    <Compile Include="FixedHUD.cs" />
-    <Compile Include="GlobalHandler.cs" />
-    <Compile Include="Globals.cs" />
-    <Compile Include="HighSpeedHandler.cs" />
-    <Compile Include="DriveByHandler.cs" />
-    <Compile Include="ItemRenamer.cs" />
-    <Compile Include="KiljuMurdererHandler.cs" />
-    <Compile Include="MailBoxEnvelope.cs" />
-    <Compile Include="PillsItem.cs" />
-    <Compile Include="PissOnDevicesHandler.cs" />
+    <Compile Include="Sources\Adrenaline.cs" />
+    <Compile Include="Sources\AdrenalineLogic.cs" />
+    <Compile Include="Sources\AmiksetHandler.cs" />
+    <Compile Include="Sources\CarElectricityHandler.cs" />
+    <Compile Include="Sources\CrashHandler.cs" />
+    <Compile Include="Sources\CustomEnergyDrink.cs" />
+    <Compile Include="Sources\DanceHallHandler.cs" />
+    <Compile Include="Sources\FerndaleSeatbeltFix.cs" />
+    <Compile Include="Sources\FixedHUD.cs" />
+    <Compile Include="Sources\GlobalHandler.cs" />
+    <Compile Include="Sources\Globals.cs" />
+    <Compile Include="Sources\HighSpeedHandler.cs" />
+    <Compile Include="Sources\DriveByHandler.cs" />
+    <Compile Include="Sources\ItemRenamer.cs" />
+    <Compile Include="Sources\KiljuMurdererHandler.cs" />
+    <Compile Include="Sources\MailBoxEnvelope.cs" />
+    <Compile Include="Sources\PillsItem.cs" />
+    <Compile Include="Sources\PissOnDevicesHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StateHook.cs" />
-    <Compile Include="WindshieldHandler.cs" />
-    <Compile Include="SpillHandler.cs" />
-    <Compile Include="StoreActionsHandler.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="VenttiGameHandler.cs" />
+    <Compile Include="Sources\StateHook.cs" />
+    <Compile Include="Sources\WindshieldHandler.cs" />
+    <Compile Include="Sources\SpillHandler.cs" />
+    <Compile Include="Sources\StoreActionsHandler.cs" />
+    <Compile Include="Sources\Utils.cs" />
+    <Compile Include="Sources\VenttiGameHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\energy.unity3d" />
