@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Harmony;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -32,9 +33,9 @@ namespace Adrenaline
 
                     Utils.SetMaterial(prefab.gameObject, 0, "ATLAS_OFFICE(Clone)", Globals.atlas_texture, Vector2.zero, Vector2.one);
                 }
-                catch
+                catch (System.Exception e)
                 {
-                    Utils.PrintDebug("Failed to set texture for pub_desk");
+                    Utils.PrintDebug(eConsoleColors.RED, $"Failed to set texture for pub_desk\n{e.GetFullMessage()}");
                 }
 
                 var cren = prefabs.Find(v => v.name == "Coffee").gameObject.AddComponent<ItemRenamer>();
@@ -47,9 +48,10 @@ namespace Adrenaline
 
                 SetDrinkPrice(AdrenalineLogic.config.GetValueSafe("PUB_COFFEE_PRICE"));
                 Utils.PrintDebug(eConsoleColors.GREEN, "CustomEnergyDrink enabled");
-            } catch
+            }
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load CustomEnergyDrink component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load CustomEnergyDrink component\n{e.GetFullMessage()}");
             }
         }
 
@@ -88,9 +90,9 @@ namespace Adrenaline
                 if (obj.childCount == 0) return;
                 Utils.ChangeModel(obj.GetChild(0).gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to replace prefab {0}", obj?.name.ToString());
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to replace prefab {obj?.name.ToString()}\n{e.GetFullMessage()}");
             }
         }
     }

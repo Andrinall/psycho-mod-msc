@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -30,9 +31,10 @@ namespace Adrenaline
 
                 StateHook.Inject(_Teimo.transform.Find("Pivot/Speak").gameObject, "Speak", "State 1", TeimoSwears);
                 Utils.PrintDebug(eConsoleColors.GREEN, "StoreActionsHandler enabled");
-            } catch
+            }
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load StoreActionsHandler component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load StoreActionsHandler component\n{e.GetFullMessage()}");
             }
         }
 

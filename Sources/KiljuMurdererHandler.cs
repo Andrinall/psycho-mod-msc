@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -19,11 +20,11 @@ namespace Adrenaline
                     () => AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("MURDERER_HIT"))
                 );
                 
-                Utils.PrintDebug("KiljuMurdererHandler component loaded & hooks installed");
+                Utils.PrintDebug(eConsoleColors.GREEN, "KiljuMurdererHandler component loaded & hooks installed");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug("KiljuMurdererHandler not loaded");
+                Utils.PrintDebug(eConsoleColors.RED, $"KiljuMurdererHandler not loaded\n{e.GetFullMessage()}");
             }
         }
     }

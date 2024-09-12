@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -24,11 +25,11 @@ namespace Adrenaline
                 RallyPlayerOnStage = Utils.GetGlobalVariable<FsmBool>("RallyPlayerOnStage");
                 SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
                 Helmet = Utils.GetGlobalVariable<FsmBool>("PlayerHelmet");
-                Utils.PrintDebug(eConsoleColors.GREEN, "HighSpeedHandler enabled for {0}", CarName);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"HighSpeedHandler enabled for {CarName}");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load HighSpeedHandler component for {0}", CarName);
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load HighSpeedHandler component for {CarName}\n{e.GetFullMessage()}");
             }
         }
 
@@ -47,9 +48,6 @@ namespace Adrenaline
             {
                 value += (Helmet.Value ? -helmet_debuff : helmet_debuff);
                 AdrenalineLogic.IncreaseTimed(value);
-                Utils.PrintDebug("HighSpeed:: car:{0}, helmet:{1}, speed:{2}",
-                    CarName, Helmet.Value, drivetrain.differentialSpeed);
-
                 return;
             }
 
@@ -60,8 +58,6 @@ namespace Adrenaline
             value += (rally ? rallybuff : 0f);
 
             AdrenalineLogic.IncreaseTimed(value);
-            Utils.PrintDebug("HighSpeed:: car:{0}, seatbelt:{1}, rally:{2}, speed:{3}",
-                CarName, SeatbeltLocked.Value, rally, drivetrain.differentialSpeed);
         }
     }
 }

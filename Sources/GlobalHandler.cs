@@ -77,7 +77,7 @@ namespace Adrenaline
                 mailFromDoctor.SetActive(true);
                 mailFromDoctor.GetComponent<PlayMakerFSM>().enabled = true;
 
-                Utils.PrintDebug("Day updated from {0} to {1}", AdrenalineLogic.LastDayUpdated, GlobalDay.Value);
+                Utils.PrintDebug($"Day updated from {AdrenalineLogic.LastDayUpdated} to {GlobalDay.Value}");
                 AdrenalineLogic.LastDayUpdated = GlobalDay.Value;
             }
         }

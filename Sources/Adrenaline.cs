@@ -151,7 +151,7 @@ namespace Adrenaline
                         AdrenalineLogic.UpdateLossRatePerDay();
                 }
 
-                Utils.PrintDebug("Value:{0}; time:{1}, day:{2}, loss:{3}", value, time, AdrenalineLogic.LastDayUpdated, AdrenalineLogic.LossRate);
+                Utils.PrintDebug($"Value:{value}; time:{time}, day:{AdrenalineLogic.LastDayUpdated}, loss:{AdrenalineLogic.LossRate}");
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             else
@@ -166,6 +166,11 @@ namespace Adrenaline
 
         public override void SecondPassOnLoad()
         {
+            ConsoleCommand.Add(new FixBrokenHUD());
+#if DEBUG
+            ConsoleCommand.Add(new TeleportToPills());
+#endif
+
             AddComponent<PissOnDevicesHandler>("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/Piss/Fluid/FluidTrigger");
             AddComponent<AmiksetHandler>("NPC_CARS/Amikset");
             AddComponent<StoreActionsHandler>("STORE");
@@ -192,14 +197,14 @@ namespace Adrenaline
                 {
                     GameObject obj = GameObject.Find(item);
                     if (obj == null)
-                        throw new MissingComponentException("Car with object name \"" + item + "\" doesn't exists");
+                        throw new MissingComponentException($"Car with object name \"{item}\" doesn't exists");
 
                     obj.AddComponent<HighSpeedHandler>();
                     obj.AddComponent<WindshieldHandler>();
                 }
-                catch
+                catch (System.Exception e)
                 {
-                    Utils.PrintDebug(eConsoleColors.RED, "HighSpeedHandler loading error for {0}", item);
+                    Utils.PrintDebug(eConsoleColors.RED, $"HighSpeedHandler loading error for {item}\n{e.GetFullMessage()}");
                 }
             }
 
@@ -233,11 +238,12 @@ namespace Adrenaline
 
                 SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
             }
-            catch
+            catch (System.Exception e)
             {
-                throw new UnassignedReferenceException("Unable to save DEBUG settings!");
+                throw new UnassignedReferenceException($"Unable to save DEBUG settings!\n{e.GetFullMessage()}");
             }
 #endif
+
             SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
             {
                 ["Value"] = AdrenalineLogic.Value,
@@ -267,7 +273,7 @@ namespace Adrenaline
         {
             var slider = _sliders.Find(v => v.Instance.ID == ID);
             AdrenalineLogic.config[field] = slider.GetValue();
-            Utils.PrintDebug("Set value for " + field + " == " + slider.GetValue());
+            Utils.PrintDebug($"Set value for {field} == {slider.GetValue()}");
         }
     }
 #endif

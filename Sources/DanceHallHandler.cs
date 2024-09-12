@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using Harmony;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -26,9 +27,9 @@ namespace Adrenaline
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "DanceHallHandler enabled");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load DanceHallHandler component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load DanceHallHandler component\n{e.GetFullMessage()}");
             }
         }
 

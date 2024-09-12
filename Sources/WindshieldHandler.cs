@@ -1,6 +1,7 @@
 ﻿using Harmony;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -49,11 +50,11 @@ namespace Adrenaline
                 }
 
                 drivetrain = base.GetComponent<Drivetrain>();
-                Utils.PrintDebug(eConsoleColors.GREEN, "WindshieldHandler enabled for " + CarName);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"WindshieldHandler enabled for {CarName}");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load WindshieldHandler for {0}", CarName);
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load WindshieldHandler for {CarName}\n{e.GetFullMessage()}");
             }
         }
 

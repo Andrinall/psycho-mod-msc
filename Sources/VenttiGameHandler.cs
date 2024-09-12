@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -12,9 +13,9 @@ namespace Adrenaline
                 StateHook.Inject(base.gameObject, "Lose", VenttiWin);
                 Utils.PrintDebug(eConsoleColors.GREEN, "VenttiGameHandler enabled");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load VenttiGameHandler component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load VenttiGameHandler component\n{e.GetFullMessage()}");
             }
         }
 

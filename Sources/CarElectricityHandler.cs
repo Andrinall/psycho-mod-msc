@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -11,9 +12,10 @@ namespace Adrenaline
             {
                 StateHook.Inject(base.gameObject, "Shock", "Reset", ShockHit);
                 Utils.PrintDebug(eConsoleColors.GREEN, "CarElectricityHandler enabled");
-            } catch
+            }
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load CarElecticityHandler component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load CarElecticityHandler component\n{e.GetFullMessage()}");
             }
         }
 

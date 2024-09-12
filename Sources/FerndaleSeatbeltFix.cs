@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using HutongGames.PlayMaker;
+using MSCLoader;
 
 namespace Adrenaline
 {
@@ -17,12 +18,14 @@ namespace Adrenaline
             {
                 PlayerCurrentVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
                 SeatbeltLocked = Utils.GetGlobalVariable<FsmBool>("PlayerSeatbeltsOn");
-                IsBukled = base.GetComponents<PlayMakerFSM>().FirstOrDefault(v => v.FsmName == "Use").FsmVariables.GetFsmBool("IsBuckled");
+                IsBukled = base.GetComponents<PlayMakerFSM>()
+                    .FirstOrDefault(v => v.FsmName == "Use").FsmVariables.GetFsmBool("IsBuckled");
+
                 Utils.PrintDebug(eConsoleColors.GREEN, "FerndaleSeatbeltFix enabled");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load FerndaleSeatbeltFix component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load FerndaleSeatbeltFix component\n{e.GetFullMessage()}");
             }
         }
 

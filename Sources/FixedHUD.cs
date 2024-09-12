@@ -129,7 +129,7 @@ namespace Adrenaline
             return _struct.FindIndex(v => v.name == name);
         }
 
-        private void Structurize()
+        internal void Structurize()
         {
             int inactive_items = 0;
 

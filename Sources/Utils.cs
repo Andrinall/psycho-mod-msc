@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 
-#if DEBUG
 using MSCLoader;
-#endif
 using UnityEngine;
 using HutongGames.PlayMaker;
 
@@ -120,35 +118,19 @@ namespace Adrenaline
         }
 
         /// <summary>
-        /// Print debug message. Only used in the DEBUG assembly
+        /// Print debug message.
         /// </summary>
         internal static void PrintDebug(string msg)
         {
-#if DEBUG
             ModConsole.Print(DBG_STRING + msg);
-#endif
         }
 
-        internal static bool PrintDebug(eConsoleColors color, string msg)
+        /// <summary>
+        /// Print colored debug
+        /// </summary>
+        internal static void PrintDebug(eConsoleColors color, string msg)
         {
-#if DEBUG
             ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), msg));
-            return true;
-#endif
-        }
-
-        internal static void PrintDebug(string fmt, params object[] vars)
-        {
-#if DEBUG
-            ModConsole.Print(string.Format(DBG_STRING + fmt, vars));
-#endif
-        }
-
-        internal static void PrintDebug(eConsoleColors color, string fmt, params object[] vars)
-        {
-#if DEBUG
-            ModConsole.Print(string.Format(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, GetColor(color), fmt), vars));
-#endif
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 
 using Harmony;
+using MSCLoader;
 using UnityEngine;
 
 namespace Adrenaline
@@ -15,9 +16,9 @@ namespace Adrenaline
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "PissOnDevicesHandler enabled");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load PissOnDevicesHandler enabled");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load PissOnDevicesHandler enabled\n{e.GetFullMessage()}");
             }
         }
 

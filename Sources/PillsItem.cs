@@ -19,16 +19,17 @@ namespace Adrenaline
             try
             {
                 CreatePillsItem();
-                Utils.PrintDebug("PillsItem created with idx: {0} & position: {1}", index, position);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"PillsItem created with idx: {index} & position: {position}");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug("Unable to create PillsItem");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to create PillsItem\n{e.GetFullMessage()}");
             }
         }
 
         ~PillsItem()
         {
+            if (self == null) return;
             Object.Destroy(self);
         }
 

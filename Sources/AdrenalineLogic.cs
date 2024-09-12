@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Harmony;
 using HealthMod;
@@ -127,7 +128,7 @@ namespace Adrenaline
         {
             get { return _lossRate; }
             set {
-                Utils.PrintDebug("_lossRate setted + {0}", IsDecreaseLocked());
+                Utils.PrintDebug($"_lossRate setted + {IsDecreaseLocked()}");
                 if (IsDecreaseLocked()) return;
                 _lossRate = Mathf.Clamp(value, 0f, 50f);
             }
@@ -228,9 +229,9 @@ namespace Adrenaline
                     return;
                 }
             }
-            catch
+            catch (Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "error in health.killcustom");
+                Utils.PrintDebug(eConsoleColors.RED, $"Error in health.killcustom\n{e.GetFullMessage()}");
             }
 
             try
@@ -243,9 +244,9 @@ namespace Adrenaline
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
                 death.SetActive(isDead);
             }
-            catch
+            catch (Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "error in custom method");
+                Utils.PrintDebug(eConsoleColors.RED, $"Error in killCustom method\n{e.GetFullMessage()}");
             }
         }
     }

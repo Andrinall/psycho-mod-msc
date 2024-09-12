@@ -45,9 +45,9 @@ namespace Adrenaline
                 mailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
                 Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Error while loading MailBoxEnvelope component");
+                Utils.PrintDebug(eConsoleColors.RED, $"Error while loading MailBoxEnvelope component\n{e.GetFullMessage()}");
             }
         }
 

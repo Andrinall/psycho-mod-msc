@@ -121,9 +121,9 @@ namespace Adrenaline
                 if (asset == null) throw new NullReferenceException();
                 return asset;
             }
-            catch
+            catch (Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Unable to load asset {0} from embedded resource (??!)", path);
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load asset {path} from embedded resource\n{e.GetFullMessage()}");
                 return null;
             }
         }
@@ -144,6 +144,7 @@ namespace Adrenaline
                 mailScreens.Add(LoadAsset<Texture>(bundle, v));
             }
 
+            // sort screens from 0 to *, for correct display this in the email
             mailScreens.Sort(delegate(Texture item, Texture target) {
                 return (Int32.Parse(item.name) < Int32.Parse(target.name)) ? -1 : 0;
             });
@@ -170,7 +171,7 @@ namespace Adrenaline
                         src.volume = 1.75f;
                         src.priority = 0;
                         audios.Add(src);
-                        Utils.PrintDebug(eConsoleColors.GREEN, "AudioSource {0} created", src.clip.name);
+                        Utils.PrintDebug(eConsoleColors.GREEN, $"AudioSource {src.clip.name} created");
                         continue;
                     }
 
@@ -179,12 +180,12 @@ namespace Adrenaline
                     source.loop = true;
                     source.volume = 2f;
                     audios.Add(source);
-                    Utils.PrintDebug(eConsoleColors.GREEN, "AudioSource {0} created", source.clip.name);
+                    Utils.PrintDebug(eConsoleColors.GREEN, $"AudioSource {source.clip.name} created");
                 }
             }
             catch (Exception e)
             {
-                Utils.PrintDebug("AUDIO loops loading failed: {0}", e.GetFullMessage());
+                Utils.PrintDebug($"AUDIO loops loading failed\n{e.GetFullMessage()}");
             }
         }
     }

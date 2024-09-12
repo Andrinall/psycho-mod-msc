@@ -83,6 +83,7 @@
     <Compile Include="Sources\AdrenalineLogic.cs" />
     <Compile Include="Sources\AmiksetHandler.cs" />
     <Compile Include="Sources\CarElectricityHandler.cs" />
+    <Compile Include="Sources\Commands.cs" />
     <Compile Include="Sources\CrashHandler.cs" />
     <Compile Include="Sources\CustomEnergyDrink.cs" />
     <Compile Include="Sources\DanceHallHandler.cs" />
