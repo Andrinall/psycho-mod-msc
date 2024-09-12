@@ -1,5 +1,4 @@
-﻿#define SILENT
-using System.Linq;
+﻿using System.Linq;
 
 #if DEBUG
 using MSCLoader;
@@ -17,6 +16,9 @@ namespace Adrenaline
     {
         private static readonly string DBG_STRING = "[Adrenaline-DBG]: ";
 
+        /// <summary>
+        /// Create a pills with random position in game world
+        /// </summary>
         internal static void CreateRandomPills()
         {
         Generate:
@@ -32,24 +34,15 @@ namespace Adrenaline
             Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
         }
 
-        internal static void PlaySound(ASIndex index)
-        {
-            StopAllAudios((int)index);
-            var item = Globals.audios.ElementAt((int)index);
-            if (item.isPlaying) return;
-            item.Play();
-        }
-
-        internal static void PlayDeathSound()
-        {
-            Globals.audios.ElementAt((int)ASIndex.HEARTSTOP)
-                .gameObject.transform.position = GameObject.Find("PLAYER").transform.position;
-
-            PlaySound(ASIndex.HEARTSTOP);
-        }
-
+        /// <summary>
+        /// Create a custom poster with specified position & rotation,
+        /// 
+        /// </summary>
         internal static void CreatePoster(int textureIndex, Vector3 position, Quaternion rotation)
         {
+            if (textureIndex < 0 || textureIndex >= Globals.poster_textures.Count)
+                throw new System.IndexOutOfRangeException($"Use texture index from 0 to {Globals.poster_textures.Count-1}");
+
             var poster = PrefabManager.Instantiate(Globals.poster);
             poster.gameObject.name = "AdrenalineADV_Poster";
             poster.transform.position = position;
@@ -58,6 +51,31 @@ namespace Adrenaline
                 .SetTexture("_MainTex", Globals.poster_textures.ElementAtOrDefault(textureIndex));
         }
 
+        /// <summary>
+        /// Play hearth sound from list by index
+        /// </summary>
+        internal static void PlaySound(ASIndex index)
+        {
+            StopAllAudios((int)index);
+            var item = Globals.audios.ElementAt((int)index);
+            if (item.isPlaying) return;
+            item.Play();
+        }
+
+        /// <summary>
+        /// Play a sound after "Activate Dead Body" from game
+        /// </summary>
+        internal static void PlayDeathSound()
+        {
+            Globals.audios.ElementAt((int)ASIndex.HEARTSTOP)
+                .gameObject.transform.position = GameObject.Find("PLAYER").transform.position;
+
+            PlaySound(ASIndex.HEARTSTOP);
+        }
+
+        /// <summary>
+        /// Stop all custom hearth sounds
+        /// </summary>
         internal static void StopAllAudios(int index = -1)
         {
             var blacklist = Globals.audios.ElementAtOrDefault(index);
@@ -71,6 +89,10 @@ namespace Adrenaline
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
         }
 
+        /// <summary>
+        /// Returns ingame car name by GameObject
+        /// (used for compare global variable "PlayerCurrentVehicle" & car name from GameObject)
+        /// </summary>
         internal static string GetCarNameByObject(GameObject obj)
         {
             if (obj.name == "FITTAN") return "Fittan"; // crutch
@@ -95,13 +117,11 @@ namespace Adrenaline
                 var = obj.transform.Find(path)?.GetComponent<PlayMakerFSM>();
             else
                 var = obj.transform.Find(path)?.GetComponents<PlayMakerFSM>().First(x => x.FsmName == fsm);
-
-#if !SILENT
-            if (var?.gameObject != null) PrintDebug(string.Format("Cached FSM: {0}/{1} | {2}", obj.name, path, fsm));
-            else PrintDebug(string.Format("Failed to cache FSM: {0}/{1} | {2}", obj.name, path, fsm));
-#endif
         }
 
+        /// <summary>
+        /// Print debug message. Only used in the DEBUG assembly
+        /// </summary>
         internal static void PrintDebug(string msg)
         {
 #if DEBUG
@@ -131,12 +151,18 @@ namespace Adrenaline
 #endif
         }
 
-        internal static void ChangeMesh(GameObject obj, Mesh mesh, Texture texture, Vector2 offset, Vector2 scale)
+        /// <summary>
+        /// Replace a mesh & texture for gameobject
+        /// </summary>
+        internal static void ChangeModel(GameObject obj, Mesh mesh, Texture texture, Vector2 offset, Vector2 scale)
         {
             SetMesh(obj, mesh);
             SetMaterial(obj, 0, texture.name, texture, offset, scale);
         }
 
+        /// <summary>
+        /// Sets a object mesh in MeshFilter component
+        /// </summary>
         internal static void SetMesh(GameObject obj, Mesh mesh)
         {
             var filter = obj.GetComponent<MeshFilter>();
@@ -179,6 +205,15 @@ namespace Adrenaline
                 default:
                     return "white";
             }
+        }
+
+        internal static bool IsPrefab(this Transform tempTrans)
+        {
+            if (!tempTrans.gameObject.activeInHierarchy && tempTrans.gameObject.activeSelf)
+            {
+                return tempTrans.root == tempTrans;
+            }
+            return false;
         }
     }
 }

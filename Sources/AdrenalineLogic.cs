@@ -120,6 +120,9 @@ namespace Adrenaline
             }
         }
 
+        /// <summary>
+        /// Adrenaline value decrease multiplier
+        /// </summary>
         internal static float LossRate
         {
             get { return _lossRate; }
@@ -130,6 +133,10 @@ namespace Adrenaline
             }
         }
 
+        /// <summary>
+        /// Increase lossRate & decrease adrenaline value
+        /// Called per FixedUpdate from GlobalHandler
+        /// </summary>
         internal static void Tick()
         {
             var lossSpeed = config.GetValueSafe("LOSS_RATE_SPEED");
@@ -138,27 +145,43 @@ namespace Adrenaline
             if (IsDecreaseLocked() && _debug) return;
             Value -= config.GetValueSafe("DEFAULT_DECREASE") * LossRate * Time.fixedDeltaTime; // basic decrease adrenaline
         }
-
+        
+        /// <summary>
+        /// Increase adrenaline value using multiply your value to Time.fixedDeltaTime (0.02f)
+        /// </summary>
         internal static void IncreaseTimed(float val)
         {
             Value += val * Time.fixedDeltaTime;
         }
 
+        /// <summary>
+        /// Increase adrenaline value using your value
+        /// (adrenaline += value)
+        /// </summary>
         internal static void IncreaseOnce(float val)
         {
             Value += val;
         }
 
+        /// <summary>
+        /// Reset lossRate to optimal value using last updated day from internal variable
+        /// </summary>
         internal static void UpdateLossRatePerDay()
         {
             LossRate = 0.2f * ((float)LastDayUpdated / 4f);
         }
 
+        /// <summary>
+        /// Reset lossRate to optimal value using your value for calculate day
+        /// </summary>
         internal static void UpdateLossRatePerDay(int day)
         {
             LossRate = 0.2f * ((float)day / 4f);
         }
 
+        /// <summary>
+        /// Lock lossRate decrease for any ticks (seconds * 200)
+        /// </summary>
         internal static void SetDecreaseLocked(bool state, float time = 12000f, bool debug = false)
         {
             if (state == _lockDecrease) return;
@@ -167,11 +190,17 @@ namespace Adrenaline
             _debug = debug;
         }
 
+        /// <summary>
+        /// Returns a current time for unlock lossRate decrease
+        /// </summary>
         internal static float GetDecreaseLockTime()
         {
             return (_lockDecrease && _lockCooldown > 0) ? _lockCooldown : 0f;
         }
 
+        /// <summary>
+        /// Returns status of lossRate decrease lock
+        /// </summary>
         internal static bool IsDecreaseLocked()
         {
             if (_lockCooldown > 0)
@@ -181,15 +210,9 @@ namespace Adrenaline
             return (_lockDecrease && _lockCooldown > 0);
         }
 
-        internal static bool IsPrefab(this Transform tempTrans)
-        {
-            if (!tempTrans.gameObject.activeInHierarchy && tempTrans.gameObject.activeSelf)
-            {
-                return tempTrans.root == tempTrans;
-            }
-            return false;
-        }
-
+        /// <summary>
+        /// Kills player by heart attack
+        /// </summary>
         private static void KillCustom(string en, string fi)
         {
             if (isDead) return;

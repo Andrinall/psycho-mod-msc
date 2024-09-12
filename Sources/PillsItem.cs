@@ -46,7 +46,7 @@ namespace Adrenaline
             ren.TargetName = "potato chips(itemx)";
             ren.FinalName = "pills(itemx)";
 
-            Utils.ChangeMesh(self,
+            Utils.ChangeModel(self,
                 Globals.pills.GetComponent<MeshFilter>().mesh,
                 Globals.pills.GetComponent<MeshRenderer>().material.mainTexture,
                 Vector2.zero, Vector2.one);

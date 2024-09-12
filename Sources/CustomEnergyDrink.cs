@@ -83,10 +83,10 @@ namespace Adrenaline
             try
             {
                 var mesh = isEmpty ? Globals.empty_cup : Globals.coffee_cup;
-                Utils.ChangeMesh(obj.gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
+                Utils.ChangeModel(obj.gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
 
                 if (obj.childCount == 0) return;
-                Utils.ChangeMesh(obj.GetChild(0).gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
+                Utils.ChangeModel(obj.GetChild(0).gameObject, mesh, Globals.can_texture, Vector2.zero, Vector2.one);
             }
             catch
             {
