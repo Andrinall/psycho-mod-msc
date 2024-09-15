@@ -50,13 +50,12 @@ This modification, adding the need for adrenaline, will diversify your gameplay,
 ☑️ Riding at high speeds in most vehicles in the game.<br>
 { JONNEZ, SATSUMA, FERNDALE, HAYOSIKO, GIFU, FITTAN (you need to give your brother the fukk) }<br>
 
-> [!NOTE]
-> ✅ Fixed game bug with seatbelt status in Ferndale.<br>
-> ☑️ With the seat belts fastened, it gives less.<br>
-> ☑️ It gives less with a helmet.<br>
-> ☑️ Without a windshield and helmet, it gives more.<br>
-> ☑️ Without the helmet on Jonnez gives more.<br>
-> ✅ During the rally race gives more at a slightly lower speed(by 20 km/h), only on SATSUMA.
+  - ✅ Fixed game bug with seatbelt status in Ferndale.<br>
+  - ☑️ With the seat belts fastened, it gives less.<br>
+  - ☑️ It gives less with a helmet.<br>
+  - ☑️ Without a windshield and helmet, it gives more.<br>
+  - ☑️ Without the helmet on Jonnez gives more.<br>
+  - ✅ During the rally race gives more at a slightly lower speed(by 20 km/h), only on SATSUMA.
 
 ❌ When evading a police chase.<br>
 ❌ When a player is stung by a wasp or a bumblebee flies into his face.<br>
