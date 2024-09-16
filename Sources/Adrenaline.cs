@@ -24,8 +24,6 @@ namespace Adrenaline
         private string LastAddedComponent = "";
         private string SaveDataPath = Application.persistentDataPath + "\\Adrenaline.dat";
 
-        private Dictionary<string, float> savedata = new Dictionary<string, float>();
-
 #if DEBUG
         private SettingsCheckBox lockbox;
         private SettingsSliderInt priceSlider;

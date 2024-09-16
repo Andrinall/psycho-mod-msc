@@ -108,8 +108,8 @@ namespace Adrenaline
         private void IncreaseByEnergyDrink()
         {
             AdrenalineLogic.IncreaseOnce(AdrenalineLogic.config.GetValueSafe("ENERGY_DRINK_INCREASE"));
-            AdrenalineLogic.SetDecreaseLocked(true, 12000f);
-            if (ModLoader.IsModPresent("Health")) Health.editHp(-4f);
+            if (ModLoader.IsModPresent("Health"))
+                Health.editHp(-8f);
         }
 
         private void IncreaseByCoffee()
