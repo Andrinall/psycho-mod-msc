@@ -71,8 +71,6 @@ namespace Adrenaline
             new Vector3(1426.629f, -4.249069f, 751.5843f)
         };
 
-        internal static int RandomPillsIndex = -1;
-
         internal static Dictionary<string, string> localization = new Dictionary<string, string>
         {
             ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
