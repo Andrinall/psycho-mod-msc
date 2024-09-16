@@ -25,14 +25,15 @@ namespace Adrenaline
 
         internal static int LastDayUpdated = 1;
         internal static bool isDead = false;
-        internal static bool loopAudio = false;
+        internal static bool envelopeSpawned = false;
+        internal static GameObject mailboxSheet = null;
 
         internal static FixedHUD _hud;
 
         internal static Dictionary<string, float> config = new Dictionary<string, float>
         {
             // timed
-            ["LOSS_RATE_SPEED"] = 0.0006f,
+            ["LOSS_RATE_SPEED"] = 0.0005f,
             ["MIN_LOSS_RATE"] = 0.0f,
             ["MAX_LOSS_RATE"] = 3.0f,
             ["DEFAULT_DECREASE"] = 0.18f,
@@ -88,7 +89,6 @@ namespace Adrenaline
                 if (_hud == null) return;
                 if (isDead) return;
                 
-
                 if (_value <= MIN_ADRENALINE)
                     KillCustom(PAPER_TEXT_EN_MIN, PAPER_TEXT_FI);
                 else if (_value >= MAX_ADRENALINE)
@@ -237,13 +237,14 @@ namespace Adrenaline
 
             try
             {
+                if (isDead) return;
                 Utils.PlayDeathSound();
                 var death = GameObject.Find("Systems/Death");
                 if (death == null) return;
                 var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
+                death.SetActive(true);
                 paper.Find("TextEN").GetComponent<TextMesh>().text = en;
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
-                death.SetActive(true);
                 isDead = true;
             }
             catch (Exception e)
