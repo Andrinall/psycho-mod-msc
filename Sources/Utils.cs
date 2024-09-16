@@ -4,7 +4,6 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-
 namespace Adrenaline
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
@@ -19,17 +18,25 @@ namespace Adrenaline
         /// </summary>
         internal static void CreateRandomPills()
         {
-        Generate:
-            var idx = Random.Range(0, Globals.pills_positions.Count);
-            if (Globals.pills_list.Any(v => v.index == idx)) goto Generate;
-            Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAtOrDefault(idx)));
+            try
+            {
+            Generate:
+                var idx = Random.Range(0, Globals.pills_positions.Count - 1);
+                if (Globals.pills_list.Any(v => v.index == idx))
+                    goto Generate;
 
-            var Image = Resources.FindObjectsOfTypeAll<GameObject>()
-                .First(v => v.name == "Sheets").transform
-                .Find("DoctorMail/Background/Image");
+                Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAt(idx)));
 
-            var texture = Globals.mailScreens.ElementAtOrDefault(idx);
-            Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
+                var Image = AdrenalineLogic.mailboxSheet.transform.Find("Background/Image");
+
+                var texture = Globals.mailScreens.Find(v => v.name == idx.ToString());
+                Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
+                PrintDebug(eConsoleColors.YELLOW, $"Generated pills: {idx}, {Image.name}");
+            }
+            catch (System.Exception e)
+            {
+                PrintDebug(eConsoleColors.RED, $"failed to create a random pills: {e.GetFullMessage()}");
+            }
         }
 
         /// <summary>
@@ -54,10 +61,17 @@ namespace Adrenaline
         /// </summary>
         internal static void PlaySound(ASIndex index)
         {
-            StopAllAudios((int)index);
-            var item = Globals.audios.ElementAt((int)index);
-            if (item.isPlaying) return;
-            item.Play();
+            try
+            {
+                StopAllAudios((int)index);
+                var item = Globals.audios?.ElementAtOrDefault((int)index);
+                if (item?.isPlaying == true) return;
+                item?.Play();
+            }
+            catch (System.Exception e)
+            {
+                PrintDebug(eConsoleColors.RED, $"PlaySound Error: {e.GetFullMessage()}");
+            }
         }
 
         /// <summary>
@@ -65,10 +79,17 @@ namespace Adrenaline
         /// </summary>
         internal static void PlayDeathSound()
         {
-            Globals.audios.ElementAt((int)ASIndex.HEARTSTOP)
-                .gameObject.transform.position = GameObject.Find("PLAYER").transform.position;
+            try
+            {
+                Globals.audios.ElementAtOrDefault((int)ASIndex.HEARTSTOP).gameObject.transform.position =
+                    GameObject.Find("PLAYER").transform.position;
 
-            PlaySound(ASIndex.HEARTSTOP);
+                PlaySound(ASIndex.HEARTSTOP);
+            }
+            catch (System.Exception e)
+            {
+                PrintDebug(eConsoleColors.RED, $"PlaySound Error in KillCustom: {e.GetFullMessage()}");
+            }
         }
 
         /// <summary>
@@ -76,10 +97,11 @@ namespace Adrenaline
         /// </summary>
         internal static void StopAllAudios(int index = -1)
         {
-            var blacklist = Globals.audios.ElementAtOrDefault(index);
-            var list = Globals.audios.Where(v => v.isPlaying && v.clip.name != blacklist.clip.name);
+            var blacklist = Globals.audios?.ElementAtOrDefault(index);
+            var list = Globals.audios?.Where(v => v?.isPlaying == true && v?.clip?.name != blacklist.clip.name);
             
-            foreach (var item in list) item.Stop();
+            foreach (var item in list)
+                item?.Stop();
         }
 
         /// <summary>
@@ -88,6 +110,22 @@ namespace Adrenaline
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable
         {
             return FsmVariables.GlobalVariables.FindVariable(name) as T;
+        }
+
+        internal static void ClearActions(this FsmState state)
+        {
+            var list = state.Actions.ToList();
+            list.Clear();
+            state.Actions = list.ToArray();
+            state.SaveActions();
+        }
+
+        internal static void ClearActions(this FsmState state, int index, int count)
+        {
+            var list = state.Actions.ToList();
+            list.RemoveRange(index, count);
+            state.Actions = list.ToArray();
+            state.SaveActions();
         }
 
         /// <summary>

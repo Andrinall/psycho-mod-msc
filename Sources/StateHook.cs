@@ -16,7 +16,7 @@ namespace Adrenaline
             public override void OnEnter()
             {
                 hook?.Invoke();
-                Finish();
+                base.Finish();
             }
         }
 
