@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 
 using Harmony;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
+
 
 namespace Adrenaline
 {
@@ -19,6 +22,7 @@ namespace Adrenaline
         public override bool SecondPass => true;
 
         private string LastAddedComponent = "";
+        private string SaveDataPath = Application.persistentDataPath + "\\Adrenaline.dat";
 
         private Dictionary<string, float> savedata = new Dictionary<string, float>();
 
@@ -123,15 +127,15 @@ namespace Adrenaline
 
         public override void OnNewGame()
         {
+            File.Delete(SaveDataPath);
             SetDefaultValuesForLogic();
-
-            if (SaveLoad.ValueExists(this, "Adrenaline"))
-                SaveLoad.DeleteValue(this, "Adrenaline");
+            Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
         }
 
         private void SetDefaultValuesForLogic()
         {
             AdrenalineLogic.isDead = false;
+            AdrenalineLogic.envelopeSpawned = false;
             AdrenalineLogic.Value = 100f;
             AdrenalineLogic.LastDayUpdated = Utils.GetGlobalVariable<FsmInt>("GlobalDay").Value;
             AdrenalineLogic.UpdateLossRatePerDay(AdrenalineLogic.LastDayUpdated);
@@ -140,6 +144,8 @@ namespace Adrenaline
 
         public override void OnLoad()
         {
+            UnloadResources();
+
             var bundle = LoadAssets.LoadBundle("Adrenaline.Assets.energy.unity3d");
             Globals.can_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/Energy.png");
             Globals.atlas_texture = Globals.LoadAsset<Texture>(bundle, "assets/textures/ATLAS_OFFICE.png");
@@ -154,32 +160,55 @@ namespace Adrenaline
             Globals.LoadAllSounds(bundle);
             bundle.Unload(false);
 
-            if (SaveLoad.ValueExists(this, "Adrenaline"))
+            try
             {
-                savedata = SaveLoad.ReadValueAsDictionary<string, float>(this, "Adrenaline");
-                if (savedata == null) return;
-
-                var time = savedata.GetValueSafe("LossRateLockTime");
-                var value = savedata.GetValueSafe("Value");
-                AdrenalineLogic.isDead = savedata.GetValueSafe("IsDead") == 1f;
-                AdrenalineLogic.Value = (value <= 20f) ? 30f : value;
-                AdrenalineLogic.LastDayUpdated = Mathf.RoundToInt(savedata.GetValueSafe("LastDayUpdated"));
-                AdrenalineLogic.LossRate = savedata.GetValueSafe("LossRate");
-                AdrenalineLogic.SetDecreaseLocked(time > 50f, time);
+                byte[] value = File.ReadAllBytes(SaveDataPath);
+                AdrenalineLogic.isDead = BitConverter.ToBoolean(value, 0);
+                AdrenalineLogic.envelopeSpawned = BitConverter.ToBoolean(value, 1);
+                AdrenalineLogic.Value = BitConverter.ToSingle(value, 2);
+                AdrenalineLogic.LossRate = BitConverter.ToSingle(value, 6);
+                AdrenalineLogic.LastDayUpdated = BitConverter.ToInt32(value, 10);
+                var time = BitConverter.ToSingle(value, 14);
+                AdrenalineLogic.SetDecreaseLocked(time > 0, time);
                 if (AdrenalineLogic.isDead)
                 {
-                    AdrenalineLogic.isDead = false;
-                    if (AdrenalineLogic.LossRate >= 3.5f)
+                    if (AdrenalineLogic.LossRate > 3.5f)
                         AdrenalineLogic.UpdateLossRatePerDay();
-                }
-                
 
-                Utils.PrintDebug($"Value:{AdrenalineLogic.Value}; time:{time}, day:{AdrenalineLogic.LastDayUpdated}, loss:{AdrenalineLogic.LossRate}");
+                    AdrenalineLogic.Value = 30f;
+                    AdrenalineLogic.isDead = false;
+                }
+
+                int _items = BitConverter.ToInt32(value, 18);
+                if (_items == 0) goto SkipLoadPills;
+
+                int _offset = 22;
+                Utils.PrintDebug(eConsoleColors.WHITE, $"Loading {_items} pills");
+                for (var i = 0; i < _items; i++)
+                {
+                    Utils.PrintDebug(eConsoleColors.WHITE, $"Loading pills with idx: {i}");
+                    float x = BitConverter.ToSingle(value, _offset);
+                    float y = BitConverter.ToSingle(value, _offset + 4);
+                    float z = BitConverter.ToSingle(value, _offset + 8);
+                    float rX = BitConverter.ToSingle(value, _offset + 12);
+                    float rY = BitConverter.ToSingle(value, _offset + 16);
+                    float rZ = BitConverter.ToSingle(value, _offset + 20);
+                    Utils.PrintDebug(eConsoleColors.WHITE, $"Position: x:{x}, y:{y}, z:{z}");
+
+                    Globals.pills_list.Add(
+                        new PillsItem(i, new Vector3(x, y, z), new Vector3(rX, rY, rZ))
+                    );
+                    _offset += 24;
+                }
+
+                SkipLoadPills:
+                Utils.PrintDebug($"Value:{AdrenalineLogic.Value}; time:{time}, day:{AdrenalineLogic.LastDayUpdated}, loss:{AdrenalineLogic.LossRate}, dead:{AdrenalineLogic.isDead}, env:{AdrenalineLogic.envelopeSpawned}");
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
-            else
+            catch (Exception e)
             {
-                ModConsole.Print("<color=red>Unable to load Save Data, resetting to default</color>");
+                ModConsole.Error("<color=red>Unable to load Save Data, resetting to default</color>");
+                Utils.PrintDebug(eConsoleColors.RED, e.GetFullMessage());
                 SetDefaultValuesForLogic();
             }
             
@@ -226,23 +255,22 @@ namespace Adrenaline
                     obj.AddComponent<HighSpeedHandler>();
                     obj.AddComponent<WindshieldHandler>();
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
                     Utils.PrintDebug(eConsoleColors.RED, $"HighSpeedHandler loading error for {item}\n{e.GetFullMessage()}");
                 }
             }
 
+            var _objects = Resources.FindObjectsOfTypeAll<GameObject>();
+
             var dynamics = Resources.FindObjectsOfTypeAll<CarDynamics>().Where(v => v.transform.parent == null);
             foreach (var item in dynamics)
                 item.gameObject.AddComponent<CrashHandler>();
 
-            var humans = Resources.FindObjectsOfTypeAll<GameObject>().Where(v => v.name == "HumanTriggerCrime");
+            var humans = _objects.Where(v => v.name == "HumanTriggerCrime");
             Utils.PrintDebug("Humans count: " + humans.Count());
             foreach (var item in humans)
                 item.AddComponent<DriveByHandler>();
-
-            GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor")
-                .SetActive(savedata.GetValueSafe("DoctorMailSpawned") == 1f);
         }
 
         private T AddComponent<T>(string obj) where T : Component
@@ -250,6 +278,27 @@ namespace Adrenaline
             LastAddedComponent = string.Format("{0}::{1}", obj, typeof(T)?.Name.ToString());
             Utils.PrintDebug(eConsoleColors.YELLOW, "Loading component " + LastAddedComponent);
             return GameObject.Find(obj)?.AddComponent<T>() ?? null;
+        }
+
+        private void UnloadResources()
+        {
+            AdrenalineLogic.mailboxSheet = null;
+
+            Globals.pills_list.Clear();
+            Globals.poster_textures.Clear();
+            Globals.mailScreens.Clear();
+            Globals.audios.Clear();
+            Globals.clips.Clear();
+            Globals.background = null;
+            Globals.pills = null;
+            Globals.poster = null;
+            Globals.can_texture = null;
+            Globals.atlas_texture = null;
+            Globals.empty_cup = null;
+            Globals.coffee_cup = null;
+
+            var handler = GameObject.Find("PLAYER")?.GetComponent<GlobalHandler>();
+            if (handler) UnityEngine.Object.Destroy(handler);
         }
 
         public override void OnSave()
@@ -262,21 +311,48 @@ namespace Adrenaline
 
                 SaveLoad.WriteValue(this, "DebugAdrenaline", AdrenalineLogic.config);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 throw new UnassignedReferenceException($"Unable to save DEBUG settings!\n{e.GetFullMessage()}");
             }
 #endif
 
-            SaveLoad.WriteValue(this, "Adrenaline", new Dictionary<string, float>
+            var list = Globals.pills_list;
+            int _items = list.Count;
+
+            byte[] array = new byte[18 + 4 + (_items * 24)];
+            BitConverter.GetBytes(AdrenalineLogic.isDead).CopyTo(array, 0); // 1
+            BitConverter.GetBytes(AdrenalineLogic.envelopeSpawned).CopyTo(array, 1); // 1
+            BitConverter.GetBytes(AdrenalineLogic.Value).CopyTo(array, 2); // 4
+            BitConverter.GetBytes(AdrenalineLogic.LossRate).CopyTo(array, 6); // 4
+            BitConverter.GetBytes(AdrenalineLogic.LastDayUpdated).CopyTo(array, 10); // 4
+            BitConverter.GetBytes(AdrenalineLogic.GetDecreaseLockTime()).CopyTo(array, 14); // 4
+            BitConverter.GetBytes(_items).CopyTo(array, 18); // 4
+            Debug.LogWarning($"[ADRENALINE DBG]: _items Count: {_items}; array len: {array.Length}");
+
+            if (_items == 0)
             {
-                ["IsDead"] = AdrenalineLogic.isDead ? 1f : 0f,
-                ["Value"] = AdrenalineLogic.Value,
-                ["LossRate"] = AdrenalineLogic.LossRate,
-                ["LossRateLockTime"] = AdrenalineLogic.GetDecreaseLockTime(),
-                ["LastDayUpdated"] = AdrenalineLogic.LastDayUpdated,
-                ["DoctorMailSpawned"] = GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor").activeSelf ? 1f : 0f
-            });
+                File.WriteAllBytes(SaveDataPath, array);
+                return;
+            }
+            
+            int _offset = 22;
+            for (var i = 0; i < _items; i++)
+            {
+                var _item = list.ElementAt(i);
+                var pos = _item.self.transform.position;
+                var rot = _item.self.transform.eulerAngles;
+                BitConverter.GetBytes(pos.x).CopyTo(array, _offset);
+                BitConverter.GetBytes(pos.y).CopyTo(array, _offset + 4);
+                BitConverter.GetBytes(pos.z).CopyTo(array, _offset + 8);
+                BitConverter.GetBytes(rot.x).CopyTo(array, _offset + 12);
+                BitConverter.GetBytes(rot.y).CopyTo(array, _offset + 16);
+                BitConverter.GetBytes(rot.z).CopyTo(array, _offset + 20);
+                Debug.LogWarning($"[ADRENALINE DBG]: Pills inserted with data x:{pos.x},y:{pos.y},z:{pos.z}; rX:{rot.x},rY:{rot.y},rZ:{rot.z}");
+                _offset += 24;
+            }
+
+            File.WriteAllBytes(SaveDataPath, array);
         }
     }
 
