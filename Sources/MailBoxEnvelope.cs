@@ -14,8 +14,9 @@ namespace Adrenaline
         private GameObject envelopeSheet;
         private bool installed = false;
 
-        private void Awake()
+        private void OnEnable()
         {
+            if (installed) return;
             try
             {
                 mailboxEnvelope = Instantiate(base.transform.Find("EnvelopeInspection").gameObject);
@@ -43,18 +44,7 @@ namespace Adrenaline
 
                 mailboxEnvelope.SetActive(true);
                 mailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
-                Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
-            }
-            catch (System.Exception e)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, $"Error while loading MailBoxEnvelope component\n{e.GetFullMessage()}");
-            }
-        }
 
-        private void Start()
-        {
-            try
-            {
                 var fsm = mailboxEnvelope.GetPlayMaker("Use");
                 var state2 = fsm.GetState("State 2");
                 (state2.Actions.ElementAtOrDefault(1) as SetStringValue).stringValue.Value = "Mail from Doctor";
@@ -62,26 +52,31 @@ namespace Adrenaline
                 var openad = fsm.GetState("Open ad");
                 var action = openad.Actions.Last() as ActivateGameObject;
                 action.gameObject.GameObject.Value = envelopeSheet;
-                action.Owner = envelopeSheet;
+                //action.Owner = envelopeSheet;
 
                 fsm.FsmVariables.FloatVariables = new List<FsmFloat> { }.ToArray();
-                mailboxEnvelope.SetActive(false);
+                if (!AdrenalineLogic.envelopeSpawned)
+                {
+                    mailboxEnvelope.SetActive(false);
+                    Utils.PrintDebug(eConsoleColors.YELLOW, "Mail hidded!");
+                }
+
+                StateHook.Inject(mailboxEnvelope, "Use", "Open ad", -1, () => Utils.CreateRandomPills());
+                StateHook.Inject(envelopeSheet, "Setup", "State 2", () => {
+                    mailboxEnvelope?.SetActive(false);
+                    AdrenalineLogic.envelopeSpawned = false;
+                });
+                envelopeSheet.SetActive(false);
+                installed = true;
+
+                AdrenalineLogic.mailboxSheet = envelopeSheet;
+
+                Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
             }
-            catch
+            catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "error in MailBoxEnvelope:Start()");
+                Utils.PrintDebug(eConsoleColors.RED, $"error in MailBoxEnvelope:OnEnable(): {e.GetFullMessage()}");
             }
-        }
-
-        private void OnEnable()
-        {
-            if (installed) return;
-
-            StateHook.Inject(mailboxEnvelope, "Use", "Open ad", Utils.CreateRandomPills);
-            StateHook.Inject(envelopeSheet, "Setup", "State 2", () => mailboxEnvelope?.SetActive(false));
-            envelopeSheet.SetActive(false);
-            installed = true;
-            Utils.PrintDebug(eConsoleColors.YELLOW, "MailBoxEnvelope enabled");
         }
     }
 }
