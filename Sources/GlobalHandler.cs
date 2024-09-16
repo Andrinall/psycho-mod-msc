@@ -15,8 +15,11 @@ namespace Adrenaline
 
         private PlayMakerFSM SmokingFSM;
         private FsmFloat PlayerMovementSpeed;
+        private FsmBool PlayerSleeps;
         private FsmBool HouseBurningState;
         private FsmInt GlobalDay;
+
+        private bool isSleep = false;
 
         private void Awake()
         {
@@ -25,6 +28,7 @@ namespace Adrenaline
             Utils.PrintDebug(eConsoleColors.GREEN, "HUD Enabled");
 
             PlayerMovementSpeed = Utils.GetGlobalVariable<FsmFloat>("PlayerMovementSpeed");
+            PlayerSleeps = Utils.GetGlobalVariable<FsmBool>("PlayerSleeps");
             HouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
             HouseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
@@ -77,11 +81,24 @@ namespace Adrenaline
             if (SmokingFSM.ActiveStateName == "Outhale")
                 AdrenalineLogic.IncreaseTimed(-AdrenalineLogic.config.GetValueSafe("SMOKING_DECREASE"));
 
+            if (PlayerSleeps.Value && !isSleep)
+            {
+                isSleep = true;
+            }
+            else if (!PlayerSleeps.Value && isSleep)
+            {
+                AdrenalineLogic.IncreaseOnce(-AdrenalineLogic.config.GetValueSafe("SLEEP_DECREASE"));
+                Utils.PrintDebug(eConsoleColors.WHITE, $"Value decreased after player sleeps");
+                isSleep = false;
+            }
+
             if (GlobalDay.Value != AdrenalineLogic.LastDayUpdated)
             {
                 var mailFromDoctor = GameObject.Find("YARD/PlayerMailBox/EnvelopeDoctor");
+
                 mailFromDoctor.SetActive(true);
                 mailFromDoctor.GetComponent<PlayMakerFSM>().enabled = true;
+                AdrenalineLogic.envelopeSpawned = true;
 
                 Utils.PrintDebug($"Day updated from {AdrenalineLogic.LastDayUpdated} to {GlobalDay.Value}");
                 AdrenalineLogic.LastDayUpdated = GlobalDay.Value;
