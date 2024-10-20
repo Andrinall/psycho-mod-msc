@@ -4,23 +4,38 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 
-namespace Adrenaline
+
+namespace Psycho
 {
-    internal static class Globals
+    public static class Globals
     {
-        internal static List<PillsItem> pills_list = new List<PillsItem> { };
-        internal static List<Texture> poster_textures = new List<Texture> { };
-        internal static List<Texture> mailScreens = new List<Texture> { };
-        internal static List<AudioSource> audios = new List<AudioSource> { };
-        internal static List<AudioClip> clips = new List<AudioClip> { };
-        internal static GameObject background = null;
-        internal static GameObject pills = null;
-        internal static GameObject poster = null;
-        internal static Texture can_texture = null;
-        internal static Texture atlas_texture = null;
-        internal static Mesh empty_cup = null;
-        internal static Mesh coffee_cup = null;
-        internal static List<Vector3> pills_positions = new List<Vector3> {
+        public static List<PillsItem> pills_list = new List<PillsItem> { };
+        public static List<Texture> mailScreens = new List<Texture> { };
+
+        public static Dictionary<int, ModelData> models_cached = new Dictionary<int, ModelData> { };
+        public static Dictionary<int, ModelData> models_replaces = new Dictionary<int, ModelData> { };
+
+        public static Dictionary<int, object> cached = new Dictionary<int, object> { };
+        public static Dictionary<int, Texture> replaces = new Dictionary<int, Texture> { };
+        public static Dictionary<int, Texture> indep_textures = new Dictionary<int, Texture> { };
+
+        public static List<AudioClip> flies_cached = new List<AudioClip> { };
+        public static List<AudioClip> horror_flies = new List<AudioClip> { };
+
+        public static List<Texture> pictures = new List<Texture> { };
+
+        public static GameObject Background_prefab = null;
+        public static GameObject Pills_prefab = null;
+        public static GameObject Crow_prefab = null;
+        public static GameObject Picture_prefab = null;
+        public static GameObject Coffin_prefab = null;
+        public static GameObject Suicidal_prefab = null;
+        public static GameObject SmokeParticleSystem_prefab = null;
+        public static GameObject mailboxSheet = null;
+        public static GameObject envelopeObject = null;
+        public static AudioClip  AcidBurnSound = null;
+
+        public static List<Vector3> pills_positions = new List<Vector3> {
             new Vector3(462.2887f, 9.311339f, 1320.133f),
             new Vector3(1353.568f, 5.9235f, 821.1407f),
             new Vector3(1396f, 4.59463f, 850.6066f),
@@ -71,49 +86,28 @@ namespace Adrenaline
             new Vector3(1426.629f, -4.249069f, 751.5843f)
         };
 
-        internal static Dictionary<string, string> localization = new Dictionary<string, string>
-        {
-            ["LOSS_RATE_SPEED"] = "Модификатор скорости пассивного уменьшения",
-            ["DEFAULT_DECREASE"] = "Базовое уменьшение адреналина",
-            ["SPRINT_INCREASE"] = "Увеличение от бега",
-            ["HIGHSPEED_INCREASE"] = "Увеличение от езды на большой скорости",
-            ["BROKEN_WINDSHIELD_INCREASE"] = "Увеличение при езде без лобового стекла",
-            ["FIGHT_INCREASE"] = "Увеличение во время драки",
-            ["WINDOW_BREAK_INCREASE"] = "Увеличение за разбивание окон (магазин, паб)",
-            ["HOUSE_BURNING"] = "Увеличение во время пожара в доме",
-            ["TEIMO_PISS"] = "Увеличение за обоссывание Теймо",
-            ["GUARD_CATCH"] = "Увеличение при попытках охранника поймать игрока",
-            ["VENTTI_WIN"] = "Увеличение адреналина при поражениях в игре со свином",
-            ["JANNI_PETTERI_HIT"] = "Увеличение за нокаут от NPC (Janni и Petteri)",
-            ["TEIMO_SWEAR"] = "Увеличение при ругани Теймо на персонажа",
-            ["PISS_ON_DEVICES"] = "Увеличение за обоссывание приборов в доме(TV)",
-            ["SPARKS_WIRING"] = "Увеличение при замыкании проводки Satsuma",
-            ["SPILL_SHIT"] = "Увеличение при сливе говна в неположенном месте (crime)",
-            ["RALLY_PLAYER"] = "Увеличение при участии в ралли",
-            ["MURDER_WALKING"] = "Увеличение при приследовании мужиком с топором",
-            ["COFFEE_INCREASE"] = "Увеличение от употребления кофе",
-            ["ENERGY_DRINK_INCREASE"] = "Увеличение от употребления энергетика",
-            ["CRASH_INCREASE"] = "Увеличение за получение урона в аварии",
-            ["DRIVEBY_INCREASE"] = "Увеличение при сбитии NPC (зрители ралли)",
-            ["MURDERER_THREAT"] = "Увеличение за уклонение от удара топором",
-            ["MURDERER_HIT"] = "Увеличение за удар по мужику с топором",
-            ["SLEEP_DECREASE"] = "Уменьшение адреналина при сне",
-            ["HELMET_DECREASE"] = "Дебафф при езде на скорости со <b>шлемом</b>",
-            ["SEATBELT_DECREASE"] = "Дебафф при езде с пристёгнутым ремнём",
-            ["SMOKING_DECREASE"] = "Уменьшение от курения",
-
-            ["REQUIRED_SPEED_Jonnez"] = "Мин.скорость для прибавки при езде на Jonezz",
-            ["REQUIRED_SPEED_Satsuma"] = "Мин.скорость для прибавки при езде в Satsuma",
-            ["REQUIRED_SPEED_Ferndale"] = "Мин.скорость для прибавки при езде в Ferndale",
-            ["REQUIRED_SPEED_Hayosiko"] = "Мин.скорость для прибавки при езде в Hayosiko",
-            ["REQUIRED_SPEED_Fittan"] = "Мин.скорость для прибавки при езде в Fittan",
-            ["REQUIRED_SPEED_Gifu"] = "Мин.скорость для прибавки при езде в Gifu",
-
-            ["REQUIRED_CRASH_SPEED"] = "Мин.скорость для прибавки от аварии",
-            ["REQUIRED_WINDSHIELD_SPEED"] = "Мин.скорость для прибавки при езде без лобаша"
+        public static List<Vector3[]> crows_positions = new List<Vector3[]> {
+            new Vector3[2]{ new Vector3(-7.516591f, 4.490543f, 8.677464f), new Vector3(0.003401852f, 87.02156f, -0.0002028467f) },
+            new Vector3[2]{ new Vector3(1.856678f, 9.4264f, 7.493578f), new Vector3(17.93412f, 274.3768f, 10.45374f) },
+            new Vector3[2]{ new Vector3(58.8f, 3.197987f, -70.876f), new Vector3(349.5564f, 87.5478f, 0.6662462f) },
+            new Vector3[2]{ new Vector3(32.70638f, 6.566193f, -41.20472f), new Vector3(0.006775226f, 172.4616f, 0.002704575f) },
+            new Vector3[2]{ new Vector3(751.0732f, -2.711799f, -348.1628f), new Vector3(23.28657f, 145.5104f, 12.25799f) },
+            new Vector3[2]{ new Vector3(1866.657f, -0.583223f, -810.8883f), new Vector3(1.390312f, 143.5693f, 12.79265f) },
+            new Vector3[2]{ new Vector3(1923.895f, 9.179598f, -411.1647f), new Vector3(359.99f, 297.3772f, 0.001026476f) },
+            new Vector3[2]{ new Vector3(1952.774f, 13.97002f, -229.0258f), new Vector3 (0.01081815f, 232.413f, 0.0006151822f) },
+            new Vector3[2]{ new Vector3(1594.176f, 8.469599f, 658.263f), new Vector3(-4.64268E-05f, 343.1817f, 0.0001089085f) },
+            new Vector3[2]{ new Vector3(1578.88f, 10.73002f, 653.0276f), new Vector3(-0.0001219711f, 348.5435f, 3.264716E-05f) },
+            new Vector3[2]{ new Vector3(1551.507f, 7.826491f, 735.2065f), new Vector3(350.2102f, 28.64273f, 347.3693f) },
+            new Vector3[2]{ new Vector3(1366.415f, 15.09954f, 798.6128f), new Vector3(0.03065068f, 297.5476f, -0.001512694f) },
+            new Vector3[2]{ new Vector3(462.1749f, 9.42584f, 1317.943f), new Vector3 (-0.00287517f, 265.5215f, -0.004583559f) },
+            new Vector3[2]{ new Vector3(-1548.195f, 7.158126f, 1178.941f), new Vector3 (354.6178f, 247.7073f, 26.39358f) },
+            new Vector3[2]{ new Vector3 (-1429.306f, 8.151156f, 1147.188f), new Vector3 (0.9512718f, 154.2885f, 29.43955f) },
+            new Vector3[2]{ new Vector3 (-1525.027f, 9.647693f, 1341.555f), new Vector3 (354.4455f, 245.7671f, 2.359069f) },
+            new Vector3[2]{ new Vector3 (-1535.116f, 8.121346f, 1259.436f), new Vector3 (354.5245f, 272.0313f, 9.901129f) }
         };
 
-        internal static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
+
+        public static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
         {
             try
             {
@@ -121,72 +115,25 @@ namespace Adrenaline
                 if (asset == null) throw new NullReferenceException();
                 return asset;
             }
-            catch (Exception e)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load asset {path} from embedded resource\n{e.GetFullMessage()}");
-                return null;
+            catch (Exception e) {
+                ModConsole.Error($"Unable to load asset {path} from embedded resource;\n{e.GetFullMessage()}");
             }
+            return null;
         }
 
-        internal static void LoadAllPosters(AssetBundle bundle)
+        public static void LoadAllScreens(AssetBundle bundle)
         {
-            foreach (var v in bundle.GetAllAssetNames()) {
-                if (!v.Contains("textures/poster")) continue;
-                poster_textures.Add(LoadAsset<Texture>(bundle, v));
-            }
-        }
-
-        internal static void LoadAllScreens(AssetBundle bundle)
-        {
+            // load all screens
             foreach (var v in bundle.GetAllAssetNames())
             {
                 if (!v.Contains("screens/")) continue;
                 mailScreens.Add(LoadAsset<Texture>(bundle, v));
             }
 
-            // sort screens from 0 to *, for correct display this in the email
+            // sort screens from 0 to *, for correct display this in the letter
             mailScreens.Sort(delegate(Texture item, Texture target) {
-                return (Int32.Parse(item.name) < Int32.Parse(target.name)) ? -1 : 0;
+                return (int.Parse(item.name) < int.Parse(target.name)) ? -1 : 0;
             });
-        }
-
-        internal static void LoadAllSounds(AssetBundle bundle)
-        {
-            try
-            {
-                var player = GameObject.Find("PLAYER");
-                var systems = GameObject.Find("Systems");
-
-                foreach (var v in bundle.GetAllAssetNames())
-                {
-                    if (!v.Contains("audio/heart_")) continue;
-                    var clip = LoadAsset<AudioClip>(bundle, v);
-                    clips.Add(clip);
-
-                    if (clip.name == "heart_stop")
-                    {
-                        var src = systems.AddComponent<AudioSource>();
-                        src.clip = clip;
-                        src.loop = false;
-                        src.volume = 1.75f;
-                        src.priority = 0;
-                        audios.Add(src);
-                        Utils.PrintDebug(eConsoleColors.GREEN, $"AudioSource {src.clip.name} created");
-                        continue;
-                    }
-
-                    var source = player.AddComponent<AudioSource>();
-                    source.clip = clip;
-                    source.loop = true;
-                    source.volume = 2f;
-                    audios.Add(source);
-                    Utils.PrintDebug(eConsoleColors.GREEN, $"AudioSource {source.clip.name} created");
-                }
-            }
-            catch (Exception e)
-            {
-                Utils.PrintDebug($"AUDIO loops loading failed\n{e.GetFullMessage()}");
-            }
         }
     }
 }

@@ -1,0 +1,63 @@
+﻿using System.Collections.Generic;
+
+using MSCLoader;
+using UnityEngine;
+
+namespace Psycho
+{
+    public sealed class SoundManager
+    {
+        public static AudioSource DeathSound;
+        public static List<GameObject> ScreamPoints = new List<GameObject>();
+
+
+        public static void PlayDeathSound()
+        {
+            try
+            {
+                if (DeathSound.isPlaying) return;
+                ScreamPoints.ForEach(v => v?.GetComponent<AudioSource>()?.Stop());
+                AudioSource.PlayClipAtPoint(DeathSound.clip, GameObject.Find("PLAYER").transform.position, 1.5f);
+            }
+            catch (System.Exception e)
+            {
+                ModConsole.Error($"PlayDeathSound error in KillCustor;\n{e.GetFullMessage()}");
+            }
+        }
+
+        public static void PlayRandomScreamSound()
+        {
+            if (DeathSound.isPlaying) return;
+
+            var rand = Random.Range(0, ScreamPoints.Count);
+            var source = ScreamPoints[rand].GetComponent<AudioSource>();
+            if (source.isPlaying) return;
+            source.loop = true;
+            source.Play();
+            Utils.PrintDebug($"Played sound {source.clip.name}; idx[{rand}]");
+        }
+
+        public static void StopScreamSound(string name)
+        {
+            var source = ScreamPoints.Find(v => v.name.Contains(name)).GetComponent<AudioSource>();
+            if (!source.isPlaying) return;
+            source.Stop();
+        }
+
+        public static bool AnyScreamSoundIsPlaying()
+        {
+            foreach(var scream in ScreamPoints)
+            {
+                var src = scream.GetComponent<AudioSource>();
+                if (!src.isPlaying) continue;
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void StopAllScreamSounds() => ScreamPoints.ForEach(v => v.GetComponent<AudioSource>()?.Stop());
+
+        public static void ChangeFliesSounds() => GameObject.Find("PLAYER/Flies")?.GetComponent<FliesChanger>()?.Change();
+    }
+}
