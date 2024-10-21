@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(Animation))]
     public sealed class ShizAnimPlayer : MonoBehaviour
     {
         GameObject _eyes = null;
@@ -13,10 +14,8 @@ namespace Psycho
 
         void OnEnable()
         {
-            if (_eyes == null)
-                _eyes = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/SleepEyes");
-            if (m_oAnimation == null)
-                m_oAnimation = _eyes.GetComponent<Animation>();
+            _eyes = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/SleepEyes");
+            m_oAnimation = _eyes.GetComponent<Animation>();
         }
 
         public void PlayAnimation(

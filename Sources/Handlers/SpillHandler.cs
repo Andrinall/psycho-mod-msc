@@ -4,6 +4,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class SpillHandler : MonoBehaviour
     {
         FsmBool m_bIsCrime;

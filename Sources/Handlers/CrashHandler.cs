@@ -3,6 +3,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(Rigidbody))]
     public sealed class CrashHandler : MonoBehaviour
     {
         Rigidbody _thisRb;

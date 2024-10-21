@@ -17,14 +17,14 @@ namespace Psycho
                 StateHook.Inject(Fleetari, "Work", $"Car {i}", () => CheckCars());
 
             StateHook.Inject(gameObject, "Use", "State 1", -1, () => UsePayMoneyTicket());
-            Utils.PrintDebug(eConsoleColors.GREEN, "JunkYardJobHandler enabled");
             m_bInstalled = true;
         }
 
         void UsePayMoneyTicket()
         {
-            Logic.PlayerCompleteJob("JUNK_YARD", m_iCarsNumber, $"Delivered {m_iCarsNumber} JunkCars");
             Utils.PrintDebug(eConsoleColors.WHITE, $"Delivered {m_iCarsNumber} cars in one of time");
+
+            Logic.PlayerCompleteJob("JUNK_YARD", m_iCarsNumber, $"Delivered {m_iCarsNumber} JunkCars");
             m_iCarsNumber = 0;
         }
 

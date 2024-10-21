@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class NPCHitHandler : MonoBehaviour
     {
         bool m_bInstalled = false;

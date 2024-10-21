@@ -4,6 +4,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(AudioSource))]
     public class GrandmaDistanceChecker : MonoBehaviour
     {
         public Transform _player;

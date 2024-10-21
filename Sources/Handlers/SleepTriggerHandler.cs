@@ -3,6 +3,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho
 {
+    [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class SleepTriggerHandler : MonoBehaviour
     {
         FsmFloat m_fPlayerFatigue;
