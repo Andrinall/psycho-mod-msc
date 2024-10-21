@@ -252,6 +252,8 @@ namespace Psycho
             source.spatialBlend = 1f;
             source.spread = 0f;
 
+            WorldManager.ActivateDINGONBIISIMiscThing3Permanently();
+
             // whisp spawn
             /*
              * var obj = GameObject.Find("MAP/Buildings/DINGONBIISI/Misc/Thing1");

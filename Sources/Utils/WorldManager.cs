@@ -17,6 +17,26 @@ namespace Psycho
 
     public class WorldManager
     {
+        public static void ActivateDINGONBIISIMiscThing3Permanently()
+        {
+            var _obj = GameObject.Find("MAP/Buildings/DINGONBIISI");
+            if (_obj == null) return;
+
+            var _house = _obj?.transform;
+            _house.GetPlayMaker("Clock").GetState("Off").ClearActions();
+
+            var _misc = _house.transform.Find("Misc");
+            _misc.gameObject.SetActive(true);
+
+            var _thing3 = _misc.Find("Thing3");
+            _thing3.gameObject.SetActive(true);
+            _thing3.GetPlayMaker("Distance").GetState("Random").ClearActions(0, 1);
+
+            var _mover = _thing3.Find("Mover");
+            _mover.gameObject.SetActive(true);
+            _mover.GetPlayMaker("Position").GetState("State 4").ClearActions();
+        }
+        
         public static GameObject CreateSuicidal(Vector3 position, string name = "") =>
             UnityEngine.Object.Instantiate(Globals.Suicidal_prefab,
                 GameObject.Find("PLAYER").transform.position,
@@ -34,33 +54,24 @@ namespace Psycho
 
         public static void ChangeCameraFog()
         {
-            try
-            {
-                CameraFog cameraFog = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.GetComponent<CameraFog>();
-                FsmVariables rainFog = GameObject.Find("PLAYER/Rain").GetPlayMaker("Rain").FsmVariables;
+            CameraFog cameraFog = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.GetComponent<CameraFog>();
+            FsmVariables rainFogVars = GameObject.Find("PLAYER/Rain").GetPlayMaker("Rain").FsmVariables;
 
-                if (Logic.inHorror)
-                {
-                    cameraFog.StartDistance = 0.5f;
-                    cameraFog.EndDistance = 50f;
-                    cameraFog.Density = 0.08f;
-                    cameraFog.Color = Color.gray;
-                    rainFog.GetFsmFloat("FogOn").Value = 0.09f;
-                    rainFog.GetFsmFloat("FogOff").Value = 0.08f;
-                    return;
-                }
-
-                cameraFog.StartDistance = 0;
-                cameraFog.EndDistance = 100f;
-                cameraFog.Density = 0.001f;
-                cameraFog.Color = Color.clear;
-                rainFog.GetFsmFloat("FogOn").Value = 0.02f;
-                rainFog.GetFsmFloat("FogOff").Value = 0.001f;
-            }
-            catch (System.Exception e)
+            if (Logic.inHorror)
             {
-                ModConsole.Error($"Unable to change camera fog after moving between worlds;\n{e.GetFullMessage()}");
+                _changeFog_Internal(
+                    cameraFog, rainFogVars,
+                    0.5f, 50f, 0.08f, Color.gray,
+                    0.09f, 0.08f
+                );
+                return;
             }
+
+            _changeFog_Internal(
+                cameraFog, rainFogVars,
+                0f, 100f, 0.001f, Color.clear,
+                0.02f, 0.001f
+            );
         }
 
         public static void ChangeWorldModels(GameObject parent)
@@ -230,6 +241,22 @@ namespace Psycho
             {
                 ModConsole.Error($"Unable to change material for {obj?.name}, idx {index}, name {name}, tex {texture?.name};\n{e.GetFullMessage()}");
             }
+        }
+
+        static void _changeFog_Internal(
+            CameraFog cam, FsmVariables rain,
+            float start, float end, float density, Color color,
+            float fogOn, float fogOff
+        )
+        {
+            if (cam == null || rain == null) return;
+            cam.StartDistance = start;
+            cam.EndDistance = end;
+            cam.Density = density;
+            cam.Color = color;
+
+            rain.GetFsmFloat("FogOn").Value = fogOn;
+            rain.GetFsmFloat("FogOff").Value = fogOff;
         }
 
         static bool _check(Component comp)
