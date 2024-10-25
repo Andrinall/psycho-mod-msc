@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 
 using MSCLoader;
+using Steamworks;
 using UnityEngine;
 
 namespace Psycho
@@ -30,8 +31,32 @@ namespace Psycho
 
         public override string Help => "";
 
-        public override void Run(string[] args) =>
-            WorldManager.CreateSuicidal(GameObject.Find("PLAYER").transform.position, "SuicidalCustom");
+        public override void Run(string[] args)
+        {
+            if (args.Length == 0 || string.IsNullOrEmpty(args[0]))
+            {
+                WorldManager.CreateSuicidal(GameObject.Find("PLAYER").transform.position, "SuicidalCustom");
+                return;
+            }
+
+            if (args[0] == "copy")
+            {
+                Utils.PrintDebug("SuicidalsCustom copy process");
+                var _suicidals = GameObject.Find("SuicidalList").transform;
+
+                for (int i = 0; i < _suicidals.childCount; i++)
+                {
+                    var _child = _suicidals.GetChild(i);
+                    Utils.PrintDebug($"[{i}]: /[{_child.position.ToString()}]\\ /[{_child.eulerAngles.ToString()}]\\");
+                }
+
+                Utils.PrintDebug("SuicidalsCustom copy finished");
+                return;
+            }
+
+            if (args[0] == "clear")
+                Object.Destroy(GameObject.Find("SuicidalList"));
+        }
     }
 
     public sealed class ChangeWorld : ConsoleCommand

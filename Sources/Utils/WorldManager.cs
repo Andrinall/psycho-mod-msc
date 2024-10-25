@@ -60,11 +60,20 @@ namespace Psycho
             _mover.gameObject.SetActive(true);
             _mover.GetPlayMaker("Position").GetState("State 4").ClearActions();
         }
-        
-        public static GameObject CreateSuicidal(Vector3 position, string name = "") =>
-            UnityEngine.Object.Instantiate(Globals.Suicidal_prefab,
+
+        public static GameObject CreateSuicidal(Vector3 position, string name = "")
+        {
+            var list = GameObject.Find("SuicidalList");
+            if (!list)
+                list = new GameObject("SuicidalList");
+
+            GameObject newchild = UnityEngine.Object.Instantiate(Globals.Suicidal_prefab,
                 GameObject.Find("PLAYER").transform.position,
                 GameObject.Find("PLAYER").transform.rotation) as GameObject;
+
+            newchild.transform.SetParent(list.transform, worldPositionStays: false);
+            return newchild;
+        }
 
         public static void AddDoorOpenCallback(string path, Action callback) =>
             StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);

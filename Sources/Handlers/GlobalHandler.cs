@@ -25,9 +25,13 @@ namespace Psycho
             _houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
 
             var fridge_paper = GameObject.Find("fridge_paper");
-            StateHook.Inject(fridge_paper, "Use", "Wait button", -1, SetFridgePaperText);
+            if (fridge_paper)
+                StateHook.Inject(fridge_paper, "Use", "Wait button", -1, SetFridgePaperText);
 
-            StateHook.Inject(GameObject.Find("HUMANS/Farmer/Walker"), "Speak", "Done", () => Logic.PlayerCompleteJob("FARMER_QUEST"));
+            var farm_walker = GameObject.Find("HUMANS/Farmer/Walker");
+            if (farm_walker)
+                StateHook.Inject(farm_walker, "Speak", "Done", () => Logic.PlayerCompleteJob("FARMER_QUEST"));
+
             Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             m_bInstalled = true;
         }

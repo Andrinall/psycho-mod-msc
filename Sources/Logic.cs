@@ -245,8 +245,10 @@ namespace Psycho
 
                     WorldManager.ChangeCameraFog();
                     WorldManager.StopCloudsOrRandomize();
+                    WorldManager.ChangeWalkersAnimation();
                     SoundManager.ChangeFliesSounds();
                     WorldManager.ChangeBedroomModels();
+                    GameObject.Find("CustomSuicidals").SetActive(inHorror);
                 });
             }
             catch (Exception e)

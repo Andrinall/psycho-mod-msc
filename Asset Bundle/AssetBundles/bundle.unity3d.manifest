@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 807641667
+CRC: 3370461074
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 298257b27fb95dfc4fa171e23fc8b31d
+    Hash: 8cb100518ea27a47de2aaa13797ec0de
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5f57cf21cd6b7dbcab0da5029a09f41f
+    Hash: df80c91f1a304b147d32afe38da163be
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -39,6 +39,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 199
   Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
 - Class: 224
   Script: {instanceID: 0}
 Assets:
@@ -62,7 +64,6 @@ Assets:
 - Assets/Screens/29.png
 - Assets/Replaces/Horror/reg_plate3.png
 - Assets/Screens/12.png
-- Assets/Prefabs/crow.prefab
 - Assets/Replaces/Horror/fabric8.png
 - Assets/Replaces/Horror/wallpaper.png
 - Assets/Screens/3.png
@@ -84,6 +85,7 @@ Assets:
 - Assets/Replaces/Horror/wood_panel6.png
 - Assets/Screens/7.png
 - Assets/Replaces/Horror/water_plant.png
+- Assets/Prefabs/CrowsList.prefab
 - Assets/Replaces/Horror/fabric21.png
 - Assets/Screens/19.png
 - Assets/Materials/suicidal/char_face01.png
@@ -196,6 +198,7 @@ Assets:
 - Assets/Replaces/Smoking/hand.png
 - Assets/Pictures/7.png
 - Assets/Replaces/Horror/wood_panel9.png
+- Assets/Prefabs/CustomSuicidals.prefab
 - Assets/Screens/22.png
 - Assets/Pictures/3.png
 - Assets/Replaces/Horror/fabric23.png
@@ -224,7 +227,6 @@ Assets:
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
-- Assets/Prefabs/Suicidal.prefab
 - Assets/Replaces/Horror/panel_wall.png
 - Assets/Screens/1.png
 Dependencies: []

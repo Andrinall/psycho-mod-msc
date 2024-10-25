@@ -86,27 +86,6 @@ namespace Psycho
             new Vector3(1426.629f, -4.249069f, 751.5843f)
         };
 
-        public static List<Vector3[]> crows_positions = new List<Vector3[]> {
-            new Vector3[2]{ new Vector3(-7.516591f, 4.490543f, 8.677464f), new Vector3(0.003401852f, 87.02156f, -0.0002028467f) },
-            new Vector3[2]{ new Vector3(1.856678f, 9.4264f, 7.493578f), new Vector3(17.93412f, 274.3768f, 10.45374f) },
-            new Vector3[2]{ new Vector3(58.8f, 3.197987f, -70.876f), new Vector3(349.5564f, 87.5478f, 0.6662462f) },
-            new Vector3[2]{ new Vector3(32.70638f, 6.566193f, -41.20472f), new Vector3(0.006775226f, 172.4616f, 0.002704575f) },
-            new Vector3[2]{ new Vector3(751.0732f, -2.711799f, -348.1628f), new Vector3(23.28657f, 145.5104f, 12.25799f) },
-            new Vector3[2]{ new Vector3(1866.657f, -0.583223f, -810.8883f), new Vector3(1.390312f, 143.5693f, 12.79265f) },
-            new Vector3[2]{ new Vector3(1923.895f, 9.179598f, -411.1647f), new Vector3(359.99f, 297.3772f, 0.001026476f) },
-            new Vector3[2]{ new Vector3(1952.774f, 13.97002f, -229.0258f), new Vector3 (0.01081815f, 232.413f, 0.0006151822f) },
-            new Vector3[2]{ new Vector3(1594.176f, 8.469599f, 658.263f), new Vector3(-4.64268E-05f, 343.1817f, 0.0001089085f) },
-            new Vector3[2]{ new Vector3(1578.88f, 10.73002f, 653.0276f), new Vector3(-0.0001219711f, 348.5435f, 3.264716E-05f) },
-            new Vector3[2]{ new Vector3(1551.507f, 7.826491f, 735.2065f), new Vector3(350.2102f, 28.64273f, 347.3693f) },
-            new Vector3[2]{ new Vector3(1366.415f, 15.09954f, 798.6128f), new Vector3(0.03065068f, 297.5476f, -0.001512694f) },
-            new Vector3[2]{ new Vector3(462.1749f, 9.42584f, 1317.943f), new Vector3 (-0.00287517f, 265.5215f, -0.004583559f) },
-            new Vector3[2]{ new Vector3(-1548.195f, 7.158126f, 1178.941f), new Vector3 (354.6178f, 247.7073f, 26.39358f) },
-            new Vector3[2]{ new Vector3 (-1429.306f, 8.151156f, 1147.188f), new Vector3 (0.9512718f, 154.2885f, 29.43955f) },
-            new Vector3[2]{ new Vector3 (-1525.027f, 9.647693f, 1341.555f), new Vector3 (354.4455f, 245.7671f, 2.359069f) },
-            new Vector3[2]{ new Vector3 (-1535.116f, 8.121346f, 1259.436f), new Vector3 (354.5245f, 272.0313f, 9.901129f) }
-        };
-
-
         public static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
         {
             try

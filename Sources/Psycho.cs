@@ -19,9 +19,13 @@ namespace Psycho
         public override string Version => "0.86.8";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
+        public override bool LoadInMenu => true;
         public override bool SecondPass => true;
 
         private string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
+        
+
+        public override void OnMenuLoad() => Resources.UnloadUnusedAssets(); // tested
         
         public override void OnNewGame()
         {
@@ -29,11 +33,6 @@ namespace Psycho
             File.Delete(_saveDataPath);
             SetDefaultValuesForLogic();
             Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
-        }
-
-        public override void OnMenuLoad()
-        {
-            Resources.UnloadUnusedAssets(); // tested
         }
 
         public override void OnLoad()
@@ -50,15 +49,19 @@ namespace Psycho
             };
 
             // load resources from bundle
-            var _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
+            AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
             Globals.Pills_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/Pills.prefab");
             Globals.Background_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/Background.prefab");
-            Globals.Crow_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crow.prefab");
-            var _picture_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
+            GameObject _picture_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
             Globals.Coffin_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             Globals.SmokeParticleSystem_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
-            Globals.Suicidal_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/suicidal.prefab");
             Globals.AcidBurnSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
+
+            GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
+            UnityEngine.Object.Instantiate(crows_list);
+
+            GameObject suicidals_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab");
+            ((GameObject)UnityEngine.Object.Instantiate(suicidals_list)).SetActive(false);
 
             // load all replaces
             _bundle.GetAllAssetNames().ToList().ForEach(v =>
@@ -223,26 +226,9 @@ namespace Psycho
             Logic.death = GameObject.Find("Systems").transform.Find("Death").gameObject; // cache ingame player death system
 
             _addHandlers();
+            _applyHorrorIfNeeded();
 
-            // apply horror textures if this needed
-            if (Logic.inHorror)
-            {
-                WorldManager.ChangeWorldTextures(Logic.inHorror);
-                WorldManager.StopCloudsOrRandomize();
-                WorldManager.ChangeCameraFog();
-                Utils.ChangeSmokingModel();
-                SoundManager.ChangeFliesSounds();
-                WorldManager.ChangeBedroomModels();
-            }
             WorldManager.ChangeIndepTextures(false);
-
-            // spawn crows
-            Globals.crows_positions.ForEach(v =>
-            {
-                var obj = UnityEngine.Object.Instantiate(Globals.Crow_prefab);
-                obj.transform.position = v[0];
-                obj.transform.eulerAngles = v[1];
-            });
 
             // add inactive audio source for play in screamer
             var _grandma = GameObject.Find("ChurchGrandma");
@@ -313,6 +299,23 @@ namespace Psycho
             Logic.milkUsed = false;
             Logic.Value = 100f;
             Logic.Points = 0f;
+        }
+
+
+        void _applyHorrorIfNeeded()
+        {
+            if (!Logic.inHorror) return;
+
+            Utils.ChangeSmokingModel();
+
+            WorldManager.ChangeWorldTextures(true);
+            WorldManager.ChangeCameraFog();
+            WorldManager.ChangeBedroomModels();
+            WorldManager.ChangeWalkersAnimation();
+            WorldManager.StopCloudsOrRandomize();
+
+            SoundManager.ChangeFliesSounds();
+            GameObject.Find("CustomSuicidals").SetActive(true);
         }
 
         void _addHandlers()
