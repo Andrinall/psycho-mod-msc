@@ -16,7 +16,7 @@ namespace Psycho
             {
                 for (int i = 0; i < transform.childCount; i++)
                 {
-                    var child = transform.GetChild(i);
+                    Transform child = transform.GetChild(i);
                     if (child.childCount == 0) continue;
 
                     _suitcase = child.Find("suitcase(itemx)");

@@ -16,7 +16,7 @@ namespace Psycho
         {
             try
             {
-                var smoking = GetGlobalVariable<FsmGameObject>("POV").Value
+                GameObject smoking = GetGlobalVariable<FsmGameObject>("POV").Value
                     ?.transform?.Find("Smoking/Hand/HandSmoking")?.gameObject;
 
                 smoking?.transform
@@ -36,14 +36,14 @@ namespace Psycho
             try
             {
             Generate:
-                var idx = Random.Range(0, Globals.pills_positions.Count - 1);
+                int idx = Random.Range(0, Globals.pills_positions.Count - 1);
                 if (Globals.pills_list.Any(v => v.index == idx))
                     goto Generate;
 
                 Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAt(idx)));
 
-                var Image = Globals.mailboxSheet.transform.Find("Background/Image");
-                var texture = Globals.mailScreens.Find(v => v.name == idx.ToString());
+                Transform Image = Globals.mailboxSheet.transform.Find("Background/Image");
+                Texture texture = Globals.mailScreens.Find(v => v.name == idx.ToString());
                 Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
 
                 PrintDebug(eConsoleColors.YELLOW, $"Generated pills: {idx}, {Image.name}");
@@ -56,21 +56,17 @@ namespace Psycho
 
         internal static void SetPictureImage()
         {
-            var picture = GameObject.Find("picture(Clone)");
+            GameObject picture = GameObject.Find("picture(Clone)");
             if (picture == null) return;
 
-            var idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
-            
-            string str = "";
-            Globals.pictures.ForEach(v => str += ", " + v.name);
-            PrintDebug($"SetPictureImage [{idx}] :: {str.TrimStart(',', ' ')}");
-            
-            var texture = Globals.pictures.ElementAtOrDefault(idx);
+            int idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
+            Texture texture = Globals.pictures.ElementAtOrDefault(idx);
             if (texture == null) return;
 
-            var material = picture.GetComponent<MeshRenderer>().materials[1];
+            Material material = picture.GetComponent<MeshRenderer>().materials[1];
             if (material.GetTexture("_MainTex")?.name == texture.name) return;
 
+            PrintDebug($"SetPictureImage [{idx}]");
             material.SetTexture("_MainTex", texture);
         }
 

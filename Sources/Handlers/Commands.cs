@@ -42,11 +42,11 @@ namespace Psycho
             if (args[0] == "copy")
             {
                 Utils.PrintDebug("SuicidalsCustom copy process");
-                var _suicidals = GameObject.Find("SuicidalList").transform;
+                Transform _suicidals = GameObject.Find("SuicidalList").transform;
 
                 for (int i = 0; i < _suicidals.childCount; i++)
                 {
-                    var _child = _suicidals.GetChild(i);
+                    Transform _child = _suicidals.GetChild(i);
                     Utils.PrintDebug($"[{i}]: /[{_child.position.ToString()}]\\ /[{_child.eulerAngles.ToString()}]\\");
                 }
 

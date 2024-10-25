@@ -27,17 +27,17 @@ namespace Psycho
                 MailboxEnvelope.transform.localPosition = new Vector3(-0.0685f, -0.007f, 0.1076f);
                 MailboxEnvelope.GetComponent<CapsuleCollider>().radius = 0.04f;
 
-                var sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
+                GameObject sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
                 EnvelopeSheet = Instantiate(sheets.transform.Find("InspectionAD").gameObject);
                 EnvelopeSheet.name = "DoctorMail";
                 EnvelopeSheet.transform.SetParent(sheets.transform, worldPositionStays: false);
                 EnvelopeSheet.SetActive(true);
 
-                var old_back = EnvelopeSheet.transform.GetChild(1);
+                Transform old_back = EnvelopeSheet.transform.GetChild(1);
                 old_back.parent = null;
                 Destroy(old_back.gameObject);
 
-                var _background = Instantiate(Globals.Background_prefab);
+                GameObject _background = Instantiate(Globals.Background_prefab);
                 _background.transform.SetParent(EnvelopeSheet.transform, worldPositionStays: false);
                 _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
                 _background.name = "Background";
@@ -47,13 +47,12 @@ namespace Psycho
                 MailboxEnvelope.SetActive(true);
                 MailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
 
-                var fsm = MailboxEnvelope.GetPlayMaker("Use");
-                var state2 = fsm.GetState("State 2");
-                (state2.Actions.ElementAtOrDefault(1) as SetStringValue).stringValue.Value = "Strange Letter";
+                PlayMakerFSM fsm = MailboxEnvelope.GetPlayMaker("Use");
+                (fsm.GetState("State 2").Actions.ElementAtOrDefault(1) as SetStringValue)
+                    .stringValue.Value = "Strange Letter";
 
-                var openad = fsm.GetState("Open ad");
-                var action = openad.Actions.Last() as ActivateGameObject;
-                action.gameObject.GameObject.Value = EnvelopeSheet;
+                (fsm.GetState("Open ad").Actions.Last() as ActivateGameObject)
+                    .gameObject.GameObject.Value = EnvelopeSheet;
 
                 fsm.FsmVariables.FloatVariables = new List<FsmFloat>().ToArray();
                 if (!Logic.envelopeSpawned)

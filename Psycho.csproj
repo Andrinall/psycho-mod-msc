@@ -90,7 +90,6 @@
   <ItemGroup>
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />
     <Compile Include="Sources\Screamers\ScreamsInitiator.cs" />
-    <Compile Include="Sources\Screamers\SuskiRigHandler.cs" />
     <Compile Include="Sources\Utils\SoundManager.cs" />
     <Compile Include="Sources\Utils\FliesChanger.cs" />
     <Compile Include="Sources\Utils\Hangover.cs" />

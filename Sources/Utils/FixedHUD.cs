@@ -28,7 +28,7 @@ namespace Psycho
 
             foreach(string element in _default)
             {
-                var t = transform.Find(element)?.gameObject;
+                GameObject t = transform.Find(element)?.gameObject;
                 if (t == null) continue;
                 _struct.Add(t);
             }
@@ -43,10 +43,10 @@ namespace Psycho
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
 
-            var hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
+            GameObject hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
             hudElement.name = name;
 
-            var label = hudElement.transform.Find("HUDLabel");
+            Transform label = hudElement.transform.Find("HUDLabel");
             label.GetComponent<TextMesh>().text = name;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
             Destroy(hudElement.GetComponentInChildren<PlayMakerFSM>());
@@ -72,7 +72,7 @@ namespace Psycho
             if (index < 0 || index > _struct.Capacity) return;
             if (!IsElementExist(name)) return;
 
-            var element = GetElementLocal(name);
+            GameObject element = GetElementLocal(name);
             if (element == null) return;
 
             _struct.Remove(element);
@@ -84,7 +84,7 @@ namespace Psycho
         {
             if (!IsElementExist(name)) return;
 
-            var element = GetElementLocal(name);
+            GameObject element = GetElementLocal(name);
             _struct.Remove(element);
             Destroy(element);
             Structurize();
@@ -124,7 +124,7 @@ namespace Psycho
         {
             int inactive_items = 0;
 
-            foreach (var child in _struct)
+            foreach (GameObject child in _struct)
             {
                 if (child?.gameObject == null)
                 {
@@ -146,7 +146,7 @@ namespace Psycho
             if (_struct.Count == transform.childCount) return;
             for (int i = 0; i < transform.childCount; i++)
             {
-                var child = transform.GetChild(i);
+                Transform child = transform.GetChild(i);
                 if (child?.gameObject == null) continue;
                 if (_blacklisted.Contains(child.name)) continue;
                 if (_struct.FindIndex(v => v == child.gameObject) == -1)

@@ -22,11 +22,11 @@ namespace Psycho
 
         public void BlowUpGrandmaAndReset()
         {
-            var smokes = Instantiate(Globals.SmokeParticleSystem_prefab);
+            GameObject smokes = Instantiate(Globals.SmokeParticleSystem_prefab);
             smokes.transform.position = transform.position;
             smokes.transform.localScale = new Vector3(0.0075f, 0.0075f, 0.0075f);
 
-            var audio = transform.GetComponent<AudioSource>();
+            AudioSource audio = transform.GetComponent<AudioSource>();
             audio.Play();
 
             var timer = new System.Timers.Timer(3000);

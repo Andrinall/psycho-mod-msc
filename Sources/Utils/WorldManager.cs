@@ -43,27 +43,27 @@ namespace Psycho
 
         public static void ActivateDINGONBIISIMiscThing3Permanently()
         {
-            var _obj = GameObject.Find("MAP/Buildings/DINGONBIISI");
+            GameObject _obj = GameObject.Find("MAP/Buildings/DINGONBIISI");
             if (_obj == null) return;
 
-            var _house = _obj?.transform;
+            Transform _house = _obj?.transform;
             _house.GetPlayMaker("Clock").GetState("Off").ClearActions();
 
-            var _misc = _house.transform.Find("Misc");
+            Transform _misc = _house.transform.Find("Misc");
             _misc.gameObject.SetActive(true);
 
-            var _thing3 = _misc.Find("Thing3");
+            Transform _thing3 = _misc.Find("Thing3");
             _thing3.gameObject.SetActive(true);
             _thing3.GetPlayMaker("Distance").GetState("Random").ClearActions(0, 1);
 
-            var _mover = _thing3.Find("Mover");
+            Transform _mover = _thing3.Find("Mover");
             _mover.gameObject.SetActive(true);
             _mover.GetPlayMaker("Position").GetState("State 4").ClearActions();
         }
 
         public static GameObject CreateSuicidal(Vector3 position, string name = "")
         {
-            var list = GameObject.Find("SuicidalList");
+            GameObject list = GameObject.Find("SuicidalList");
             if (!list)
                 list = new GameObject("SuicidalList");
 
@@ -80,7 +80,7 @@ namespace Psycho
 
         public static void CloseDoor(string path)
         {
-            var door = GameObject.Find(path)?.GetPlayMaker("Use");
+            PlayMakerFSM door = GameObject.Find(path)?.GetPlayMaker("Use");
             door.GetVariable<FsmBool>("DoorOpen").Value = true;
             door.SendEvent("GLOBALEVENT");
         }
@@ -111,7 +111,7 @@ namespace Psycho
         {
             foreach (var item in Globals.models_replaces)
             {
-                var obj = parent?.transform?.Find(item.Value.path)?.gameObject;
+                GameObject obj = parent?.transform?.Find(item.Value.path)?.gameObject;
                 if (obj == null) continue;
 
                 if (Logic.inHorror)
@@ -140,11 +140,11 @@ namespace Psycho
 
         public static void ChangeIndepTextures(bool onSave)
         {
-            foreach (var renderer in Resources.FindObjectsOfTypeAll<MeshRenderer>())
+            foreach (MeshRenderer renderer in Resources.FindObjectsOfTypeAll<MeshRenderer>())
             {
                 if (!_check(renderer)) continue;
-                var material = renderer.materials[0];
-                var hash = material.mainTexture.name.ToLower().GetHashCode();
+                Material material = renderer.materials[0];
+                int hash = material.mainTexture.name.ToLower().GetHashCode();
 
                 if (!Globals.indep_textures.ContainsKey(hash)) continue;
                 if (material.mainTexture == Globals.indep_textures[hash] && !onSave) continue;
@@ -157,12 +157,12 @@ namespace Psycho
         public static void ChangeWorldTextures(bool state)
         {
 
-            foreach (var renderer in Resources.FindObjectsOfTypeAll<MeshRenderer>())
+            foreach (MeshRenderer renderer in Resources.FindObjectsOfTypeAll<MeshRenderer>())
             {
                 if (!_check(renderer)) continue;
 
-                var material = renderer.materials[0];
-                var hash = material.mainTexture.name.ToLower().GetHashCode();
+                Material material = renderer.materials[0];
+                int hash = material.mainTexture.name.ToLower().GetHashCode();
                 if (!Globals.replaces.ContainsKey(hash)) continue;
                 if (material.mainTexture == Globals.replaces[hash] && state) continue;
 
@@ -170,11 +170,11 @@ namespace Psycho
                 material.SetTexture("_MainTex", state ? Globals.replaces[hash] : Globals.cached[hash] as Texture);
             }
 
-            foreach (var renderer in Resources.FindObjectsOfTypeAll<SkinnedMeshRenderer>())
+            foreach (SkinnedMeshRenderer renderer in Resources.FindObjectsOfTypeAll<SkinnedMeshRenderer>())
             {
                 if (!_check(renderer)) continue;
-                var material = renderer.materials[0];
-                var hash = material.mainTexture.name.ToLower().GetHashCode();
+                Material material = renderer.materials[0];
+                int hash = material.mainTexture.name.ToLower().GetHashCode();
                 if (!Globals.replaces.ContainsKey(hash)) continue;
                 if (material.mainTexture == Globals.replaces[hash]) continue;
 
@@ -185,21 +185,20 @@ namespace Psycho
 
         public static void ChangeBedroomModels()
         {
-            var state = Logic.inHorror;
+            bool state = Logic.inHorror;
             GameObject.Find("YARD/Building/BEDROOM2/bed_base")?.SetActive(!state);
 
-            var coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
+            GameObject coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
             if (coffinsGroup == null && state)
             {
                 coffinsGroup = new GameObject("BedroomCoffins");
-
-                var coffin1 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
+                GameObject coffin1 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738183f, 13.52571f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
                 coffin1.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
 
-                var coffin2 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
+                GameObject coffin2 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738185f, 12.52524f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
@@ -219,13 +218,13 @@ namespace Psycho
         {
             try
             {
-                var filter = obj.GetComponent<MeshFilter>();
+                MeshFilter filter = obj.GetComponent<MeshFilter>();
                 if (filter == null) return;
 
                 filter.mesh = mesh;
                 filter.sharedMesh = mesh;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModConsole.Error($"Unable to change mesh for {obj?.name}, mesh {mesh?.name};\n{e.GetFullMessage()}");
             }
@@ -239,8 +238,9 @@ namespace Psycho
                 GameObject clouds = GameObject.Find("MAP/CloudSystem/Clouds");
                 PlayMakerFSM cloudsFsm = clouds.GetPlayMaker("Weather");
                 FsmState cloudsMove = cloudsFsm.GetState("Move clouds");
-                var action1 = (cloudsMove.Actions[1] as FloatAdd);
-                var action2 = (cloudsMove.Actions[2] as SetPosition);
+                
+                FloatAdd action1 = (cloudsMove.Actions[1] as FloatAdd);
+                SetPosition action2 = (cloudsMove.Actions[2] as SetPosition);
 
                 action1.everyFrame = state;
                 action1.perSecond = state;
@@ -253,7 +253,7 @@ namespace Psycho
                 else
                     cloudsFsm.SendEvent("RANDOMIZE");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModConsole.Error($"Failed to change clouds after moving between worlds;\n{e.GetFullMessage()}");
             }
@@ -263,10 +263,10 @@ namespace Psycho
         {
             try
             {
-                var renderer = obj.GetComponent<MeshRenderer>();
+                MeshRenderer renderer = obj.GetComponent<MeshRenderer>();
                 if (!renderer) return;
 
-                var material = renderer.materials.ElementAt(index);
+                Material material = renderer.materials.ElementAt(index);
                 if (name.Length > 0) material.name = name;
                 material.mainTexture = texture;
             }
@@ -296,12 +296,12 @@ namespace Psycho
         {
             if (comp is MeshRenderer)
             {
-                var renderer = comp as MeshRenderer;
+                MeshRenderer renderer = (MeshRenderer)comp;
                 if (renderer == null) return false;
                 if (renderer?.materials?.Length == 0) return false;
                 if (renderer.materials[0] == null) return false;
 
-                var material = renderer.materials[0];
+                Material material = renderer.materials[0];
                 if (material.mainTexture == null) return false;
                 if (material.mainTexture.name.Length == 0) return false;
 
@@ -309,12 +309,12 @@ namespace Psycho
             }
             else if (comp is SkinnedMeshRenderer)
             {
-                var renderer = comp as SkinnedMeshRenderer;
+                SkinnedMeshRenderer renderer = (SkinnedMeshRenderer)comp;
                 if (renderer == null) return false;
                 if (renderer?.materials?.Length == 0) return false;
                 if (renderer.materials[0] == null) return false;
 
-                var material = renderer.materials[0];
+                Material material = renderer.materials[0];
                 if (material.mainTexture == null) return false;
                 if (material.mainTexture.name.Length == 0) return false;
 

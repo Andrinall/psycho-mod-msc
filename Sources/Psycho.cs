@@ -110,7 +110,7 @@ namespace Psycho
             Utils.PrintDebug(eConsoleColors.YELLOW, $"Independently textures loaded: {Globals.indep_textures.Count}");
 
             // load smoking replaces
-            var cig_texture = Globals.LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
+            Texture cig_texture = Globals.LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
             Globals.models_replaces.Add("cigarette_filter".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Filter",
@@ -126,7 +126,7 @@ namespace Psycho
             });
 
             // Load death sound
-            var src = GameObject.Find("Systems").AddComponent<AudioSource>();
+            AudioSource src = GameObject.Find("Systems").AddComponent<AudioSource>();
             src.clip = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/heart_stop.wav");
             src.loop = false;
             src.volume = 1.75f;
@@ -147,13 +147,13 @@ namespace Psycho
                 Logic.Value = BitConverter.ToSingle(value, 3);
                 Logic.Points = BitConverter.ToSingle(value, 7);
 
-                var picture_pos = new Vector3(
+                Vector3 picture_pos = new Vector3(
                     BitConverter.ToSingle(value, 11),
                     BitConverter.ToSingle(value, 15),
                     BitConverter.ToSingle(value, 19)
                 );
 
-                var picture_rot = new Vector3(
+                Vector3 picture_rot = new Vector3(
                     BitConverter.ToSingle(value, 23),
                     BitConverter.ToSingle(value, 27),
                     BitConverter.ToSingle(value, 31)
@@ -172,7 +172,7 @@ namespace Psycho
                 if (!Logic.inHorror || Logic.envelopeSpawned)
                     goto SkipLoadPills;
 
-                var item = new PillsItem(0);
+                PillsItem item = new PillsItem(0);
                 item.ReadData(ref value, 35);
                 item.self.SetActive(Logic.inHorror);
                 Globals.pills_list.Add(item);
@@ -218,7 +218,7 @@ namespace Psycho
             _registerCommands();
 
             // add component for make hangover in horror world
-            var camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").gameObject;
+            GameObject camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").gameObject;
             camera.AddComponent<Hangover>();
 
             // add animplayer component
@@ -231,8 +231,8 @@ namespace Psycho
             WorldManager.ChangeIndepTextures(false);
 
             // add inactive audio source for play in screamer
-            var _grandma = GameObject.Find("ChurchGrandma");
-            var source = _grandma.AddComponent<AudioSource>();
+            GameObject _grandma = GameObject.Find("ChurchGrandma");
+            AudioSource source = _grandma.AddComponent<AudioSource>();
             source.clip = Globals.AcidBurnSound;
             source.loop = false;
             source.volume = 2f;
@@ -272,7 +272,8 @@ namespace Psycho
             BitConverter.GetBytes(Logic.Value).CopyTo(array, 3); // 4
             BitConverter.GetBytes(Logic.Points).CopyTo(array, 7); // 4
 
-            var picture = GameObject.FindGameObjectsWithTag("PART").First(v => v.name == "picture(Clone)").transform;
+            Transform picture = GameObject.FindGameObjectsWithTag("PART")
+                .First(v => v.name == "picture(Clone)").transform;
             BitConverter.GetBytes(picture.position.x).CopyTo(array, 11);
             BitConverter.GetBytes(picture.position.y).CopyTo(array, 15);
             BitConverter.GetBytes(picture.position.z).CopyTo(array, 19);
@@ -338,7 +339,7 @@ namespace Psycho
                     .Find("PayMoney").gameObject.AddComponent<HouseShitHandler>();
 
             // add handlers for human triggers (hit by player & crime)
-            var objects = Resources.FindObjectsOfTypeAll<GameObject>();
+            GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>();
             objects.Where(v => v.name.Contains("HumanTrigger")).ToList()
                 .ForEach(v => v.AddComponent<NPCHitHandler>());
 
@@ -376,8 +377,9 @@ namespace Psycho
             );
 
             // add fatigue increasing by drink milk
-            var drink = camera.transform.Find("Drink");
-            var drink_state = drink.GetPlayMaker("Drink").GetState("Activate 3");
+            Transform drink = camera.transform.Find("Drink");
+            FsmState drink_state = drink.GetPlayMaker("Drink").GetState("Activate 3");
+            
             var actions = new List<FsmStateAction>(drink_state.Actions); // copy actions list
             actions.Insert(9, new FloatAdd // insert action
             {
@@ -401,8 +403,9 @@ namespace Psycho
                 Logic.milkUseTime = DateTime.Now;
             });
 
-            var yard_sleep = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger");
-            var sleep_fsm = yard_sleep.GetPlayMaker("Activate");
+            GameObject yard_sleep = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger");
+            PlayMakerFSM sleep_fsm = yard_sleep.GetPlayMaker("Activate");
+
             StateHook.Inject(yard_sleep, "Activate", "Does call?", 0, () =>
             {
                 if (!Logic.milkUsed) return;

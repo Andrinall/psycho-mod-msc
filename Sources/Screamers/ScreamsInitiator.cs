@@ -64,7 +64,7 @@ namespace Psycho
             m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
             m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
-            var sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
+            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
             m_fSunHours = sun.GetVariable<FsmFloat>("Hours");
             m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
 
@@ -76,13 +76,13 @@ namespace Psycho
                 if (m_iRand == 3) return;
                 if (m_iRand == 2) return; // for remove
 
-                var day = (m_iGlobalDay.Value + 1) % 7;
+                int day = (m_iGlobalDay.Value + 1) % 7;
                 Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
                 if (!m_liDays[m_iRand].Contains(day)) return;
 
-                var time = m_iTimeOfDay.Value;
-                var sleepTime = _fsm.GetVariable<FsmInt>("SleepTime");
-                var calc = time + sleepTime.Value - 24;
+                FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime");
+                int time = m_iTimeOfDay.Value;
+                int calc = time + sleepTime.Value - 24;
 
                 Utils.PrintDebug($"SleepTime orig[{sleepTime.Value}]; new[{24 - time + m_liTimes[m_iRand]}]; time[{time}]; calc[{calc}]; rand[{m_iRand}]");
                 if (calc < m_liTimes[m_iRand] || calc == 2) return;

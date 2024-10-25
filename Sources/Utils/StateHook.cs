@@ -46,7 +46,7 @@ namespace Psycho
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
                 if (playMakerState == null) throw new NullReferenceException();
 
-                List<FsmStateAction> list = new List<FsmStateAction>(playMakerState.Actions);
+                var list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookAction item = new FsmHookAction { hook = hook };
                 InsertItemWithIndex(index, ref list, ref item);
                 playMakerState.Actions = list.ToArray();
@@ -67,7 +67,7 @@ namespace Psycho
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
                 if (playMakerState == null) return;
 
-                List<FsmStateAction> list = new List<FsmStateAction>(playMakerState.Actions);
+                var list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookAction item = new FsmHookAction { hook = hook };
                 list.Insert(0, item);
                 playMakerState.Actions = list.ToArray();
@@ -88,7 +88,7 @@ namespace Psycho
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
                 if (playMakerState == null) throw new NullReferenceException();
 
-                List<FsmStateAction> list = new List<FsmStateAction>(playMakerState.Actions);
+                var list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookAction item = new FsmHookAction { hook = hook };
 
                 InsertItemWithIndex(index, ref list, ref item);

@@ -87,7 +87,7 @@ namespace Psycho
                     KillHeartAttack();
                 else if (_hud?.IsElementExist("Psycho") == true)
                 {
-                    var clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
+                    float clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
                     _hud.SetElementScale("Psycho", new Vector3(clamped, 1f));
                     _hud.SetElementColor("Psycho", (clamped >= 0.85f && inHorror) ? Color.red : Color.white);
                 }
@@ -99,10 +99,11 @@ namespace Psycho
             get { return _points; }
             set
             {
-                var prev = _points;
+                float prev = _points;
                 _points = value;
                 if (_gameFinished) return;
                 if (_hud == null) return;
+                if (isDead) return;
 
                 Utils.SetPictureImage();
 
@@ -151,6 +152,7 @@ namespace Psycho
         }
 
         public static void ResetValue() => Value = inHorror ? 0f : 100f;
+        public static void ResetPoints() => Points = 0;
 
 
         internal static void Tick()
@@ -166,28 +168,23 @@ namespace Psycho
             Value -= DEFAULT_DECREASE * Time.fixedDeltaTime;
         }
 
-        internal static void PlayerCompleteJob(
-            string job,
-            int multiplier = 1,
-            string comment = default
-        ) => Points += config.GetValueSafe(job) * multiplier;
+        internal static void PlayerCompleteJob(string job, int multiplier = 1, string comment = default)
+            => Points += config.GetValueSafe(job) * multiplier;
 
-        internal static void PlayerCommittedOffence(
-            string offence,
-            string comment = default
-        ) => Points -= config.GetValueSafe(offence);
+        internal static void PlayerCommittedOffence(string offence, string comment = default)
+            => Points -= config.GetValueSafe(offence);
 
         internal static void KillUsingTrain()
         {
             try
             {
-                var train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
-                var player = GameObject.Find("PLAYER");
+                PlayMakerFSM train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
+                GameObject player = GameObject.Find("PLAYER");
                 player.GetComponent<CharacterMotor>().canControl = false;
 
                 StateHook.Inject(train.gameObject, "Player", "Die 2", -1, () =>
                 {
-                    var paper = death.transform.Find("GameOverScreen/Paper/Train");
+                    Transform paper = death.transform.Find("GameOverScreen/Paper/Train");
                     paper.Find("TextFI").GetComponent<TextMesh>().text = PAPER_TEXT_FI_POINTS;
                     paper.Find("TextEN").GetComponent<TextMesh>().text = PAPER_TEXT_EN_POINTS;
                 });
@@ -230,8 +227,8 @@ namespace Psycho
         {
             try
             {
-                var player = GameObject.Find("PLAYER");
-                var motor = player.GetComponent<CharacterMotor>();
+                GameObject player = GameObject.Find("PLAYER");
+                CharacterMotor motor = player.GetComponent<CharacterMotor>();
                 motor.canControl = false;
 
                 shizAnimPlayer?.PlayAnimation("sleep_knockout", default, 8f, default, () =>
@@ -240,21 +237,45 @@ namespace Psycho
                     player.transform.eulerAngles = new Vector3(0f, 158.85f, 0f);
 
                     WorldManager.ChangeWorldTextures(inHorror);
-                    Utils.ChangeSmokingModel();
-                    shizAnimPlayer?.PlayAnimation("sleep_off", true, default, default, () => motor.canControl = true);
-
-                    WorldManager.ChangeCameraFog();
-                    WorldManager.StopCloudsOrRandomize();
-                    WorldManager.ChangeWalkersAnimation();
-                    SoundManager.ChangeFliesSounds();
                     WorldManager.ChangeBedroomModels();
-                    GameObject.Find("CustomSuicidals").SetActive(inHorror);
+                    Utils.ChangeSmokingModel();
+                    SoundManager.ChangeFliesSounds();
+                    WorldManager.StopCloudsOrRandomize();
+                    WorldManager.ChangeCameraFog();
+                    WorldManager.ChangeWalkersAnimation();
+
+                    GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
+                    _changeFittanDriverHeadPivotRotation();
+
+                    shizAnimPlayer?.PlayAnimation("sleep_off", true, default, default, () => motor.canControl = true);
                 });
             }
             catch (Exception e)
             {
                 ModConsole.Error($"Error in KnockOutPlayer;\n{e.GetFullMessage()}");
             }
+        }
+
+        static void _changeFittanDriverHeadPivotRotation()
+        {
+            GameObject _fittanDriverHeadPivot =
+                GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN/Driver/skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
+
+            Utils.PrintDebug($"fittan driver head pivot == null? {_fittanDriverHeadPivot == null}");
+            if (!_fittanDriverHeadPivot) return;
+
+            _fittanDriverHeadPivot.GetPlayMaker("Look").enabled = !inHorror;
+
+            Transform _head = _fittanDriverHeadPivot.transform.Find("head");
+            Utils.PrintDebug($"fittan HeadPivot/head == null? {_head == null}");
+            if (!_head) return;
+            _head.localRotation = Quaternion.Euler(new Vector3(
+                _head.localEulerAngles.x,
+                _head.localEulerAngles.y,
+                inHorror ? 64f : 270f
+            ));
+
+            _head.Find("eye_glasses_regular").gameObject.SetActive(!inHorror);
         }
 
         static void FinishShizGame()
@@ -271,7 +292,7 @@ namespace Psycho
 
             try
             {
-                var paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
+                Transform paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
                 paper.Find("TextEN").GetComponent<TextMesh>().text = en;
                 death.SetActive(true);

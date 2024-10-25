@@ -29,8 +29,8 @@ namespace Psycho
         {
             if (DeathSound.isPlaying) return;
 
-            var rand = Random.Range(0, ScreamPoints.Count);
-            var source = ScreamPoints[rand].GetComponent<AudioSource>();
+            int rand = Random.Range(0, ScreamPoints.Count);
+            AudioSource source = ScreamPoints[rand].GetComponent<AudioSource>();
             if (source.isPlaying) return;
             source.loop = true;
             source.Play();
@@ -39,16 +39,16 @@ namespace Psycho
 
         public static void StopScreamSound(string name)
         {
-            var source = ScreamPoints.Find(v => v.name.Contains(name)).GetComponent<AudioSource>();
+            AudioSource source = ScreamPoints.Find(v => v.name.Contains(name)).GetComponent<AudioSource>();
             if (!source.isPlaying) return;
             source.Stop();
         }
 
         public static bool AnyScreamSoundIsPlaying()
         {
-            foreach(var scream in ScreamPoints)
+            foreach(GameObject scream in ScreamPoints)
             {
-                var src = scream.GetComponent<AudioSource>();
+                AudioSource src = scream.GetComponent<AudioSource>();
                 if (!src.isPlaying) continue;
                 return true;
             }

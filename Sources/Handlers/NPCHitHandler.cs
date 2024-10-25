@@ -18,7 +18,7 @@ namespace Psycho
             if (transform.parent.parent.gameObject.name == "JokkeHiker1")
                 return;
 
-            var parentName = transform.parent.gameObject.name;
+            string parentName = transform.parent.gameObject.name;
             if (parentName == "Teimo") return;
 
             if (parentName == "SuskiHiker")
@@ -43,7 +43,7 @@ namespace Psycho
         {
             try
             {
-                var crime = transform.GetPlayMaker("CarHit").FsmStates
+                bool crime = transform.GetPlayMaker("CarHit").FsmStates
                     .First(v => v.Name == "Crime") == null;
 
                 StateHook.Inject(gameObject, "CarHit",

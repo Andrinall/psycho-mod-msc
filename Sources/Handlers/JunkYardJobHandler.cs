@@ -12,7 +12,7 @@ namespace Psycho
         {
             if (m_bInstalled) return;
 
-            var Fleetari = GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari");
+            GameObject Fleetari = GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari");
             for (int i = 1; i < 5; i++)
                 StateHook.Inject(Fleetari, "Work", $"Car {i}", () => CheckCars());
 
@@ -22,8 +22,7 @@ namespace Psycho
 
         void UsePayMoneyTicket()
         {
-            Utils.PrintDebug(eConsoleColors.WHITE, $"Delivered {m_iCarsNumber} cars in one of time");
-
+            Utils.PrintDebug(eConsoleColors.WHITE, $"Delivered {m_iCarsNumber} cars in one of time");            
             Logic.PlayerCompleteJob("JUNK_YARD", m_iCarsNumber, $"Delivered {m_iCarsNumber} JunkCars");
             m_iCarsNumber = 0;
         }

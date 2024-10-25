@@ -18,8 +18,8 @@ namespace Psycho
             _GFX_Store = transform.FindChild("LOD/GFX_Store");
             _GFX_Pub = transform.FindChild("LOD/GFX_Pub");
             _Teimo = transform.FindChild("TeimoInShop").Find("Pivot");
-            var windowPub = _GFX_Pub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
-            var windowStore = _GFX_Store.Find("BreakableWindows/BreakableWindow")?.gameObject;
+            GameObject windowPub = _GFX_Pub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
+            GameObject windowStore = _GFX_Store.Find("BreakableWindows/BreakableWindow")?.gameObject;
 
             if (windowPub != null)
                 StateHook.Inject(windowPub, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK_INCREASE"));
@@ -32,7 +32,7 @@ namespace Psycho
             StateHook.Inject(_Teimo.Find("TeimoCollider").gameObject, "Reaction", "State 1", () => Logic.PlayerCommittedOffence("TEIMO_PISS"));
 
             // 10+ adv sended
-            var adv = transform.Find("LOD/ActivateStore/PayMoneyAdvert").gameObject;
+            GameObject adv = transform.Find("LOD/ActivateStore/PayMoneyAdvert").gameObject;
             StateHook.Inject(adv, "Use", "Good", () => Logic.PlayerCompleteJob("TEIMO_ADS"));
             StateHook.Inject(adv, "Use", "Average", () => Logic.PlayerCompleteJob("TEIMO_ADS"));
 

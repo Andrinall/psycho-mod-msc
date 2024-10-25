@@ -78,7 +78,7 @@ namespace Psycho
         {
             Logic.ChangeWorld(eWorldType.MAIN);
 
-            var index = Globals.pills_list.FindIndex(v => v.index == this.index);
+            int index = Globals.pills_list.FindIndex(v => v.index == this.index);
             if (index == -1) return;
             
             Globals.pills_list.RemoveAt(index);
@@ -87,12 +87,12 @@ namespace Psycho
 
         internal void WriteData(ref byte[] array, int offset)
         {
-            var pos = self.transform.position;
+            Vector3 pos = self.transform.position;
             BitConverter.GetBytes(pos.x).CopyTo(array, offset);
             BitConverter.GetBytes(pos.y).CopyTo(array, offset + 4);
             BitConverter.GetBytes(pos.z).CopyTo(array, offset + 8);
 
-            var rot = self.transform.eulerAngles;
+            Vector3 rot = self.transform.eulerAngles;
             BitConverter.GetBytes(rot.x).CopyTo(array, offset + 12);
             BitConverter.GetBytes(rot.y).CopyTo(array, offset + 16);
             BitConverter.GetBytes(rot.z).CopyTo(array, offset + 20);

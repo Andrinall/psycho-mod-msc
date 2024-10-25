@@ -90,7 +90,7 @@ namespace Psycho
         {
             try
             {
-                var asset = bundle.LoadAsset<T>(path);
+                T asset = bundle.LoadAsset<T>(path);
                 if (asset == null) throw new NullReferenceException();
                 return asset;
             }
@@ -103,7 +103,7 @@ namespace Psycho
         public static void LoadAllScreens(AssetBundle bundle)
         {
             // load all screens
-            foreach (var v in bundle.GetAllAssetNames())
+            foreach (string v in bundle.GetAllAssetNames())
             {
                 if (!v.Contains("screens/")) continue;
                 mailScreens.Add(LoadAsset<Texture>(bundle, v));
