@@ -60,13 +60,17 @@ namespace Psycho
             if (picture == null) return;
 
             var idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
-            var texture = Globals.pictures[idx];
+            
+            string str = "";
+            Globals.pictures.ForEach(v => str += ", " + v.name);
+            PrintDebug($"SetPictureImage [{idx}] :: {str.TrimStart(',', ' ')}");
+            
+            var texture = Globals.pictures.ElementAtOrDefault(idx);
+            if (texture == null) return;
+
             var material = picture.GetComponent<MeshRenderer>().materials[1];
             if (material.GetTexture("_MainTex")?.name == texture.name) return;
 
-            string str = "";
-            Globals.pictures.ForEach(v => str += ", " + v.name);
-            PrintDebug($"SetPictureImage :: {str}");
             material.SetTexture("_MainTex", texture);
         }
 

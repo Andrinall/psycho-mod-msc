@@ -22,8 +22,6 @@ namespace Psycho
             _death = GameObject.Find("Systems/Death");
             m_sUpName = gameObject.name.ToUpper();
             m_sPlayerVehicle = Utils.GetGlobalVariable<FsmString>("PlayerCurrentVehicle");
-
-            Utils.PrintDebug(eConsoleColors.GREEN, $"CrashHandler enabled for car: {m_sUpName}");
         }
 
         void OnCollisionEnter(Collision col)

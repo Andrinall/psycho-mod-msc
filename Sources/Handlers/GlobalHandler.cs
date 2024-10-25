@@ -39,8 +39,7 @@ namespace Psycho
             if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
             {
                 if (Vector3.Distance(_houseFire.position, transform.position) > 4f) return;
-                Logic.Points -= Logic.config.GetValueSafe("HOUSE_BURNING");
-                Utils.PrintDebug(eConsoleColors.WHITE, "Points decreased by HOUSE_BURNING");
+                Logic.PlayerCommittedOffence("HOUSE_BURNING");
                 m_bHouseOnFire = true;
                 return;
             }

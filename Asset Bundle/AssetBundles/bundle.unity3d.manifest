@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3300469278
+CRC: 807641667
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f03025dbc01eb5f8f29e3cb77ebe8f9b
+    Hash: 298257b27fb95dfc4fa171e23fc8b31d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 414362de82d2f9d60133f762df0a53aa
+    Hash: 5f57cf21cd6b7dbcab0da5029a09f41f
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -34,8 +34,6 @@ ClassTypes:
 - Class: 82
   Script: {instanceID: 0}
 - Class: 83
-  Script: {instanceID: 0}
-- Class: 137
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -95,9 +93,8 @@ Assets:
 - Assets/Screens/38.png
 - Assets/Replaces/AllWorlds/ATLAS_OFFICE.png
 - Assets/Screens/35.png
-- Assets/Prefabs/picture.prefab
+- Assets/Prefabs/Picture.prefab
 - Assets/Screens/34.png
-- Assets/Prefabs/suicidal.prefab
 - Assets/Replaces/Horror/char_face02.png
 - Assets/Replaces/Horror/charred_wood.png
 - Assets/Replaces/Horror/concrete_wall.png
@@ -137,7 +134,7 @@ Assets:
 - Assets/Replaces/Horror/terrace_shade.png
 - Assets/Replaces/Horror/fabric_zebra.png
 - Assets/Replaces/Horror/brickwall2.png
-- Assets/Prefabs/background.prefab
+- Assets/Prefabs/Background.prefab
 - Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
 - Assets/Replaces/Horror/tiles.png
@@ -146,14 +143,13 @@ Assets:
 - Assets/Replaces/Horror/char_face09.png
 - Assets/Replaces/Horror/beer_container.png
 - Assets/Audio/screamers/door_knock.mp3
-- Assets/Prefabs/coffin.prefab
+- Assets/Prefabs/Coffin.prefab
 - Assets/Replaces/Horror/fabric2.png
 - Assets/Replaces/Horror/fabric_suomi.png
 - Assets/Replaces/Horror/beer_bottle.png
 - Assets/Screens/18.png
 - Assets/Replaces/Horror/ATLAS_GARAGE.png
 - Assets/Replaces/Horror/cardboard.png
-- Assets/Meshes/bridgerope.asset
 - Assets/Replaces/Horror/wall_rock.png
 - Assets/Replaces/Horror/car_radios_emission.png
 - Assets/Replaces/Horror/satsuma_dash_gauges.png
@@ -179,7 +175,7 @@ Assets:
 - Assets/Replaces/Horror/building_wall.png
 - Assets/Replaces/Horror/char_face01.png
 - Assets/Screens/10.png
-- Assets/Prefabs/pills.prefab
+- Assets/Prefabs/Pills.prefab
 - Assets/Screens/47.png
 - Assets/Replaces/Horror/brickwall3.png
 - Assets/Materials/suicidal/char_pants01.mat
@@ -228,6 +224,7 @@ Assets:
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
+- Assets/Prefabs/Suicidal.prefab
 - Assets/Replaces/Horror/panel_wall.png
 - Assets/Screens/1.png
 Dependencies: []

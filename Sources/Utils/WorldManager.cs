@@ -17,6 +17,30 @@ namespace Psycho
 
     public class WorldManager
     {
+        static AnimationClip pig_anim;
+
+        public static void ChangeWalkersAnimation()
+        {
+            if (!pig_anim)
+                pig_anim = GameObject.Find("CABIN/Cabin/Ventti/PIG/VenttiPig/Pivot/Char/skeleton")
+                    .GetComponent<Animation>()
+                    .GetClip("venttipig_pig_walk");
+
+            Transform _walkers = GameObject.Find("HUMANS/Randomizer/Walkers").transform;
+            _walkers.gameObject.SetActive(false);
+            for (int i = 0; i < _walkers.childCount; i++)
+            {
+                Transform _child = _walkers.GetChild(i);
+                Animation _anim = _child.Find("Pivot/Char/skeleton").GetComponent<Animation>();
+                if (!_anim.GetClip("venttipig_pig_walk"))
+                    _anim.AddClip(pig_anim, "venttipig_pig_walk");
+
+                (_child.GetPlayMaker("Move").GetState("Walking").Actions[0] as PlayAnimation).animName.Value =
+                    Logic.inHorror ? "venttipig_pig_walk" : "fat_walk";
+            }
+            _walkers.gameObject.SetActive(true);
+        }
+
         public static void ActivateDINGONBIISIMiscThing3Permanently()
         {
             var _obj = GameObject.Find("MAP/Buildings/DINGONBIISI");

@@ -31,6 +31,11 @@ namespace Psycho
             Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
         }
 
+        public override void OnMenuLoad()
+        {
+            Resources.UnloadUnusedAssets(); // tested
+        }
+
         public override void OnLoad()
         {
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
@@ -52,7 +57,7 @@ namespace Psycho
             var _picture_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
             Globals.Coffin_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             Globals.SmokeParticleSystem_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
-            //Globals.Suicidal_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/suicidal.prefab");
+            Globals.Suicidal_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/suicidal.prefab");
             Globals.AcidBurnSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
 
             // load all replaces
@@ -253,6 +258,7 @@ namespace Psycho
             source.spread = 0f;
 
             WorldManager.ActivateDINGONBIISIMiscThing3Permanently();
+            WorldManager.ChangeWalkersAnimation();
 
             // whisp spawn
             /*
@@ -263,6 +269,7 @@ namespace Psycho
              */
 
             ModConsole.Print("[Schizophrenia]: <color=green>Successfully loaded!</color>");
+            Resources.UnloadUnusedAssets(); // tested
         }
 
         public override void OnSave()
@@ -296,7 +303,6 @@ namespace Psycho
             Globals.pills_list.ElementAtOrDefault(0)?.WriteData(ref array, 35);
             File.WriteAllBytes(_saveDataPath, array);
         }
-        
 
 
         void SetDefaultValuesForLogic()
@@ -308,7 +314,6 @@ namespace Psycho
             Logic.Value = 100f;
             Logic.Points = 0f;
         }
-
 
         void _addHandlers()
         {
