@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Psycho
 {
     public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
-    public enum HandParent : int { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
+    public enum HandParent : byte { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
 
     public struct ModelData
     {
