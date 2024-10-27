@@ -14,9 +14,9 @@ namespace Psycho
 
             GameObject Fleetari = GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari");
             for (int i = 1; i < 5; i++)
-                StateHook.Inject(Fleetari, "Work", $"Car {i}", () => CheckCars());
+                StateHook.Inject(Fleetari, "Work", $"Car {i}", _ => CheckCars());
 
-            StateHook.Inject(gameObject, "Use", "State 1", -1, () => UsePayMoneyTicket());
+            StateHook.Inject(gameObject, "Use", "State 1", -1, _ => UsePayMoneyTicket());
             m_bInstalled = true;
         }
 

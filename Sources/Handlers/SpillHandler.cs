@@ -13,7 +13,7 @@ namespace Psycho
         void Start()
         {
             m_bIsCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
-            StateHook.Inject(gameObject, "SpillPump", "Spill grow", () => SpillShit());
+            StateHook.Inject(gameObject, "SpillPump", "Spill grow", _ => SpillShit());
         }
 
         void SpillShit()

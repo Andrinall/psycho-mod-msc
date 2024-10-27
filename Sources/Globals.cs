@@ -7,6 +7,26 @@ using UnityEngine;
 
 namespace Psycho
 {
+    public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
+    public enum HandParent : int { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
+
+    public struct ModelData
+    {
+        public string path { get; set; }
+        public Mesh mesh { get; set; }
+        public Texture texture { get; set; }
+    }
+
+    public struct ScreamHand
+    {
+        public HandOrig orig { get; set; }
+        public HandParent parent { get; set; }
+        public Vector3 position { get; set; }
+        public Vector3 euler { get; set; }
+        public float scale { get; set; }
+    }
+
+
     public static class Globals
     {
         public static List<PillsItem> pills_list = new List<PillsItem> { };
@@ -84,6 +104,102 @@ namespace Psycho
             new Vector3(1469.62f, -4.294517f, 1070.209f),
             new Vector3(2187.362f, -0.6239323f, -454.2437f),
             new Vector3(1426.629f, -4.249069f, 751.5843f)
+        };
+
+        public static List<ScreamHand> hands_list = new List<ScreamHand>
+        {
+            // stairs section
+            new ScreamHand {
+                orig = HandOrig.MILK,
+                parent = HandParent.STAIRS,
+                position = new Vector3(-2.92797852f, -0.168999672f, -0.0360107422f),
+                euler = new Vector3(9.56607628f, 92.0791168f, 162.548065f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.STAIRS,
+                position = new Vector3(-3.79699707f, -0.388000488f, -0.718017578f),
+                euler = new Vector3(60.6711922f, 260.106995f, 104.075432f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.STAIRS,
+                position = new Vector3(-1.89999998f, 0.806999981f, -0.270999998f),
+                euler = new Vector3(1.9119761f, 79.2116547f, 52.6669617f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.STAIRS,
+                position = new Vector3(-2.73600006f, 0.188999996f, -0.0260000005f),
+                euler = new Vector3(19.481802f, 24.7313232f, 197.737717f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.STAIRS,
+                position = new Vector3(-3.1559999f, 0.414000005f, -1.09399998f),
+                euler = new Vector3(338.406006f, 197.075912f, 63.9442787f),
+                scale = 1.5f
+            },
+            // end stairs section
+
+            // house section
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.HOUSE,
+                position = new Vector3(-5.30700684f, 0.831999779f, -1.46496582f),
+                euler = new Vector3(287.232086f, 170.030548f, 14.5584507f),
+                scale = 2f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.MILK,
+                parent = HandParent.HOUSE,
+                position = new Vector3(-5.30700684f, 0.831999779f, -1.46496582f),
+                euler = new Vector3(287.232086f, 170.030548f, 14.5584507f),
+                scale = 2f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.PUSH,
+                parent = HandParent.HOUSE,
+                position = new Vector3(-0.885009766f, -0.284000397f, 0.158996582f),
+                euler = new Vector3(359.39566f, 202.685089f, 87.7484665f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.PUSH,
+                parent = HandParent.HOUSE,
+                position = new Vector3(-4.0090332f, -0.536999702f, 4.76702881f),
+                euler = new Vector3(5.85977411f, 18.493206f, 92.2100677f),
+                scale = 1.5f
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.PUSH,
+                parent = HandParent.HOUSE,
+                position = new Vector3(-5.9029541f, -0.477999687f, 2.35900879f),
+                euler = new Vector3(1.27469838f, 2.89245844f, 88.4191437f),
+                scale = 2
+            },
+            new ScreamHand
+            {
+                orig = HandOrig.WATCH,
+                parent = HandParent.HOUSE,
+                position = new Vector3(0.233032227f, -0.222999573f, 1.45800781f),
+                euler = new Vector3(325.567657f, 44.3248367f, 5.16276741f),
+                scale = 2f
+            },
+            // end house section
         };
 
         public static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object

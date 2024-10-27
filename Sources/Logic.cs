@@ -182,7 +182,7 @@ namespace Psycho
                 GameObject player = GameObject.Find("PLAYER");
                 player.GetComponent<CharacterMotor>().canControl = false;
 
-                StateHook.Inject(train.gameObject, "Player", "Die 2", -1, () =>
+                StateHook.Inject(train.gameObject, "Player", "Die 2", -1, _ =>
                 {
                     Transform paper = death.transform.Find("GameOverScreen/Paper/Train");
                     paper.Find("TextFI").GetComponent<TextMesh>().text = PAPER_TEXT_FI_POINTS;
@@ -243,6 +243,7 @@ namespace Psycho
                     WorldManager.StopCloudsOrRandomize();
                     WorldManager.ChangeCameraFog();
                     WorldManager.ChangeWalkersAnimation();
+                    WorldManager.SetHandsActive(inHorror);
 
                     GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
                     _changeFittanDriverHeadPivotRotation();

@@ -5,19 +5,83 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
+using System.Collections.Generic;
 
 namespace Psycho
 {
-    public class ModelData
-    {
-        public string path;
-        public Mesh mesh;
-        public Texture texture;
-    }
-
     public class WorldManager
     {
         static AnimationClip pig_anim;
+
+        public static void SetHandsActive(bool state)
+        {
+            GameObject.Find("MAP/Buildings/DINGONBIISI/Hands")?.SetActive(state);
+
+            GameObject _chair = GameObject.Find("MAP/Buildings/DINGONBIISI/autiotalo/LOD/Chair");
+            _chair.GetComponent<Rigidbody>().useGravity = !state;
+            _chair.transform.localPosition = new Vector3(-1.84862494f, -0.92900008f, -0.122052498f);
+            _chair.transform.localEulerAngles = new Vector3(336.172913f, 190.832809f, 268.149536f);
+        }
+
+        public static void SpawnDINGONBIISIHands()
+        {
+            // setup hierarchy
+            var parents = new List<GameObject>
+            {
+                new GameObject("Hands"),
+                new GameObject("Stairs"),
+                new GameObject("House"),
+                new GameObject("Loft")
+            };
+
+            Transform _dingo = GameObject.Find("MAP/Buildings/DINGONBIISI").transform;
+            Transform _main = parents[(byte)HandParent.MAIN].transform;
+            _main.SetParent(_dingo, worldPositionStays: false);
+            _main.gameObject.SetActive(false);
+
+            for (int i = 1; i < 4; i++)
+                parents[i].transform.SetParent(parents[(byte)HandParent.MAIN].transform, worldPositionStays: false);
+
+            // get orig objects
+            Transform _camera = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").transform;
+            var objs = new List<GameObject>
+            {
+                _camera.Find("Hand Push").gameObject,
+                _camera.Find("Hello").gameObject,
+                _camera.Find("Watch").gameObject,
+                _camera.Find("Drink/Hand/HandMilk").gameObject
+            };
+
+            // spawn objects
+            Globals.hands_list.ForEach(v =>
+            {
+                GameObject clone = GameObject.Instantiate(objs[(byte)v.orig]);
+                Transform t = clone.transform;
+
+                t.SetParent(parents[(byte)v.parent].transform, worldPositionStays: false);
+                t.localPosition = v.position;
+                t.localEulerAngles = v.euler;
+                t.localScale = new Vector3(v.scale, v.scale, v.scale);
+
+                switch (v.orig)
+                {
+                    case HandOrig.MILK:
+                        UnityEngine.Object.Destroy(t.Find("Milk").gameObject);
+                        break;
+                    case HandOrig.PUSH:
+                        UnityEngine.Object.Destroy(t.Find("Pivot/Collider").gameObject);
+                        UnityEngine.Object.Destroy(t.Find("Pivot/RigidBody").gameObject);
+                        break;
+                    case HandOrig.WATCH:
+                        t.Find("Animate/BreathAnim/WristwatchHand").gameObject.SetActive(true);
+                        break;
+                }
+
+                clone.layer = 0;
+                Utils.IterateAllChilds(clone.transform, child => child.gameObject.layer = 0);
+                clone.SetActive(true);
+            });
+        }
 
         public static void ChangeWalkersAnimation()
         {
@@ -75,7 +139,7 @@ namespace Psycho
             return newchild;
         }
 
-        public static void AddDoorOpenCallback(string path, Action callback) =>
+        public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback) =>
             StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);
 
         public static void CloseDoor(string path)

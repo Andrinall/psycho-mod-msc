@@ -68,7 +68,7 @@ namespace Psycho
             m_fSunHours = sun.GetVariable<FsmFloat>("Hours");
             m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
 
-            StateHook.Inject(gameObject, "Activate", "Check time of day", 3, () => {
+            StateHook.Inject(gameObject, "Activate", "Check time of day", 3, _ => {
                 if (Logic.inHorror) return;
                 if (Logic.milkUsed && Logic.milkUseTime.Minute + 1 > DateTime.Now.Minute) return;
 
@@ -91,14 +91,20 @@ namespace Psycho
                 m_bTrigger = true;
             });
 
-            StateHook.Inject(gameObject, "Activate", "Phone", -1, () => m_bTrigger = false);
+            StateHook.Inject(gameObject, "Activate", "Phone", -1, _ => m_bTrigger = false);
 
-            StateHook.Inject(gameObject, "Activate", "Wake up 2", () =>
+            StateHook.Inject(gameObject, "Activate", "Wake up 2", _ =>
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
                 ApplyScreamer();
                 m_bTrigger = false;
+            });
+
+            StateHook.Inject(gameObject, "Activate", "Does call?", 0, fsm =>
+            {
+                if (m_bTrigger)
+                    fsm.SendEvent("NOCALL");
             });
         }
 

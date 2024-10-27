@@ -70,8 +70,8 @@ namespace Psycho
             Utils.ClearActions(fsm.GetState("Save"));
             Utils.ClearActions(fsm.GetState("Destroy"));
 
-            StateHook.Inject(self, "Use", "Eat", () => EatState());
-            StateHook.Inject(self, "Use", "Destroy", -1, () => UnityEngine.Object.Destroy(self));
+            StateHook.Inject(self, "Use", "Eat", _ => EatState());
+            StateHook.Inject(self, "Use", "Destroy", -1, _ => UnityEngine.Object.Destroy(self));
         }
 
         void EatState()

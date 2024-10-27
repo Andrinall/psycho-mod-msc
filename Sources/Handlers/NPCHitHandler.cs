@@ -25,7 +25,7 @@ namespace Psycho
             {
                 StateHook.Inject(
                     transform.Find("HumanCollider").gameObject, "PlayerHit", "State 3",
-                    () => Logic.PlayerCommittedOffence("SUSKI_HIT")
+                    _ => Logic.PlayerCommittedOffence("SUSKI_HIT")
                 );
 
                 goto SkipOther;
@@ -48,12 +48,12 @@ namespace Psycho
 
                 StateHook.Inject(gameObject, "CarHit",
                     crime ? "Crime 2" : "Crime",
-                    () => Logic.PlayerCommittedOffence("NPC_HIT")
+                    _ => Logic.PlayerCommittedOffence("NPC_HIT")
                 );
             }
             catch
             {
-                StateHook.Inject(gameObject, "CarHit", "Crime 2", () => Logic.PlayerCommittedOffence("NPC_HIT"));
+                StateHook.Inject(gameObject, "CarHit", "Crime 2", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
             }
         }
 
@@ -61,20 +61,20 @@ namespace Psycho
         {
             if (name == "HumanTriggerCop")
             {
-                StateHook.Inject(gameObject, "PlayerHit", "State 2", () => Logic.PlayerCommittedOffence("NPC_HIT"));
+                StateHook.Inject(gameObject, "PlayerHit", "State 2", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
                 return;
             }
 
             if (t == 1)
             {
-                StateHook.Inject(gameObject, "PlayerHit", "State 3", () => Logic.PlayerCommittedOffence("NPC_HIT"));
+                StateHook.Inject(gameObject, "PlayerHit", "State 3", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
                 return;
             }
 
             if (t == 2)
             {
                 StateHook.Inject(transform.Find("HitCollider").gameObject,
-                    "PlayerHit", "State 3", () => Logic.PlayerCommittedOffence("NPC_HIT")
+                    "PlayerHit", "State 3", _ => Logic.PlayerCommittedOffence("NPC_HIT")
                 );
             }
         }

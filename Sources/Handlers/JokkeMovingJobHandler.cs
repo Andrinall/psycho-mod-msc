@@ -20,7 +20,7 @@ namespace Psycho
 
             if (_payMoney?.activeSelf == true && !m_bInstalled)
             {
-                StateHook.Inject(_payMoney, "Use", "Anim", () => Logic.PlayerCompleteJob("YOKKE_RELOCATION"));
+                StateHook.Inject(_payMoney, "Use", "Anim", _ => Logic.PlayerCompleteJob("YOKKE_RELOCATION"));
                 m_bInstalled = true;
             }
 

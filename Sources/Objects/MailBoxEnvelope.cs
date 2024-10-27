@@ -61,8 +61,8 @@ namespace Psycho
                     Utils.PrintDebug(eConsoleColors.YELLOW, "Mail hidded!");
                 }
 
-                StateHook.Inject(MailboxEnvelope, "Use", "Open ad", -1, () => Utils.CreateRandomPills());
-                StateHook.Inject(EnvelopeSheet, "Setup", "State 2", () => {
+                StateHook.Inject(MailboxEnvelope, "Use", "Open ad", -1, _ => Utils.CreateRandomPills());
+                StateHook.Inject(EnvelopeSheet, "Setup", "State 2", _ => {
                     MailboxEnvelope.SetActive(false);
                     Logic.envelopeSpawned = false;
                 });

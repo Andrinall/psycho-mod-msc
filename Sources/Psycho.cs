@@ -243,9 +243,6 @@ namespace Psycho
             source.spatialBlend = 1f;
             source.spread = 0f;
 
-            WorldManager.ActivateDINGONBIISIMiscThing3Permanently();
-            WorldManager.ChangeWalkersAnimation();
-
             // whisp spawn
             /*
              * var obj = GameObject.Find("MAP/Buildings/DINGONBIISI/Misc/Thing1");
@@ -305,10 +302,15 @@ namespace Psycho
 
         void _applyHorrorIfNeeded()
         {
+            WorldManager.ActivateDINGONBIISIMiscThing3Permanently();
+            WorldManager.SpawnDINGONBIISIHands();
+            WorldManager.ChangeWalkersAnimation();
+
             if (!Logic.inHorror) return;
 
             Utils.ChangeSmokingModel();
 
+            WorldManager.SetHandsActive(true);
             WorldManager.ChangeWorldTextures(true);
             WorldManager.ChangeCameraFog();
             WorldManager.ChangeBedroomModels();
@@ -328,8 +330,8 @@ namespace Psycho
             AddComponent<SuitcaseHandler>("KILJUGUY/SuitcaseSpawns");
             AddComponent<FliesChanger>("PLAYER/Flies");
 
-            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", () => SoundManager.StopScreamSound("door_knock"));
-            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", () => SoundManager.StopScreamSound("bedroom"));
+            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", _ => SoundManager.StopScreamSound("door_knock"));
+            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", _ => SoundManager.StopScreamSound("bedroom"));
 
             // add handlers for HOUSE_SHIT objects (septics)
             for (int i = 1; i < 6; i++)
@@ -397,7 +399,7 @@ namespace Psycho
         void _injectStateHooks(Transform drink)
         {
             // add milk usage handler
-            StateHook.Inject(drink.gameObject, "Drink", "Activate 3", () =>
+            StateHook.Inject(drink.gameObject, "Drink", "Activate 3", _ =>
             {
                 Logic.milkUsed = true;
                 Logic.milkUseTime = DateTime.Now;
@@ -406,32 +408,25 @@ namespace Psycho
             GameObject yard_sleep = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger");
             PlayMakerFSM sleep_fsm = yard_sleep.GetPlayMaker("Activate");
 
-            StateHook.Inject(yard_sleep, "Activate", "Does call?", 0, () =>
-            {
-                if (!Logic.milkUsed) return;
-                sleep_fsm.SendEvent("NOCALL");
-                Logic.milkUsed = false;
-            });
-
             StateHook.Inject( // add FITTAN crash handler (crime)
                 GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN").transform.Find("CrashEvent").gameObject,
                 "Crash", "Crime",
-                () => Logic.PlayerCommittedOffence("FITTAN_CRASH")
+                _ => Logic.PlayerCommittedOffence("FITTAN_CRASH")
             );
 
             StateHook.Inject( // add handler for mission delivery Granny to church
                 GameObject.Find("ChurchGrandma/GrannyHiker"), "Logic", "Start walking",
-                () => Logic.PlayerCompleteJob("GRANNY_CHURCH")
+                _ => Logic.PlayerCompleteJob("GRANNY_CHURCH")
             );
 
             StateHook.Inject( // add Granny angry handler
                 GameObject.Find("JOBS/Mummola/TalkEngine"), "Granny", "Speak 27",
-                () => Logic.PlayerCommittedOffence("GRANNY_ANGRY")
+                _ => Logic.PlayerCommittedOffence("GRANNY_ANGRY")
             );
 
             StateHook.Inject( // add arrest handler for horror world
                 GameObject.Find("Systems/PlayerWanted"), "Activate", "State 2",
-                () => {
+                _ => {
                     if (!Logic.inHorror) return;
                     Logic.KillHeartAttack();
                 });

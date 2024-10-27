@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
@@ -11,6 +12,19 @@ namespace Psycho
     internal static class Utils
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
+
+        internal static void IterateAllChilds(Transform obj, Action<Transform> handler)
+        {
+            if (obj.childCount == 0) return;
+            for (int i = 0; i < obj.childCount; i++)
+            {
+                Transform child = obj.GetChild(i);
+                handler?.Invoke(child);
+
+                if (child.childCount == 0) continue;
+                IterateAllChilds(child, handler);
+            }
+        }
 
         internal static void ChangeSmokingModel()
         {
@@ -36,7 +50,7 @@ namespace Psycho
             try
             {
             Generate:
-                int idx = Random.Range(0, Globals.pills_positions.Count - 1);
+                int idx = UnityEngine.Random.Range(0, Globals.pills_positions.Count - 1);
                 if (Globals.pills_list.Any(v => v.index == idx))
                     goto Generate;
 
@@ -104,7 +118,7 @@ namespace Psycho
             Resources.UnloadAsset(SoundManager.DeathSound);
             SoundManager.DeathSound = null;
 
-            SoundManager.ScreamPoints.ForEach(v => Object.Destroy(v));
+            SoundManager.ScreamPoints.ForEach(v => UnityEngine.Object.Destroy(v));
             SoundManager.ScreamPoints.Clear();
 
             Resources.UnloadAsset(Globals.Picture_prefab);
@@ -123,8 +137,8 @@ namespace Psycho
 
             foreach (var item in Globals.models_replaces)
             {
-                Resources.UnloadAsset(item.Value?.mesh);
-                Resources.UnloadAsset(item.Value?.texture);
+                Resources.UnloadAsset(item.Value.mesh);
+                Resources.UnloadAsset(item.Value.texture);
             }
             Globals.models_replaces.Clear();
 

@@ -26,11 +26,12 @@ namespace Psycho
 
             GameObject fridge_paper = GameObject.Find("fridge_paper");
             if (fridge_paper)
-                StateHook.Inject(fridge_paper, "Use", "Wait button", -1, SetFridgePaperText);
+                StateHook.Inject(fridge_paper, "Use", "Wait button", -1,
+                    _ => Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = "I should take my pills\nI shouldn't be bad");
 
             GameObject farm_walker = GameObject.Find("HUMANS/Farmer/Walker");
             if (farm_walker)
-                StateHook.Inject(farm_walker, "Speak", "Done", () => Logic.PlayerCompleteJob("FARMER_QUEST"));
+                StateHook.Inject(farm_walker, "Speak", "Done", _ => Logic.PlayerCompleteJob("FARMER_QUEST"));
 
             Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             m_bInstalled = true;
@@ -50,8 +51,5 @@ namespace Psycho
         }
 
         void OnDestroy() => Destroy(Logic._hud);
-
-        void SetFridgePaperText() =>
-            Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = "I should take my pills\nI shouldn't be bad";
     }
 }

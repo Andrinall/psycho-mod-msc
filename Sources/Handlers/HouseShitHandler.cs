@@ -10,7 +10,7 @@ namespace Psycho
         void OnEnable()
         {
             if (m_bInstalled) return;
-            StateHook.Inject(gameObject, "Use", "State 1", () => Logic.PlayerCompleteJob("SEPTIC_TANK"));
+            StateHook.Inject(gameObject, "Use", "State 1", _ => Logic.PlayerCompleteJob("SEPTIC_TANK"));
             m_bInstalled = true;
         }
     }
