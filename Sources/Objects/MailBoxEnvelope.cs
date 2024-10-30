@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
+using Psycho.Internal;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
-namespace Psycho
+namespace Psycho.Objects
 {
     public sealed class MailBoxEnvelope : MonoBehaviour
     {

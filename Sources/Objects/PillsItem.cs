@@ -3,8 +3,9 @@ using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
+using Psycho.Internal;
 
-namespace Psycho
+namespace Psycho.Objects
 {
     public class PillsItem
     {

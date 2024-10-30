@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     public sealed class JunkYardJobHandler : MonoBehaviour
     {

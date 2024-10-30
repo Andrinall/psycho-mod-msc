@@ -4,11 +4,17 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 
+using Psycho.Objects;
 
 namespace Psycho
 {
     public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
     public enum HandParent : byte { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
+
+    public enum ScreamTimeType : int { SOUNDS = 0, FEAR = 1, PARALYSIS = 2 }
+    public enum ScreamSoundType : int { BEDROOM = 0, KNOCK = 1, GLASS1 = 2, GLASS2 = 3, WATER = 4 }
+    public enum ScreamFearType : int { GRANNY = 0, SUICIDAL = 1, TV = 2, PHONE = 3, WATER = 4 }
+    public enum ScreamParalysisType : int { GRANNY = 0, HAND = 1, KESSELI = 2 }
 
     public struct ModelData
     {

@@ -1,30 +1,20 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+using Psycho.Objects;
+
+namespace Psycho.Internal
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
 
     internal static class Utils
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
-
-        internal static void IterateAllChilds(Transform obj, Action<Transform> handler)
-        {
-            if (obj.childCount == 0) return;
-            for (int i = 0; i < obj.childCount; i++)
-            {
-                Transform child = obj.GetChild(i);
-                handler?.Invoke(child);
-
-                if (child.childCount == 0) continue;
-                IterateAllChilds(child, handler);
-            }
-        }
 
         internal static void ChangeSmokingModel()
         {
@@ -196,10 +186,31 @@ namespace Psycho
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable =>
             FsmVariables.GlobalVariables.FindVariable(name) as T;
 
+
+        internal static void AddEvent(this PlayMakerFSM fsm, string eventName)
+        {
+            if (string.IsNullOrEmpty(eventName)) return;
+            fsm.Fsm.Events = new List<FsmEvent>(fsm.Fsm.Events)
+                { new FsmEvent(eventName) }.ToArray();
+        }
+
         internal static bool IsPrefab(this Transform tempTrans)
         {
             if (tempTrans.gameObject.activeInHierarchy && !tempTrans.gameObject.activeSelf) return false;
             return tempTrans.root == tempTrans;
+        }
+
+        internal static void IterateAllChilds(this Transform obj, Action<Transform> handler)
+        {
+            if (obj.childCount == 0) return;
+            for (int i = 0; i < obj.childCount; i++)
+            {
+                Transform child = obj.GetChild(i);
+                handler?.Invoke(child);
+
+                if (child.childCount == 0) continue;
+                child.IterateAllChilds(handler);
+            }
         }
 
         static string _getColor(eConsoleColors color)

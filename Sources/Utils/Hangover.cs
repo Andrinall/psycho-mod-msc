@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Psycho
+namespace Psycho.Internal
 {
-    public sealed class Hangover : MonoBehaviour
+    internal sealed class Hangover : MonoBehaviour
     {
         const float m_fHangoverStrenght = 0.004251007f;
         const float m_fHangoverStrenghtMinus = -0.004251007f; // defaults from game

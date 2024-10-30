@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class HouseShitHandler : MonoBehaviour

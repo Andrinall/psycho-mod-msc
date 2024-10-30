@@ -5,6 +5,7 @@ using Harmony;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
+using Psycho.Internal;
 
 
 namespace Psycho

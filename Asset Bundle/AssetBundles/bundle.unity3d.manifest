@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3370461074
+CRC: 1696920460
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8cb100518ea27a47de2aaa13797ec0de
+    Hash: fa58430bd245c5eca87d8c7c2ec237e7
   TypeTreeHash:
     serializedVersion: 2
     Hash: df80c91f1a304b147d32afe38da163be
@@ -227,6 +227,7 @@ Assets:
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
+- Assets/Prefabs/Suicidal.prefab
 - Assets/Replaces/Horror/panel_wall.png
 - Assets/Screens/1.png
 Dependencies: []

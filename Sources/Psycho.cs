@@ -8,6 +8,11 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
+using Psycho.Objects;
+using Psycho.Commands;
+using Psycho.Handlers;
+using Psycho.Internal;
+using Psycho.Screamers;
 
 namespace Psycho
 {
@@ -56,12 +61,13 @@ namespace Psycho
             Globals.Coffin_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             Globals.SmokeParticleSystem_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
             Globals.AcidBurnSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
+            Globals.Suicidal_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/suicidal.prefab");
 
             GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
-            UnityEngine.Object.Instantiate(crows_list);
+            GameObject.Instantiate(crows_list);
 
             GameObject suicidals_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab");
-            ((GameObject)UnityEngine.Object.Instantiate(suicidals_list)).SetActive(false);
+            GameObject.Instantiate(suicidals_list).SetActive(false);
 
             // load all replaces
             _bundle.GetAllAssetNames().ToList().ForEach(v =>
@@ -304,10 +310,10 @@ namespace Psycho
         {
             WorldManager.ActivateDINGONBIISIMiscThing3Permanently();
             WorldManager.SpawnDINGONBIISIHands();
-            WorldManager.ChangeWalkersAnimation();
+            WorldManager.CopyVenttiAnimation();
+            WorldManager.CopyGrannyHiker();
 
             if (!Logic.inHorror) return;
-
             Utils.ChangeSmokingModel();
 
             WorldManager.SetHandsActive(true);
@@ -362,10 +368,11 @@ namespace Psycho
         {
 #if DEBUG
             // register debug commands
-            ConsoleCommand.Add(new SuicidalCmd());
+            ConsoleCommand.Add(new Suicidal());
             ConsoleCommand.Add(new TeleportToPills());
             ConsoleCommand.Add(new ChangeWorld());
             ConsoleCommand.Add(new Kill());
+            ConsoleCommand.Add(new Scream());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());

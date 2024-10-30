@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     [RequireComponent(typeof(Rigidbody))]
     public sealed class CrashHandler : MonoBehaviour

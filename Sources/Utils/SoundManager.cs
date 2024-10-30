@@ -3,9 +3,9 @@
 using MSCLoader;
 using UnityEngine;
 
-namespace Psycho
+namespace Psycho.Internal
 {
-    public sealed class SoundManager
+    internal sealed class SoundManager
     {
         public static AudioSource DeathSound;
         public static List<GameObject> ScreamPoints = new List<GameObject>();
@@ -25,13 +25,16 @@ namespace Psycho
             }
         }
 
-        public static void PlayRandomScreamSound()
+        public static void PlayRandomScreamSound(int rand = -1)
         {
             if (DeathSound.isPlaying) return;
 
-            int rand = Random.Range(0, ScreamPoints.Count);
+            if (rand == -1)
+                rand = Random.Range(0, ScreamPoints.Count);
+
             AudioSource source = ScreamPoints[rand].GetComponent<AudioSource>();
             if (source.isPlaying) return;
+
             source.loop = true;
             source.Play();
             Utils.PrintDebug($"Played sound {source.clip.name}; idx[{rand}]");

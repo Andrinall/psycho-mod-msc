@@ -2,14 +2,16 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+
+namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    public class GrandmaDistanceChecker : MonoBehaviour
+    public sealed class GrandmaDistanceChecker : MonoBehaviour
     {
         public Transform _player;
         public float Distance = 3.5f;
         bool m_bBlowed = false;
+
 
         void OnEnable() => _player = GameObject.Find("PLAYER").transform;
         
@@ -32,9 +34,9 @@ namespace Psycho
             var timer = new System.Timers.Timer(3000);
             timer.Elapsed += (sender, e) => {
                 audio.Stop();
-                transform.position = transform.Find("GrannyHiker").GetPlayMaker("Logic")
+                transform.position = transform.GetPlayMaker("Logic")
                     .GetVariable<FsmVector3>("WalkerOriginalPos").Value;
-                transform.Find("GrannyHiker/Char").gameObject.SetActive(false);
+                transform.Find("Char").gameObject.SetActive(false);
 
                 timer.Stop();
                 Destroy(smokes);

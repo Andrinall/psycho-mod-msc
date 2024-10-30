@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
+using Psycho.Internal;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+
+namespace Psycho.Screamers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public class ScreamsInitiator : MonoBehaviour
+    public sealed class ScreamsInitiator : MonoBehaviour
     {
-        PlayMakerFSM _fsm;
+        public PlayMakerFSM _fsm;
         FsmInt m_iTimeOfDay;
         FsmInt m_iGlobalDay;
         FsmFloat m_fSunHours;
         FsmFloat m_fSunMinutes;
-        
-        FsmStateAction[] m_loCachedChurch;
         
         int[] m_liTimes = new int[3] { 1, 4, 1 };
         List<List<int>> m_liDays = new List<List<int>>()
@@ -34,16 +34,13 @@ namespace Psycho
         bool m_bTrigger = false;
         bool m_bInstalled = false;
 
+
         void OnEnable()
         {
             if (m_bInstalled) return;
             SetupSleepTriggerHooks();
             m_bInstalled = true;
         }
-
-        /* TODO:
-         * fix fade out effect
-         */
 
         void FixedUpdate()
         {
@@ -58,9 +55,70 @@ namespace Psycho
             Utils.PrintDebug($"All sounds stopped start[{Mathf.RoundToInt(m_fSoundStartMinutes)}] current[{Mathf.RoundToInt(m_fSunMinutes.Value)}] end[{Mathf.RoundToInt(m_fSoundStartMinutes + 10f)}]");
         }
 
+
+        public void ApplyScreamer(ScreamTimeType rand, int variation = -1)
+        {
+            m_bApplyed = true;
+
+            WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
+            WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
+
+            if (rand == ScreamTimeType.SOUNDS) // 1:00
+            {
+                m_fSoundStartMinutes = m_fSunMinutes.Value;
+                SoundManager.PlayRandomScreamSound(variation);
+                m_bStopped = false;
+                return;
+            }
+
+            if (rand == ScreamTimeType.FEAR) // 4:00
+            {
+                int rand2 = (variation == -1 ? 0 : variation); // Random.Range(0, 6);
+                switch (rand2)
+                {
+                    case (int)ScreamFearType.GRANNY:
+                        ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
+                        break;
+                    case (int)ScreamFearType.SUICIDAL:
+                        // AddSuicidalInLivingRoom();
+                        break;
+                    case (int)ScreamFearType.TV:
+                        // SetupTVScreamer();
+                        break;
+                    case (int)ScreamFearType.PHONE:
+                        // SetupPhoneScreamer();
+                        break;
+                    case (int)ScreamFearType.WATER:
+                        // AddWaterScreamer();
+                        break;
+                }
+                return;
+            }
+
+            if (rand == ScreamTimeType.PARALYSIS) // 1:00
+            {
+                int rand2 = (variation == -1 ? 0 : variation); // Random.Range(0, 3);
+                switch (rand2)
+                {
+                    case (int)ScreamParalysisType.GRANNY:
+                        _fsm.enabled = false;
+                        GameObject.Find("GrannyScreamHiker").GetComponent<MummolaCrawl>().enabled = true;
+                        break;
+                    case (int)ScreamParalysisType.HAND:
+                        break;
+                    case (int)ScreamParalysisType.KESSELI:
+                        break;
+                }
+            }
+        }
+
+
         void SetupSleepTriggerHooks()
         {
             _fsm = transform.GetPlayMaker("Activate");
+            _fsm.AddEvent("SCREAMSTOP");
+            _fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
+
             m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
             m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
@@ -72,13 +130,12 @@ namespace Psycho
                 if (Logic.inHorror) return;
                 if (Logic.milkUsed && Logic.milkUseTime.Minute + 1 > DateTime.Now.Minute) return;
 
-                m_iRand = UnityEngine.Random.Range(0, 4);
+                m_iRand = 2; //UnityEngine.Random.Range(0, 4);
                 if (m_iRand == 3) return;
-                if (m_iRand == 2) return; // for remove
 
                 int day = (m_iGlobalDay.Value + 1) % 7;
                 Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
-                if (!m_liDays[m_iRand].Contains(day)) return;
+                //if (!m_liDays[m_iRand].Contains(day)) return;
 
                 FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime");
                 int time = m_iTimeOfDay.Value;
@@ -97,7 +154,7 @@ namespace Psycho
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
-                ApplyScreamer();
+                ApplyScreamer(ScreamTimeType.PARALYSIS); // )m_iRand
                 m_bTrigger = false;
             });
 
@@ -108,75 +165,12 @@ namespace Psycho
             });
         }
 
-        void ApplyScreamer()
+        void ChangeGrandmaPosition(Vector3 position)
         {
-            m_bApplyed = true;
-
-            WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
-            WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
-
-            if (m_iRand == 0)
-            {
-                m_fSoundStartMinutes = m_fSunMinutes.Value;
-                SoundManager.PlayRandomScreamSound();
-                m_bStopped = false;
-                return;
-            }
-
-            if (m_iRand == 1)
-            {
-                int rand2 = 0; // Random.Range(0, 6);
-                switch (rand2)
-                {
-                    case 0:
-                        ChangeGrandmaPosition();
-                        ClearGrandmaStates();
-                        break;
-                    case 1:
-                        // ChangeSuskiPosition();
-                        break;
-                    case 2:
-                        // ChangeKiljuguyPosition();
-                        break;
-                    case 3:
-                        // SetupTVScreamer();
-                        break;
-                    case 4:
-                        // SetupPhoneScreamer();
-                        break;
-                    case 5:
-                        // SetupWaterScreamer();
-                        break;
-                }
-                return;
-            }
-
-            if (m_iRand == 2)
-                return;
-        }
-
-        void ChangeGrandmaPosition()
-        {
-            var grandma = GameObject.Find("ChurchGrandma");
-            grandma.transform.position = new Vector3(-9.980711f, -0.593821f, 4.589845f);
-            grandma.transform.Find("GrannyHiker/Char").gameObject.SetActive(true);
+            GameObject grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
+            grandma.transform.position = position;
+            grandma.transform.Find("Char").gameObject.SetActive(true);
             grandma.AddComponent<GrandmaDistanceChecker>();
-        }
-
-        void ClearGrandmaStates()
-        {
-            var grandma = GameObject.Find("ChurchGrandma");
-            var lookat = grandma.transform.Find("GrannyHiker/Char/HeadTarget/LookAt").GetPlayMaker("Random");
-            var around = lookat.GetState("Look around");
-
-            if (around.Actions.Length == 3)
-            {
-                m_loCachedChurch = new List<FsmStateAction>(around.Actions).ToArray();
-                Utils.ClearActions(around);
-                return;
-            }
-            
-            around.Actions = m_loCachedChurch;
         }
     }
 }

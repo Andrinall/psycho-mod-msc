@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-namespace Psycho
+
+namespace Psycho.Handlers
 {
     public sealed class SuitcaseHandler : MonoBehaviour
     {

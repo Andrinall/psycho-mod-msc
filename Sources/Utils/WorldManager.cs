@@ -1,17 +1,51 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
-using System.Collections.Generic;
 
-namespace Psycho
+using Psycho.Screamers;
+using Object = UnityEngine.Object;
+
+namespace Psycho.Internal
 {
-    public class WorldManager
+    internal class WorldManager
     {
-        static AnimationClip pig_anim;
+        public static AnimationClip PigWalkAnimation;
+        public static GameObject ClonedGrannyHiker;
+
+        public static void CopyGrannyHiker()
+        {
+            GameObject _hiker = GameObject.Find("ChurchGrandma/GrannyHiker");
+            ClonedGrannyHiker = GameObject.Instantiate(_hiker);
+            ClonedGrannyHiker.transform.parent = null;
+            ClonedGrannyHiker.name = "GrannyScreamHiker";
+
+            var _char = ClonedGrannyHiker.transform.Find("Char");
+            var _head = _char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
+
+            Object.Destroy(ClonedGrannyHiker.transform.GetPlayMaker("Logic"));
+            Object.Destroy(_char.Find("HeadTarget/LookAt").GetPlayMaker("Random"));
+            Object.Destroy(_head.GetPlayMaker("Look"));
+            Object.Destroy(ClonedGrannyHiker.transform.Find("Ray").gameObject);
+            Object.Destroy(ClonedGrannyHiker.transform.Find("RagDoll2").gameObject);
+            Object.Destroy(_char.Find("RagDollCar").gameObject);
+            Object.Destroy(_char.Find("HeadTarget").gameObject);
+            Object.Destroy(_char.Find("HumanTriggerCrime").gameObject);
+
+            Animation _animation = _char.Find("skeleton").GetComponent<Animation>();
+            if (!_animation.GetClip("venttipig_pig_walk"))
+                _animation.AddClip(PigWalkAnimation, "venttipig_pig_walk");
+
+            _animation.clip = _animation.GetClip("venttipig_pig_walk");
+            _animation.playAutomatically = true;
+            _animation.Play("venttipig_pig_walk", PlayMode.StopAll);
+
+            (ClonedGrannyHiker.GetComponent<MummolaCrawl>() ?? ClonedGrannyHiker.AddComponent<MummolaCrawl>()).enabled = false;
+        }
 
         public static void SetHandsActive(bool state)
         {
@@ -66,11 +100,11 @@ namespace Psycho
                 switch (v.orig)
                 {
                     case HandOrig.MILK:
-                        UnityEngine.Object.Destroy(t.Find("Milk").gameObject);
+                        Object.Destroy(t.Find("Milk").gameObject);
                         break;
                     case HandOrig.PUSH:
-                        UnityEngine.Object.Destroy(t.Find("Pivot/Collider").gameObject);
-                        UnityEngine.Object.Destroy(t.Find("Pivot/RigidBody").gameObject);
+                        Object.Destroy(t.Find("Pivot/Collider").gameObject);
+                        Object.Destroy(t.Find("Pivot/RigidBody").gameObject);
                         break;
                     case HandOrig.WATCH:
                         t.Find("Animate/BreathAnim/WristwatchHand").gameObject.SetActive(true);
@@ -78,18 +112,25 @@ namespace Psycho
                 }
 
                 clone.layer = 0;
-                Utils.IterateAllChilds(clone.transform, child => child.gameObject.layer = 0);
+                clone.transform.IterateAllChilds(child => child.gameObject.layer = 0);
                 clone.SetActive(true);
             });
         }
 
+        public static void CopyVenttiAnimation()
+        {
+            if (PigWalkAnimation) return;
+            
+            PigWalkAnimation = AnimationClip.Instantiate
+            (
+                GameObject.Find("CABIN/Cabin/Ventti/PIG/VenttiPig/Pivot/Char/skeleton")
+                    .GetComponent<Animation>()
+                    .GetClip("venttipig_pig_walk")
+            );
+        }
+
         public static void ChangeWalkersAnimation()
         {
-            if (!pig_anim)
-                pig_anim = GameObject.Find("CABIN/Cabin/Ventti/PIG/VenttiPig/Pivot/Char/skeleton")
-                    .GetComponent<Animation>()
-                    .GetClip("venttipig_pig_walk");
-
             Transform _walkers = GameObject.Find("HUMANS/Randomizer/Walkers").transform;
             _walkers.gameObject.SetActive(false);
             for (int i = 0; i < _walkers.childCount; i++)
@@ -97,7 +138,7 @@ namespace Psycho
                 Transform _child = _walkers.GetChild(i);
                 Animation _anim = _child.Find("Pivot/Char/skeleton").GetComponent<Animation>();
                 if (!_anim.GetClip("venttipig_pig_walk"))
-                    _anim.AddClip(pig_anim, "venttipig_pig_walk");
+                    _anim.AddClip(PigWalkAnimation, "venttipig_pig_walk");
 
                 (_child.GetPlayMaker("Move").GetState("Walking").Actions[0] as PlayAnimation).animName.Value =
                     Logic.inHorror ? "venttipig_pig_walk" : "fat_walk";
@@ -256,13 +297,13 @@ namespace Psycho
             if (coffinsGroup == null && state)
             {
                 coffinsGroup = new GameObject("BedroomCoffins");
-                GameObject coffin1 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
+                GameObject coffin1 = (Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738183f, 13.52571f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
                 coffin1.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
 
-                GameObject coffin2 = (UnityEngine.Object.Instantiate(Globals.Coffin_prefab,
+                GameObject coffin2 = (Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738185f, 12.52524f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
@@ -334,7 +375,7 @@ namespace Psycho
                 if (name.Length > 0) material.name = name;
                 material.mainTexture = texture;
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModConsole.Error($"Unable to change material for {obj?.name}, idx {index}, name {name}, tex {texture?.name};\n{e.GetFullMessage()}");
             }

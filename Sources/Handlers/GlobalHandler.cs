@@ -1,8 +1,10 @@
-﻿using Harmony;
-using UnityEngine;
+﻿using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     public sealed class GlobalHandler : MonoBehaviour
     {

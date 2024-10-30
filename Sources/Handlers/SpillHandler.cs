@@ -2,7 +2,10 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class SpillHandler : MonoBehaviour

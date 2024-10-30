@@ -1,0 +1,24 @@
+﻿#if DEBUG
+using MSCLoader;
+
+
+namespace Psycho.Commands
+{
+    public sealed class Kill : ConsoleCommand
+    {
+        public override string Name => "kill";
+
+        public override string Help => "";
+
+        public override void Run(string[] args)
+        {
+            if (args.Length == 0 || string.IsNullOrEmpty(args[0])) return;
+
+            if (args[0] == "heart")
+                Logic.Points = 200f;
+            else if (args[0] == "train")
+                Logic.KillUsingTrain();
+        }
+    }
+}
+#endif

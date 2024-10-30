@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using HutongGames.PlayMaker;
 
-namespace Psycho
+using Psycho.Internal;
+
+
+namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class SleepTriggerHandler : MonoBehaviour
@@ -17,8 +20,10 @@ namespace Psycho
             m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 
             Utils.ClearActions(transform, "Activate", "Calc rates", 6);
-            StateHook.Inject(gameObject, "Activate", "Calc rates", -1, _ =>
-                m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f));
+            StateHook.Inject(gameObject,
+                "Activate", "Calc rates", -1,
+                _ => m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)
+            );
 
             m_bInstalled = true;
         }

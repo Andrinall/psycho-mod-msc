@@ -88,7 +88,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
+    <Compile Include="Sources\Commands\DBG\Kill.cs" />
+    <Compile Include="Sources\Commands\DBG\Scream.cs" />
+    <Compile Include="Sources\Commands\DBG\Suicidal.cs" />
+    <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
+    <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />
+    <Compile Include="Sources\Screamers\MummolaCrawl.cs" />
     <Compile Include="Sources\Screamers\ScreamsInitiator.cs" />
     <Compile Include="Sources\Utils\SoundManager.cs" />
     <Compile Include="Sources\Utils\FliesChanger.cs" />
@@ -103,7 +110,6 @@
     <Compile Include="Sources\Utils\ShizAnimPlayer.cs" />
     <Compile Include="Sources\Psycho.cs" />
     <Compile Include="Sources\Logic.cs" />
-    <Compile Include="Sources\Handlers\Commands.cs" />
     <Compile Include="Sources\Utils\FixedHUD.cs" />
     <Compile Include="Sources\Handlers\GlobalHandler.cs" />
     <Compile Include="Sources\Globals.cs" />

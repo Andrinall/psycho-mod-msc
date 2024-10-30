@@ -3,10 +3,10 @@ using System.Collections;
 
 using UnityEngine;
 
-namespace Psycho
+namespace Psycho.Internal
 {
     [RequireComponent(typeof(Animation))]
-    public sealed class ShizAnimPlayer : MonoBehaviour
+    internal sealed class ShizAnimPlayer : MonoBehaviour
     {
         GameObject _eyes = null;
         Animation m_oAnimation = null;

@@ -3,7 +3,7 @@
 using UnityEngine;
 
 
-namespace Psycho
+namespace Psycho.Internal
 {
     internal enum eHUDCloneType { RECT, TEXT }
 
