@@ -60,13 +60,19 @@ namespace Psycho
             Globals.Coffin_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             Globals.SmokeParticleSystem_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
             Globals.AcidBurnSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
-            Globals.Suicidal_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/suicidal.prefab");
 
             GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
             GameObject.Instantiate(crows_list);
-
+            
             GameObject suicidals_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab");
-            GameObject.Instantiate(suicidals_list).SetActive(false);
+            var clonedlist = GameObject.Instantiate(suicidals_list);
+            clonedlist.SetActive(false);
+
+            var suicidal = GameObject.Instantiate(clonedlist.transform.GetChild(0).gameObject).transform;
+            suicidal.SetParent(GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform, worldPositionStays: false);
+            suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
+            suicidal.localPosition = Vector3.zero;
+            suicidal.gameObject.SetActive(false);
 
             // load all replaces
             _bundle.GetAllAssetNames().ToList().ForEach(v =>
@@ -335,6 +341,7 @@ namespace Psycho
             AddComponent<JunkYardJobHandler>("REPAIRSHOP/JunkYardJob/PayMoney");
             AddComponent<SuitcaseHandler>("KILJUGUY/SuitcaseSpawns");
             AddComponent<FliesChanger>("PLAYER/Flies");
+            AddComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
 
             WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", _ => SoundManager.StopScreamSound("door_knock"));
             WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", _ => SoundManager.StopScreamSound("bedroom"));

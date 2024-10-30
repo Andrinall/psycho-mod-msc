@@ -80,7 +80,8 @@ namespace Psycho.Screamers
                         ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
                         break;
                     case (int)ScreamFearType.SUICIDAL:
-                        // AddSuicidalInLivingRoom();
+                        GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom")
+                            .GetComponent<LivingRoomSuicidal>().enabled = true;
                         break;
                     case (int)ScreamFearType.TV:
                         // SetupTVScreamer();
@@ -156,7 +157,7 @@ namespace Psycho.Screamers
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
-                ApplyScreamer(ScreamTimeType.PARALYSIS); // )m_iRand
+                ApplyScreamer((ScreamTimeType)m_iRand);
                 m_bTrigger = false;
             });
 

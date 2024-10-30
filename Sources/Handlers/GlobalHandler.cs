@@ -3,6 +3,7 @@ using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using MSCLoader;
+using HutongGames.PlayMaker.Actions;
 
 
 namespace Psycho.Handlers
@@ -11,6 +12,7 @@ namespace Psycho.Handlers
     {
         Transform _houseFire;
         Transform _bells;
+        FsmState _bellsState;
 
         FsmFloat SUN_hours;
         FsmFloat SUN_minutes;
@@ -49,28 +51,32 @@ namespace Psycho.Handlers
             SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
 
             _bells = GameObject.Find("PERAJARVI/CHURCH/Bells").transform;
+            _bellsState = _bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
             bellsOrigPos = _bells.position;
 
             Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             m_bInstalled = true;
         }
-
+        
         void FixedUpdate()
         {
             Logic.Tick();
 
             if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
             {
+                (_bellsState.Actions[0] as ActivateGameObject).activate = true;
                 _bells.gameObject.SetActive(true);
                 _bells.position = GameObject.Find("PLAYER").transform.position;
-
                 m_bBellsActivated = true;
                 Utils.PrintDebug("Bells activated");
             }
             else if (m_bBellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
             {
+                (_bellsState.Actions[0] as ActivateGameObject).activate = true;
+                _bells.gameObject.SetActive(false);
                 _bells.position = bellsOrigPos;
                 m_bBellsActivated = false;
+                Utils.PrintDebug("Bells stopped");
             }
             
             if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
