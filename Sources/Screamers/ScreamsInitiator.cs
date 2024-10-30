@@ -6,6 +6,7 @@ using UnityEngine;
 using Psycho.Internal;
 using HutongGames.PlayMaker;
 
+using Random = UnityEngine.Random;
 
 namespace Psycho.Screamers
 {
@@ -73,8 +74,7 @@ namespace Psycho.Screamers
 
             if (rand == ScreamTimeType.FEAR) // 4:00
             {
-                int rand2 = (variation == -1 ? 0 : variation); // Random.Range(0, 6);
-                switch (rand2)
+                switch (_getVariativeRandom(variation, 5))
                 {
                     case (int)ScreamFearType.GRANNY:
                         ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
@@ -97,16 +97,19 @@ namespace Psycho.Screamers
 
             if (rand == ScreamTimeType.PARALYSIS) // 1:00
             {
-                int rand2 = (variation == -1 ? 0 : variation); // Random.Range(0, 3);
-                switch (rand2)
+                switch (_getVariativeRandom(variation, 3))
                 {
                     case (int)ScreamParalysisType.GRANNY:
                         _fsm.enabled = false;
                         GameObject.Find("GrannyScreamHiker").GetComponent<MummolaCrawl>().enabled = true;
                         break;
                     case (int)ScreamParalysisType.HAND:
+                        // hand screamer
+                        // GameObject.Find("WindowHandScreamer").GetComponent<MovingHand>().enabled = true;
                         break;
                     case (int)ScreamParalysisType.KESSELI:
+                        // kesseli screamer
+                        // GameObject.Find("KESSELIScreamer").GetComponent<LongNeck>().enabled = true;
                         break;
                 }
             }
@@ -128,14 +131,13 @@ namespace Psycho.Screamers
 
             StateHook.Inject(gameObject, "Activate", "Check time of day", 3, _ => {
                 if (Logic.inHorror) return;
-                if (Logic.milkUsed && Logic.milkUseTime.Minute + 1 > DateTime.Now.Minute) return;
+                if (Logic.milkUsed && (DateTime.Now - Logic.milkUseTime).Seconds < 60) return;
 
-                m_iRand = 2; //UnityEngine.Random.Range(0, 4);
-                if (m_iRand == 3) return;
+                m_iRand = Random.Range(0, 3);
 
                 int day = (m_iGlobalDay.Value + 1) % 7;
                 Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
-                //if (!m_liDays[m_iRand].Contains(day)) return;
+                if (!m_liDays[m_iRand].Contains(day)) return;
 
                 FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime");
                 int time = m_iTimeOfDay.Value;
@@ -172,5 +174,8 @@ namespace Psycho.Screamers
             grandma.transform.Find("Char").gameObject.SetActive(true);
             grandma.AddComponent<GrandmaDistanceChecker>();
         }
+
+        int _getVariativeRandom(int variation, int maxValue)
+            => (variation == -1 ? Random.Range(0, maxValue) : variation);
     }
 }

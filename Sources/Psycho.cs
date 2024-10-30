@@ -233,6 +233,7 @@ namespace Psycho
 
             _addHandlers();
             _applyHorrorIfNeeded();
+            _setupActions(camera.transform);
 
             WorldManager.ChangeIndepTextures(false);
 
