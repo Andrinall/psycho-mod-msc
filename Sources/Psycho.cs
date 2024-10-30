@@ -27,8 +27,7 @@ namespace Psycho
         public override bool LoadInMenu => true;
         public override bool SecondPass => true;
 
-        private string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
-        
+        string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
 
         public override void OnMenuLoad() => Resources.UnloadUnusedAssets(); // tested
         
