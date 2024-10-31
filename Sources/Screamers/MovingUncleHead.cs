@@ -37,7 +37,7 @@ namespace Psycho.Screamers
             CameraOrigs = Utils.SetCameraLookAt(Head.position);
             Char.gameObject.SetActive(true);
         }
-
+        
         void OnDisable()
         {
             animPlayed = false;

@@ -18,6 +18,31 @@ namespace Psycho.Internal
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
 
+        public static void CopyScreamHand()
+        {
+            GameObject HandMilk = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/HandMilk");
+            Transform Bedroom = GameObject.Find("YARD/Building/BEDROOM1").transform;
+            Transform ScreamHand = Object.Instantiate(HandMilk).transform;
+            Utils.PrintDebug($"milk:{HandMilk}; bedroom:{Bedroom}; hand:{ScreamHand}");
+            Object.Destroy(ScreamHand.Find("Milk").gameObject);
+
+            ScreamHand.SetParent(Bedroom, worldPositionStays: false);
+            ScreamHand.gameObject.name = "ScreamHand";
+            
+            ScreamHand.Find("Armature").gameObject.SetActive(false);
+            ScreamHand.Find("hand_rigged").gameObject.SetActive(false);
+
+            ScreamHand.IterateAllChilds(v => v.gameObject.layer = 0);
+
+            ScreamHand.Find("Armature").localEulerAngles = new Vector3(-90, 0, 0);
+            ScreamHand.position = new Vector3(-12.00460433959961f, 1.1982498168945313f, 15.551212310791016f);
+            ScreamHand.eulerAngles = new Vector3(0.4349295198917389f, 0.05798640847206116f, 0.02807953953742981f);
+            ScreamHand.localScale = new Vector3(2f, 2f, 2f);
+
+            (ScreamHand.gameObject.GetComponent<MovingHand>() ?? ScreamHand.gameObject.AddComponent<MovingHand>()).enabled = false;
+            ScreamHand.gameObject.SetActive(true);
+        }
+
         public static void CopyUncleChar()
         {
             GameObject uncleOrig = GameObject.Find("YARD/UNCLE/UncleWalking/Uncle");

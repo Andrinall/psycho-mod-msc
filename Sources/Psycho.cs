@@ -317,6 +317,7 @@ namespace Psycho
             WorldManager.CopyVenttiAnimation();
             WorldManager.CopyGrannyHiker();
             WorldManager.CopyUncleChar();
+            WorldManager.CopyScreamHand();
 
             if (!Logic.inHorror) return;
             Utils.ChangeSmokingModel();

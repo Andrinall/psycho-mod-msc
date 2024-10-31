@@ -100,12 +100,11 @@ namespace Psycho.Screamers
             {
                 switch (_getVariativeRandom(variation, 3))
                 {
-                    case (int)ScreamParalysisType.GRANNY:
+                    case (int)ScreamParalysisType.GRANNY: // granny crawl screamer
                         _startParalysisScream<MummolaCrawl>("GrannyScreamHiker");
                         break;
-                    case (int)ScreamParalysisType.HAND:
-                        // hand screamer
-                        // GameObject.Find("WindowHandScreamer").GetComponent<MovingHand>().enabled = true;
+                    case (int)ScreamParalysisType.HAND: // hand screamer
+                        _startParalysisScream<MovingHand>("YARD/Building/BEDROOM1/ScreamHand");
                         break;
                     case (int)ScreamParalysisType.KESSELI: // kesseli screamer
                         _startParalysisScream<MovingUncleHead>("YARD/Building/BEDROOM1/ScreamUncle");
@@ -162,7 +161,7 @@ namespace Psycho.Screamers
                 if (!m_bTrigger) return;
                 
                 // for tests use this
-                // ApplyScreamer(ScreamTimeType.PARALYSIS, 2); //(ScreamTimeType)m_iRand);
+                //ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
 
                 ApplyScreamer((ScreamTimeType)m_iRand);
                 m_bTrigger = false;
