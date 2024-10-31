@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace Psycho.Internal
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
 
-    internal static class Utils
+    internal sealed class Utils
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
 
@@ -143,39 +142,6 @@ namespace Psycho.Internal
             Globals.horror_flies.ForEach(v => Resources.UnloadAsset(v));
             Globals.horror_flies.Clear();
         }
-
-        internal static void ClearActions(Transform obj, string fsm, string state, int index = -1, int count = -1)
-        {
-            try
-            {
-                obj?.GetPlayMaker(fsm)?.GetState(state)?.ClearActions(index, count);
-            }
-            catch (System.Exception e)
-            {
-                ModConsole.Error($"[1] Failed to clears actions;\n{e.GetFullMessage()}");
-            }
-        }
-
-        internal static void ClearActions(this FsmState state, int index = -1, int count = -1)
-        {
-            try
-            {
-                var list = state.Actions.ToList();
-                if (index == -1 && count == -1)
-                    list.Clear();
-                else if (index != -1 && count == -1)
-                    list.RemoveRange(index, 1);
-                else
-                    list.RemoveRange(index, count);
-
-                state.Actions = list.ToArray();
-                state.SaveActions();
-            }
-            catch (System.Exception e)
-            {
-                ModConsole.Error($"[2] Failed to clears actions;\n{e.GetFullMessage()}");
-            }
-        }
         
         internal static void PrintDebug(string msg) =>
             ModConsole.Print(DBG_STRING + msg);
@@ -186,31 +152,33 @@ namespace Psycho.Internal
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable =>
             FsmVariables.GlobalVariables.FindVariable(name) as T;
 
-
-        internal static void AddEvent(this PlayMakerFSM fsm, string eventName)
+        internal static void PlayScreamSleepAnim(ref bool animPlayed, Action callback)
         {
-            if (string.IsNullOrEmpty(eventName)) return;
-            fsm.Fsm.Events = new List<FsmEvent>(fsm.Fsm.Events)
-                { new FsmEvent(eventName) }.ToArray();
+            if (animPlayed) return;
+            animPlayed = true;
+
+            Logic.shizAnimPlayer.PlayAnimation("sleep_knockout", default, 4f, default, () => callback?.Invoke());
         }
 
-        internal static bool IsPrefab(this Transform tempTrans)
+        internal static Vector3[] SetCameraLookAt(Vector3 targetPoint)
         {
-            if (tempTrans.gameObject.activeInHierarchy && !tempTrans.gameObject.activeSelf) return false;
-            return tempTrans.root == tempTrans;
+            Transform fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
+
+            Vector3[] origs = new Vector3[2] {
+                fpsCamera.localPosition,
+                fpsCamera.localEulerAngles
+            };
+
+            fpsCamera.LookAt(targetPoint);
+            return origs;
         }
 
-        internal static void IterateAllChilds(this Transform obj, Action<Transform> handler)
+        internal static void ResetCameraLook(Vector3[] origs)
         {
-            if (obj.childCount == 0) return;
-            for (int i = 0; i < obj.childCount; i++)
-            {
-                Transform child = obj.GetChild(i);
-                handler?.Invoke(child);
+            Transform fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
 
-                if (child.childCount == 0) continue;
-                child.IterateAllChilds(handler);
-            }
+            fpsCamera.localPosition = origs[0];
+            fpsCamera.localEulerAngles = origs[1];
         }
 
         static string _getColor(eConsoleColors color)
