@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Psycho.Screamers
 {
-    public class LivingRoomSuicidal : MonoBehaviour
+    public sealed class LivingRoomSuicidal : MonoBehaviour
     {
         GameObject suicidal;
         GameObject lamp;

@@ -2,6 +2,7 @@
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using Psycho.Extensions;
 
 
 namespace Psycho.Handlers
@@ -19,7 +20,7 @@ namespace Psycho.Handlers
 
             m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 
-            Utils.ClearActions(transform, "Activate", "Calc rates", 6);
+            transform.ClearActions("Activate", "Calc rates", 6);
             StateHook.Inject(gameObject,
                 "Activate", "Calc rates", -1,
                 _ => m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)

@@ -3,11 +3,13 @@ using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
+
 using Psycho.Internal;
+using Psycho.Extensions;
 
 namespace Psycho.Objects
 {
-    public class PillsItem
+    public sealed class PillsItem
     {
         PlayMakerFSM fsm;
 
@@ -48,14 +50,14 @@ namespace Psycho.Objects
             self.transform.eulerAngles = euler;
             self.transform.SetParent(GameObject.Find("ITEMS").transform);
 
-            var ren = self.AddComponent<ItemRenamer>();
-            ren.TargetName = "potato chips(itemx)";
-            ren.FinalName = "pills(itemx)";
+            ItemRenamer renamer = self.AddComponent<ItemRenamer>();
+            renamer.TargetName = "potato chips(itemx)";
+            renamer.FinalName = "pills(itemx)";
 
-            var pills = Globals.Pills_prefab;
+            GameObject pillsPrefab = Globals.Pills_prefab;
             WorldManager.ChangeModel(self,
-                pills.GetComponent<MeshFilter>().mesh,
-                pills.GetComponent<MeshRenderer>().material.mainTexture
+                pillsPrefab.GetComponent<MeshFilter>().mesh,
+                pillsPrefab.GetComponent<MeshRenderer>().material.mainTexture
             );
 
             var collider = self.GetComponent<BoxCollider>();
@@ -66,10 +68,10 @@ namespace Psycho.Objects
             collider.size = pcoll.size;
 
             fsm = self.GetPlayMaker("Use");
-            Utils.ClearActions(fsm.GetState("Eat"), 6, 3);
-            Utils.ClearActions(fsm.GetState("Load"));
-            Utils.ClearActions(fsm.GetState("Save"));
-            Utils.ClearActions(fsm.GetState("Destroy"));
+            fsm.GetState("Eat").ClearActions(6, 3);
+            fsm.GetState("Load").ClearActions();
+            fsm.GetState("Save").ClearActions();
+            fsm.GetState("Destroy").ClearActions();
 
             StateHook.Inject(self, "Use", "Eat", _ => EatState());
             StateHook.Inject(self, "Use", "Destroy", -1, _ => UnityEngine.Object.Destroy(self));

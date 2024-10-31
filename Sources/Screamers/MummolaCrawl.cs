@@ -1,7 +1,7 @@
-﻿using HutongGames.PlayMaker;
-using MSCLoader;
+﻿using UnityEngine;
+
 using Psycho.Internal;
-using UnityEngine;
+using Psycho.Extensions;
 
 
 namespace Psycho.Screamers
@@ -12,15 +12,14 @@ namespace Psycho.Screamers
         Transform Head;
 
         Animation Anim;
-        AnimationClip pigwalk;
+        AnimationClip PigWalk;
 
-        PlayMakerFSM _fsm;
+        PlayMakerFSM Fsm;
 
-        bool isDisabledChar = false;
-        bool animPlayed = false;
+        bool AnimPlayed = false;
 
         int HeadInterpolationFrames = 240;
-        int elapsedFrames = 0;
+        int ElapsedFrames = 0;
         
         float TargetDistance = 0.1f;
         float MaxSpeed = 1;
@@ -29,21 +28,11 @@ namespace Psycho.Screamers
         Vector3 TargetPoint = new Vector3(-11.2399998f, 2.5150001f, 12.6759996f);
         Vector3 HeadEndRotation = new Vector3(80f, 270f, 0f);
 
-        Transform player;
-        Transform fpsCamera;
-        Vector3 playerOrigPos;
-        Vector3 playerOrigEuler;
-
-        Vector3 cameraOrigPos;
-        Vector3 cameraOrigEuler;
+        Vector3[] cameraOrigs;
 
         void Awake()
         {
-            _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
-            
-            player = GameObject.Find("PLAYER").transform;
-            fpsCamera = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
-            
+            Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             enabled = false;
         }
 
@@ -55,15 +44,15 @@ namespace Psycho.Screamers
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
             
-            SetCameraPos();
+            cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
         }
         
         void OnDisable()
         {
-            elapsedFrames = 0;
-            animPlayed = false;
+            ElapsedFrames = 0;
+            AnimPlayed = false;
             
             Char.gameObject.SetActive(false);            
             ResetHeadRotation();
@@ -71,67 +60,29 @@ namespace Psycho.Screamers
         
         void FixedUpdate()
         {
-            if (TargetPoint == null) return;
-            if (animPlayed) return;
-
-            if (CheckDistance())
-            { 
-                RotateHeadPivot();
-                return;
-            }
-
-            MoveTowards();
+            if (AnimPlayed) return;
+            if (!transform.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;
+            RotateHeadPivot();
         }
-
-        bool CheckDistance() => (transform.position - TargetPoint).magnitude < TargetDistance;
-
-        void MoveTowards() => transform.position = Vector3.MoveTowards(transform.position, TargetPoint, MaxSpeed * Time.deltaTime);
 
         void ResetHeadRotation() => Head.localEulerAngles = new Vector3(270f, 90f, 0f);
 
         void RotateHeadPivot()
         {
-            if (elapsedFrames == HeadInterpolationFrames)
+            if (ElapsedFrames == HeadInterpolationFrames)
             {
-                PlaySleepAnim();
+                Utils.PlayScreamSleepAnim(ref AnimPlayed, () =>
+                {
+                    this.enabled = false;
+                    Utils.ResetCameraLook(cameraOrigs);
+                    Fsm.CallGlobalTransition("SCREAMSTOP");
+                });
                 return;
             }
 
-            float interpolationRatio = (float)elapsedFrames / HeadInterpolationFrames;
+            float interpolationRatio = (float)ElapsedFrames / HeadInterpolationFrames;
             Head.localEulerAngles = Vector3.Lerp(Head.localEulerAngles, HeadEndRotation, interpolationRatio);
-            elapsedFrames++;
-        }
-
-        void PlaySleepAnim()
-        {
-            if (animPlayed) return;
-            animPlayed = true;
-
-            Logic.shizAnimPlayer.PlayAnimation("sleep_knockout", default, 4f, default, () =>
-            {                
-                this.enabled = false;
-                ResetCameraPos();
-
-                _fsm.enabled = true;
-                _fsm.Fsm.Event(_fsm.GetGlobalTransition("SCREAMSTOP").FsmEvent); // work
-            });
-        }
-
-
-        void SetCameraPos()
-        {
-            Utils.PrintDebug("SetCameraPos() called in MummolaCrawl");
-
-            cameraOrigPos = fpsCamera.localPosition;
-            cameraOrigEuler = fpsCamera.localEulerAngles;
-
-            fpsCamera.LookAt(TargetPoint);
-        }
-
-        void ResetCameraPos()
-        {
-            fpsCamera.localPosition = cameraOrigPos;
-            fpsCamera.localEulerAngles = cameraOrigEuler;
+            ElapsedFrames++;
         }
     }
 }

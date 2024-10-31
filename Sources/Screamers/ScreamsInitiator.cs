@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
-using Psycho.Internal;
 using HutongGames.PlayMaker;
 
+using Psycho.Internal;
+using Psycho.Extensions;
 using Random = UnityEngine.Random;
 
 namespace Psycho.Screamers
@@ -80,8 +81,7 @@ namespace Psycho.Screamers
                         ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
                         break;
                     case (int)ScreamFearType.SUICIDAL:
-                        GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom")
-                            .GetComponent<LivingRoomSuicidal>().enabled = true;
+                        _startParalysisScream<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
                         break;
                     case (int)ScreamFearType.TV:
                         // SetupTVScreamer();
@@ -101,21 +101,24 @@ namespace Psycho.Screamers
                 switch (_getVariativeRandom(variation, 3))
                 {
                     case (int)ScreamParalysisType.GRANNY:
-                        _fsm.enabled = false;
-                        GameObject.Find("GrannyScreamHiker").GetComponent<MummolaCrawl>().enabled = true;
+                        _startParalysisScream<MummolaCrawl>("GrannyScreamHiker");
                         break;
                     case (int)ScreamParalysisType.HAND:
                         // hand screamer
                         // GameObject.Find("WindowHandScreamer").GetComponent<MovingHand>().enabled = true;
                         break;
-                    case (int)ScreamParalysisType.KESSELI:
-                        // kesseli screamer
-                        // GameObject.Find("KESSELIScreamer").GetComponent<LongNeck>().enabled = true;
+                    case (int)ScreamParalysisType.KESSELI: // kesseli screamer
+                        _startParalysisScream<MovingUncleHead>("YARD/Building/BEDROOM1/ScreamUncle");
                         break;
                 }
             }
         }
 
+        void _startParalysisScream<T>(string path) where T : MonoBehaviour
+        {
+            _fsm.enabled = false;
+            GameObject.Find(path).GetComponent<T>().enabled = true;
+        }
 
         void SetupSleepTriggerHooks()
         {
@@ -157,6 +160,10 @@ namespace Psycho.Screamers
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
+                
+                // for tests use this
+                // ApplyScreamer(ScreamTimeType.PARALYSIS, 2); //(ScreamTimeType)m_iRand);
+
                 ApplyScreamer((ScreamTimeType)m_iRand);
                 m_bTrigger = false;
             });

@@ -8,24 +8,60 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
 using Psycho.Screamers;
+using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
 namespace Psycho.Internal
 {
-    internal class WorldManager
+    internal sealed class WorldManager
     {
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
+
+        public static void CopyUncleChar()
+        {
+            GameObject uncleOrig = GameObject.Find("YARD/UNCLE/UncleWalking/Uncle");
+            Transform uncleClone = GameObject.Instantiate(uncleOrig).transform;
+
+            Transform _char = uncleClone.Find("Char");
+            Object.Destroy(uncleClone.Find("Ray").gameObject);
+            Object.Destroy(_char.Find("OriginalPos").gameObject);
+            Object.Destroy(_char.Find("LookTarget").gameObject);
+            Object.Destroy(_char.Find("HumanCollider").gameObject);
+            Object.Destroy(_char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot").GetComponent<PlayMakerFSM>());
+            Object.Destroy(_char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot/head/Smoking").GetComponent<PlayMakerFSM>());
+            Object.Destroy(_char.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney").gameObject);
+            _char.gameObject.SetActive(false);
+
+            uncleClone.SetParent(GameObject.Find("YARD/Building/BEDROOM1").transform, worldPositionStays: false);
+            _char.position = new Vector3(-11.72816f, 0.3139997f, 11.2811f);
+            _char.eulerAngles = new Vector3(0.0f, 270f, 0.0f);
+
+            uncleClone.gameObject.name = "ScreamUncle";
+            (uncleClone.gameObject.GetComponent<MovingUncleHead>() ?? uncleClone.gameObject.AddComponent<MovingUncleHead>())
+                .enabled = false;
+
+            uncleClone.gameObject.SetActive(true);
+        }
+
+        public static void CopySuicidal(GameObject cloned)
+        {
+            Transform suicidal = GameObject.Instantiate(cloned.transform.GetChild(0).gameObject).transform;
+            Transform livingroom = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform;
+            Utils.PrintDebug($"LIVING: {livingroom}");
+            suicidal.SetParent(livingroom, worldPositionStays: false);
+            suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
+            suicidal.localPosition = Vector3.zero;
+            suicidal.gameObject.SetActive(false);
+        }
 
         public static void CopyGrannyHiker()
         {
             GameObject _hiker = GameObject.Find("ChurchGrandma/GrannyHiker");
             ClonedGrannyHiker = GameObject.Instantiate(_hiker);
-            ClonedGrannyHiker.transform.parent = null;
-            ClonedGrannyHiker.name = "GrannyScreamHiker";
-
-            var _char = ClonedGrannyHiker.transform.Find("Char");
-            var _head = _char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
+            
+            Transform _char = ClonedGrannyHiker.transform.Find("Char");
+            Transform _head = _char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
 
             Object.Destroy(ClonedGrannyHiker.transform.GetPlayMaker("Logic"));
             Object.Destroy(_char.Find("HeadTarget/LookAt").GetPlayMaker("Random"));
@@ -35,6 +71,10 @@ namespace Psycho.Internal
             Object.Destroy(_char.Find("RagDollCar").gameObject);
             Object.Destroy(_char.Find("HeadTarget").gameObject);
             Object.Destroy(_char.Find("HumanTriggerCrime").gameObject);
+            _char.gameObject.SetActive(false);
+            
+            ClonedGrannyHiker.transform.parent = null;
+            ClonedGrannyHiker.name = "GrannyScreamHiker";
 
             Animation _animation = _char.Find("skeleton").GetComponent<Animation>();
             if (!_animation.GetClip("venttipig_pig_walk"))
@@ -45,6 +85,7 @@ namespace Psycho.Internal
             _animation.Play("venttipig_pig_walk", PlayMode.StopAll);
 
             (ClonedGrannyHiker.GetComponent<MummolaCrawl>() ?? ClonedGrannyHiker.AddComponent<MummolaCrawl>()).enabled = false;
+            ClonedGrannyHiker.gameObject.SetActive(true);
         }
 
         public static void SetHandsActive(bool state)

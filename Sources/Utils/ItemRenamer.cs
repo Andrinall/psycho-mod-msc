@@ -2,17 +2,21 @@
 
 namespace Psycho.Internal
 {
-    internal class ItemRenamer : MonoBehaviour
+    public class ItemRenamer : MonoBehaviour
     {
-        public string TargetName = "";
+        public string TargetName;
         public string FinalName;
 
         void Update()
         {
+            if (string.IsNullOrEmpty(TargetName)) return; 
+            if (string.IsNullOrEmpty(FinalName)) return;
             if (name != TargetName) return;
             if (name == FinalName) return;
 
-            name = FinalName;
+            SetName(FinalName);
         }
+
+        public virtual void SetName(string name) => name = FinalName;
     }
 }

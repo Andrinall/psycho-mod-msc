@@ -13,6 +13,9 @@ using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
+using Psycho.Extensions;
+
+using Object = UnityEngine.Object;
 
 namespace Psycho
 {
@@ -66,13 +69,8 @@ namespace Psycho
             
             GameObject suicidals_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab");
             var clonedlist = GameObject.Instantiate(suicidals_list);
+            WorldManager.CopySuicidal(clonedlist);
             clonedlist.SetActive(false);
-
-            var suicidal = GameObject.Instantiate(clonedlist.transform.GetChild(0).gameObject).transform;
-            suicidal.SetParent(GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform, worldPositionStays: false);
-            suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
-            suicidal.localPosition = Vector3.zero;
-            suicidal.gameObject.SetActive(false);
 
             // load all replaces
             _bundle.GetAllAssetNames().ToList().ForEach(v =>
@@ -170,7 +168,7 @@ namespace Psycho
                     BitConverter.ToSingle(value, 31)
                 );
 
-                (UnityEngine.Object.Instantiate(_picture_prefab, picture_pos, Quaternion.Euler(picture_rot)) as GameObject).MakePickable();
+                (Object.Instantiate(_picture_prefab, picture_pos, Quaternion.Euler(picture_rot)) as GameObject).MakePickable();
 
                 Utils.PrintDebug($"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
                 if (Logic.isDead)
@@ -200,7 +198,7 @@ namespace Psycho
 
             if (GameObject.Find("picture(Clone)") == null)
             {
-                (UnityEngine.Object.Instantiate(_picture_prefab,
+                (Object.Instantiate(_picture_prefab,
                     new Vector3(-10.1421f, 0.2857685f, 6.501729f),
                     Quaternion.Euler(new Vector3(0.01392611f, 2.436693f, 89.99937f))
                 ) as GameObject).MakePickable();
@@ -318,6 +316,7 @@ namespace Psycho
             WorldManager.SpawnDINGONBIISIHands();
             WorldManager.CopyVenttiAnimation();
             WorldManager.CopyGrannyHiker();
+            WorldManager.CopyUncleChar();
 
             if (!Logic.inHorror) return;
             Utils.ChangeSmokingModel();
@@ -387,10 +386,8 @@ namespace Psycho
 
         void _setupActions(Transform camera)
         {
-            Utils.ClearActions(
-                GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").transform,
-                "PickUp", "Wait", 2
-            );
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").transform?
+                .ClearActions("PickUp", "Wait", 2);
 
             // add fatigue increasing by drink milk
             Transform drink = camera.transform.Find("Drink");
