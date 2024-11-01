@@ -380,6 +380,7 @@ namespace Psycho
             ConsoleCommand.Add(new ChangeWorld());
             ConsoleCommand.Add(new Kill());
             ConsoleCommand.Add(new Scream());
+            ConsoleCommand.Add(new Shower());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());

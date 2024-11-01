@@ -18,6 +18,20 @@ namespace Psycho.Internal
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
 
+        public static void SwitchBathroomShower(bool state = false)
+        {
+            PlayMakerFSM ValveFSM =
+                GameObject.Find("YARD/Building/BATHROOM/Shower/Valve").GetComponent<PlayMakerFSM>();
+
+            ValveFSM.GetVariable<FsmBool>("Valve").Value = state;
+            ValveFSM.CallGlobalTransition("SWITCH");
+        }
+
+        public static void SwitchKitchenShower(bool state = false)
+        {
+            // ...
+        }
+
         public static void TurnOffElecMeter()
         {
             Transform FuseTable = GameObject.Find("YARD/Building/Dynamics/FuseTable").transform;
@@ -37,6 +51,11 @@ namespace Psycho.Internal
 
             //PlayMakerFSM.BroadcastEvent("ELEC_CUTOFF");
             mainswitch.Find("Pivot").localEulerAngles = new Vector3(25f, 0);
+        }
+
+        public static bool GetElecMeterSwitchState()
+        {
+            return GameObject.Find("Systems/ElectricityBills").GetComponent<PlayMakerFSM>().GetVariable<FsmBool>("MainSwitch").Value;
         }
 
         public static void CopyScreamHand()

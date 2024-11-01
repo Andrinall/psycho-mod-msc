@@ -91,6 +91,7 @@
     <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
     <Compile Include="Sources\Commands\DBG\Kill.cs" />
     <Compile Include="Sources\Commands\DBG\Scream.cs" />
+    <Compile Include="Sources\Commands\DBG\Shower.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />

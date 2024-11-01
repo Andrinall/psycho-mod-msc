@@ -64,7 +64,6 @@ namespace Psycho.Screamers
 
             WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
             WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
-            if (rand != 0) WorldManager.TurnOffElecMeter();
 
             if (rand == ScreamTimeType.SOUNDS) // 1:00
             {
@@ -76,7 +75,7 @@ namespace Psycho.Screamers
 
             if (rand == ScreamTimeType.FEAR) // 4:00
             {
-                switch (_getVariativeRandom(variation, 5))
+                switch (variation)
                 {
                     case (int)ScreamFearType.GRANNY:
                         ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
@@ -91,15 +90,24 @@ namespace Psycho.Screamers
                         // SetupPhoneScreamer();
                         break;
                     case (int)ScreamFearType.WATER:
-                        // AddWaterScreamer();
+                        // AddWaterScreamer
+                        ((Random.Range(0, 2) == 0
+                            ? (Action<bool>)WorldManager.SwitchBathroomShower
+                            : (Action<bool>)WorldManager.SwitchKitchenShower
+                        ))?.Invoke(true);
                         break;
+                    default:
+                        {
+                            ModConsole.Error("Variation is -1 for ScreamTimeType.FEAR in ScreamInitiator.ApplyHorror");
+                            break;
+                        }
                 }
                 return;
             }
 
             if (rand == ScreamTimeType.PARALYSIS) // 1:00
             {
-                switch (_getVariativeRandom(variation, 3))
+                switch (variation)
                 {
                     case (int)ScreamParalysisType.GRANNY: // granny crawl screamer
                         _startParalysisScream<MummolaCrawl>("GrannyScreamHiker");
@@ -164,7 +172,17 @@ namespace Psycho.Screamers
                 // for tests use this
                 //ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
 
-                ApplyScreamer((ScreamTimeType)m_iRand);
+                int[] temp = new int[2] { 5, 3 };
+                int variation = m_iRand > 0 ? Random.Range(0, temp[m_iRand - 1]) : -1;
+                
+                if (m_iRand == (int)ScreamTimeType.FEAR && variation < 2)
+                    WorldManager.TurnOffElecMeter();
+
+                if (m_iRand == (int)ScreamTimeType.PARALYSIS)
+                    WorldManager.TurnOffElecMeter();
+
+                ApplyScreamer((ScreamTimeType)m_iRand, variation);
+                
                 m_bTrigger = false;
             });
 
@@ -182,8 +200,5 @@ namespace Psycho.Screamers
             grandma.transform.Find("Char").gameObject.SetActive(true);
             grandma.AddComponent<GrandmaDistanceChecker>();
         }
-
-        int _getVariativeRandom(int variation, int maxValue)
-            => (variation == -1 ? Random.Range(0, maxValue) : variation);
     }
 }
