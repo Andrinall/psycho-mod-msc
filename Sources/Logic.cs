@@ -26,8 +26,6 @@ namespace Psycho
         static readonly float MIN_VALUE = 0f;
         static readonly float MAX_VALUE = 100f;
 
-
-        static bool _gameFinished = false;
         static float _points = 0;
         static float _value = 100f;
 
@@ -70,7 +68,7 @@ namespace Psycho
             ["SUSKI_HIT"] = 3f
         };
 
-
+        public static bool GameFinished { get; private set; }
 
         public static float Value {
             get { return _value; }
@@ -78,7 +76,7 @@ namespace Psycho
             {
                 _value = value;
                 psycho.Value = _value;
-                if (_gameFinished) return;
+                if (GameFinished) return;
                 if (_hud == null) return;
                 if (isDead) return;
 
@@ -102,7 +100,7 @@ namespace Psycho
             {
                 float prev = _points;
                 _points = value;
-                if (_gameFinished) return;
+                if (GameFinished) return;
                 if (_hud == null) return;
                 if (isDead) return;
 
@@ -158,7 +156,7 @@ namespace Psycho
 
         internal static void Tick()
         {
-            if (_gameFinished) return;
+            if (GameFinished) return;
 
             if (inHorror)
             {
@@ -263,14 +261,12 @@ namespace Psycho
             GameObject _fittanDriverHeadPivot =
                 GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN/Driver/skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
 
-            Utils.PrintDebug($"fittan driver head pivot == null? {_fittanDriverHeadPivot == null}");
             if (!_fittanDriverHeadPivot) return;
-
             _fittanDriverHeadPivot.GetPlayMaker("Look").enabled = !inHorror;
 
             Transform _head = _fittanDriverHeadPivot.transform.Find("head");
-            Utils.PrintDebug($"fittan HeadPivot/head == null? {_head == null}");
             if (!_head) return;
+
             _head.localRotation = Quaternion.Euler(new Vector3(
                 _head.localEulerAngles.x,
                 _head.localEulerAngles.y,
@@ -282,7 +278,8 @@ namespace Psycho
 
         static void FinishShizGame()
         {
-            _gameFinished = true;
+            GameFinished = true;
+            if (inHorror) ChangeWorld(eWorldType.MAIN);
             // ...
 
             Utils.PrintDebug(eConsoleColors.YELLOW, "Shiz game finished!");

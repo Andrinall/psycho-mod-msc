@@ -64,6 +64,7 @@ namespace Psycho.Screamers
 
             WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
             WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
+            if (rand != 0) WorldManager.TurnOffElecMeter();
 
             if (rand == ScreamTimeType.SOUNDS) // 1:00
             {
@@ -159,7 +160,7 @@ namespace Psycho.Screamers
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
-                
+
                 // for tests use this
                 //ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
 

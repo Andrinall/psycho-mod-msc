@@ -103,8 +103,6 @@ namespace Psycho.Objects
 
         internal void ReadData(ref byte[] array, int offset)
         {
-            Utils.PrintDebug(eConsoleColors.WHITE, $"Loading pills");
-
             self.transform.position = new Vector3(
                 BitConverter.ToSingle(array, offset),
                 BitConverter.ToSingle(array, offset + 4),

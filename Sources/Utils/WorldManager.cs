@@ -18,12 +18,32 @@ namespace Psycho.Internal
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
 
+        public static void TurnOffElecMeter()
+        {
+            Transform FuseTable = GameObject.Find("YARD/Building/Dynamics/FuseTable").transform;
+            Transform mainswitch = FuseTable.Find("Fusetable/MainSwitch");
+            PlayMakerFSM switchfsm = mainswitch.GetComponent<PlayMakerFSM>();
+            
+            // states Wait Player -> Wait Button -> Switch
+            switchfsm.GetVariable<FsmBool>("Switch").Value = false;
+            
+            // states Position -> OFF
+            GameObject.Find("Systems/ElectricityBills")
+                .GetComponent<PlayMakerFSM>()
+                .GetVariable<FsmBool>("MainSwitch")
+                .Value = false;
+
+            FuseTable.Find("ElectricShockPoint").gameObject.SetActive(false);
+
+            //PlayMakerFSM.BroadcastEvent("ELEC_CUTOFF");
+            mainswitch.Find("Pivot").localEulerAngles = new Vector3(25f, 0);
+        }
+
         public static void CopyScreamHand()
         {
             GameObject HandMilk = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/HandMilk");
             Transform Bedroom = GameObject.Find("YARD/Building/BEDROOM1").transform;
             Transform ScreamHand = Object.Instantiate(HandMilk).transform;
-            Utils.PrintDebug($"milk:{HandMilk}; bedroom:{Bedroom}; hand:{ScreamHand}");
             Object.Destroy(ScreamHand.Find("Milk").gameObject);
 
             ScreamHand.SetParent(Bedroom, worldPositionStays: false);
@@ -73,7 +93,7 @@ namespace Psycho.Internal
         {
             Transform suicidal = GameObject.Instantiate(cloned.transform.GetChild(0).gameObject).transform;
             Transform livingroom = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform;
-            Utils.PrintDebug($"LIVING: {livingroom}");
+            
             suicidal.SetParent(livingroom, worldPositionStays: false);
             suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
             suicidal.localPosition = Vector3.zero;
@@ -232,26 +252,13 @@ namespace Psycho.Internal
             _mover.GetPlayMaker("Position").GetState("State 4").ClearActions();
         }
 
-        public static GameObject CreateSuicidal(Vector3 position, string name = "")
-        {
-            GameObject list = GameObject.Find("SuicidalList");
-            if (!list)
-                list = new GameObject("SuicidalList");
-
-            GameObject newchild = UnityEngine.Object.Instantiate(Globals.Suicidal_prefab,
-                GameObject.Find("PLAYER").transform.position,
-                GameObject.Find("PLAYER").transform.rotation) as GameObject;
-
-            newchild.transform.SetParent(list.transform, worldPositionStays: false);
-            return newchild;
-        }
-
         public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback) =>
             StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);
 
         public static void CloseDoor(string path)
         {
             PlayMakerFSM door = GameObject.Find(path)?.GetPlayMaker("Use");
+            if (!door) return;
             door.GetVariable<FsmBool>("DoorOpen").Value = true;
             door.SendEvent("GLOBALEVENT");
         }

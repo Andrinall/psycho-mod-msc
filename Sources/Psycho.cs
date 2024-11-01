@@ -307,6 +307,7 @@ namespace Psycho
             Logic.milkUsed = false;
             Logic.Value = 100f;
             Logic.Points = 0f;
+            
         }
 
 
@@ -375,7 +376,6 @@ namespace Psycho
         {
 #if DEBUG
             // register debug commands
-            ConsoleCommand.Add(new Suicidal());
             ConsoleCommand.Add(new TeleportToPills());
             ConsoleCommand.Add(new ChangeWorld());
             ConsoleCommand.Add(new Kill());

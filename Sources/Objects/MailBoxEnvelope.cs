@@ -57,10 +57,7 @@ namespace Psycho.Objects
 
                 fsm.FsmVariables.FloatVariables = new List<FsmFloat>().ToArray();
                 if (!Logic.envelopeSpawned)
-                {
                     MailboxEnvelope.SetActive(false);
-                    Utils.PrintDebug(eConsoleColors.YELLOW, "Mail hidded!");
-                }
 
                 StateHook.Inject(MailboxEnvelope, "Use", "Open ad", -1, _ => Utils.CreateRandomPills());
                 StateHook.Inject(EnvelopeSheet, "Setup", "State 2", _ => {
@@ -71,7 +68,6 @@ namespace Psycho.Objects
 
                 Globals.mailboxSheet = EnvelopeSheet;
                 Globals.envelopeObject = MailboxEnvelope;
-                Utils.PrintDebug(eConsoleColors.GREEN, "MailBoxEnvelope component loaded");
                 
                 m_bInstalled = true;
             }
