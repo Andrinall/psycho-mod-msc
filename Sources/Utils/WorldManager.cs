@@ -29,7 +29,9 @@ namespace Psycho.Internal
 
         public static void SwitchKitchenShower(bool state = false)
         {
-            // ...
+            GameObject go = GameObject.Find("YARD/Building/KITCHEN/KitchenWaterTap");
+
+            go.transform.GetChild(3).gameObject.SetActive(state);
         }
 
         public static void TurnOffElecMeter()

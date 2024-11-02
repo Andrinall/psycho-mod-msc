@@ -381,6 +381,7 @@ namespace Psycho
             ConsoleCommand.Add(new Kill());
             ConsoleCommand.Add(new Scream());
             ConsoleCommand.Add(new Shower());
+            ConsoleCommand.Add(new KitchenTap());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
