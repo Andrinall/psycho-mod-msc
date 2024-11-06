@@ -17,6 +17,7 @@ using Psycho.Extensions;
 
 using Object = UnityEngine.Object;
 
+
 namespace Psycho
 {
     public sealed class Psycho : Mod
@@ -24,7 +25,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.86.8";
+        public override string Version => "0.9.0";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
         public override bool LoadInMenu => true;
@@ -63,6 +64,10 @@ namespace Psycho
             Globals.Coffin_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             Globals.SmokeParticleSystem_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
             Globals.AcidBurnSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
+            Globals.ScreamCallClip = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
+            Globals.PhantomScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
+            Globals.TVScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
+            Globals.UncleScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
 
             GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
             GameObject.Instantiate(crows_list);
@@ -319,6 +324,10 @@ namespace Psycho
             WorldManager.CopyGrannyHiker();
             WorldManager.CopyUncleChar();
             WorldManager.CopyScreamHand();
+            GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs").AddComponent<TVScreamer>();
+            GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Logic").AddComponent<PhoneRing>();
+            GameObject.Find("YARD/Building/BATHROOM/Shower").AddComponent<BathroomShower>();
+            GameObject.Find("YARD/Building/KITCHEN/KitchenWaterTap").AddComponent<KitchenShower>();
 
             if (!Logic.inHorror) return;
             Utils.ChangeSmokingModel();
@@ -382,6 +391,9 @@ namespace Psycho
             ConsoleCommand.Add(new Scream());
             ConsoleCommand.Add(new Shower());
             ConsoleCommand.Add(new KitchenTap());
+            ConsoleCommand.Add(new TVTexChange());
+            ConsoleCommand.Add(new Phone());
+            ConsoleCommand.Add(new Phantom());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
@@ -389,13 +401,14 @@ namespace Psycho
 
         void _setupActions(Transform camera)
         {
-            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").transform?
-                .ClearActions("PickUp", "Wait", 2);
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand")?.transform
+                ?.ClearActions("PickUp", "Wait", 2);
 
             // add fatigue increasing by drink milk
-            Transform drink = camera.transform.Find("Drink");
-            FsmState drink_state = drink.GetPlayMaker("Drink").GetState("Activate 3");
-            
+            Transform drink = camera.Find("Drink");
+            PlayMakerFSM drinkfsm = drink.GetPlayMaker("Drink");
+            FsmState drink_state = drinkfsm.GetState("Activate 3");
+
             var actions = new List<FsmStateAction>(drink_state.Actions); // copy actions list
             actions.Insert(9, new FloatAdd // insert action
             {

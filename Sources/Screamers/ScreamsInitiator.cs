@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TEST
+
+using System;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -9,12 +11,13 @@ using Psycho.Internal;
 using Psycho.Extensions;
 using Random = UnityEngine.Random;
 
+
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
     public sealed class ScreamsInitiator : MonoBehaviour
     {
-        public PlayMakerFSM _fsm;
+        PlayMakerFSM _fsm;
         FsmInt m_iTimeOfDay;
         FsmInt m_iGlobalDay;
         FsmFloat m_fSunHours;
@@ -61,6 +64,7 @@ namespace Psycho.Screamers
         public void ApplyScreamer(ScreamTimeType rand, int variation = -1)
         {
             m_bApplyed = true;
+            m_bTrigger = false;
 
             WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
             WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
@@ -83,24 +87,31 @@ namespace Psycho.Screamers
                     case (int)ScreamFearType.SUICIDAL:
                         _startParalysisScream<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
                         break;
+                    case (int)ScreamFearType.WATERKITCHEN:
+                        GameObject.Find("YARD/Building/KITCHEN/KitchenWaterTap")
+                            .GetComponent<KitchenShower>()
+                            .enabled = true;
+                        break;
+                    case (int)ScreamFearType.WATERBATHROOM:
+                        GameObject.Find("YARD/Building/BATHROOM/Shower")
+                            .GetComponent<BathroomShower>()
+                            .enabled = true;
+                        break;
                     case (int)ScreamFearType.TV:
-                        // SetupTVScreamer();
+                        GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs")
+                            .GetComponent<TVScreamer>()
+                            .enabled = true;
                         break;
                     case (int)ScreamFearType.PHONE:
-                        // SetupPhoneScreamer();
-                        break;
-                    case (int)ScreamFearType.WATER:
-                        // AddWaterScreamer
-                        ((Random.Range(0, 2) == 0
-                            ? (Action<bool>)WorldManager.SwitchBathroomShower
-                            : (Action<bool>)WorldManager.SwitchKitchenShower
-                        ))?.Invoke(true);
+                        GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Logic")
+                            .GetComponent<PhoneRing>()
+                            .enabled = true;
                         break;
                     default:
-                        {
-                            ModConsole.Error("Variation is -1 for ScreamTimeType.FEAR in ScreamInitiator.ApplyHorror");
-                            break;
-                        }
+                    {
+                        ModConsole.Error($"Variation is {variation} for ScreamTimeType.FEAR in ScreamInitiator.ApplyHorror");
+                        break;
+                    }
                 }
                 return;
             }
@@ -149,7 +160,9 @@ namespace Psycho.Screamers
 
                 int day = (m_iGlobalDay.Value + 1) % 7;
                 Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
+#if !TEST
                 if (!m_liDays[m_iRand].Contains(day)) return;
+#endif
 
                 FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime");
                 int time = m_iTimeOfDay.Value;
@@ -168,22 +181,20 @@ namespace Psycho.Screamers
             {
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
-
-                // for tests use this
-                //ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
-
+#if TEST
+                ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
+#else
                 int[] temp = new int[2] { 5, 3 };
                 int variation = m_iRand > 0 ? Random.Range(0, temp[m_iRand - 1]) : -1;
-                
-                if (m_iRand == (int)ScreamTimeType.FEAR && variation < 2)
+
+                if (m_iRand == (int)ScreamTimeType.FEAR && variation == (int)ScreamFearType.TV)
                     WorldManager.TurnOffElecMeter();
 
                 if (m_iRand == (int)ScreamTimeType.PARALYSIS)
                     WorldManager.TurnOffElecMeter();
 
                 ApplyScreamer((ScreamTimeType)m_iRand, variation);
-                
-                m_bTrigger = false;
+#endif
             });
 
             StateHook.Inject(gameObject, "Activate", "Does call?", 0, fsm =>
