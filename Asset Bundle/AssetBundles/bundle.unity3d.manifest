@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1696920460
+CRC: 2171865860
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 13b10c8424a60d9a69524f13688f06d0
+    Hash: a4032ebc35dc556ab124f68136fe17d6
   TypeTreeHash:
     serializedVersion: 2
     Hash: df80c91f1a304b147d32afe38da163be
@@ -88,6 +88,7 @@ Assets:
 - Assets/Prefabs/CrowsList.prefab
 - Assets/Replaces/Horror/fabric21.png
 - Assets/Screens/19.png
+- Assets/Audio/screamcall.wav
 - Assets/Materials/suicidal/char_face01.png
 - Assets/Materials/suicidal/char_face01.mat
 - Assets/Screens/39.png
@@ -105,12 +106,11 @@ Assets:
 - Assets/Screens/24.png
 - Assets/Replaces/Horror/wood_panel12.png
 - Assets/Replaces/Horror/wood_panel7.png
-- Assets/Audio/crow_angry.wav
 - Assets/Screens/15.png
 - Assets/Screens/21.png
 - Assets/Replaces/Horror/ATLAS_DOORS.png
 - Assets/Pictures/4.png
-- Assets/Audio/crow_ambient.wav
+- Assets/Audio/crows/crow_ambient.wav
 - Assets/Replaces/Horror/store_banners.png
 - Assets/Replaces/Horror/fabric.png
 - Assets/Screens/4.png
@@ -130,6 +130,7 @@ Assets:
 - Assets/Replaces/Horror/sticker_satsuma.png
 - Assets/Audio/screamers/bedroom.mp3
 - Assets/Replaces/Horror/roadside.png
+- Assets/Audio/phantomscream.mp3
 - Assets/Replaces/Horror/basketball2.png
 - Assets/Screens/11.png
 - Assets/Audio/screamers/glass1.mp3
@@ -139,6 +140,7 @@ Assets:
 - Assets/Prefabs/Background.prefab
 - Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
+- Assets/Audio/uncle_screamer.mp3
 - Assets/Replaces/Horror/tiles.png
 - Assets/Replaces/Horror/fabric10.png
 - Assets/Replaces/Horror/paint1.png
@@ -173,7 +175,6 @@ Assets:
 - Assets/Replaces/Horror/wood8.png
 - Assets/Replaces/Horror/wood_panel8.png
 - Assets/Screens/23.png
-- Assets/Audio/crow_main.wav
 - Assets/Replaces/Horror/building_wall.png
 - Assets/Replaces/Horror/char_face01.png
 - Assets/Screens/10.png
@@ -215,6 +216,7 @@ Assets:
 - Assets/Screens/0.png
 - Assets/Replaces/Horror/char_face04.png
 - Assets/Replaces/Horror/ATLAS_GROCERIES.png
+- Assets/Audio/TVScreamer.mp3
 - Assets/Pictures/6.png
 - Assets/Screens/9.png
 - Assets/Materials/suicidal/char_shirt01.png
