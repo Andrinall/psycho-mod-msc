@@ -11,27 +11,41 @@ using Psycho.Screamers;
 using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
+
 namespace Psycho.Internal
 {
     internal sealed class WorldManager
     {
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
+        public static GameObject ClonedPhantom;
 
-        public static void SwitchBathroomShower(bool state = false)
+        static int elapsedFrames = 0;
+
+        public static void SpawnPhantomBehindPlayer(float distance = 0.75f)
         {
-            PlayMakerFSM ValveFSM =
-                GameObject.Find("YARD/Building/BATHROOM/Shower/Valve").GetComponent<PlayMakerFSM>();
-
-            ValveFSM.GetVariable<FsmBool>("Valve").Value = state;
-            ValveFSM.CallGlobalTransition("SWITCH");
+            Transform player = GameObject.Find("PLAYER").transform;
+            ClonedPhantom.transform.position = player.position - player.forward * distance;
+            ClonedPhantom.transform.LookAt(player.position);
+            ClonedPhantom.SetActive(true);
         }
 
-        public static void SwitchKitchenShower(bool state = false)
+        public static bool ClonedPhantomTick(int neededFrames, Action callback = null)
         {
-            GameObject go = GameObject.Find("YARD/Building/KITCHEN/KitchenWaterTap");
+            if (!ClonedPhantom.activeSelf) return false;
 
-            go.transform.GetChild(3).gameObject.SetActive(state);
+            if (elapsedFrames < neededFrames)
+            {
+                elapsedFrames++;
+                return true;
+            }
+
+            ClonedPhantom.SetActive(false);
+            elapsedFrames = 0;
+
+            Globals.PhantomScream?.Play();
+            callback?.Invoke();
+            return false;
         }
 
         public static void TurnOffElecMeter()
@@ -271,6 +285,14 @@ namespace Psycho.Internal
             Transform _mover = _thing3.Find("Mover");
             _mover.gameObject.SetActive(true);
             _mover.GetPlayMaker("Position").GetState("State 4").ClearActions();
+
+            ClonedPhantom = GameObject.Instantiate(_mover.gameObject);
+            Object.Destroy(ClonedPhantom.GetComponent<PlayMakerFSM>());
+            ClonedPhantom.SetActive(false);
+
+            ClonedPhantom.transform.parent = null;
+            ClonedPhantom.transform.position = Vector3.zero;
+            ClonedPhantom.transform.eulerAngles = Vector3.zero;
         }
 
         public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback) =>
