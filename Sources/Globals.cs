@@ -6,6 +6,7 @@ using UnityEngine;
 
 using Psycho.Objects;
 
+
 namespace Psycho
 {
     public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
@@ -13,7 +14,7 @@ namespace Psycho
 
     public enum ScreamTimeType : int { SOUNDS = 0, FEAR = 1, PARALYSIS = 2 }
     public enum ScreamSoundType : int { BEDROOM = 0, KNOCK = 1, GLASS1 = 2, GLASS2 = 3, WATER = 4 }
-    public enum ScreamFearType : int { GRANNY = 0, SUICIDAL = 1, TV = 2, PHONE = 3, WATER = 4 }
+    public enum ScreamFearType : int { GRANNY = 0, SUICIDAL = 1, WATERKITCHEN = 2, WATERBATHROOM = 3, TV = 4, PHONE = 5 }
     public enum ScreamParalysisType : int { GRANNY = 0, HAND = 1, KESSELI = 2 }
 
     public struct ModelData
@@ -59,7 +60,14 @@ namespace Psycho
         public static GameObject SmokeParticleSystem_prefab = null;
         public static GameObject mailboxSheet = null;
         public static GameObject envelopeObject = null;
-        public static AudioClip  AcidBurnSound = null;
+        
+        public static AudioClip AcidBurnSound = null;
+        public static AudioClip ScreamCallClip = null;
+        public static AudioClip PhantomScreamSound = null;
+        public static AudioClip TVScreamSound = null;
+        public static AudioClip UncleScreamSound = null;
+
+        public static AudioSource PhantomScream = null;
 
         public static List<Vector3> pills_positions = new List<Vector3> {
             new Vector3(462.2887f, 9.311339f, 1320.133f),
