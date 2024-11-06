@@ -3,6 +3,7 @@ using System.Collections;
 
 using UnityEngine;
 
+
 namespace Psycho.Internal
 {
     [RequireComponent(typeof(Animation))]

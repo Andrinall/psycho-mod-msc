@@ -4,7 +4,7 @@ using MSCLoader;
 
 namespace Psycho.Commands
 {
-    public sealed class ChangeWorld : ConsoleCommand
+    internal class ChangeWorld : ConsoleCommand
     {
         public override string Name => "cworld";
         public override string Help => "change a player world";

@@ -30,6 +30,7 @@ namespace Psycho.Screamers
 
         Vector3[] CameraOrigs;
 
+
         void Awake()
         {
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();

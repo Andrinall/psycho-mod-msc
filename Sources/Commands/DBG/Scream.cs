@@ -7,7 +7,7 @@ using Psycho.Screamers;
 
 namespace Psycho.Commands
 {
-    public sealed class Scream : ConsoleCommand
+    internal class Scream : ConsoleCommand
     {
         ScreamsInitiator initiator;
 

@@ -33,6 +33,8 @@ namespace Psycho.Screamers
         void Awake()
         {
             Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
+            Char = transform.Find("Char");
+            Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
             enabled = false;
         }
 
@@ -40,9 +42,6 @@ namespace Psycho.Screamers
         {
             transform.position = StartPoint;
             transform.eulerAngles = new Vector3(347.788879f, 331.232269f, 180f);
-
-            Char = transform.Find("Char");
-            Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
             
             cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
@@ -65,7 +64,8 @@ namespace Psycho.Screamers
             RotateHeadPivot();
         }
 
-        void ResetHeadRotation() => Head.localEulerAngles = new Vector3(270f, 90f, 0f);
+        void ResetHeadRotation()
+            => Head.localEulerAngles = new Vector3(270f, 90f, 0f);
 
         void RotateHeadPivot()
         {
@@ -73,7 +73,7 @@ namespace Psycho.Screamers
             {
                 Utils.PlayScreamSleepAnim(ref AnimPlayed, () =>
                 {
-                    this.enabled = false;
+                    enabled = false;
                     Utils.ResetCameraLook(cameraOrigs);
                     Fsm.CallGlobalTransition("SCREAMSTOP");
                 });

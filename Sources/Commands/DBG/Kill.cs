@@ -4,7 +4,7 @@ using MSCLoader;
 
 namespace Psycho.Commands
 {
-    public sealed class Kill : ConsoleCommand
+    internal class Kill : ConsoleCommand
     {
         public override string Name => "kill";
 

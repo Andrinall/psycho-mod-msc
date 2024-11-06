@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
-using Psycho.Internal;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
+
+using Psycho.Internal;
+
 
 namespace Psycho.Objects
 {

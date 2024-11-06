@@ -5,6 +5,7 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
+
 namespace Psycho.Internal
 {
     internal sealed class StateHook : FsmHook

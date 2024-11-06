@@ -9,7 +9,7 @@ using Psycho.Internal;
 
 namespace Psycho.Commands
 {
-    public sealed class TeleportToPills : ConsoleCommand
+    internal class TeleportToPills : ConsoleCommand
     {
         public override string Name => "ptp";
         public override string Help => "Teleport a player to pills; [ ptp index ]";

@@ -8,12 +8,12 @@ namespace Psycho.Screamers
     [RequireComponent(typeof(AudioSource))]
     public sealed class GrandmaDistanceChecker : MonoBehaviour
     {
-        public Transform _player;
-        public float Distance = 3.5f;
+        Transform _player;
         bool m_bBlowed = false;
+        float Distance = 3.5f;
 
 
-        void OnEnable() => _player = GameObject.Find("PLAYER").transform;
+        void Awake() => _player = GameObject.Find("PLAYER").transform;
         
         void FixedUpdate()
         {

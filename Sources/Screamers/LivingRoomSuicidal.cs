@@ -8,7 +8,8 @@ namespace Psycho.Screamers
         GameObject suicidal;
         GameObject lamp;
         DateTime enableTime;
-        public TimeSpan span;
+        TimeSpan span;
+
 
         void Awake()
         {

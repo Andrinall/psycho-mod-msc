@@ -7,6 +7,7 @@ using HutongGames.PlayMaker;
 
 using Psycho.Objects;
 
+
 namespace Psycho.Internal
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
@@ -85,7 +86,19 @@ namespace Psycho.Internal
 
             Resources.UnloadAsset(Globals.AcidBurnSound);
             Globals.AcidBurnSound = null;
-            
+
+            Resources.UnloadAsset(Globals.ScreamCallClip);
+            Globals.ScreamCallClip = null;
+
+            Resources.UnloadAsset(Globals.PhantomScreamSound);
+            Globals.PhantomScreamSound = null;
+
+            Resources.UnloadAsset(Globals.TVScreamSound);
+            Globals.TVScreamSound = null;
+
+            Resources.UnloadAsset(Globals.UncleScreamSound);
+            Globals.UncleScreamSound = null;
+
             Resources.UnloadAsset(Globals.SmokeParticleSystem_prefab);
             Globals.SmokeParticleSystem_prefab = null;
 
