@@ -12,13 +12,18 @@ namespace Psycho.Screamers
         Transform Char;
         PlayMakerFSM _fsm;
 
+        AudioSource ScreamSound;
+
         Vector3 StartPoint;
         Vector3 TargetPoint = new Vector3(-12.035453796386719f, 0.24380475282669068f, 13.690605163574219f);
 
         Vector3[] CameraOrigs;
 
-        float TargetDistance = 0.1f;
-        float MaxSpeed = 0.52f;
+        float TargetDistance = 0.07f;
+        float MaxSpeed = 0.26f;
+
+        int elapsedFrames = 0;
+        int neededFrames = 100;
 
         bool animPlayed = false;
 
@@ -28,6 +33,23 @@ namespace Psycho.Screamers
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot/head");
             StartPoint = Head.position;
+
+            var source = Head.gameObject.AddComponent<AudioSource>();
+            source.clip = Globals.UncleScreamSound;
+            source.playOnAwake = true;
+            source.loop = false;
+            source.priority = 128;
+            source.volume = 3f;
+            source.pitch = 1f;
+            source.panStereo = 0;
+            source.spatialBlend = 1f;
+            source.reverbZoneMix = 1f;
+            source.dopplerLevel = 1f;
+            source.minDistance = 1.5f;
+            source.spread = 0;
+            source.maxDistance = 12f;
+            ScreamSound = source;
+
             enabled = false;
         }
 
@@ -36,22 +58,32 @@ namespace Psycho.Screamers
             Head.position = StartPoint;
             CameraOrigs = Utils.SetCameraLookAt(Head.position);
             Char.gameObject.SetActive(true);
+            Head.gameObject.SetActive(false);
         }
         
         void OnDisable()
         {
             animPlayed = false;
             Char.gameObject.SetActive(false);
+            elapsedFrames = 0;
         }
 
         void FixedUpdate()
         {
+            if (elapsedFrames < neededFrames)
+            {
+                elapsedFrames++;
+                if (elapsedFrames == neededFrames)
+                    Head.gameObject.SetActive(true);
+                return;
+            }
+
             if (animPlayed) return;
             if (!Head.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;
 
             Utils.PlayScreamSleepAnim(ref animPlayed, () =>
             {
-                this.enabled = false;
+                enabled = false;
                 Utils.ResetCameraLook(CameraOrigs);
                 _fsm.CallGlobalTransition("SCREAMSTOP");
             });
