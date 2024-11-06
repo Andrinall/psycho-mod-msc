@@ -90,16 +90,24 @@
   <ItemGroup>
     <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
     <Compile Include="Sources\Commands\DBG\Kill.cs" />
+    <Compile Include="Sources\Commands\DBG\KitchenTap.cs" />
+    <Compile Include="Sources\Commands\DBG\Phantom.cs" />
+    <Compile Include="Sources\Commands\DBG\Phone.cs" />
     <Compile Include="Sources\Commands\DBG\Scream.cs" />
     <Compile Include="Sources\Commands\DBG\Shower.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
+    <Compile Include="Sources\Commands\DBG\TVTexChange.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
+    <Compile Include="Sources\Screamers\BathroomShower.cs" />
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />
+    <Compile Include="Sources\Screamers\KitchenShower.cs" />
     <Compile Include="Sources\Screamers\LivingRoomSuicidal.cs" />
     <Compile Include="Sources\Screamers\MovingHand.cs" />
     <Compile Include="Sources\Screamers\MovingUncleHead.cs" />
     <Compile Include="Sources\Screamers\MummolaCrawl.cs" />
+    <Compile Include="Sources\Screamers\PhoneRing.cs" />
     <Compile Include="Sources\Screamers\ScreamsInitiator.cs" />
+    <Compile Include="Sources\Screamers\TVScreamer.cs" />
     <Compile Include="Sources\Utils\Extensions.cs" />
     <Compile Include="Sources\Utils\SoundManager.cs" />
     <Compile Include="Sources\Utils\FliesChanger.cs" />

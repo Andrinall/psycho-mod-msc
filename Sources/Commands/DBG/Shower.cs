@@ -1,5 +1,9 @@
 ﻿using MSCLoader;
+
 using Psycho.Internal;
+using Psycho.Screamers;
+using UnityEngine;
+
 
 namespace Psycho.Commands
 {
@@ -9,11 +13,11 @@ namespace Psycho.Commands
 
         public override string Help => "";
 
-        static bool active = false;
         public override void Run(string[] args)
         {
-            active = !active;
-            WorldManager.SwitchBathroomShower(active);
+            GameObject.Find("YARD/Building/BATHROOM/Shower")
+                .GetComponent<BathroomShower>()
+                .enabled = true;
         }
     }
 }
