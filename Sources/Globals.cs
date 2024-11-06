@@ -68,6 +68,7 @@ namespace Psycho
         public static AudioClip UncleScreamSound = null;
 
         public static AudioSource PhantomScream = null;
+        public static AudioSource HeartbeatSound = null;
 
         public static List<Vector3> pills_positions = new List<Vector3> {
             new Vector3(462.2887f, 9.311339f, 1320.133f),

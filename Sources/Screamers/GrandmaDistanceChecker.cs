@@ -13,7 +13,8 @@ namespace Psycho.Screamers
         float Distance = 3.5f;
 
 
-        void Awake() => _player = GameObject.Find("PLAYER").transform;
+        void Awake()
+            => _player = GameObject.Find("PLAYER").transform;
         
         void FixedUpdate()
         {
@@ -31,12 +32,16 @@ namespace Psycho.Screamers
             AudioSource audio = transform.GetComponent<AudioSource>();
             audio.Play();
 
+            Globals.HeartbeatSound?.Play();
+
             var timer = new System.Timers.Timer(3000);
             timer.Elapsed += (sender, e) => {
                 audio.Stop();
                 transform.position = transform.GetPlayMaker("Logic")
                     .GetVariable<FsmVector3>("WalkerOriginalPos").Value;
                 transform.Find("Char").gameObject.SetActive(false);
+
+                Globals.HeartbeatSound?.Stop();
 
                 timer.Stop();
                 Destroy(smokes);

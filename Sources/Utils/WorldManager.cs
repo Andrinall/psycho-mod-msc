@@ -28,6 +28,7 @@ namespace Psycho.Internal
             ClonedPhantom.transform.position = player.position - player.forward * distance;
             ClonedPhantom.transform.LookAt(player.position);
             ClonedPhantom.SetActive(true);
+            Globals.HeartbeatSound?.Play();
         }
 
         public static bool ClonedPhantomTick(int neededFrames, Action callback = null)
@@ -45,6 +46,7 @@ namespace Psycho.Internal
 
             Globals.PhantomScream?.Play();
             callback?.Invoke();
+            Globals.HeartbeatSound?.Stop();
             return false;
         }
 

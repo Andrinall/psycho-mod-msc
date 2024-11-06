@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2171865860
+CRC: 60809276
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a4032ebc35dc556ab124f68136fe17d6
+    Hash: 21ed7b4eb1ddf0380fb6c9caeb77ebab
   TypeTreeHash:
     serializedVersion: 2
     Hash: df80c91f1a304b147d32afe38da163be
@@ -64,6 +64,7 @@ Assets:
 - Assets/Screens/29.png
 - Assets/Replaces/Horror/reg_plate3.png
 - Assets/Screens/12.png
+- Assets/Audio/uncle_screamer.mp3
 - Assets/Replaces/Horror/fabric8.png
 - Assets/Replaces/Horror/wallpaper.png
 - Assets/Screens/3.png
@@ -118,6 +119,7 @@ Assets:
 - Assets/Replaces/Horror/helmet_vision.png
 - Assets/Replaces/Horror/wood_panel16.png
 - Assets/Screens/13.png
+- Assets/Audio/heartbeat.wav
 - Assets/Replaces/Horror/wood5.png
 - Assets/Screens/28.png
 - Assets/Screens/8.png
@@ -140,7 +142,6 @@ Assets:
 - Assets/Prefabs/Background.prefab
 - Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
-- Assets/Audio/uncle_screamer.mp3
 - Assets/Replaces/Horror/tiles.png
 - Assets/Replaces/Horror/fabric10.png
 - Assets/Replaces/Horror/paint1.png

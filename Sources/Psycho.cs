@@ -71,7 +71,24 @@ namespace Psycho
 
             GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
             GameObject.Instantiate(crows_list);
-            
+
+            AudioSource heartbeat = GameObject.Find("PLAYER").AddComponent<AudioSource>();
+            heartbeat.clip = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/heartbeat.wav");
+            heartbeat.loop = true;
+            heartbeat.playOnAwake = false;
+            heartbeat.priority = 128;
+            heartbeat.volume = 1;
+            heartbeat.pitch = 1;
+            heartbeat.panStereo = 0;
+            heartbeat.spatialBlend = 1;
+            heartbeat.reverbZoneMix = 1;
+            heartbeat.dopplerLevel = 1;
+            heartbeat.spread = 0;
+            heartbeat.minDistance = 1.5f;
+            heartbeat.maxDistance = 12f;
+            Globals.HeartbeatSound = heartbeat;
+            heartbeat.Stop();
+
             GameObject suicidals_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab");
             var clonedlist = GameObject.Instantiate(suicidals_list);
             WorldManager.CopySuicidal(clonedlist);

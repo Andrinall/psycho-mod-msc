@@ -74,7 +74,10 @@ namespace Psycho.Screamers
             {
                 elapsedFrames++;
                 if (elapsedFrames == neededFrames)
+                {
                     Head.gameObject.SetActive(true);
+                    Globals.HeartbeatSound?.Play();
+                }
                 return;
             }
 
@@ -84,6 +87,7 @@ namespace Psycho.Screamers
             Utils.PlayScreamSleepAnim(ref animPlayed, () =>
             {
                 enabled = false;
+                Globals.HeartbeatSound?.Stop();
                 Utils.ResetCameraLook(CameraOrigs);
                 _fsm.CallGlobalTransition("SCREAMSTOP");
             });

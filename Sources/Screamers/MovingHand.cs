@@ -48,6 +48,7 @@ namespace Psycho.Screamers
 
             Armature.gameObject.SetActive(true);
             Rigged.gameObject.SetActive(true);
+            Globals.HeartbeatSound?.Play();
         }
 
         void OnDisable()

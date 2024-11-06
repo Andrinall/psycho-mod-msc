@@ -99,6 +99,9 @@ namespace Psycho.Internal
             Resources.UnloadAsset(Globals.UncleScreamSound);
             Globals.UncleScreamSound = null;
 
+            Resources.UnloadAsset(Globals.HeartbeatSound);
+            Globals.HeartbeatSound = null;
+
             Resources.UnloadAsset(Globals.SmokeParticleSystem_prefab);
             Globals.SmokeParticleSystem_prefab = null;
 

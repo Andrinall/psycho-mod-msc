@@ -22,7 +22,7 @@ namespace Psycho.Screamers
         int ElapsedFrames = 0;
         
         float TargetDistance = 0.1f;
-        float MaxSpeed = 1;
+        float MaxSpeed = 0.9f;
 
         Vector3 StartPoint = new Vector3(-8.40377522f, 2.46443129f, 9.5422678f);
         Vector3 TargetPoint = new Vector3(-11.2399998f, 2.5150001f, 12.6759996f);
@@ -46,6 +46,7 @@ namespace Psycho.Screamers
             cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
+            Globals.HeartbeatSound?.Play();
         }
         
         void OnDisable()
@@ -55,6 +56,7 @@ namespace Psycho.Screamers
             
             Char.gameObject.SetActive(false);            
             ResetHeadRotation();
+            Globals.HeartbeatSound?.Play();
         }
         
         void FixedUpdate()
