@@ -8,13 +8,13 @@ using Psycho.Extensions;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public sealed class SleepTriggerHandler : MonoBehaviour
+    internal sealed class SleepTriggerHandler : CatchedComponent
     {
         FsmFloat m_fPlayerFatigue;
         bool m_bInstalled = false;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             if (m_bInstalled) return;
 

@@ -60,7 +60,7 @@ namespace Psycho.Internal
 
         internal static void SetPictureImage()
         {
-            GameObject picture = GameObject.Find("picture(Clone)");
+            GameObject picture = GameObject.Find("Picture(Clone)");
             if (picture == null) return;
 
             int idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
@@ -123,9 +123,6 @@ namespace Psycho.Internal
             Resources.UnloadAsset(SoundManager.DeathSound);
             SoundManager.DeathSound = null;
 
-            SoundManager.ScreamPoints.ForEach(v => UnityEngine.Object.Destroy(v));
-            SoundManager.ScreamPoints.Clear();
-
             Resources.UnloadAsset(Globals.Picture_prefab);
             Globals.Picture_prefab = null;
 
@@ -136,6 +133,7 @@ namespace Psycho.Internal
             Globals.models_cached.Clear();
             Globals.flies_cached.Clear();
             Globals.cached.Clear();
+            SoundManager.ScreamPoints.Clear();
             
             Globals.mailScreens.ForEach(v => Resources.UnloadAsset(v));
             Globals.mailScreens.Clear();

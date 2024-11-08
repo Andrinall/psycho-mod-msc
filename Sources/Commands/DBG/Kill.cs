@@ -15,7 +15,7 @@ namespace Psycho.Commands
             if (args.Length == 0 || string.IsNullOrEmpty(args[0])) return;
 
             if (args[0] == "heart")
-                Logic.Points = 200f;
+                Logic.SetPoints(200f);
             else if (args[0] == "train")
                 Logic.KillUsingTrain();
         }

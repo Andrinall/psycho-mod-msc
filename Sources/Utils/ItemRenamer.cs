@@ -17,6 +17,7 @@ namespace Psycho.Internal
             SetName(FinalName);
         }
 
-        public virtual void SetName(string name) => name = FinalName;
+        public virtual void SetName(string _name)
+            => name = _name;
     }
 }

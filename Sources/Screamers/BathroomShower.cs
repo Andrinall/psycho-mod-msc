@@ -7,7 +7,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    public sealed class BathroomShower : MonoBehaviour
+    internal sealed class BathroomShower : MonoBehaviour
     {
         GameObject TapDrink;
         EllipsoidParticleEmitter TapParticle;
@@ -40,7 +40,13 @@ namespace Psycho.Screamers
         }
 
         void OnEnable()
-            => SwitchValve(true);
+        {
+            SwitchValve(true);
+            WorldManager.ShowCrows(false);
+        }
+
+        void OnDisable()
+            => WorldManager.ShowCrows(true);
 
         void FixedUpdate()
         {

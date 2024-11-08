@@ -22,13 +22,18 @@ namespace Psycho.Internal
 
         static int elapsedFrames = 0;
 
+        
+        public static void ShowCrows(bool state)
+            => GameObject.Find("CrowsList(Clone)")?.SetActive(state);
+
         public static void SpawnPhantomBehindPlayer(float distance = 0.75f)
         {
+            elapsedFrames = 0;
             Transform player = GameObject.Find("PLAYER").transform;
             ClonedPhantom.transform.position = player.position - player.forward * distance;
             ClonedPhantom.transform.LookAt(player.position);
             ClonedPhantom.SetActive(true);
-            Globals.HeartbeatSound?.Play();
+            SoundManager.PlayHeartbeat(true);
         }
 
         public static bool ClonedPhantomTick(int neededFrames, Action callback = null)
@@ -46,7 +51,7 @@ namespace Psycho.Internal
 
             Globals.PhantomScream?.Play();
             callback?.Invoke();
-            Globals.HeartbeatSound?.Stop();
+            SoundManager.PlayHeartbeat(false);
             return false;
         }
 

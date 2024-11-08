@@ -6,15 +6,9 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public sealed class HouseShitHandler : MonoBehaviour
+    internal sealed class HouseShitHandler : CatchedComponent
     {
-        bool m_bInstalled = false;
-
-        void OnEnable()
-        {
-            if (m_bInstalled) return;
-            StateHook.Inject(gameObject, "Use", "State 1", _ => Logic.PlayerCompleteJob("SEPTIC_TANK"));
-            m_bInstalled = true;
-        }
+        internal override void Awaked()
+            => StateHook.Inject(gameObject, "Use", "State 1", _ => Logic.PlayerCompleteJob("SEPTIC_TANK"));
     }
 }

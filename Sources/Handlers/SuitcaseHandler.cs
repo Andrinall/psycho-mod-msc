@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Psycho.Internal;
+using UnityEngine;
 
 
 namespace Psycho.Handlers
 {
-    public sealed class SuitcaseHandler : MonoBehaviour
+    internal sealed class SuitcaseHandler : CatchedComponent
     {
         bool m_bSuitCaseSpawned = false;
         bool m_bSuitCaseGrabbed = false;
@@ -11,7 +12,7 @@ namespace Psycho.Handlers
         Transform _suitcase = null;
 
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (_suitcase == null)
             {

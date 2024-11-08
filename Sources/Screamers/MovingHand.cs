@@ -3,6 +3,7 @@
 using Psycho.Internal;
 using Psycho.Extensions;
 
+
 namespace Psycho.Screamers
 {
     public sealed class MovingHand : MonoBehaviour
@@ -43,12 +44,14 @@ namespace Psycho.Screamers
 
         void OnEnable()
         {
+            _fsm.enabled = false;
             Armature.position = StartPoint;
             CameraOrigs = Utils.SetCameraLookAt(CameraTargetPoint);
 
             Armature.gameObject.SetActive(true);
             Rigged.gameObject.SetActive(true);
-            Globals.HeartbeatSound?.Play();
+            SoundManager.PlayHeartbeat(true);
+            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
@@ -59,6 +62,7 @@ namespace Psycho.Screamers
 
             Armature.gameObject.SetActive(false);
             Rigged.gameObject.SetActive(false);
+            WorldManager.ShowCrows(true);
         }
 
         void FixedUpdate()
@@ -89,7 +93,9 @@ namespace Psycho.Screamers
             {
                 Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {
+                    _fsm.enabled = true;
                     enabled = false;
+                    SoundManager.PlayHeartbeat(false);
                     Utils.ResetCameraLook(CameraOrigs);
                     _fsm.CallGlobalTransition("SCREAMSTOP");
                 });

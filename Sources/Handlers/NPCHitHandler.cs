@@ -9,12 +9,12 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public sealed class NPCHitHandler : MonoBehaviour
+    internal sealed class NPCHitHandler : CatchedComponent
     {
         bool m_bInstalled = false;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             if (m_bInstalled) return;
             
@@ -38,7 +38,6 @@ namespace Psycho.Handlers
             SetupPlayerHitCrime(transform.childCount);
             
             SkipOther:
-            Utils.PrintDebug(eConsoleColors.GREEN, "NPCHitHandler enabled");
             m_bInstalled = true;
         }
 

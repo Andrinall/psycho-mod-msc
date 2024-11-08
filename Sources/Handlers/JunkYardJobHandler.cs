@@ -5,13 +5,13 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    public sealed class JunkYardJobHandler : MonoBehaviour
+    internal sealed class JunkYardJobHandler : CatchedComponent
     {
         bool m_bInstalled = false;
         int m_iCarsNumber = 0;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             if (m_bInstalled) return;
 

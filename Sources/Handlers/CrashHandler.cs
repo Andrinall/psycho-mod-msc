@@ -7,7 +7,7 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(Rigidbody))]
-    public sealed class CrashHandler : MonoBehaviour
+    internal sealed class CrashHandler : CatchedComponent
     {
         Rigidbody _thisRb;
         GameObject _death;
@@ -19,7 +19,7 @@ namespace Psycho.Handlers
         string m_sUpName;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             _thisRb = GetComponent<Rigidbody>();
             _death = GameObject.Find("Systems/Death");

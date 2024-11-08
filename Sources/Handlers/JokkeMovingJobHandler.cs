@@ -5,13 +5,23 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    public sealed class JokkeMovingJobHandler : MonoBehaviour
+    internal sealed class JokkeMovingJobHandler : CatchedComponent
     {
         GameObject _payMoney;
         bool m_bInstalled = false;
 
+        internal override void Awaked()
+        {
+            _payMoney = transform.Find("HitcherPivotNew/JokkeHiker1")?.Find("Pivot/Char")
+                ?.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right")
+                ?.Find("PayMoney")?.gameObject;
 
-        void OnEnable() => _findObject();
+            if (!_payMoney) return;
+            StateHook.Inject(_payMoney, "Use", "Anim", _ => Logic.PlayerCompleteJob("YOKKE_RELOCATION"));
+        }
+
+        /*void OnEnable()
+            => _findObject();
 
         void FixedUpdate()
         {
@@ -26,13 +36,11 @@ namespace Psycho.Handlers
                 StateHook.Inject(_payMoney, "Use", "Anim", _ => Logic.PlayerCompleteJob("YOKKE_RELOCATION"));
                 m_bInstalled = true;
             }
-
         }
 
         void _findObject() =>
             _payMoney = transform.Find("HitcherPivotNew/JokkeHiker1")?.Find("Pivot/Char")
                 ?.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right")
-                ?.Find("PayMoney")?.gameObject;
-        
+                ?.Find("PayMoney")?.gameObject;*/
     }
 }

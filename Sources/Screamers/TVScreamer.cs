@@ -70,9 +70,11 @@ namespace Psycho.Screamers
         void OnEnable()
         {
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = false;
+            (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
             TVSwitch.CallGlobalTransition("SCREAM_ON");
 
             fullEnable = true;
+            WorldManager.ShowCrows(false);
             Utils.PrintDebug(eConsoleColors.GREEN, "TVScreamer enabled");
         }
 
@@ -81,13 +83,16 @@ namespace Psycho.Screamers
             if (!fullEnable) return;
 
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = true;
+            (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = true;
             TVSwitch.CallGlobalTransition("GLOBALEVENT");
+
             _setAudioClip(OrigAudioClip);
 
             elapsedFrames = 0;
             ScreamEnabled = false;
             fullEnable = false;
 
+            WorldManager.ShowCrows(true);
             Utils.PrintDebug(eConsoleColors.RED, "TVScreamer disabled");
         }
 

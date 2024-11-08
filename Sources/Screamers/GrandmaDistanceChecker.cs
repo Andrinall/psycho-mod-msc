@@ -2,20 +2,31 @@
 using UnityEngine;
 using HutongGames.PlayMaker;
 
+using Psycho.Internal;
+
 
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    public sealed class GrandmaDistanceChecker : MonoBehaviour
+    internal sealed class GrandmaDistanceChecker : MonoBehaviour
     {
         Transform _player;
+        AudioSource audio;
         bool m_bBlowed = false;
         float Distance = 3.5f;
 
-
         void Awake()
-            => _player = GameObject.Find("PLAYER").transform;
+        {
+            _player = GameObject.Find("PLAYER").transform;
+            audio = transform.GetComponent<AudioSource>();
+        }
+
+        void OnEnable()
+            => WorldManager.ShowCrows(false);
         
+        void OnDestroy()
+            => WorldManager.ShowCrows(true);
+
         void FixedUpdate()
         {
             if (m_bBlowed) return;
@@ -29,18 +40,16 @@ namespace Psycho.Screamers
             smokes.transform.position = transform.position;
             smokes.transform.localScale = new Vector3(0.0075f, 0.0075f, 0.0075f);
 
-            AudioSource audio = transform.GetComponent<AudioSource>();
-            audio.Play();
-
+            audio?.Play();
             Globals.HeartbeatSound?.Play();
 
             var timer = new System.Timers.Timer(3000);
-            timer.Elapsed += (sender, e) => {
-                audio.Stop();
-                transform.position = transform.GetPlayMaker("Logic")
-                    .GetVariable<FsmVector3>("WalkerOriginalPos").Value;
+            timer.Elapsed += (sender, e) =>
+            {
+                transform.position = transform.GetPlayMaker("Logic").GetVariable<FsmVector3>("WalkerOriginalPos").Value;
                 transform.Find("Char").gameObject.SetActive(false);
 
+                audio?.Stop();
                 Globals.HeartbeatSound?.Stop();
 
                 timer.Stop();

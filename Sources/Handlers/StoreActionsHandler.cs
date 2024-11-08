@@ -5,7 +5,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    public sealed class StoreActionsHandler : MonoBehaviour
+    internal sealed class StoreActionsHandler : CatchedComponent
     {
         Transform _GFX_Store;
         Transform _GFX_Pub;
@@ -14,7 +14,7 @@ namespace Psycho.Handlers
         bool m_bInstalled = false;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             if (m_bInstalled) return;
 

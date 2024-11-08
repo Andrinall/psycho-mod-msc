@@ -16,10 +16,10 @@ namespace Psycho
     internal static class Logic
     {
         static readonly string PAPER_TEXT_FI_MAX = "Mies kuoli\nsydänkohtaukseen";
-        static readonly string PAPER_TEXT_EN_MAX = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
+        //static readonly string PAPER_TEXT_EN_MAX = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
 
         static readonly string PAPER_TEXT_FI_POINTS = "\nMies teki itsemurhan";
-        static readonly string PAPER_TEXT_EN_POINTS = "Man found\nafter committing\nsuicide in\nregion of\nAlivieska";
+        //static readonly string PAPER_TEXT_EN_POINTS = "Man found\nafter committing\nsuicide in\nregion of\nAlivieska";
 
         static readonly float DEFAULT_DECREASE = 0.0185f; // -99.9 for 1 hour 30 minutes
         static readonly float DEFAULT_INCREASE = 0.0555f; // +99.9 for 30 minutes
@@ -27,9 +27,8 @@ namespace Psycho
         static readonly float MIN_VALUE = 0f;
         static readonly float MAX_VALUE = 100f;
 
-        static float _points = 0;
-        static float _value = 100f;
-
+        private static float _value = 100f;
+        private static float _points = 0f;
 
         public static bool milkUsed = false;
         public static bool isDead = false;
@@ -37,14 +36,13 @@ namespace Psycho
         public static bool envelopeSpawned = false;
         public static DateTime milkUseTime = DateTime.MinValue;
 
-
         internal static FixedHUD _hud = null;
         internal static GameObject death = null;
         internal static GameObject knockOut = null;
         internal static ShizAnimPlayer shizAnimPlayer = null;
         internal static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
-
-        internal static Dictionary<string, float> config = new Dictionary<string, float>
+        
+        internal static readonly Dictionary<string, float> config = new Dictionary<string, float>
         {
             // Increase
             ["GRANNY_DELIVERY"] = 1f,
@@ -71,19 +69,20 @@ namespace Psycho
 
         public static bool GameFinished { get; private set; }
 
-        public static float Value {
-            get { return _value; }
-            set
+        public static float Value
+        {
+            get => _value;
+            private set
             {
-                _value = value;
-                psycho.Value = _value;
                 if (GameFinished) return;
+                _value = value;
+                psycho.Value = value;
                 if (_hud == null) return;
                 if (isDead) return;
 
-                if (_value <= MIN_VALUE && !inHorror)
+                if (value <= MIN_VALUE && !inHorror)
                     ChangeWorld(eWorldType.HORROR);
-                else if (_value > MAX_VALUE)
+                else if (value > MAX_VALUE)
                     KillHeartAttack();
                 else if (_hud?.IsElementExist("Psycho") == true)
                 {
@@ -96,33 +95,38 @@ namespace Psycho
 
         public static float Points
         {
-            get { return _points; }
-            set
+            get => _points;
+            private set
             {
+                if (GameFinished) return;
                 float prev = _points;
                 _points = value;
-                if (GameFinished) return;
                 if (_hud == null) return;
                 if (isDead) return;
 
                 Utils.SetPictureImage();
 
-                if (prev > _points)
-                    Value = inHorror ? 0f : 100f; // reset shiz hud bar
+                if (prev > value)
+                    ResetValue();
 
-                if (_points > 7.0f)
+                if (value > 7.0f)
                     FinishShizGame();
-                else if (_points < -7.0f)
+                else if (value < -7.0f)
                     KillUsingTrain();
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"New value for points {_points}; prev: {prev}");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"New value for points {value}; prev: {prev}");
             }
         }
 
+        public static void SetValue(float value) => Value = value;
+        public static void SetPoints(float points) => Points = points;
+        public static void ResetValue(float min = 0f, float max = 100f) => Value = inHorror ? min : max;
+        public static void ResetPoints() => Points = 0;
 
 
         public static void ChangeWorld(eWorldType type)
         {
+            if (GameFinished) return;
             if (type == eWorldType.MAIN)
             {
                 inHorror = false;
@@ -151,9 +155,6 @@ namespace Psycho
             Utils.PrintDebug(eConsoleColors.GREEN, $"World changed to {(type == 0 ? "MAIN" : "HORROR")}");
         }
 
-        public static void ResetValue() => Value = inHorror ? 0f : 100f;
-        public static void ResetPoints() => Points = 0;
-
 
         internal static void Tick()
         {
@@ -169,10 +170,16 @@ namespace Psycho
         }
 
         internal static void PlayerCompleteJob(string job, int multiplier = 1, string comment = default)
-            => Points += config.GetValueSafe(job) * multiplier;
+        {
+            Points += config.GetValueSafe(job) * multiplier;
+            Utils.PrintDebug($"Player complete job : {job}[X{multiplier}] \"{comment}\"");
+        }
 
         internal static void PlayerCommittedOffence(string offence, string comment = default)
-            => Points -= config.GetValueSafe(offence);
+        {
+            Points -= config.GetValueSafe(offence);
+            Utils.PrintDebug($"Player committed offence : {offence}[X1] \"{comment}\"");
+        }
 
         internal static void KillUsingTrain()
         {
@@ -186,7 +193,7 @@ namespace Psycho
                 {
                     Transform paper = death.transform.Find("GameOverScreen/Paper/Train");
                     paper.Find("TextFI").GetComponent<TextMesh>().text = PAPER_TEXT_FI_POINTS;
-                    paper.Find("TextEN").GetComponent<TextMesh>().text = PAPER_TEXT_EN_POINTS;
+                    paper.Find("TextEN").GetComponent<TextMesh>().text = Locales.DEATH_PAPER[1, Globals.CurrentLang]; // PAPER_TEXT_EN_POINTS;
                 });
 
                 train.SendEvent("FINISHED"); // reset current state
@@ -213,13 +220,24 @@ namespace Psycho
             {
                 SoundManager.PlayDeathSound();
                 shizAnimPlayer.PlayAnimation("sleep_knockout", default, default, default,
-                    () => KillCustom(PAPER_TEXT_EN_MAX, PAPER_TEXT_FI_MAX)
+                    () => KillCustom(Locales.DEATH_PAPER[0, Globals.CurrentLang], PAPER_TEXT_FI_MAX)
                 );
             }
             catch (Exception e)
             {
                 ModConsole.Error($"Error in KillHearthAttack;\n{e.GetFullMessage()}");
             }
+        }
+
+        internal static void FinishShizGame()
+        {
+            GameFinished = true;
+            if (inHorror) ChangeWorld(eWorldType.MAIN);
+
+            _hud.RemoveElement("Psycho");
+            _hud.Structurize();
+
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Shiz game finished!");
         }
 
 
@@ -275,15 +293,6 @@ namespace Psycho
             ));
 
             _head.Find("eye_glasses_regular").gameObject.SetActive(!inHorror);
-        }
-
-        static void FinishShizGame()
-        {
-            GameFinished = true;
-            if (inHorror) ChangeWorld(eWorldType.MAIN);
-            // ...
-
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Shiz game finished!");
         }
 
         static void KillCustom(string en, string fi)

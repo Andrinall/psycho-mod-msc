@@ -26,40 +26,6 @@ namespace Psycho.Extensions
             }
         }
 
-        public static void ClearActions(this FsmState state, int index = -1, int count = -1)
-        {
-            try
-            {
-                var list = state.Actions.ToList();
-                if (index == -1 && count == -1)
-                    list.Clear();
-                else if (index != -1 && count == -1)
-                    list.RemoveRange(index, 1);
-                else
-                    list.RemoveRange(index, count);
-
-                state.Actions = list.ToArray();
-                state.SaveActions();
-            }
-            catch (Exception e)
-            {
-                ModConsole.Error($"[2] Failed to clears actions;\n{e.GetFullMessage()}");
-            }
-        }
-
-        public static void AddEvent(this PlayMakerFSM fsm, string eventName)
-        {
-            if (string.IsNullOrEmpty(eventName)) return;
-            fsm.Fsm.Events = new List<FsmEvent>(fsm.Fsm.Events)
-                { new FsmEvent(eventName) }.ToArray();
-        }
-
-        public static void CallGlobalTransition(this PlayMakerFSM fsm, string eventName)
-        {
-            fsm.enabled = true;
-            fsm.Fsm.Event(fsm.GetGlobalTransition(eventName).FsmEvent);
-        }
-
         public static bool IsPrefab(this Transform tempTrans)
         {
             if (tempTrans.gameObject.activeInHierarchy && !tempTrans.gameObject.activeSelf) return false;
@@ -92,6 +58,49 @@ namespace Psycho.Extensions
             transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, maxSpeed * Time.deltaTime);
             return false;
         }
+
+        public static string GetPath(this Transform current)
+        {
+            if (current.parent == null)
+                return current.name;
+            return current.parent.GetPath() + "/" + current.name;
+        }
+
+
+        public static void AddEvent(this PlayMakerFSM fsm, string eventName)
+        {
+            if (string.IsNullOrEmpty(eventName)) return;
+            fsm.Fsm.Events = new List<FsmEvent>(fsm.Fsm.Events)
+                { new FsmEvent(eventName) }.ToArray();
+        }
+
+        public static void CallGlobalTransition(this PlayMakerFSM fsm, string eventName)
+        {
+            fsm.enabled = true;
+            fsm.Fsm.Event(fsm.GetGlobalTransition(eventName).FsmEvent);
+        }
+
+        public static void ClearActions(this FsmState state, int index = -1, int count = -1)
+        {
+            try
+            {
+                var list = state.Actions.ToList();
+                if (index == -1 && count == -1)
+                    list.Clear();
+                else if (index != -1 && count == -1)
+                    list.RemoveRange(index, 1);
+                else
+                    list.RemoveRange(index, count);
+
+                state.Actions = list.ToArray();
+                state.SaveActions();
+            }
+            catch (Exception e)
+            {
+                ModConsole.Error($"[2] Failed to clears actions;\n{e.GetFullMessage()}");
+            }
+        }
+
 
         static bool _checkDistance(Vector3 p1, Vector3 p2, float target)
             => (p1 - p2).magnitude < target;

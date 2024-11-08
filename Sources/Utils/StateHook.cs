@@ -50,6 +50,7 @@ namespace Psycho.Internal
                 PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
                 if (playMaker == null) return;
 
+                playMaker.Fsm.InitData();
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
                 if (playMakerState == null) return;
 
@@ -75,6 +76,7 @@ namespace Psycho.Internal
                 PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
                 if (playMaker == null) throw new NullReferenceException();
 
+                playMaker.Fsm.InitData();
                 FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
                 if (playMakerState == null) throw new NullReferenceException();
 

@@ -13,7 +13,7 @@ namespace Psycho
     public enum HandParent : byte { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
 
     public enum ScreamTimeType : int { SOUNDS = 0, FEAR = 1, PARALYSIS = 2 }
-    public enum ScreamSoundType : int { BEDROOM = 0, KNOCK = 1, GLASS1 = 2, GLASS2 = 3, WATER = 4 }
+    public enum ScreamSoundType : int { BEDROOM = 0, CRYFEMALE = 1, CRYKID = 2, KNOCK = 3, FOOTSTEPS = 4, GLASS1 = 5, GLASS2 = 6, WATER = 7 }
     public enum ScreamFearType : int { GRANNY = 0, SUICIDAL = 1, WATERKITCHEN = 2, WATERBATHROOM = 3, TV = 4, PHONE = 5 }
     public enum ScreamParalysisType : int { GRANNY = 0, HAND = 1, KESSELI = 2 }
 
@@ -36,20 +36,20 @@ namespace Psycho
 
     public static class Globals
     {
-        public static List<PillsItem> pills_list = new List<PillsItem> { };
-        public static List<Texture> mailScreens = new List<Texture> { };
+        public static List<PillsItem> pills_list { get; private set; } = new List<PillsItem> { };
+        public static List<Texture> mailScreens { get; private set; } = new List<Texture> { };
 
-        public static Dictionary<int, ModelData> models_cached = new Dictionary<int, ModelData> { };
-        public static Dictionary<int, ModelData> models_replaces = new Dictionary<int, ModelData> { };
+        public static Dictionary<int, ModelData> models_cached { get; private set; } = new Dictionary<int, ModelData> { };
+        public static Dictionary<int, ModelData> models_replaces { get; private set; } = new Dictionary<int, ModelData> { };
 
-        public static Dictionary<int, object> cached = new Dictionary<int, object> { };
-        public static Dictionary<int, Texture> replaces = new Dictionary<int, Texture> { };
-        public static Dictionary<int, Texture> indep_textures = new Dictionary<int, Texture> { };
+        public static Dictionary<int, object> cached { get; private set; } = new Dictionary<int, object> { };
+        public static Dictionary<int, Texture> replaces { get; private set; } = new Dictionary<int, Texture> { };
+        public static Dictionary<int, Texture> indep_textures { get; private set; } = new Dictionary<int, Texture> { };
 
-        public static List<AudioClip> flies_cached = new List<AudioClip> { };
-        public static List<AudioClip> horror_flies = new List<AudioClip> { };
+        public static List<AudioClip> flies_cached { get; private set; } = new List<AudioClip> { };
+        public static List<AudioClip> horror_flies { get; private set; } = new List<AudioClip> { };
 
-        public static List<Texture> pictures = new List<Texture> { };
+        public static List<Texture> pictures { get; private set; } = new List<Texture> { };
 
         public static GameObject Background_prefab = null;
         public static GameObject Pills_prefab = null;
@@ -70,7 +70,9 @@ namespace Psycho
         public static AudioSource PhantomScream = null;
         public static AudioSource HeartbeatSound = null;
 
-        public static List<Vector3> pills_positions = new List<Vector3> {
+        public static int CurrentLang = 0;
+
+        public static readonly List<Vector3> pills_positions = new List<Vector3> {
             new Vector3(462.2887f, 9.311339f, 1320.133f),
             new Vector3(1353.568f, 5.9235f, 821.1407f),
             new Vector3(1396f, 4.59463f, 850.6066f),
@@ -121,7 +123,7 @@ namespace Psycho
             new Vector3(1426.629f, -4.249069f, 751.5843f)
         };
 
-        public static List<ScreamHand> hands_list = new List<ScreamHand>
+        public static readonly List<ScreamHand> hands_list = new List<ScreamHand>
         {
             // stairs section
             new ScreamHand {

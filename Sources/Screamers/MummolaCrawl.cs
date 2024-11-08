@@ -40,13 +40,15 @@ namespace Psycho.Screamers
 
         void OnEnable()
         {
+            Fsm.enabled = false;
             transform.position = StartPoint;
             transform.eulerAngles = new Vector3(347.788879f, 331.232269f, 180f);
             
             cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
-            Globals.HeartbeatSound?.Play();
+            SoundManager.PlayHeartbeat(true);
+            WorldManager.ShowCrows(false);
         }
         
         void OnDisable()
@@ -56,7 +58,8 @@ namespace Psycho.Screamers
             
             Char.gameObject.SetActive(false);            
             ResetHeadRotation();
-            Globals.HeartbeatSound?.Play();
+            SoundManager.PlayHeartbeat(false);
+            WorldManager.ShowCrows(true);
         }
         
         void FixedUpdate()
@@ -75,6 +78,7 @@ namespace Psycho.Screamers
             {
                 Utils.PlayScreamSleepAnim(ref AnimPlayed, () =>
                 {
+                    Fsm.enabled = true;
                     enabled = false;
                     Utils.ResetCameraLook(cameraOrigs);
                     Fsm.CallGlobalTransition("SCREAMSTOP");

@@ -1,4 +1,4 @@
-﻿#define TEST
+﻿//#define TEST
 
 using System;
 using System.Collections.Generic;
@@ -22,6 +22,10 @@ namespace Psycho.Screamers
         FsmInt m_iGlobalDay;
         FsmFloat m_fSunHours;
         FsmFloat m_fSunMinutes;
+
+        DateTime StartScream;
+        public TimeSpan Span { get; private set; }
+        public readonly int SoundDisableTime = 90;
         
         int[] m_liTimes = new int[3] { 1, 4, 1 };
         List<List<int>> m_liDays = new List<List<int>>()
@@ -32,37 +36,34 @@ namespace Psycho.Screamers
         };
 
         int m_iRand = -1;
-        float m_fSoundStartMinutes = 0f;
 
         bool m_bStopped = false;
         bool m_bApplyed = false;
         bool m_bTrigger = false;
-        bool m_bInstalled = false;
 
 
-        void OnEnable()
-        {
-            if (m_bInstalled) return;
-            SetupSleepTriggerHooks();
-            m_bInstalled = true;
-        }
+        void Awake()
+            => SetupSleepTriggerHooks();
 
         void FixedUpdate()
         {
             if (!m_bApplyed) return;
-            if (m_iRand != 0 || m_bStopped) return;
-            if (Mathf.RoundToInt(m_fSunMinutes.Value) < Mathf.RoundToInt(m_fSoundStartMinutes + 10f)) return;
+            if (m_bStopped) return;
+            Span = (DateTime.Now - StartScream);
+            if (Span.Seconds < SoundDisableTime) return;
 
             SoundManager.StopAllScreamSounds();
+            WorldManager.ShowCrows(true);
             m_bStopped = true;
             m_bApplyed = false;
 
-            Utils.PrintDebug($"All sounds stopped start[{Mathf.RoundToInt(m_fSoundStartMinutes)}] current[{Mathf.RoundToInt(m_fSunMinutes.Value)}] end[{Mathf.RoundToInt(m_fSoundStartMinutes + 10f)}]");
+            Utils.PrintDebug($"All scream sounds stopped");
         }
 
 
         public void ApplyScreamer(ScreamTimeType rand, int variation = -1)
         {
+            Utils.PrintDebug("ApplyScreamer called");
             m_bApplyed = true;
             m_bTrigger = false;
 
@@ -71,47 +72,42 @@ namespace Psycho.Screamers
 
             if (rand == ScreamTimeType.SOUNDS) // 1:00
             {
-                m_fSoundStartMinutes = m_fSunMinutes.Value;
+                WorldManager.ShowCrows(false); // 12
                 SoundManager.PlayRandomScreamSound(variation);
+                StartScream = DateTime.Now;
                 m_bStopped = false;
+                Utils.PrintDebug($"rand == Time.SOUNDS; variation == {variation}");
                 return;
             }
 
             if (rand == ScreamTimeType.FEAR) // 4:00
             {
+                Utils.PrintDebug($"rand == Time.FEAR; variation = {(ScreamFearType)variation}");
+                WorldManager.ShowCrows(false);
                 switch (variation)
                 {
                     case (int)ScreamFearType.GRANNY:
                         ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
                         break;
                     case (int)ScreamFearType.SUICIDAL:
-                        _startParalysisScream<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
+                        _startScreamerComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
                         break;
                     case (int)ScreamFearType.WATERKITCHEN:
-                        GameObject.Find("YARD/Building/KITCHEN/KitchenWaterTap")
-                            .GetComponent<KitchenShower>()
-                            .enabled = true;
+                        _startScreamerComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
                         break;
                     case (int)ScreamFearType.WATERBATHROOM:
-                        GameObject.Find("YARD/Building/BATHROOM/Shower")
-                            .GetComponent<BathroomShower>()
-                            .enabled = true;
+                        _startScreamerComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
                         break;
                     case (int)ScreamFearType.TV:
-                        GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs")
-                            .GetComponent<TVScreamer>()
-                            .enabled = true;
+                        _startScreamerComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
                         break;
                     case (int)ScreamFearType.PHONE:
-                        GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Logic")
-                            .GetComponent<PhoneRing>()
-                            .enabled = true;
+                        _startScreamerComponent<PhoneRing>("YARD/Building/LIVINGROOM/Telephone/Logic");
                         break;
                     default:
-                    {
+                        WorldManager.ShowCrows(true);
                         ModConsole.Error($"Variation is {variation} for ScreamTimeType.FEAR in ScreamInitiator.ApplyHorror");
                         break;
-                    }
                 }
                 return;
             }
@@ -121,22 +117,22 @@ namespace Psycho.Screamers
                 switch (variation)
                 {
                     case (int)ScreamParalysisType.GRANNY: // granny crawl screamer
-                        _startParalysisScream<MummolaCrawl>("GrannyScreamHiker");
+                        _startScreamerComponent<MummolaCrawl>("GrannyScreamHiker");
                         break;
                     case (int)ScreamParalysisType.HAND: // hand screamer
-                        _startParalysisScream<MovingHand>("YARD/Building/BEDROOM1/ScreamHand");
+                        _startScreamerComponent<MovingHand>("YARD/Building/BEDROOM1/ScreamHand");
                         break;
                     case (int)ScreamParalysisType.KESSELI: // kesseli screamer
-                        _startParalysisScream<MovingUncleHead>("YARD/Building/BEDROOM1/ScreamUncle");
+                        _startScreamerComponent<MovingUncleHead>("YARD/Building/BEDROOM1/ScreamUncle");
                         break;
                 }
             }
         }
 
-        void _startParalysisScream<T>(string path) where T : MonoBehaviour
+        void _startScreamerComponent<T>(string path) where T : MonoBehaviour
         {
-            _fsm.enabled = false;
             GameObject.Find(path).GetComponent<T>().enabled = true;
+            Utils.PrintDebug($"_startScreamerComponent ({path})");
         }
 
         void SetupSleepTriggerHooks()
@@ -153,6 +149,7 @@ namespace Psycho.Screamers
             m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
 
             StateHook.Inject(gameObject, "Activate", "Check time of day", 3, _ => {
+                if (Logic.GameFinished) return;
                 if (Logic.inHorror) return;
                 if (Logic.milkUsed && (DateTime.Now - Logic.milkUseTime).Seconds < 60) return;
 
@@ -182,16 +179,30 @@ namespace Psycho.Screamers
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
 #if TEST
-                ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
+                ApplyScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
 #else
                 int[] temp = new int[2] { 5, 3 };
                 int variation = m_iRand > 0 ? Random.Range(0, temp[m_iRand - 1]) : -1;
 
-                if (m_iRand == (int)ScreamTimeType.FEAR && variation == (int)ScreamFearType.TV)
-                    WorldManager.TurnOffElecMeter();
+                if (m_iRand == (int)ScreamTimeType.FEAR)
+                {
+                    if (variation == (int)ScreamFearType.TV && !WorldManager.GetElecMeterSwitchState())
+                    {
+                        Utils.PrintDebug("variation == Fear.TV && ElecMeterSwitchState == false");
+                        return;
+                    }
+                    else if (variation != (int)ScreamFearType.TV)
+                    {
+                        Utils.PrintDebug("variation != Fear.TV");
+                        WorldManager.TurnOffElecMeter();
+                    }
+                }
 
                 if (m_iRand == (int)ScreamTimeType.PARALYSIS)
+                {
+                    Utils.PrintDebug("rand == Time.PARALYSIS");
                     WorldManager.TurnOffElecMeter();
+                }
 
                 ApplyScreamer((ScreamTimeType)m_iRand, variation);
 #endif
@@ -207,9 +218,12 @@ namespace Psycho.Screamers
         void ChangeGrandmaPosition(Vector3 position)
         {
             GameObject grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
+            if (!grandma) return;
+
             grandma.transform.position = position;
             grandma.transform.Find("Char").gameObject.SetActive(true);
             grandma.AddComponent<GrandmaDistanceChecker>();
+            Utils.PrintDebug("Grandma add component distance checker");
         }
     }
 }

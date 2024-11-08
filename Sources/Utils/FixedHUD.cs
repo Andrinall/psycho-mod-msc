@@ -5,21 +5,21 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal enum eHUDCloneType { RECT, TEXT }
+    public enum eHUDCloneType { RECT, TEXT }
 
-    internal sealed class FixedHUD : MonoBehaviour
+    public sealed class FixedHUD : MonoBehaviour
     {
-        private readonly List<GameObject> _struct = new List<GameObject>();
-        private readonly List<string> _blacklisted = new List<string> {
+        readonly List<GameObject> _struct = new List<GameObject>();
+        readonly List<string> _blacklisted = new List<string> {
             "FPS", "Clutch", "Clutch 1", "DRMpink", "SpeedyHUD"
         };
-        private readonly List<string> _default = new List<string> {
+        readonly List<string> _default = new List<string> {
             "Mortal", "Day", "Thrist",
             "Hunger", "Stress", "Urine",
             "Fatigue", "Dirty", "Money", "Jailtime"
         };
 
-        private Vector3 _start = Vector3.zero;
+        Vector3 _start = Vector3.zero;
 
 
         private void OnEnable()
@@ -34,11 +34,11 @@ namespace Psycho.Internal
             }
         }
 
-        private void OnDestroy() => _struct.Clear();
-        private GameObject GetElement(string name) => transform.Find(name)?.gameObject;
-        private GameObject GetElementLocal(string name) => _struct.Find(v => v.name == name);
+        void OnDestroy() => _struct.Clear();
+        GameObject GetElement(string name) => transform.Find(name)?.gameObject;
+        GameObject GetElementLocal(string name) => _struct.Find(v => v.name == name);
         
-        internal void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
+        public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
@@ -60,14 +60,14 @@ namespace Psycho.Internal
             Structurize();
         }
 
-        internal bool IsElementExist(string name) => _struct.Exists(v =>
+        public bool IsElementExist(string name) => _struct.Exists(v =>
         {
             if (v != null) return v.name == name;
             _struct.Remove(v);
             return false;
         });
 
-        internal void MoveElement(string name, int index)
+        public void MoveElement(string name, int index)
         {
             if (index < 0 || index > _struct.Capacity) return;
             if (!IsElementExist(name)) return;
@@ -80,7 +80,7 @@ namespace Psycho.Internal
             Structurize();
         }
 
-        internal void RemoveElement(string name)
+        public void RemoveElement(string name)
         {
             if (!IsElementExist(name)) return;
 
@@ -90,13 +90,13 @@ namespace Psycho.Internal
             Structurize();
         }
 
-        internal void HideElement(string name, bool hide)
+        public void HideElement(string name, bool hide)
         {
             if (!IsElementExist(name)) return;
             GetElementLocal(name).SetActive(!hide);
         }
 
-        internal void SetElementText(string name, string text)
+        public void SetElementText(string name, string text)
         {
             if (!IsElementExist(name)) return;
             Transform label = GetElement($"{name}/HUDLabel").transform;
@@ -104,7 +104,7 @@ namespace Psycho.Internal
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
         }
 
-        internal void SetElementColor(string name, Color color)
+        public void SetElementColor(string name, Color color)
         {
             if (!IsElementExist(name)) return;
             GetElement($"{name}/Pivot/HUDBar")
@@ -112,15 +112,16 @@ namespace Psycho.Internal
                 .material.color = color;
         }
 
-        internal void SetElementScale(string name, Vector3 scale)
+        public void SetElementScale(string name, Vector3 scale)
         {
             if (!IsElementExist(name)) return;
             GetElement($"{name}/Pivot").transform.localScale = scale;
         }
 
-        internal int GetIndexByName(string name) => _struct.FindIndex(v => v.name == name);
+        public int GetIndexByName(string name)
+            => _struct.FindIndex(v => v.name == name);
 
-        internal void Structurize()
+        public void Structurize()
         {
             int inactive_items = 0;
 

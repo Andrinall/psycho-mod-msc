@@ -9,7 +9,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    public sealed class GlobalHandler : MonoBehaviour
+    internal sealed class GlobalHandler : CatchedComponent
     {
         Transform _houseFire;
         Transform _bells;
@@ -26,14 +26,13 @@ namespace Psycho.Handlers
         bool m_bInstalled = false;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             if (m_bInstalled) return;
 
             Logic._hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
             Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", Logic._hud.GetIndexByName("Money"));
-            Utils.PrintDebug(eConsoleColors.GREEN, "HUD Enabled");
-            Logic.Points = Logic.Points;
+            Logic.SetPoints(Logic.Points);
 
             m_bHouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             _houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
@@ -41,7 +40,7 @@ namespace Psycho.Handlers
             GameObject fridge_paper = GameObject.Find("fridge_paper");
             if (fridge_paper)
                 StateHook.Inject(fridge_paper, "Use", "Wait button", -1,
-                    _ => Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = "I should take my pills\nI shouldn't be bad");
+                    _ => Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang]);
 
             GameObject farm_walker = GameObject.Find("HUMANS/Farmer/Walker");
             if (farm_walker)
@@ -55,12 +54,16 @@ namespace Psycho.Handlers
             _bellsState = _bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
             bellsOrigPos = _bells.position;
 
-            Utils.PrintDebug(eConsoleColors.GREEN, "GlobalHandler enabled");
             m_bInstalled = true;
         }
-        
-        void FixedUpdate()
+
+        internal override void OnFixedUpdate()
         {
+            if (Logic.GameFinished)
+            {
+                enabled = false;
+                return;
+            }
             Logic.Tick();
 
             if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
@@ -69,7 +72,6 @@ namespace Psycho.Handlers
                 _bells.gameObject.SetActive(true);
                 _bells.position = GameObject.Find("PLAYER").transform.position;
                 m_bBellsActivated = true;
-                Utils.PrintDebug("Bells activated");
             }
             else if (m_bBellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
             {
@@ -77,7 +79,6 @@ namespace Psycho.Handlers
                 _bells.gameObject.SetActive(false);
                 _bells.position = bellsOrigPos;
                 m_bBellsActivated = false;
-                Utils.PrintDebug("Bells stopped");
             }
             
             if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
@@ -89,6 +90,7 @@ namespace Psycho.Handlers
             }
         }
 
-        void OnDestroy() => Destroy(Logic._hud);
+        void OnDestroy()
+            => Destroy(Logic._hud);
     }
 }

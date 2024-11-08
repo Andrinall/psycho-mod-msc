@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Psycho.Internal;
+using System;
 using UnityEngine;
 
 namespace Psycho.Screamers
@@ -19,10 +20,17 @@ namespace Psycho.Screamers
             suicidal.transform.localPosition = lamp.transform.localPosition;
             suicidal.transform.localEulerAngles = new Vector3(270f, 177.6f, 0f);
 
-            var origSource = GameObject.Find("KILJUGUY/HikerPivot/JokkeHiker2/RagDoll/pelvis/spine_mid/shoulders(xxxxx)/head/Speak")
-                .GetComponent<AudioSource>();
+            AudioSource origSource = GameObject.Find(
+                "KILJUGUY/HikerPivot/JokkeHiker2/RagDoll/pelvis/spine_mid/shoulders(xxxxx)/head/Speak"
+            )?.GetComponent<AudioSource>();
 
-            var newSource = suicidal.AddComponent<AudioSource>();
+            if (!origSource)
+            {
+                enabled = false;
+                return;
+            }
+
+            AudioSource newSource = suicidal.AddComponent<AudioSource>();
             newSource.clip = AudioClip.Instantiate(origSource.clip);
             newSource.mute = false;
             newSource.loop = true;
@@ -46,12 +54,14 @@ namespace Psycho.Screamers
             enableTime = DateTime.Now;
             suicidal.SetActive(true);
             lamp.SetActive(false);
+            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
         {
             suicidal.SetActive(false);
             lamp.SetActive(true);
+            WorldManager.ShowCrows(true);
         }
 
         void FixedUpdate()

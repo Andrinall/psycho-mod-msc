@@ -20,6 +20,7 @@ namespace Psycho.Screamers
 
         bool switched = false;
 
+
         void Awake()
         {
             ParticleDrink = transform.Find("ParticleDrink").gameObject;
@@ -39,7 +40,11 @@ namespace Psycho.Screamers
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
+            WorldManager.ShowCrows(false);
         }
+
+        void OnDisable()
+            => WorldManager.ShowCrows(true);
 
         void FixedUpdate()
         {
@@ -50,6 +55,7 @@ namespace Psycho.Screamers
 
         void _showerHook(PlayMakerFSM _)
         {
+            SoundManager.StopScreamSound("kitchen_water");
             if (!enabled) return;
             if (switched) return;
 

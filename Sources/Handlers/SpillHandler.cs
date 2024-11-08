@@ -8,12 +8,12 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public sealed class SpillHandler : MonoBehaviour
+    internal sealed class SpillHandler : CatchedComponent
     {
         FsmBool m_bIsCrime;
 
 
-        void Start()
+        internal override void Awaked()
         {
             m_bIsCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
             StateHook.Inject(gameObject, "SpillPump", "Spill grow", _ => SpillShit());

@@ -55,6 +55,7 @@ namespace Psycho.Screamers
             Topic.Value = "SCREAMCALL";
             PhoneLogic.SetActive(false);
             Ring.SetActive(true);
+            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
@@ -63,6 +64,7 @@ namespace Psycho.Screamers
             PhoneLogic.SetActive(true);
             Topic.Value = "";
             elapsedFrames = 0;
+            WorldManager.ShowCrows(true);
         }
 
         void FixedUpdate()
@@ -109,7 +111,7 @@ namespace Psycho.Screamers
             FsmState newState = new FsmState(RingFSM.Fsm.States.Last());
             newState.Name = "Night screamer";
             (newState.Actions[0] as MasterAudioPlaySound).variationName.Value = "night_screamer";
-            (newState.Actions[1] as SetStringValue).stringValue.Value = "I'm always watching you! I'm always with you! Behind you...";
+            (newState.Actions[1] as SetStringValue).stringValue.Value = Locales.CALL_SCREMER_TEXT[Globals.CurrentLang]; //"I'm always watching you! I'm always with you! Behind you...";
             (newState.Actions[2] as Wait).time.Value = 4f;
             RingFSM.Fsm.States = new List<FsmState>(RingFSM.Fsm.States) { newState }.ToArray();
 
