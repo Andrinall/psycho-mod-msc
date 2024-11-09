@@ -18,6 +18,8 @@ namespace Psycho.Screamers
     public sealed class ScreamsInitiator : MonoBehaviour
     {
         PlayMakerFSM _fsm;
+        PlayMakerFSM _phoneCord;
+
         FsmInt m_iTimeOfDay;
         FsmInt m_iGlobalDay;
         FsmFloat m_fSunHours;
@@ -141,6 +143,10 @@ namespace Psycho.Screamers
             _fsm.AddEvent("SCREAMSTOP");
             _fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
 
+            _phoneCord = GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Cord/PhoneCordOut/Trigger").GetComponent<PlayMakerFSM>();
+            _phoneCord.AddEvent("SCREAMTRIGGER");
+            _phoneCord.AddGlobalTransition("SCREAMTRIGGER", "Position");
+
             m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
             m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
@@ -156,7 +162,7 @@ namespace Psycho.Screamers
                 m_iRand = Random.Range(0, 3);
 
                 int day = (m_iGlobalDay.Value + 1) % 7;
-                Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
+                Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
 #if !TEST
                 if (!m_liDays[m_iRand].Contains(day)) return;
 #endif
@@ -165,11 +171,17 @@ namespace Psycho.Screamers
                 int time = m_iTimeOfDay.Value;
                 int calc = time + sleepTime.Value - 24;
 
-                Utils.PrintDebug($"SleepTime orig[{sleepTime.Value}]; new[{24 - time + m_liTimes[m_iRand]}]; time[{time}]; calc[{calc}]; rand[{m_iRand}]");
+                Utils.PrintDebug($"SleepTime orig[{sleepTime.Value}]; new[{24 - time + m_liTimes[m_iRand]}]; time[{time}]; calc[{calc}]; rand[{(ScreamTimeType)m_iRand}]");
                 if (calc < m_liTimes[m_iRand] || calc == 2) return;
 
                 sleepTime.Value = 24 - time + m_liTimes[m_iRand];
                 m_bTrigger = true;
+            });
+
+            StateHook.Inject(gameObject, "Activate", "Does call?", 0, fsm =>
+            {
+                if (m_bTrigger)
+                    fsm.SendEvent("NOCALL");
             });
 
             StateHook.Inject(gameObject, "Activate", "Phone", -1, _ => m_bTrigger = false);
@@ -181,37 +193,27 @@ namespace Psycho.Screamers
 #if TEST
                 ApplyScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
 #else
-                int[] temp = new int[2] { 5, 3 };
+                int[] temp = new int[2] {
+                    Enum.GetValues(typeof(ScreamFearType)).Length,
+                    Enum.GetValues(typeof(ScreamParalysisType)).Length
+                };
+
                 int variation = m_iRand > 0 ? Random.Range(0, temp[m_iRand - 1]) : -1;
 
-                if (m_iRand == (int)ScreamTimeType.FEAR)
-                {
-                    if (variation == (int)ScreamFearType.TV && !WorldManager.GetElecMeterSwitchState())
-                    {
-                        Utils.PrintDebug("variation == Fear.TV && ElecMeterSwitchState == false");
-                        return;
-                    }
-                    else if (variation != (int)ScreamFearType.TV)
-                    {
-                        Utils.PrintDebug("variation != Fear.TV");
-                        WorldManager.TurnOffElecMeter();
-                    }
-                }
+                if
+                (
+                    m_iRand == (int)ScreamTimeType.FEAR
+                    && variation == (int)ScreamFearType.TV
+                    && !WorldManager.GetElecMeterSwitchState()
+                )
+                { return; }
+               
+                if (variation == (int)ScreamFearType.PHONE)
+                    _enablePhoneCord();
 
-                if (m_iRand == (int)ScreamTimeType.PARALYSIS)
-                {
-                    Utils.PrintDebug("rand == Time.PARALYSIS");
-                    WorldManager.TurnOffElecMeter();
-                }
-
+                WorldManager.TurnOffElecMeter();
                 ApplyScreamer((ScreamTimeType)m_iRand, variation);
 #endif
-            });
-
-            StateHook.Inject(gameObject, "Activate", "Does call?", 0, fsm =>
-            {
-                if (m_bTrigger)
-                    fsm.SendEvent("NOCALL");
             });
         }
 
@@ -224,6 +226,13 @@ namespace Psycho.Screamers
             grandma.transform.Find("Char").gameObject.SetActive(true);
             grandma.AddComponent<GrandmaDistanceChecker>();
             Utils.PrintDebug("Grandma add component distance checker");
+        }
+
+        void _enablePhoneCord()
+        {
+            Utils.PrintDebug("SCREAMTRIGGER called");
+            _phoneCord.gameObject.transform.parent.gameObject.SetActive(true);
+            _phoneCord.CallGlobalTransition("SCREAMTRIGGER");
         }
     }
 }

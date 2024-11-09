@@ -75,7 +75,7 @@ namespace Psycho.Handlers
             }
             else if (m_bBellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
             {
-                (_bellsState.Actions[0] as ActivateGameObject).activate = true;
+                (_bellsState.Actions[0] as ActivateGameObject).activate = false;
                 _bells.gameObject.SetActive(false);
                 _bells.position = bellsOrigPos;
                 m_bBellsActivated = false;

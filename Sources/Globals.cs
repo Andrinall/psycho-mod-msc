@@ -51,6 +51,7 @@ namespace Psycho
 
         public static List<Texture> pictures { get; private set; } = new List<Texture> { };
 
+        public static GameObject Pentagram_prefab = null;
         public static GameObject Background_prefab = null;
         public static GameObject Pills_prefab = null;
         public static GameObject Crow_prefab = null;
@@ -60,7 +61,7 @@ namespace Psycho
         public static GameObject SmokeParticleSystem_prefab = null;
         public static GameObject mailboxSheet = null;
         public static GameObject envelopeObject = null;
-        
+
         public static AudioClip AcidBurnSound = null;
         public static AudioClip ScreamCallClip = null;
         public static AudioClip PhantomScreamSound = null;

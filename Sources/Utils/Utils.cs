@@ -84,6 +84,9 @@ namespace Psycho.Internal
             Resources.UnloadAsset(Globals.Suicidal_prefab);
             Globals.Suicidal_prefab = null;
 
+            Resources.UnloadAsset(Globals.Pentagram_prefab);
+            Globals.Pentagram_prefab = null;
+
             Resources.UnloadAsset(Globals.AcidBurnSound);
             Globals.AcidBurnSound = null;
 

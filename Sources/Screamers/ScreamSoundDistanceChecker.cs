@@ -8,25 +8,27 @@ namespace Psycho.Screamers
     [RequireComponent(typeof(AudioSource))]
     internal sealed class ScreamSoundDistanceChecker : MonoBehaviour
     {
-        Transform player;
-        public AudioSource source;
-        public float distance;
+        Transform Player;
+        AudioSource Source;
+        float Distance;
+
+        public float TargetDistance = 1.75f;
 
         void Awake()
         {
-            source = GetComponent<AudioSource>();
-            player = GameObject.Find("PLAYER").transform;
+            Source = GetComponent<AudioSource>();
+            Player = GameObject.Find("PLAYER").transform;
         }
 
         void FixedUpdate()
         {
-            if (!source.isPlaying) return;
-            distance = Vector3.Distance(transform.position, player.position);
+            if (!Source.isPlaying) return;
+            Distance = Vector3.Distance(transform.position, Player.position);
             
-            if (distance > 1.75f) return;
+            if (Distance > TargetDistance) return;
 
-            source.loop = false;
-            source.Stop();
+            Source.loop = false;
+            Source.Stop();
             Utils.PrintDebug(eConsoleColors.YELLOW, $"{name} - audio clip stopped by distance checker!");
         }
     }

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2934630684
+CRC: 555051647
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: bc013c4a4c6420da3235cf274be444ff
+    Hash: 0bb1d985e80c6f95f9406e8dd2009265
   TypeTreeHash:
     serializedVersion: 2
-    Hash: df80c91f1a304b147d32afe38da163be
+    Hash: 5df2726dc7e915492e5fb50c12be224a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -34,6 +34,8 @@ ClassTypes:
 - Class: 82
   Script: {instanceID: 0}
 - Class: 83
+  Script: {instanceID: 0}
+- Class: 108
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -124,12 +126,12 @@ Assets:
 - Assets/Screens/8.png
 - Assets/Screens/31.png
 - Assets/Screens/14.png
+- Assets/Prefabs/Penta.prefab
 - Assets/Screens/36.png
 - Assets/Replaces/Horror/treecollection.png
 - Assets/Screens/26.png
 - Assets/Replaces/Sounds/Breaths23.mp3
 - Assets/Replaces/Horror/sticker_satsuma.png
-- Assets/Audio/screamers/bedroom.mp3
 - Assets/Replaces/Horror/roadside.png
 - Assets/Audio/phantomscream.mp3
 - Assets/Replaces/Horror/basketball2.png
@@ -198,6 +200,7 @@ Assets:
 - Assets/Replaces/Horror/bus_paint.png
 - Assets/Replaces/Horror/wood_panel1.png
 - Assets/Replaces/Horror/fabric3.png
+- Assets/Audio/screamers/bedroom.mp3
 - Assets/Replaces/Smoking/hand.png
 - Assets/Audio/screamers/crying_kid.mp3
 - Assets/Audio/screamers/footsteps.mp3

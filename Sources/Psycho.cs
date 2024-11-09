@@ -28,7 +28,6 @@ namespace Psycho
         public override string Version => "0.9-beta_0.1";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
-        public override bool LoadInMenu => true;
         public override bool SecondPass => true;
 
         string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
@@ -87,6 +86,8 @@ namespace Psycho
             Globals.PhantomScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
             Globals.TVScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
             Globals.UncleScreamSound = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
+            Globals.Pentagram_prefab = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab");
+            GameObject.Instantiate(Globals.Pentagram_prefab).AddComponent<Pentagram>();
 
             GameObject crows_list = Globals.LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab");
             GameObject.Instantiate(crows_list); // clone crows list
@@ -155,7 +156,9 @@ namespace Psycho
                     source.spread = 0;
                     source.dopplerLevel = 1;
                     
-                    emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
+                    if (!v.Contains("door_knock") && !v.Contains("kitchen_water"))
+                        emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
+
                     emptyPoint.transform.SetParent(building, worldPositionStays: false);
                     emptyPoint.transform.position = pointsPos[item];
                     SoundManager.ScreamPoints.Add(emptyPoint);
@@ -445,6 +448,7 @@ namespace Psycho
             ConsoleCommand.Add(new Phone());
             ConsoleCommand.Add(new Phantom());
             ConsoleCommand.Add(new Finish());
+            ConsoleCommand.Add(new Penta());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
