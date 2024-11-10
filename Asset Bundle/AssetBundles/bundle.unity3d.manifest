@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 555051647
+CRC: 4174258665
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0bb1d985e80c6f95f9406e8dd2009265
+    Hash: da27a5b74351b1f8e9fc4a202b7f9c8e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5df2726dc7e915492e5fb50c12be224a
@@ -60,6 +60,7 @@ Assets:
 - Assets/Replaces/Horror/char_shirt01.png
 - Assets/Replaces/Horror/soil12.png
 - Assets/Replaces/Horror/fabric5.png
+- Assets/Prefabs/PalmNut.prefab
 - Assets/Replaces/Horror/parketti.png
 - Assets/Replaces/Horror/wood6.png
 - Assets/Pictures/5.png
@@ -108,6 +109,7 @@ Assets:
 - Assets/Screens/24.png
 - Assets/Replaces/Horror/wood_panel12.png
 - Assets/Replaces/Horror/wood_panel7.png
+- Assets/Prefabs/Ferns.prefab
 - Assets/Screens/15.png
 - Assets/Screens/21.png
 - Assets/Replaces/Horror/ATLAS_DOORS.png
@@ -124,6 +126,7 @@ Assets:
 - Assets/Replaces/Horror/wood5.png
 - Assets/Screens/28.png
 - Assets/Screens/8.png
+- Assets/Prefabs/Mushroom.prefab
 - Assets/Screens/31.png
 - Assets/Screens/14.png
 - Assets/Prefabs/Penta.prefab
@@ -132,6 +135,7 @@ Assets:
 - Assets/Screens/26.png
 - Assets/Replaces/Sounds/Breaths23.mp3
 - Assets/Replaces/Horror/sticker_satsuma.png
+- Assets/Meshes/Egg.fbx
 - Assets/Replaces/Horror/roadside.png
 - Assets/Audio/phantomscream.mp3
 - Assets/Replaces/Horror/basketball2.png
@@ -176,6 +180,7 @@ Assets:
 - Assets/Replaces/Horror/Atlas_countryside.png
 - Assets/Replaces/Horror/wood8.png
 - Assets/Replaces/Horror/wood_panel8.png
+- Assets/Prefabs/BlackEgg.prefab
 - Assets/Screens/23.png
 - Assets/Replaces/Horror/building_wall.png
 - Assets/Replaces/Horror/char_face01.png
@@ -191,7 +196,6 @@ Assets:
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
 - Assets/Replaces/Horror/ATLAS_BUILDINGS.png
-- Assets/Meshes/bodymesh_0.asset
 - Assets/Replaces/Horror/kitchentaso.png
 - Assets/Replaces/Horror/wood_panel4.png
 - Assets/Replaces/Horror/moose.png
