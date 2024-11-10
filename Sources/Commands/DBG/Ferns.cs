@@ -14,7 +14,7 @@ namespace Psycho.Commands
         {
             GameObject.Find("Ferns(Clone)")
                 .GetComponent<FernFlowerSpawner>()
-                .SpawnRandomFlower();
+                .SpawnRandomFlower(true);
         }
     }
 }

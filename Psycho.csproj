@@ -101,6 +101,7 @@
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
     <Compile Include="Sources\Commands\DBG\TVTexChange.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
+    <Compile Include="Sources\Handlers\ItemsGravityEnabler.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
     <Compile Include="Sources\Locales.cs" />
     <Compile Include="Sources\Objects\FernFlowerSpawner.cs" />

@@ -6,6 +6,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using Psycho.Handlers;
 
 
 namespace Psycho.Objects
@@ -43,27 +44,35 @@ namespace Psycho.Objects
         internal bool AnyFlowerIsSpawned()
             => Flowers.Any(v => v.activeSelf);
 
-        internal void SpawnRandomFlower()
+        internal void SpawnRandomFlower(bool byCmd = false)
         {
             GameObject point = Flowers[Random.Range(0, Flowers.Count)];
-            point.SetActive(true);
+            if (byCmd && point.activeSelf) return;
 
-            GameObject flower = GameObject.Instantiate( Globals.PalmNut_prefab /*Globals.FernFlower_prefab*/ );
+            GameObject flower = GameObject.Instantiate( Globals.Walnut_prefab /*Globals.FernFlower_prefab*/ );
             flower.transform.SetParent(point.transform, worldPositionStays: false);
             flower.transform.localPosition = Vector3.zero;
             flower.transform.localEulerAngles = Vector3.zero;
+            flower.AddComponent<ItemsGravityEnabler>();
             flower.MakePickable();
+
+            if (byCmd) flower.name = "flower(cmd)";
+
+            point.SetActive(true);
         }
 
         void DespawnItems()
         {
             Flowers.ForEach(v =>
             {
-                if (!v.activeSelf || v.transform.childCount == 0) return;
+                if (!v.activeSelf || v.transform.childCount == 0) goto setActive;
 
-                for (int i = 0; i < v.transform.childCount; i++)
-                    Object.Destroy(v.transform.GetChild(i));
+                GameObject child = v.transform.GetChild(0).gameObject;
+                if (child.name == "flower(cmd)") return;
 
+                Object.Destroy(child);
+                
+            setActive:
                 v.SetActive(false);
             });
         }

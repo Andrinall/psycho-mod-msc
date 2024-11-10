@@ -56,7 +56,8 @@ namespace Psycho
 
         public static GameObject Pentagram_prefab = null;
         public static GameObject FernFlower_prefab = null;
-        public static GameObject PalmNut_prefab = null;
+        public static GameObject Walnut_prefab = null;
+        public static GameObject Nut_prefab = null;
         public static GameObject BlackEgg_prefab = null;
         public static GameObject Mushroom_prefab = null;
 
@@ -245,7 +246,8 @@ namespace Psycho
             // load resources from bundle
             Pills_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/pills.prefab");
             FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
-            PalmNut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/palmnut.prefab");
+            Walnut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/walnut.prefab");
+            Nut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/nut.prefab");
             BlackEgg_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/blackegg.prefab");
             Mushroom_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/mushroom.prefab");
 
