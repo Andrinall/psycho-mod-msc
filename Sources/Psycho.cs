@@ -223,6 +223,7 @@ namespace Psycho
             ConsoleCommand.Add(new Phantom());
             ConsoleCommand.Add(new Finish());
             ConsoleCommand.Add(new Penta());
+            ConsoleCommand.Add(new Ferns());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());

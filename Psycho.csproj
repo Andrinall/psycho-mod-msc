@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
+    <Compile Include="Sources\Commands\DBG\Ferns.cs" />
     <Compile Include="Sources\Commands\DBG\Finish.cs" />
     <Compile Include="Sources\Commands\DBG\Kill.cs" />
     <Compile Include="Sources\Commands\DBG\KitchenTap.cs" />

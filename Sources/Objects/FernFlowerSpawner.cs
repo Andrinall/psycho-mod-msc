@@ -28,30 +28,44 @@ namespace Psycho.Objects
 
         void FixedUpdate()
         {
-            if ((GlobalDay.Value % 7) != 3) return;
-
-            if (SUN_hours.Value > 18 || SUN_hours.Value < 4)
+            if (((GlobalDay.Value % 7) == 3) && (SUN_hours.Value > 18 || SUN_hours.Value < 4))
             {
                 if (AnyFlowerIsSpawned()) return;
+                SpawnRandomFlower();
             }
             else
             {
                 if (!AnyFlowerIsSpawned()) return;
+                DespawnItems();
             }
         }
 
-        bool AnyFlowerIsSpawned()
+        internal bool AnyFlowerIsSpawned()
             => Flowers.Any(v => v.activeSelf);
 
-        void SpawnRandomFlower()
+        internal void SpawnRandomFlower()
         {
             GameObject point = Flowers[Random.Range(0, Flowers.Count)];
             point.SetActive(true);
 
-            GameObject flower = GameObject.Instantiate(Globals.FernFlower_prefab);
+            GameObject flower = GameObject.Instantiate( Globals.PalmNut_prefab /*Globals.FernFlower_prefab*/ );
             flower.transform.SetParent(point.transform, worldPositionStays: false);
             flower.transform.localPosition = Vector3.zero;
             flower.transform.localEulerAngles = Vector3.zero;
+            flower.MakePickable();
+        }
+
+        void DespawnItems()
+        {
+            Flowers.ForEach(v =>
+            {
+                if (!v.activeSelf || v.transform.childCount == 0) return;
+
+                for (int i = 0; i < v.transform.childCount; i++)
+                    Object.Destroy(v.transform.GetChild(i));
+
+                v.SetActive(false);
+            });
         }
     }
 }
