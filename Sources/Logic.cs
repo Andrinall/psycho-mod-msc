@@ -123,6 +123,15 @@ namespace Psycho
         public static void ResetValue(float min = 0f, float max = 100f) => Value = inHorror ? min : max;
         public static void ResetPoints() => Points = 0;
 
+        public static void SetDefaultValues()
+        {
+            isDead = false;
+            inHorror = false;
+            envelopeSpawned = false;
+            milkUsed = false;
+            Value = 100f;
+            Points = 0f;
+        }
 
         public static void ChangeWorld(eWorldType type)
         {

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
 
 using Psycho.Objects;
+using Psycho.Internal;
+using Psycho.Screamers;
 
 
 namespace Psycho
@@ -52,6 +55,11 @@ namespace Psycho
         public static List<Texture> pictures { get; private set; } = new List<Texture> { };
 
         public static GameObject Pentagram_prefab = null;
+        public static GameObject FernFlower_prefab = null;
+        public static GameObject PalmNut_prefab = null;
+        public static GameObject BlackEgg_prefab = null;
+        public static GameObject Mushroom_prefab = null;
+
         public static GameObject Background_prefab = null;
         public static GameObject Pills_prefab = null;
         public static GameObject Crow_prefab = null;
@@ -220,7 +228,146 @@ namespace Psycho
             // end house section
         };
 
-        public static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
+        public static void LoadAssets(AssetBundle _bundle)
+        {
+            var pointsPos = new Dictionary<string, Vector3>() // night scream sounds positions
+            {
+                ["bedroom"] = new Vector3(-2.338177f, 0.03142646f, 12.91463f),
+                ["crying_female"] = new Vector3(-6.801387f, 0.1021783f, 6.610903f),
+                ["crying_kid"] = new Vector3(-5.944736f, -0.2938192f, 14.34833f),
+                ["door_knock"] = new Vector3(-13.04612f, -0.2938216f, 9.959766f),
+                ["footsteps"] = new Vector3(-14.68741f, -0.2938224f, 4.410945f),
+                ["glass1"] = new Vector3(-8.830304f, 0.4986353f, 4.962998f),
+                ["glass2"] = new Vector3(-2.926222f, 0.4986371f, 4.988186f),
+                ["kitchen_water"] = new Vector3(-8.391668f, 0.9055675f, 7.271975f),
+            };
+
+            // load resources from bundle
+            Pills_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/pills.prefab");
+            FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
+            PalmNut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/palmnut.prefab");
+            BlackEgg_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/blackegg.prefab");
+            Mushroom_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/mushroom.prefab");
+
+            Background_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/background.prefab");
+            Picture_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
+            Coffin_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
+            SmokeParticleSystem_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
+            AcidBurnSound = LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
+            ScreamCallClip = LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
+            PhantomScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
+            TVScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
+            UncleScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
+            
+            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab")).AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
+            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
+            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
+
+            AudioSource heartbeat = GameObject.Find("PLAYER").AddComponent<AudioSource>(); // attach heartbeat sound to player
+            heartbeat.clip = LoadAsset<AudioClip>(_bundle, "assets/audio/heartbeat.wav");
+            heartbeat.loop = true;
+            heartbeat.playOnAwake = false;
+            heartbeat.priority = 128;
+            heartbeat.volume = 1;
+            heartbeat.pitch = 1;
+            heartbeat.panStereo = 0;
+            heartbeat.spatialBlend = 1;
+            heartbeat.reverbZoneMix = 1;
+            heartbeat.dopplerLevel = 1;
+            heartbeat.spread = 0;
+            heartbeat.minDistance = 1.5f;
+            heartbeat.maxDistance = 12f;
+            
+            HeartbeatSound = heartbeat;
+            heartbeat.enabled = false;
+
+            GameObject clonedlist = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
+            WorldManager.CopySuicidal(clonedlist); // copy first suicidal from list for use in night screamer
+            clonedlist.SetActive(false); // hide suicidals list
+
+
+            // load all replaces
+            Transform building = GameObject.Find("YARD/Building").transform;
+            _bundle.GetAllAssetNames().ToList().ForEach(v =>
+            {
+                if (v.Contains("assets/replaces")) // load texture & sound replaces
+                {
+                    if (v.Contains("/horror"))
+                    { // load replaces for horror world
+                        replaces.Add(
+                            v.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            LoadAsset<Texture>(_bundle, v)
+                        );
+                    }
+                    else if (v.Contains("/sounds")) // replaces for flies sounds in horror world
+                        horror_flies.Add(LoadAsset<AudioClip>(_bundle, v));
+                    else if (v.Contains("/allworlds"))
+                    { // load texture used independently of world
+                        indep_textures.Add(
+                            v.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            LoadAsset<Texture>(_bundle, v)
+                        );
+                    }
+                }
+                else if (v.Contains("assets/pictures")) // load textures for picture in frame
+                    pictures.Add(LoadAsset<Texture>(_bundle, v));
+                else if (v.Contains("assets/audio/screamers"))
+                { // load sounds for night screamer
+                    string item = v.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
+                    GameObject emptyPoint = new GameObject($"ScreamPoint({item})");
+                    AudioSource source = emptyPoint.AddComponent<AudioSource>();
+                    source.clip = LoadAsset<AudioClip>(_bundle, v);
+                    source.loop = true;
+                    source.volume = v.Contains("crying") ? 0.4f : 0.9f;
+                    source.priority = 0;
+                    source.rolloffMode = AudioRolloffMode.Logarithmic;
+                    source.minDistance = 1.5f;
+                    source.maxDistance = 12;
+                    source.spatialBlend = 1;
+                    source.spread = 0;
+                    source.dopplerLevel = 1;
+
+                    if (!v.Contains("door_knock") && !v.Contains("kitchen_water"))
+                        emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
+
+                    emptyPoint.transform.SetParent(building, worldPositionStays: false);
+                    emptyPoint.transform.position = pointsPos[item];
+                    SoundManager.ScreamPoints.Add(emptyPoint);
+                }
+            });
+
+            //Utils.PrintDebug(eConsoleColors.YELLOW, $"Horror textures loaded: {Globals.replaces.Count}");
+            //Utils.PrintDebug(eConsoleColors.YELLOW, $"Independently textures loaded: {Globals.indep_textures.Count}");
+
+            // load smoking replaces
+            Texture cig_texture = Globals.LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
+            models_replaces.Add("cigarette_filter".GetHashCode(), new ModelData
+            {
+                path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Filter",
+                mesh = Globals.LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_filter.obj"),
+                texture = cig_texture
+            });
+
+            models_replaces.Add("cigarette_shaft".GetHashCode(), new ModelData
+            {
+                path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft",
+                mesh = Globals.LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
+                texture = cig_texture
+            });
+
+            // Load death sound
+            AudioSource src = GameObject.Find("Systems").AddComponent<AudioSource>();
+            src.clip = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/heart_stop.wav");
+            src.loop = false;
+            src.volume = 1.75f;
+            src.priority = 0;
+            SoundManager.DeathSound = src;
+
+            // load screenshots for indicate a pills position in letter
+            LoadAllScreens(_bundle);
+        }
+
+        static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
         {
             try
             {
@@ -228,7 +375,8 @@ namespace Psycho
                 if (asset == null) throw new NullReferenceException();
                 return asset;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 ModConsole.Error($"Unable to load asset {path} from embedded resource;\n{e.GetFullMessage()}");
             }
             return null;
