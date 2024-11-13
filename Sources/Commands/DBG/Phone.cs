@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿#if DEBUG
+using MSCLoader;
 using UnityEngine;
 
 using Psycho.Screamers;
@@ -16,3 +17,4 @@ namespace Psycho.Commands
             => GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Logic").GetComponent<PhoneRing>().enabled = true;
     }
 }
+#endif

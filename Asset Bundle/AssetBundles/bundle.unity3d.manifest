@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3676470290
+CRC: 3178247675
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c5bfdaec935795a64e84ec1ba300abad
+    Hash: c5f1c5271afde5fc4cb7c60210b3e8b6
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5df2726dc7e915492e5fb50c12be224a
@@ -147,6 +147,7 @@ Assets:
 - Assets/Prefabs/Background.prefab
 - Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
+- Assets/Prefabs/FernFlower.prefab
 - Assets/Replaces/Horror/tiles.png
 - Assets/Replaces/Horror/fabric10.png
 - Assets/Replaces/Horror/paint1.png
@@ -197,6 +198,7 @@ Assets:
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
 - Assets/Replaces/Horror/ATLAS_BUILDINGS.png
+- Assets/Prefabs/Candle.fbx
 - Assets/Replaces/Horror/kitchentaso.png
 - Assets/Replaces/Horror/wood_panel4.png
 - Assets/Replaces/Horror/moose.png

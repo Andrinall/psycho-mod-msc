@@ -13,6 +13,7 @@ using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
 using Psycho.Extensions;
+using Psycho.Sources.Objects;
 
 
 namespace Psycho
@@ -169,6 +170,7 @@ namespace Psycho
 
             AddComponent<FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter
+            AddComponent<AnyPentaItemsSpawner>("PLAYER");
 
             // add door callbacks for disable night screamer sounds
             WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", _ => {

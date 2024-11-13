@@ -8,6 +8,7 @@ using UnityEngine;
 using Psycho.Objects;
 using Psycho.Internal;
 using Psycho.Screamers;
+using Psycho.Handlers;
 
 
 namespace Psycho
@@ -55,11 +56,12 @@ namespace Psycho
         public static List<Texture> pictures { get; private set; } = new List<Texture> { };
 
         public static GameObject Pentagram_prefab = null;
+        public static GameObject Candle_prefab = null;
         public static GameObject FernFlower_prefab = null;
-        public static GameObject Walnut_prefab = null;
         public static GameObject Nut_prefab = null;
         public static GameObject BlackEgg_prefab = null;
         public static GameObject Mushroom_prefab = null;
+        public static GameObject Walnut_prefab = null;
 
         public static GameObject Background_prefab = null;
         public static GameObject Pills_prefab = null;
@@ -245,6 +247,7 @@ namespace Psycho
 
             // load resources from bundle
             Pills_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/pills.prefab");
+            Candle_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/candle.fbx");
             FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
             Walnut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/walnut.prefab");
             Nut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/nut.prefab");
@@ -260,8 +263,10 @@ namespace Psycho
             PhantomScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
             TVScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
             UncleScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
-            
-            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab")).AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
+
+            GameObject penta = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab"));
+            penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
+            penta.AddComponent<PentagramEvents>();
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
 

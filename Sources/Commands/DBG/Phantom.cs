@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿#if DEBUG
+using MSCLoader;
 using Psycho.Internal;
 
 namespace Psycho.Commands
@@ -21,3 +22,4 @@ namespace Psycho.Commands
         }
     }
 }
+#endif

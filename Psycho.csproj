@@ -102,8 +102,10 @@
     <Compile Include="Sources\Commands\DBG\TVTexChange.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Handlers\ItemsGravityEnabler.cs" />
+    <Compile Include="Sources\Handlers\PentagramEvents.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
     <Compile Include="Sources\Locales.cs" />
+    <Compile Include="Sources\Objects\AnyPentaItemsSpawner.cs" />
     <Compile Include="Sources\Objects\FernFlowerSpawner.cs" />
     <Compile Include="Sources\Objects\Pentagram.cs" />
     <Compile Include="Sources\Screamers\BathroomShower.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Sources\Screamers\TVScreamer.cs" />
     <Compile Include="Sources\Utils\CatchedComponent.cs" />
     <Compile Include="Sources\Utils\Extensions.cs" />
+    <Compile Include="Sources\Utils\ItemsCloner.cs" />
     <Compile Include="Sources\Utils\SaveManager.cs" />
     <Compile Include="Sources\Utils\SoundManager.cs" />
     <Compile Include="Sources\Utils\FliesChanger.cs" />

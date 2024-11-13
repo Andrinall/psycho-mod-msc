@@ -6,6 +6,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Objects;
+using Psycho.Extensions;
 
 
 namespace Psycho.Internal
@@ -196,6 +197,13 @@ namespace Psycho.Internal
 
             fpsCamera.localPosition = origs[0];
             fpsCamera.localEulerAngles = origs[1];
+        }
+
+        internal static GameObject FindPrefab(string name)
+        {
+            return Resources.FindObjectsOfTypeAll<Transform>()
+                .First(v => v.IsPrefab() && v?.gameObject?.name == name)
+                ?.gameObject ?? null;
         }
 
         static string _getColor(eConsoleColors color)

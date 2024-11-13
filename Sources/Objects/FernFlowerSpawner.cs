@@ -44,19 +44,23 @@ namespace Psycho.Objects
         internal bool AnyFlowerIsSpawned()
             => Flowers.Any(v => v.activeSelf);
 
-        internal void SpawnRandomFlower(bool byCmd = false)
+        internal void SpawnRandomFlower(
+#if DEBUG
+            bool byCmd = false
+#endif
+        )
         {
             GameObject point = Flowers[Random.Range(0, Flowers.Count)];
+#if DEBUG
             if (byCmd && point.activeSelf) return;
+#endif
 
-            GameObject flower = GameObject.Instantiate( Globals.Walnut_prefab /*Globals.FernFlower_prefab*/ );
+            GameObject flower = GameObject.Instantiate(Globals.FernFlower_prefab);
             flower.transform.SetParent(point.transform, worldPositionStays: false);
             flower.transform.localPosition = Vector3.zero;
-            flower.transform.localEulerAngles = Vector3.zero;
+            flower.transform.localScale = new Vector3(.5f, .5f, .5f);
             flower.AddComponent<ItemsGravityEnabler>();
             flower.MakePickable();
-
-            if (byCmd) flower.name = "flower(cmd)";
 
             point.SetActive(true);
         }
@@ -68,9 +72,10 @@ namespace Psycho.Objects
                 if (!v.activeSelf || v.transform.childCount == 0) goto setActive;
 
                 GameObject child = v.transform.GetChild(0).gameObject;
-                if (child.name == "flower(cmd)") return;
-
-                Object.Destroy(child);
+#if DEBUG
+                if (child.name.Contains("(cmd)")) return;
+#endif
+                Destroy(child);
                 
             setActive:
                 v.SetActive(false);

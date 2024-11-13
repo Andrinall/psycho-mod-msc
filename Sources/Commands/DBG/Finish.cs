@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿#if DEBUG
+using MSCLoader;
 
 namespace Psycho.Commands
 {
@@ -12,3 +13,4 @@ namespace Psycho.Commands
             => Logic.FinishShizGame();
     }
 }
+#endif

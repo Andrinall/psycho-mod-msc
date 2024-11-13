@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
@@ -7,6 +9,9 @@ using HutongGames.PlayMaker;
 using Psycho.Internal;
 using Psycho.Handlers;
 using Psycho.Extensions;
+
+using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 
 namespace Psycho.Objects
@@ -29,31 +34,30 @@ namespace Psycho.Objects
             { "Very bad", 0.2f }
         };
 
-        Dictionary<string, string[]> InnerEvents = new Dictionary<string, string[]>
+        public Dictionary<string, string[]> InnerEvents = new Dictionary<string, string[]>
         {
             ["Very good"] = new string[]
-            { "money", "fuel", "beer", "battery" },
-            
+            { "money", "fuel", "beercase", "battery" },
+
             ["Good"] = new string[]
-            { "fuses", "sparks", "coolant", "oil", "brakeoil", "coffee" },
-            
+            { "fusesbox", "sparksbox", "coolant", "motoroil", "brakefluid", "coffee" },
+
             ["Normal"] = new string[]
-            { "drunk", "sausages", "lamp(satsuma)", "macaronbox", "chips", "sugar", "cigarettes" },
+            { "booze", "sausages", "lightbulb", "macaronbox", "chips", "sugar", "cigarettes" },
 
             ["Bad"] = new string[]
             { "spirit", "spoil", "hangover", "fatigue", "hunger", "blowfuses" },
 
             ["Very bad"] = new string[]
-            { "knockout", "bursttire", "outoffuel", "blindless" }
+            { "knockout", "bursttires", "outoffuel", "blindless" }
         };
         
-        string[] recipe = new string[5]
-        { "candle", "flower", "amanita", "egg", "nut" };
-
+        string[] recipe = new string[5] { "candle", "fernflower", "mushroom", "blackegg", "walnut" };
 
         FsmFloat SUN_hours;
         FsmFloat SUN_minutes;
         bool LightsEnabled = false;
+
 
         internal override void Awaked()
         {
@@ -63,7 +67,7 @@ namespace Psycho.Objects
 
             Transform _triggers = transform.Find("Triggers");
             for (int i = 0; i < _triggers.childCount; i++)
-                _triggers.GetChild(i).GetComponent<PentaTrigger>();
+                Triggers.Add(_triggers.GetChild(i).gameObject.AddComponent<PentaTrigger>());
 
             GameObject _fireParticle = GameObject.Find("ITEMS/lantern(itemx)/light/particle");
             for (int i = 0; i < Candles.childCount; i++)
@@ -98,8 +102,10 @@ namespace Psycho.Objects
                 SetCandlesFireActive(true);
             else if (LightsEnabled && SUN_hours.Value > 4 && SUN_hours.Value < 19)
                 SetCandlesFireActive(false);
-        }
 
+            if (!CheckItems()) return;
+            SpawnRandomEvent();
+        }
 
 
         public void SetCandlesFireActive(bool state)
@@ -113,29 +119,35 @@ namespace Psycho.Objects
 
         public bool GetCandlesFireActive() => LightsEnabled;
 
-        bool _checkItems()
+        public bool CheckItems()
         {
-            for (int i = 0; i < Triggers.Count; i++)
-            {
-                PentaTrigger trigger = Triggers[i];
-                
-                if (!trigger.IsItemIn) return false;
-                if (!trigger.Item.name.Contains(recipe[i])) return false;
-            }
-
-            return true;
+            return Triggers.All(v =>
+                v.IsItemIn
+                && v.Item != null
+                && recipe.Contains(v.Item.name.Replace("(Clone)", "").ToLower())
+                && !Triggers.Any(r => r.Item == v.Item)
+            );
         }
 
-        string _randomEvent()
-            => Events.RandomElementByWeight(_weightSelector).Key;
-
-        string _randomInnerEvent()
+        void SpawnRandomEvent()
         {
-            string _event = _randomEvent();
-            string[] _inner = InnerEvents[_event];
-            return _inner[Random.Range(0, _inner.Length)];
+            Utils.PrintDebug("all penta items in trigger");
+            string _mainEvent = Events.RandomElementByWeight(_weightSelector).Key;
+            string[] _innerEvents = InnerEvents[_mainEvent];
+            string _innerEvent = _innerEvents[Random.Range(0, _innerEvents.Length)];
+            
+            GetComponent<PentagramEvents>().Activate(_innerEvent);
         }
 
-        float _weightSelector(KeyValuePair<string, float> t) => t.Value;
+        public void DestroyItems()
+        {
+            Triggers.ForEach(v => {
+                Destroy(v.Item);
+                v.Item = null;
+                v.IsItemIn = false;
+            });
+        }
+
+        static float _weightSelector(KeyValuePair<string, float> t) => t.Value;
     }
 }

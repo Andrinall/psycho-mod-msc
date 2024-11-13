@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿#if DEBUG
+using MSCLoader;
 
 using Psycho.Screamers;
 using UnityEngine;
@@ -20,3 +21,4 @@ namespace Psycho.Commands
         }
 	}
 }
+#endif
