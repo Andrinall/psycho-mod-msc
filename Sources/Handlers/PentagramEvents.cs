@@ -14,7 +14,6 @@ using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
 
-
 namespace Psycho.Handlers
 {
     internal sealed class PentagramEvents : CatchedComponent
@@ -23,27 +22,31 @@ namespace Psycho.Handlers
         public bool IsEventFinished = true;
 
         Pentagram penta;
-        Vector3 itemSpawnPos;
+        Vector3 itemSpawnPos, GrandmaSoundOrigPos;
 
-        FsmFloat PlayerFatigue, PlayerHunger, BlindIntensity;
-        GameObject Fire, MoneyObj, FPSCamera;
-        Transform Fusetable;
+        AudioSource GrandmaSound;
+        GameObject Fire, MoneyObj, FPSCamera, Grandma;
+        Transform Fusetable, Player;
 
         PlayMakerFSM Blindless, Hangover, Knockout;
+        FsmFloat PlayerFatigue, PlayerHunger, PlayerThirst, BlindIntensity;
 
         Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
+        List<FsmFloat> fuellevels = new List<FsmFloat>();
 
 
         internal override void Awaked()
         {
+            penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
 
-            penta = GetComponent<Pentagram>();
+            Player = GameObject.Find("PLAYER").transform;
             PlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
             PlayerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
+            PlayerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
             FPSCamera = Utils.GetGlobalVariable<FsmGameObject>("POV").Value;
             
-            Blindless = FPSCamera.GetPlayMaker("Blindless");
+            Blindless = FPSCamera.GetPlayMaker("Blindness");
             BlindIntensity = Blindless.GetVariable<FsmFloat>("Intensity");
 
             Hangover = FPSCamera.GetPlayMaker("Hangover");
@@ -53,12 +56,35 @@ namespace Psycho.Handlers
 
             Fusetable = GameObject.Find("YARD/Building/Dynamics/FuseTable/Fusetable").transform;
 
+            Grandma = GameObject.Instantiate(GameObject.Find("ChurchGrandma/GrannyHiker/Char"));
+            Grandma.name = "PentaGrannyChar";
+
+            Transform temp = Grandma.transform;
+            temp.SetParent(transform, worldPositionStays: false);
+            temp.localPosition = new Vector3(0, 0.7f, 0);
+            temp.localEulerAngles = new Vector3(0, -166.109f, 0);
+            temp.localScale = new Vector3(3.603494f, 1.028313f, 3.999587f);
+
+            Destroy(temp.Find("RagDollCar").gameObject);
+            Destroy(temp.Find("HeadTarget").gameObject);
+            Destroy(temp.Find("HumanTriggerCrime").gameObject);
+            Grandma.SetActive(false);
+
+            GrandmaSound = GameObject.Find("MasterAudio/Mummo/mummo_angry2").GetComponent<AudioSource>();
+            GrandmaSoundOrigPos = GrandmaSound.transform.position;
+
+            // "SATSUMA(557kg, 248)/CarSimulation/Engine/Fuel"
+            fuellevels.Add(_getFuelLevel("Database/DatabaseMechanics/FuelTank")); // satsuma
+            fuellevels.Add(_getFuelLevel("FERNDALE(1630kg)/FuelTank")); // ferndale
+            fuellevels.Add(_getFuelLevel("HAYOSIKO(1500kg, 250)/FuelTank")); // hayosiko
+            fuellevels.Add(_getFuelLevel("GIFU(750/450psi)/FuelTank")); // gifu
+            fuellevels.Add(_getFuelLevel("RCO_RUSCKO12(270)/FuelTank")); // ruscko
+
             Fire = GameObject.Instantiate(
                 Resources.FindObjectsOfTypeAll<GameObject>()
                     .First(v=>v.name=="garbage barrel(itemx)")?.transform
                     ?.Find("Fire")?.gameObject
             );
-            Utils.PrintDebug($"FIRE {Fire}");
 
             Fire.transform.SetParent(transform, worldPositionStays: false);
             Fire.transform.position = itemSpawnPos; //transform.position;
@@ -72,7 +98,6 @@ namespace Psycho.Handlers
             MoneyObj =
                 GameObject.Find("MISC/holiday present(Clon2)/Parts/Money")
                 ?? list.First(v => v != null && v?.gameObject?.name == "Money" && v?.parent == null)?.gameObject;
-            Utils.PrintDebug($"MoneyObj {MoneyObj}");
 
             objects.Add("beercase", _findPrefab(list, "beer case"));
             //objects.Add("battery", list.FirstOrDefault(v => v != null && v?.IsPrefab() == true && v?.name == "battety" && v?.GetComponent<PlayMakerFSM>() == null)?.gameObject);
@@ -94,7 +119,6 @@ namespace Psycho.Handlers
 
             objects.Any(v =>
             {
-                Utils.PrintDebug($"{v}; {v.Key} ; {v.Value}");
                 bool res = v.Value == null;
                 if (res) Utils.PrintDebug(eConsoleColors.RED, $"{v.Key} in objects is null");
                 return res;
@@ -107,34 +131,29 @@ namespace Psycho.Handlers
             Utils.PrintDebug("Activate called");
             if (IsEventCalled || !IsEventFinished) return;
             if (string.IsNullOrEmpty(_event)) return;
-            Utils.PrintDebug("pass three checks");
             if (!penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
-            Utils.PrintDebug("event in inner events");
 
             IsEventCalled = true;
             IsEventFinished = false;
+            Utils.PrintDebug("_processEvents called");
             _processEvents(_event);
         }
 
         GameObject _findPrefab(List<Transform> list, string find)
-        {
-            Utils.PrintDebug($"_findPrefab find {find}");
-            GameObject go = list.First(v => v != null && v?.IsPrefab() == true && v?.name == find)?.gameObject ?? null;
-            Utils.PrintDebug($"_findPrefab go {go}");
-            return go;
-        }
+            => list.First(v => v != null && v?.IsPrefab() == true && v?.name == find)?.gameObject ?? null;
 
         void _finishEvent()
         {
+            Utils.PrintDebug("_finishEvent called");
             IsEventCalled = false;
             IsEventFinished = true;
         }
 
         void _abortEvent()
         {
+            Utils.PrintDebug("_abortEvent called");
             _playSound("aborted");
             _finishEvent();
-            Utils.PrintDebug("_abortEvent called");
         }
 
         void _playSound(string soundcase = "item")
@@ -147,7 +166,25 @@ namespace Psycho.Handlers
                 case "saatana":
                     break;
 
+                case "nausea":
+                    break;
+
                 case "belching":
+                    break;
+                
+                case "jokkeangry":
+                    break;
+
+                case "accelerate":
+                    break;
+
+                case "removal":
+                    break;
+
+                case "thunder":
+                    break;
+
+                case "yawning":
                     break;
 
                 case "aborted":
@@ -157,13 +194,12 @@ namespace Psycho.Handlers
 
         void _destroyItems()
         {
-            penta.DestroyItems();
             Utils.PrintDebug("_destroyItems called");
+            penta.DestroyItems();
         }
 
         void _processEvents(string _event)
         {
-            Utils.PrintDebug("_processEvents called");
             switch (_event)
             {
                 case "money":
@@ -184,28 +220,34 @@ namespace Psycho.Handlers
                         state.SaveActions();
 
                         MoneyObj.SetActive(true);
-                    });
+                    }, "cash");
                     return; // ▼ "spawn letter "RANDOM GIFT MONEY""
 
                 case "fuel":
-                    throw new NotImplementedException($"Event {_event} are not implemented");
+                    _startEvent(() => fuellevels.ForEach(v => v.Value = 300f), "accelerate");
+                    return; // ▼ "fill all fuel tanks"
 
                 case "spoil":
-                    /*_startEvent(() =>
+                    _startGrannyEvent(() =>
                     {
                         // spoil all products
-                    },
-                    null, // grandma monolog audio source
-                    (b) =>
-                    {
-                        if (b)
+                        List<PlayMakerFSM> list = Resources.FindObjectsOfTypeAll<PlayMakerFSM>()
+                            .Where(v =>
+                                v.FsmName == "Use"
+                                && v.gameObject.name.Contains("(itemx)")
+                                && v.FsmEvents.Any(ev => ev.Name == "BAD")
+                            )
+                            .ToList();
+
+                        list.ForEach(item =>
                         {
-                            // move church grandma to penta & activate
-                            return;
-                        }
-                        // reset church grandma position
-                    });*/
-                    throw new NotImplementedException($"Event {_event} are not implemented");
+                            Utils.PrintDebug(eConsoleColors.YELLOW, $"{item.gameObject.name} spoiled");
+                            item.GetVariable<FsmFloat>("Condition").Value = .5f;
+                            item.SendEvent("UPDATE");
+                            item.SendEvent("BAD");
+                        });
+                    });
+                    return; // ▼ "spoil all products"
 
                 case "hangover":
                     _startEvent(() =>
@@ -214,17 +256,18 @@ namespace Psycho.Handlers
                         Hangover.GetVariable<FsmFloat>("HangoverStrenghtMinus").Value = -2;
                         Hangover.GetVariable<FsmFloat>("TimeLeft").Value = 10;
                         Hangover.SendEvent("HANGOVER");
-
-                        _playSound("saaatana");
-                    });
+                    }, "saaatana");
                     return; // ▼ "activate hangover"
 
                 case "fatigue":
-                    _startEvent(() => PlayerFatigue.Value = 110f);
+                    _startEvent(() => PlayerFatigue.Value = 110f, "yawning");
                     return; // ▼ "set fatigue to 100"
 
                 case "hunger":
-                    _startEvent(() => PlayerHunger.Value = 110f);
+                    _startEvent(() => {
+                        PlayerHunger.Value = 101f;
+                        PlayerThirst.Value = 101f;
+                    }, "nausea");
                     return; // ▼ "set hunger to 100"
 
                 case "blowfuses":
@@ -240,14 +283,19 @@ namespace Psycho.Handlers
                     return; // ▼ "blow ALL fuses"
 
                 case "knockout":
-                    //_startEvent(() => Knockout.SendEvent("GLOBALEVENT"));
-                    return; // ▼ "knockout player"
+                    _startEvent(() =>
+                    {
+
+                    });
+                    return;
 
                 case "bursttires":
+                    _startEvent(() => { }, "jokkeangry");
                     throw new NotImplementedException($"Event {_event} are not implemented");
 
                 case "outoffuel":
-                    throw new NotImplementedException($"Event {_event} are not implemented");
+                    _startEvent(() => fuellevels.ForEach(v => v.Value = 0f), "removal");
+                    return; // ▼ "empty all fuel tanks"
 
                 case "blindless":
                     _startEvent(() =>
@@ -268,8 +316,9 @@ namespace Psycho.Handlers
             }
         }
 
-        void _startEvent(Action func)
-            => StartCoroutine(_eventCoroutine(func));
+        void _startEvent(Action func, string sound = "") => StartCoroutine(_eventCoroutine(func, sound));
+
+        void _startGrannyEvent(Action func) => StartCoroutine(_eventGrannyCoroutine(func));
 
         void _cloneItemFromPrefab(string item)
         {
@@ -287,19 +336,17 @@ namespace Psycho.Handlers
             );
 
             Utils.PrintDebug($"_spawnItem cloned item {cloned}");
-            _playSound("cash");
-            Utils.PrintDebug("_spawnItem sound played");
         }
+
+        FsmFloat _getFuelLevel(string path)
+            => GameObject.Find(path).GetPlayMaker("Data").GetVariable<FsmFloat>("FuelLevel");
 
         IEnumerator _playFireAnimation(Action onFinish)
         {
-            Utils.PrintDebug($"_playFireAnimation start enumerator {Time.time}");
-            Fire.SetActive(true);
-            Utils.PrintDebug($"_playFireAnimation fire activated {Time.time}");
+            Utils.PrintDebug($"_playFireAnimation called");
+            
+            Fire.SetActive(true);            
             yield return new WaitForSeconds(2f);
-
-            Utils.PrintDebug($"_playFireAnimation wait for 2 seconds {Time.time}");
-
             /*if (!penta.CheckItems())
             {
                 Utils.PrintDebug("_playFireAnimation any items does not match the prescription");
@@ -307,47 +354,39 @@ namespace Psycho.Handlers
                 Fire.SetActive(false);
                 yield break;
             }*/
-
             onFinish?.Invoke();
             yield return new WaitForSeconds(2f);
-            Utils.PrintDebug($"_playFireAnimation wait for 2 seconds {Time.time}");
             Fire.SetActive(false);
-            Utils.PrintDebug($"_playFireAnimation fire deactivated {Time.time}");
         }
 
-        IEnumerator _eventCoroutine(Action _action, AudioSource audio = null, Action<bool> _audioAction = null)
+        IEnumerator _eventGrannyCoroutine(Action _action)
         {
-            Utils.PrintDebug($"_eventCoroutine started {Time.time}");
-            yield return StartCoroutine(_playFireAnimation(_destroyItems));
-            Utils.PrintDebug($"_eventCoroutine fire animation played {Time.time}");
-
-            if (_audioAction != null)
-            {
-                Utils.PrintDebug($"_eventCoroutine audio action call first {Time.time}");
-                _audioAction?.Invoke(true);
-            }
-
+            Utils.PrintDebug("_eventGrannyCoroutine called");
+            Fire.SetActive(true);
+            Grandma.SetActive(true);
+            GrandmaSound.transform.position = transform.position;
+            GrandmaSound.Play();
             _action?.Invoke();
 
-            if (audio != null)
-            {
-                Utils.PrintDebug($"_eventCoroutine play audio source {Time.time}");
-                audio.Play();
-                while (audio.isPlaying)
-                    yield return new WaitForSeconds(.5f);
+            while (GrandmaSound.isPlaying)
+                yield return new WaitForSeconds(.1f);
+            
+            GrandmaSound.transform.position = GrandmaSoundOrigPos;
+            Grandma.SetActive(false);
+            Fire.SetActive(false);
+            _finishEvent();
+        }
 
-                Utils.PrintDebug($"_eventCoroutine audio source finish playing {Time.time}");
-            }
-
-            if (_audioAction != null)
-            {
-                Utils.PrintDebug($"_eventCoroutine audio action call second {Time.time}");
-                _audioAction?.Invoke(false);
-            }
+        IEnumerator _eventCoroutine(Action _action, string sound = "")
+        {
+            Utils.PrintDebug("_eventCoroutine called");
+            yield return StartCoroutine(_playFireAnimation(_destroyItems));
+            _action?.Invoke();
+            
+            if (!string.IsNullOrEmpty(sound))
+                _playSound(sound);
 
             _finishEvent();
-            Utils.PrintDebug($"_spawnItem event finished {Time.time}");
-            yield break;
         }
     }
 }
