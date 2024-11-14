@@ -86,16 +86,6 @@ namespace Psycho.Objects
             SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
         }
 
-        internal override void Enabled()
-        {
-            
-        }
-
-        internal override void Disabled()
-        {
-            
-        }
-
         internal override void OnFixedUpdate()
         {
             if (!LightsEnabled && SUN_hours.Value > 18 || SUN_hours.Value < 5)

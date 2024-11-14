@@ -267,6 +267,7 @@ namespace Psycho
             GameObject penta = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab"));
             penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
             penta.AddComponent<PentagramEvents>();
+
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
 

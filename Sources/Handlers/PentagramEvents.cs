@@ -28,7 +28,7 @@ namespace Psycho.Handlers
         GameObject Fire, MoneyObj, FPSCamera, Grandma;
         Transform Fusetable, Player;
 
-        PlayMakerFSM Blindless, Hangover, Knockout;
+        PlayMakerFSM Blindless, HangoverCamera, Knockout;
         FsmFloat PlayerFatigue, PlayerHunger, PlayerThirst, BlindIntensity;
 
         Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
@@ -40,7 +40,8 @@ namespace Psycho.Handlers
             penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
 
-            Player = GameObject.Find("PLAYER").transform;
+            GameObject PLAYER = GameObject.Find("PLAYER");
+            Player = PLAYER.transform;
             PlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
             PlayerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
             PlayerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
@@ -49,8 +50,10 @@ namespace Psycho.Handlers
             Blindless = FPSCamera.GetPlayMaker("Blindness");
             BlindIntensity = Blindless.GetVariable<FsmFloat>("Intensity");
 
-            Hangover = FPSCamera.GetPlayMaker("Hangover");
-            Hangover.AddGlobalTransition("HANGOVER", "Shake");
+            HangoverCamera = FPSCamera.GetPlayMaker("Hangover");
+            HangoverCamera.Fsm.InitData();
+            HangoverCamera.AddEvent("PENTAEVENT");
+            HangoverCamera.AddGlobalTransition("PENTAEVENT", "Shake");
 
             Knockout = GameObject.Find("Systems/KnockOut").GetComponent<PlayMakerFSM>();
 
@@ -115,7 +118,6 @@ namespace Psycho.Handlers
             objects.Add("sugar", _findPrefab(list, "sugar"));
             objects.Add("cigarettes", _findPrefab(list, "cigarettes0"));
             //objects.Add("spirit", _findPrefab(list, "spirit")); // ??!
-            Utils.PrintDebug("objects assigned");
 
             objects.Any(v =>
             {
@@ -252,10 +254,10 @@ namespace Psycho.Handlers
                 case "hangover":
                     _startEvent(() =>
                     {
-                        Hangover.GetVariable<FsmFloat>("HangoverStrenght").Value = 2;
-                        Hangover.GetVariable<FsmFloat>("HangoverStrenghtMinus").Value = -2;
-                        Hangover.GetVariable<FsmFloat>("TimeLeft").Value = 10;
-                        Hangover.SendEvent("HANGOVER");
+                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenght").Value = 2;
+                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenghtMinus").Value = -2;
+                        HangoverCamera.GetVariable<FsmFloat>("TimeLeft").Value = 10;
+                        HangoverCamera.SendEvent("PENTAEVENT");
                     }, "saaatana");
                     return; // ▼ "activate hangover"
 
@@ -279,15 +281,12 @@ namespace Psycho.Handlers
                             if (fusePivot.childCount == 0) continue;
                             fusePivot.GetChild(0).GetPlayMaker("Use").SendEvent("BLOWFUSE");
                         }
-                    });
+                    }, "thunder");
                     return; // ▼ "blow ALL fuses"
 
                 case "knockout":
-                    _startEvent(() =>
-                    {
-
-                    });
-                    return;
+                    _startEvent(() => Knockout.CallGlobalTransition("GLOBALEVENT"));
+                    return; // ▼ "knockout player like a by Jani hit"
 
                 case "bursttires":
                     _startEvent(() => { }, "jokkeangry");

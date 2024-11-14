@@ -89,17 +89,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
-    <Compile Include="Sources\Commands\DBG\Ferns.cs" />
     <Compile Include="Sources\Commands\DBG\Finish.cs" />
     <Compile Include="Sources\Commands\DBG\Kill.cs" />
-    <Compile Include="Sources\Commands\DBG\KitchenTap.cs" />
     <Compile Include="Sources\Commands\DBG\Penta.cs" />
-    <Compile Include="Sources\Commands\DBG\Phantom.cs" />
-    <Compile Include="Sources\Commands\DBG\Phone.cs" />
     <Compile Include="Sources\Commands\DBG\Scream.cs" />
-    <Compile Include="Sources\Commands\DBG\Shower.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
-    <Compile Include="Sources\Commands\DBG\TVTexChange.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Handlers\ItemsGravityEnabler.cs" />
     <Compile Include="Sources\Handlers\PentagramEvents.cs" />

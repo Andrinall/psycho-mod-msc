@@ -22,8 +22,8 @@ namespace Psycho.Handlers
 
             transform.ClearActions("Activate", "Calc rates", 6);
             StateHook.Inject(gameObject,
-                "Activate", "Calc rates", -1,
-                _ => m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)
+                "Activate", "Calc rates", -1, _ =>
+                    m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)
             );
 
             m_bInstalled = true;
