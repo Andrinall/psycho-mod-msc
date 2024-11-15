@@ -5,7 +5,7 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Objects;
+using Psycho.Features;
 using Psycho.Extensions;
 
 

@@ -7,13 +7,12 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
-using Psycho.Objects;
+using Psycho.Features;
 using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
 using Psycho.Extensions;
-using Psycho.Sources.Objects;
 
 
 namespace Psycho

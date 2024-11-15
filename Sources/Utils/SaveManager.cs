@@ -5,7 +5,7 @@ using System.Linq;
 using MSCLoader;
 using UnityEngine;
 
-using Psycho.Objects;
+using Psycho.Features;
 using Object = UnityEngine.Object;
 
 

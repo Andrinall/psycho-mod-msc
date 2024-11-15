@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3178247675
+CRC: 2896232603
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: c5f1c5271afde5fc4cb7c60210b3e8b6
+    Hash: a871448a02e78526e1f04833abc30ded
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5df2726dc7e915492e5fb50c12be224a
+    Hash: 14fe3923bd680560f09763060c872a51
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -36,6 +36,10 @@ ClassTypes:
 - Class: 83
   Script: {instanceID: 0}
 - Class: 108
+  Script: {instanceID: 0}
+- Class: 135
+  Script: {instanceID: 0}
+- Class: 136
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -90,6 +94,7 @@ Assets:
 - Assets/Screens/7.png
 - Assets/Replaces/Horror/water_plant.png
 - Assets/Prefabs/CrowsList.prefab
+- Assets/Prefabs/rooster_poster.prefab
 - Assets/Replaces/Horror/fabric21.png
 - Assets/Screens/19.png
 - Assets/Audio/screamcall.wav
@@ -127,6 +132,7 @@ Assets:
 - Assets/Replaces/Horror/wood5.png
 - Assets/Screens/28.png
 - Assets/Screens/8.png
+- Assets/Textures/rooster1.png
 - Assets/Prefabs/Mushroom.prefab
 - Assets/Screens/31.png
 - Assets/Screens/14.png
@@ -240,6 +246,7 @@ Assets:
 - Assets/Audio/screamers/kitchen_water.mp3
 - Assets/Replaces/Horror/wood7.png
 - Assets/Replaces/Smoking/cigarette_shaft.obj
+- Assets/Textures/rooster0.png
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png

@@ -5,10 +5,9 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 
-using Psycho.Objects;
+using Psycho.Features;
 using Psycho.Internal;
 using Psycho.Screamers;
-using Psycho.Handlers;
 
 
 namespace Psycho
@@ -268,6 +267,7 @@ namespace Psycho
             penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
             penta.AddComponent<PentagramEvents>();
 
+            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/rooster_poster.prefab")).AddComponent<AngryRoosterPoster>();
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
             GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
 
