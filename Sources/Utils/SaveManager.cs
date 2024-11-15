@@ -7,6 +7,7 @@ using UnityEngine;
 
 using Psycho.Features;
 using Object = UnityEngine.Object;
+using Psycho.Extensions;
 
 
 namespace Psycho.Internal
@@ -29,21 +30,10 @@ namespace Psycho.Internal
                 Logic.envelopeSpawned = BitConverter.ToBoolean(value, 2);
                 Logic.SetValue(BitConverter.ToSingle(value, 3));
                 Logic.SetPoints(BitConverter.ToSingle(value, 7));
+                GameObject.Find("rooster_poster(Clone)")
+                    .GetComponent<AngryRoosterPoster>().Applyed = BitConverter.ToBoolean(value, 11);
 
-                Vector3 picture_pos = new Vector3(
-                    BitConverter.ToSingle(value, 11),
-                    BitConverter.ToSingle(value, 15),
-                    BitConverter.ToSingle(value, 19)
-                );
-
-                Vector3 picture_rot = new Vector3(
-                    BitConverter.ToSingle(value, 23),
-                    BitConverter.ToSingle(value, 27),
-                    BitConverter.ToSingle(value, 31)
-                );
-
-                // spawn picture frame & set saved position
-                (Object.Instantiate(Globals.Picture_prefab, picture_pos, Quaternion.Euler(picture_rot)) as GameObject).MakePickable();
+                Globals.LoadPool(value, 48);
 
                 Utils.PrintDebug($"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
                 if (Logic.isDead)
@@ -58,7 +48,7 @@ namespace Psycho.Internal
 
                 // spawn pills in needed
                 PillsItem item = new PillsItem(0);
-                item.ReadData(ref value, 35);
+                item.ReadData(ref value, 12);
                 item.self.SetActive(Logic.inHorror);
                 Globals.pills_list.Add(item);
 
@@ -74,10 +64,10 @@ namespace Psycho.Internal
 
                 if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
                 {
-                    (Object.Instantiate(Globals.Picture_prefab,
+                    Globals.AddPentaItem(Globals.Picture_prefab,
                         new Vector3(-10.1421f, 0.2857685f, 6.501729f),
-                        Quaternion.Euler(new Vector3(0.01392611f, 2.436693f, 89.99937f))
-                    ) as GameObject).MakePickable();
+                        new Vector3(0.01392611f, 2.436693f, 89.99937f)
+                    );
                 }
             }
         }
@@ -85,20 +75,17 @@ namespace Psycho.Internal
         internal static void SaveData()
         {
             // save data
-            byte[] array = new byte[11 + 24]; // values bytes + item bytes
+            byte[] array = new byte[80 + (Globals.penta_pool.Count * 90)];
+            // [(values + picture + pills + empty space) + (penta pool len * penta pool alloc)]
+
             BitConverter.GetBytes(Logic.isDead).CopyTo(array, 0); // 1
             BitConverter.GetBytes(Logic.inHorror).CopyTo(array, 1); // 1
             BitConverter.GetBytes(Logic.envelopeSpawned).CopyTo(array, 2); // 1
             BitConverter.GetBytes(Logic.Value).CopyTo(array, 3); // 4
             BitConverter.GetBytes(Logic.Points).CopyTo(array, 7); // 4
+            BitConverter.GetBytes(GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>().Applyed).CopyTo(array, 11);
 
-            Transform picture = GameObject.Find("Picture(Clone)")?.transform;
-            BitConverter.GetBytes(picture.position.x).CopyTo(array, 11);
-            BitConverter.GetBytes(picture.position.y).CopyTo(array, 15);
-            BitConverter.GetBytes(picture.position.z).CopyTo(array, 19);
-            BitConverter.GetBytes(picture.eulerAngles.x).CopyTo(array, 23);
-            BitConverter.GetBytes(picture.eulerAngles.x).CopyTo(array, 27);
-            BitConverter.GetBytes(picture.eulerAngles.x).CopyTo(array, 31);
+            Globals.SavePool(ref array, 48);
 
             if (!Logic.inHorror || Logic.envelopeSpawned)
             {
@@ -106,7 +93,7 @@ namespace Psycho.Internal
                 return;
             }
 
-            Globals.pills_list.ElementAtOrDefault(0)?.WriteData(ref array, 35);
+            Globals.pills_list.ElementAtOrDefault(0)?.WriteData(ref array, 12);
             File.WriteAllBytes(_saveDataPath, array);
         }
 

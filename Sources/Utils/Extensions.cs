@@ -120,8 +120,56 @@ namespace Psycho.Extensions
 
             return default(T);
         }
+        
+        public static void CopyBytes(this Vector3 self, ref byte[] array, ref int offset)
+        {
+            BitConverter.GetBytes(self.x).CopyTo(array, offset);
+            BitConverter.GetBytes(self.y).CopyTo(array, offset + 4);
+            BitConverter.GetBytes(self.z).CopyTo(array, offset + 8);
+            offset += 12;
+        }
+
+        public static Vector3 GetFromBytes(this Vector3 self, byte[] array, ref int offset)
+        {
+            float x = BitConverter.ToSingle(array, offset);
+            float y = BitConverter.ToSingle(array, offset + 4);
+            float z = BitConverter.ToSingle(array, offset + 8);
+            offset += 12;
+            return new Vector3(x, y, z);
+        }
+
+        public static void CopyBytes(this string self, ref byte[] array, ref int offset)
+        {
+            int len = self.Length;
+            BitConverter.GetBytes(len).CopyTo(array, offset);
+            offset += 4;
+            
+            char[] chars = self.ToCharArray();
+            foreach (char itc in chars)
+            {
+                BitConverter.GetBytes(itc).CopyTo(array, offset);
+                offset += 2;
+            }
+        }
+
+        public static string GetFromBytes(this string self, byte[] array, ref int offset)
+        {
+            int len = BitConverter.ToInt32(array, offset);
+            char[] chars = new char[len];
+
+            offset += 4;
+
+            for (int i = 0; i < len; i++)
+            {
+                chars[i] = BitConverter.ToChar(array, offset);
+                offset += 2;
+            }
+
+            return new string(chars);
+        }
 
         static bool _checkDistance(Vector3 p1, Vector3 p2, float target)
             => (p1 - p2).magnitude < target;
+
     }
 }

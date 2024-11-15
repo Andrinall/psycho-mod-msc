@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2896232603
+CRC: 1837195438
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a871448a02e78526e1f04833abc30ded
+    Hash: d7ef3db6bec9ceed83c71b3d69341dec
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 14fe3923bd680560f09763060c872a51
+    Hash: 5df2726dc7e915492e5fb50c12be224a
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -36,10 +36,6 @@ ClassTypes:
 - Class: 83
   Script: {instanceID: 0}
 - Class: 108
-  Script: {instanceID: 0}
-- Class: 135
-  Script: {instanceID: 0}
-- Class: 136
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -82,6 +78,7 @@ Assets:
 - Assets/Replaces/Horror/dashboard.png
 - Assets/Screens/32.png
 - Assets/Replaces/Horror/soil13.png
+- Assets/Prefabs/ChurchCandle.prefab
 - Assets/Screens/33.png
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
@@ -204,7 +201,6 @@ Assets:
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
 - Assets/Replaces/Horror/ATLAS_BUILDINGS.png
-- Assets/Prefabs/Candle.fbx
 - Assets/Replaces/Horror/kitchentaso.png
 - Assets/Replaces/Horror/wood_panel4.png
 - Assets/Replaces/Horror/moose.png

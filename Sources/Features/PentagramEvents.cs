@@ -338,14 +338,16 @@ namespace Psycho.Features
 
         public void Activate(string _event)
         {
-            Utils.PrintDebug("Activate called");
+            if (!penta.GetCandlesFireActive()) return;
             if (IsEventCalled || !IsEventFinished) return;
             if (string.IsNullOrEmpty(_event)) return;
             if (!penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
+            Utils.PrintDebug("Activate called");
 
             IsEventCalled = true;
             IsEventFinished = false;
-            Utils.PrintDebug("_processEvents called");
+            penta.MakeItemsUnPickable();
+
             _processEvents(_event);
         }
 
@@ -357,6 +359,7 @@ namespace Psycho.Features
             Utils.PrintDebug("_finishEvent called");
             IsEventCalled = false;
             IsEventFinished = true;
+            penta.SetCandlesFireActive(false, true);
         }
 
         void _abortEvent()
@@ -387,6 +390,7 @@ namespace Psycho.Features
 
         void _processEvents(string _event)
         {
+            Utils.PrintDebug($"_processEvents called: {_event}");
             switch (_event)
             {
                 case "money":
@@ -517,26 +521,20 @@ namespace Psycho.Features
         FsmFloat _getFuelLevel(string path)
             => GameObject.Find(path).GetPlayMaker("Data").GetVariable<FsmFloat>("FuelLevel");
 
-        IEnumerator _playFireAnimation(Action onFinish)
+        IEnumerator _playFireAnimation()
         {
             Utils.PrintDebug($"_playFireAnimation called");
             
             Fire.SetActive(true);            
             yield return new WaitForSeconds(2f);
-            /*if (!penta.CheckItems())
-            {
-                Utils.PrintDebug("_playFireAnimation any items does not match the prescription");
-                _abortEvent();
-                Fire.SetActive(false);
-                yield break;
-            }*/
+
             try
             {
-                onFinish?.Invoke();
+                _destroyItems();
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Exception in PrentagramEvents._playFireAnimation()::onFinish.Invoke()");
+                Utils.PrintDebug(eConsoleColors.RED, "Exception in PrentagramEvents._playFireAnimation()::_destroyItems()");
                 ModConsole.Error(ex.GetFullMessage());
             }
 
@@ -548,6 +546,10 @@ namespace Psycho.Features
         {
             Utils.PrintDebug("_eventGrannyCoroutine called");
             Fire.SetActive(true);
+            
+            yield return new WaitForSeconds(2f);
+            _destroyItems();
+
             Grandma.SetActive(true);
             GrandmaSound.transform.position = transform.position;
             GrandmaSound.Play();
@@ -574,7 +576,7 @@ namespace Psycho.Features
         IEnumerator _eventCoroutine(Action _action, string sound = "")
         {
             Utils.PrintDebug("_eventCoroutine called");
-            yield return StartCoroutine(_playFireAnimation(_destroyItems));
+            yield return StartCoroutine(_playFireAnimation());
 
             try
             {

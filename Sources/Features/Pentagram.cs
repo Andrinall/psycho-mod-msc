@@ -51,10 +51,11 @@ namespace Psycho.Features
             { "knockout", "bursttires", "outoffuel", "blindless" }
         };
         
-        string[] recipe = new string[5] { "candle", "fernflower", "mushroom", "blackegg", "walnut" };
+        public readonly string[] recipe = new string[5] { "churchcandle", "fernflower", "mushroom", "blackegg", "walnut" };
 
         FsmFloat SUN_hours;
         FsmFloat SUN_minutes;
+        PlayMakerFSM Hand;
         bool LightsEnabled = false;
 
 
@@ -83,39 +84,43 @@ namespace Psycho.Features
             PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
             SUN_hours = sun.GetVariable<FsmFloat>("Hours");
             SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
+            Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
         }
 
         internal override void OnFixedUpdate()
         {
-            if (!LightsEnabled && SUN_hours.Value > 18 || SUN_hours.Value < 5)
+            if (!LightsEnabled && SUN_hours.Value >= 20 || SUN_hours.Value < 5)
                 SetCandlesFireActive(true);
-            else if (LightsEnabled && SUN_hours.Value > 4 && SUN_hours.Value < 19)
+            else if (LightsEnabled && SUN_hours.Value > 4 && SUN_hours.Value < 20)
                 SetCandlesFireActive(false);
-
-            if (!CheckItems()) return;
-            SpawnRandomEvent();
         }
 
-
-        public void SetCandlesFireActive(bool state)
+        public void SetCandlesFireActive(bool state, bool notSet = false)
         {
             if (!LightsEnabled && Vector3.Distance(Candles.position, Player.position) > 10f) return;
 
             for (int i = 0; i < Candles.childCount; i++)
                 Candles.GetChild(i).GetChild(0 /* Fire */).gameObject.SetActive(state);
+            
+            if (notSet) return;
+
             LightsEnabled = state;
         }
 
         public bool GetCandlesFireActive() => LightsEnabled;
 
         public bool CheckItems()
-        {
-            return Triggers.All(v =>
+            => Triggers.All(v =>
                 v.IsItemIn
                 && v.Item != null
                 && recipe.Contains(v.Item.name.Replace("(Clone)", "").ToLower())
-                && !Triggers.Any(r => r.Item == v.Item)
+                && Triggers.Select(n => n.Item?.name).Distinct().Count() == 5
             );
+
+        public void TryTriggerEvent()
+        {
+            if (!CheckItems()) return;
+            SpawnRandomEvent();
         }
 
         void SpawnRandomEvent()
@@ -128,9 +133,28 @@ namespace Psycho.Features
             GetComponent<PentagramEvents>().Activate(_innerEvent);
         }
 
+        public void MakeItemsUnPickable()
+        {
+            Utils.PrintDebug("Hand 1");
+            Hand?.CallGlobalTransition("DROP_PART");
+
+            Utils.PrintDebug("Hand 2");
+            Triggers.ForEach(v => {
+                Utils.PrintDebug("Hand 3");
+                if (!v.IsItemIn) return;
+                Utils.PrintDebug("Hand 4");
+                if (v.Item == null) return;
+                Utils.PrintDebug("Hand 5");
+
+                v.Item.layer = 0;
+                Utils.PrintDebug("Hand 6");
+            });
+        }
+
         public void DestroyItems()
         {
             Triggers.ForEach(v => {
+                Globals.RemovePentaItem(v.Item);
                 Destroy(v.Item);
                 v.Item = null;
                 v.IsItemIn = false;

@@ -11,7 +11,7 @@ namespace Psycho.Features
     {
         public int CandleDay = 0;
         public int MushroomDay = 4;
-        public int NutDay = 2;
+        public int WalnutDay = 2;
 
         public bool CandleSpawned = false;
         public bool MushroomSpawned = false;
@@ -48,7 +48,7 @@ namespace Psycho.Features
         internal override void OnFixedUpdate()
         {
             int day = GlobalDay.Value % 7;
-            CheckItemSpawnTimeAndSpawn(day, NutDay, ref WalnutSpawned, palm, Globals.Walnut_prefab, walnut_pos);
+            CheckItemSpawnTimeAndSpawn(day, WalnutDay, ref WalnutSpawned, palm, Globals.Walnut_prefab, walnut_pos);
             CheckItemSpawnTimeAndSpawn(day, MushroomDay, ref MushroomSpawned, island, Globals.Mushroom_prefab, mushroom_pos);
             CheckItemSpawnTimeAndSpawn(day, CandleDay, ref CandleSpawned, church, Globals.Candle_prefab, candle_pos);
         }
@@ -59,25 +59,16 @@ namespace Psycho.Features
         ) {
             if (!spawned && day == spawnDay && parent.childCount == 0)
             {
-                GameObject cloned = GameObject.Instantiate(prefab);
+                GameObject cloned = Globals.AddPentaItem(prefab);
                 cloned.transform.SetParent(parent, worldPositionStays: false);
                 cloned.transform.localPosition = pos;
 
                 if (spawnDay == MushroomDay)
-                {
-                    cloned.transform.localScale = new Vector3(.5f, .5f, .5f);
                     mushroom_pos = mushroom_rand[Random.Range(0, mushroom_rand.Length)];
-                }
 
                 if (spawnDay == CandleDay)
-                {
                     cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);
-                    cloned.transform.localScale = new Vector3(1.2f, 1.2f, 5);
-                    cloned.GetComponent<MeshRenderer>().materials[0].color = new Color(.6886792f, .6486886f, .4905215f);
-                }
 
-                _applyGravity(cloned);
-                cloned.MakePickable();
                 spawned = true;
             }
             else if (spawnDay != MushroomDay && spawned && day != spawnDay)
@@ -92,18 +83,14 @@ namespace Psycho.Features
             }
         }
 
-        void _applyGravity(GameObject cloned)
-        {
-            Rigidbody rb = cloned.GetComponent<Rigidbody>();
-            if (!rb) return;
-            rb.isKinematic = false;
-            rb.useGravity = true;
-        }
-
         void _destroy(Transform parent, ref bool spawned)
         {
             if (parent.childCount != 0)
-                Object.Destroy(parent.GetChild(0).gameObject);
+            {
+                GameObject obj = parent.GetChild(0).gameObject;
+                Globals.RemovePentaItem(obj);
+                Destroy(obj);
+            }
 
             spawned = false;
         }

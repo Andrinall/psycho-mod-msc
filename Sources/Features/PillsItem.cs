@@ -91,30 +91,14 @@ namespace Psycho.Features
 
         internal void WriteData(ref byte[] array, int offset)
         {
-            Vector3 pos = self.transform.position;
-            BitConverter.GetBytes(pos.x).CopyTo(array, offset);
-            BitConverter.GetBytes(pos.y).CopyTo(array, offset + 4);
-            BitConverter.GetBytes(pos.z).CopyTo(array, offset + 8);
-
-            Vector3 rot = self.transform.eulerAngles;
-            BitConverter.GetBytes(rot.x).CopyTo(array, offset + 12);
-            BitConverter.GetBytes(rot.y).CopyTo(array, offset + 16);
-            BitConverter.GetBytes(rot.z).CopyTo(array, offset + 20);
+            self.transform.position.CopyBytes(ref array, ref offset);
+            self.transform.eulerAngles.CopyBytes(ref array, ref offset);
         }
 
         internal void ReadData(ref byte[] array, int offset)
         {
-            self.transform.position = new Vector3(
-                BitConverter.ToSingle(array, offset),
-                BitConverter.ToSingle(array, offset + 4),
-                BitConverter.ToSingle(array, offset + 8)
-            );
-
-            self.transform.eulerAngles = new Vector3(
-                BitConverter.ToSingle(array, offset + 12),
-                BitConverter.ToSingle(array, offset + 16),
-                BitConverter.ToSingle(array, offset + 20)
-            );
+            self.transform.position = Vector3.zero.GetFromBytes(array, ref offset);
+            self.transform.eulerAngles = Vector3.zero.GetFromBytes(array, ref offset);
         }
     }
 }

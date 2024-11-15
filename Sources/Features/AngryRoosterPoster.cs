@@ -3,6 +3,7 @@ using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using MSCLoader;
+using Psycho.Extensions;
 
 
 namespace Psycho.Features
@@ -11,7 +12,7 @@ namespace Psycho.Features
     internal sealed class AngryRoosterPoster : CatchedComponent
     {
         bool Status = false; // false = IDLE, true = NEED CHIPS
-        bool Applyed = false;
+        public bool Applyed = false;
 
         AudioSource AngrySounds;
         AudioSource CompleteSound;
@@ -20,6 +21,8 @@ namespace Psycho.Features
         FsmFloat SUN_hours;
 
         MeshRenderer renderer;
+
+        PlayMakerFSM Hand;
 
         internal override void Awaked()
         {
@@ -33,6 +36,7 @@ namespace Psycho.Features
 
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
             SUN_hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
+            Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
         }
 
         void FixedUpdate()
@@ -58,13 +62,12 @@ namespace Psycho.Features
             if (parent == null) return;
 
             Vector3 pos = other.gameObject.transform.position;
-            Destroy(other.gameObject);
-
-            GameObject clone = (GameObject)Instantiate(Globals.BlackEgg_prefab, pos, Quaternion.Euler(Vector3.zero));
-            clone.MakePickable();
+            Hand.CallGlobalTransition("DROP_PART");
+            other.gameObject.GetComponent<PlayMakerFSM>().CallGlobalTransition("GARBAGE");
 
             Applyed = true;
             Activate(false);
+            Globals.AddPentaItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
         }
 
         void Activate(bool state)

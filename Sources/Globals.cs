@@ -8,6 +8,8 @@ using UnityEngine;
 using Psycho.Features;
 using Psycho.Internal;
 using Psycho.Screamers;
+using Object = UnityEngine.Object;
+using Psycho.Extensions;
 
 
 namespace Psycho
@@ -230,6 +232,8 @@ namespace Psycho
             // end house section
         };
 
+        public static readonly List<GameObject> penta_pool = new List<GameObject>();
+
         public static void LoadAssets(AssetBundle _bundle)
         {
             var pointsPos = new Dictionary<string, Vector3>() // night scream sounds positions
@@ -246,7 +250,7 @@ namespace Psycho
 
             // load resources from bundle
             Pills_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/pills.prefab");
-            Candle_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/candle.fbx");
+            Candle_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/churchcandle.prefab");
             FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
             Walnut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/walnut.prefab");
             Nut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/nut.prefab");
@@ -403,6 +407,104 @@ namespace Psycho
             mailScreens.Sort(delegate(Texture item, Texture target) {
                 return (int.Parse(item.name) < int.Parse(target.name)) ? -1 : 0;
             });
+        }
+
+        public static GameObject AddPentaItem(GameObject prefab)
+            => AddPentaItem(prefab, Vector3.zero, Vector3.zero);
+        
+        public static GameObject AddPentaItem(GameObject prefab, Vector3 pos, Vector3 euler)
+        {
+            GameObject cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
+            cloned.MakePickable();
+
+            penta_pool.Add(cloned);
+            return cloned;
+        }
+
+        public static bool RemovePentaItem(GameObject obj)
+            => penta_pool.Remove(obj);
+
+        public static void SavePool(ref byte[] array, int offset)
+        {
+            IEnumerable<GameObject> toSave = penta_pool.Where(v => v != null && v.transform.parent == null);
+            BitConverter.GetBytes(toSave.Count()).CopyTo(array, offset);
+            offset += 4;
+            Utils.PrintDebug($"[SavePool]: Length == {toSave.Count()}");
+
+            foreach (GameObject item in toSave)
+            {
+                string name = item.name.Replace("(Clone)", "");
+                Vector3 pos = item.transform.position;
+                Vector3 rot = item.transform.eulerAngles;
+
+                Utils.PrintDebug($"[SavePool]:[{offset}]: name \"{name}\"; length: {name.Length}");
+                Utils.PrintDebug($"[SavePool]:[{offset}]: pos: {pos}; rot: {rot}");
+
+                name.CopyBytes(ref array, ref offset);
+                Utils.PrintDebug($"[SavePool]:[{offset}] check 1");
+                pos.CopyBytes(ref array, ref offset);
+                Utils.PrintDebug($"[SavePool]:[{offset}] check 2");
+                rot.CopyBytes(ref array, ref offset);
+                Utils.PrintDebug($"[SavePool]:[{offset}] check 3");
+            }
+        }
+
+        public static void LoadPool(byte[] array, int offset)
+        {
+            int count = BitConverter.ToInt32(array, offset);
+            offset += 4;
+
+            Utils.PrintDebug($"[LoadPool]: pool size: {count}");
+            if (count == 0)
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "[LoadPool]: is empty; loading stopped");
+                return;
+            }
+
+
+            for (int i = 0; i < count; i++)
+            {
+                string sName = "".GetFromBytes(array, ref offset); // 1
+                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: name: \"{sName}\"");
+
+                Vector3 pos = Vector3.zero.GetFromBytes(array, ref offset);
+                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: pos: \"{pos}\"");
+
+                Vector3 rot = Vector3.zero.GetFromBytes(array, ref offset); // 3
+                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: pos: \"{rot}\"");
+
+                GameObject prefab = null;
+                switch (sName)
+                {
+                    case "Candle":
+                        prefab = Candle_prefab;
+                        break;
+                    case "FernFlower":
+                        prefab = FernFlower_prefab;
+                        break;
+                    case "Mushroom":
+                        prefab = Mushroom_prefab;
+                        break;
+                    case "Walnut":
+                        prefab = Walnut_prefab;
+                        break;
+                    case "BlackEgg":
+                        prefab = BlackEgg_prefab;
+                        break;
+                    case "Picture":
+                        prefab = Picture_prefab;
+                        break;
+                }
+
+                Utils.PrintDebug($"[LoadPool]:[{i}]: prefab: \"{prefab}\"");
+                if (prefab == null)
+                {
+                    Utils.PrintDebug($"Loaded item {sName} has null prefab");
+                    continue;
+                }
+
+                AddPentaItem(prefab, pos, rot);
+            }
         }
     }
 }
