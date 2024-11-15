@@ -77,12 +77,13 @@ namespace Psycho.Features
             GrandmaSound = GameObject.Find("MasterAudio/Mummo/mummo_angry2").GetComponent<AudioSource>();
             GrandmaSoundOrigPos = GrandmaSound.transform.position;
 
-            // "SATSUMA(557kg, 248)/CarSimulation/Engine/Fuel"
             fuellevels.Add(_getFuelLevel("Database/DatabaseMechanics/FuelTank")); // satsuma
             fuellevels.Add(_getFuelLevel("FERNDALE(1630kg)/FuelTank")); // ferndale
             fuellevels.Add(_getFuelLevel("HAYOSIKO(1500kg, 250)/FuelTank")); // hayosiko
             fuellevels.Add(_getFuelLevel("GIFU(750/450psi)/FuelTank")); // gifu
             fuellevels.Add(_getFuelLevel("RCO_RUSCKO12(270)/FuelTank")); // ruscko
+            fuellevels.Add(_getFuelLevel("JONNEZ ES(Clone)/FuelTank")); // jonnez
+            fuellevels.Add(_getFuelLevel("KEKMET(350-400psi)/FuelTank")); // kekmet
 
             TireStatus = GameObject.Find("Database/PartsStatus/TireStatus");
             TireStatusList.Add(getInstalledTireRef("WheelFL"));
