@@ -93,7 +93,7 @@ namespace Psycho.Features
 
             Fire = GameObject.Instantiate(
                 Resources.FindObjectsOfTypeAll<GameObject>()
-                    .First(v=>v.name=="garbage barrel(itemx)")?.transform
+                    .First(v => v.name == "garbage barrel(itemx)")?.transform
                     ?.Find("Fire")?.gameObject
             );
 
@@ -108,8 +108,8 @@ namespace Psycho.Features
 
             objects.Add("beercase", _findPrefab(list, "beer case"));
             objects.Add("battery", list.First(v =>
-                v.gameObject.name == "battery"
-                && v.IsPrefab()
+                v.IsPrefab()
+                && v.gameObject.name == "battery"
                 && v.GetComponents<PlayMakerFSM>().Length > 0).gameObject
             );
             objects.Add("fusesbox", _findPrefab(list, "fusepackage0"));
@@ -126,12 +126,8 @@ namespace Psycho.Features
             objects.Add("sugar", _findPrefab(list, "sugar"));
             objects.Add("cigarettes", _findPrefab(list, "cigarettes0"));
 
-            objects.Any(v =>
-            {
-                bool res = v.Value == null;
-                if (res) Utils.PrintDebug(eConsoleColors.RED, $"{v.Key} in objects is null");
-                return res;
-            });
+            if (objects.Any(v => v.Value == null))
+                Utils.PrintDebug(eConsoleColors.RED, $"[PentagramEvents] null exists in objects dict");
 
             addSoundClip("cash", "MasterAudio/Store/cash_register_1");
             addSoundClip("saatana", "MasterAudio/Hangover/hangover02");
@@ -353,7 +349,7 @@ namespace Psycho.Features
         }
 
         GameObject _findPrefab(List<Transform> list, string find)
-            => list.First(v => v != null && v?.IsPrefab() == true && v?.name == find)?.gameObject ?? null;
+            => list.First(v => v?.IsPrefab() == true && v?.name == find)?.gameObject;
 
         void _finishEvent()
         {

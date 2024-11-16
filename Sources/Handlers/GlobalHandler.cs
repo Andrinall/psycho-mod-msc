@@ -30,8 +30,10 @@ namespace Psycho.Handlers
         {
             if (m_bInstalled) return;
 
-            Logic._hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
-            Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", Logic._hud.GetIndexByName("Money"));
+            FixedHUD hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
+            hud.AddElement(eHUDCloneType.RECT, "Psycho", hud.GetIndexByName("Money"));
+            
+            Logic._hud = hud;
             Logic.SetPoints(Logic.Points);
 
             m_bHouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");

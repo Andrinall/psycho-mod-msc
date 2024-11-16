@@ -1,6 +1,9 @@
-﻿using Psycho.Internal;
-using System;
+﻿using System;
+
 using UnityEngine;
+
+using Psycho.Internal;
+
 
 namespace Psycho.Screamers
 {

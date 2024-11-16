@@ -51,7 +51,7 @@ namespace Psycho.Features
                 MailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
 
                 PlayMakerFSM fsm = MailboxEnvelope.GetPlayMaker("Use");
-                (fsm.GetState("State 2").Actions.ElementAtOrDefault(1) as SetStringValue)
+                (fsm.GetState("State 2").Actions[1] as SetStringValue)
                     .stringValue.Value = "Strange Letter";
 
                 (fsm.GetState("Open ad").Actions.Last() as ActivateGameObject)

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -192,21 +191,24 @@ namespace Psycho
 
             // add handlers for human triggers (hit by player & crime)
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>();
-            objects.Where(v => v.name.Contains("HumanTrigger")).ToList()
-                .ForEach(v => v.AddComponent<NPCHitHandler>());
-
-            // add handlers for sleep triggers
-            objects.Where(v => v.name == "SleepTrigger").ToList()
-                .ForEach(v => v.AddComponent<SleepTriggerHandler>());
+            foreach (GameObject obj in objects)
+            {
+                if (obj.name.Contains("HumanTrigger"))
+                    obj.AddComponent<NPCHitHandler>();
+                else if (obj.name == "SleepTrigger")
+                    obj.AddComponent<SleepTriggerHandler>();
+            }
 
             // main sleep trigger for initiating a night screamers
             GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger")
                 .AddComponent<ScreamsInitiator>();
 
             // add crash handler for cars (reset psycho after crashing)
-            Resources.FindObjectsOfTypeAll<CarDynamics>()
-                .Where(v => v.transform.parent == null).ToList()
-                .ForEach(v => v.gameObject.AddComponent<CrashHandler>());
+            foreach (CarDynamics cd in Resources.FindObjectsOfTypeAll<CarDynamics>())
+            {
+                if (cd.transform.parent != null) continue;
+                cd.gameObject.AddComponent<CrashHandler>();
+            }
         }
 
         void _registerCommands()

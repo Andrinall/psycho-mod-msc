@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+
+using MSCLoader;
+using UnityEngine;
 
 using Psycho.Internal;
-using System.Linq;
 using Psycho.Features;
-using MSCLoader;
 using Psycho.Extensions;
 
 
@@ -27,12 +28,14 @@ namespace Psycho.Handlers
         {
             if (IsItemIn) return;
             if (other.gameObject == null) return;
+
             string itemname = other.gameObject.name.Replace("(Clone)", "").ToLower();
             if (!penta.recipe.Contains(itemname)) return;
 
+            Hand.CallGlobalTransition("DROP_PART");
+
             IsItemIn = true;
             Item = other.gameObject;
-            Hand.CallGlobalTransition("DROP_PART");
             Item.transform.position = transform.position;
 
             penta.TryTriggerEvent();

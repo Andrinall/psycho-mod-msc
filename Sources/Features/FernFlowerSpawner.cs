@@ -60,16 +60,16 @@ namespace Psycho.Features
 
         void DespawnItems()
         {
-            Flowers.ForEach(v =>
+            foreach (GameObject flower in Flowers)
             {
-                if (!v.activeSelf || v.transform.childCount == 0) goto setActive;
+                if (!flower.activeSelf || flower.transform.childCount == 0) goto setActive;
 
-                GameObject child = v.transform.GetChild(0).gameObject;
+                GameObject child = flower.transform.GetChild(0).gameObject;
                 Globals.RemovePentaItem(child);
                 Destroy(child);
             setActive:
-                v.SetActive(false);
-            });
+                flower.SetActive(false);
+            }
         }
     }
 }

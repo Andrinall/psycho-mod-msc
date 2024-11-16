@@ -114,7 +114,7 @@ namespace Psycho.Features
                 v.IsItemIn
                 && v.Item != null
                 && recipe.Contains(v.Item.name.Replace("(Clone)", "").ToLower())
-                && Triggers.Select(n => n.Item?.name).Distinct().Count() == 5
+                && Triggers.Select(n => n.Item?.name).Distinct().ToList().Count == 5
             );
 
         public void TryTriggerEvent()
@@ -135,30 +135,26 @@ namespace Psycho.Features
 
         public void MakeItemsUnPickable()
         {
-            Utils.PrintDebug("Hand 1");
             Hand?.CallGlobalTransition("DROP_PART");
 
-            Utils.PrintDebug("Hand 2");
-            Triggers.ForEach(v => {
-                Utils.PrintDebug("Hand 3");
-                if (!v.IsItemIn) return;
-                Utils.PrintDebug("Hand 4");
-                if (v.Item == null) return;
-                Utils.PrintDebug("Hand 5");
+            foreach (PentaTrigger trigger in Triggers)
+            {
+                if (!trigger.IsItemIn) continue;
+                if (trigger.Item == null) continue;
 
-                v.Item.layer = 0;
-                Utils.PrintDebug("Hand 6");
-            });
+                trigger.Item.layer = 0;
+            }
         }
 
         public void DestroyItems()
         {
-            Triggers.ForEach(v => {
-                Globals.RemovePentaItem(v.Item);
-                Destroy(v.Item);
-                v.Item = null;
-                v.IsItemIn = false;
-            });
+            foreach (PentaTrigger trigger in Triggers)
+            {
+                Globals.RemovePentaItem(trigger.Item);
+                Destroy(trigger.Item);
+                trigger.Item = null;
+                trigger.IsItemIn = false;
+            }
         }
 
         static float _weightSelector(KeyValuePair<string, float> t) => t.Value;

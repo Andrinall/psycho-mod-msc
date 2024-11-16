@@ -8,8 +8,9 @@ using UnityEngine;
 using Psycho.Features;
 using Psycho.Internal;
 using Psycho.Screamers;
-using Object = UnityEngine.Object;
 using Psycho.Extensions;
+
+using Object = UnityEngine.Object;
 
 
 namespace Psycho
@@ -300,37 +301,37 @@ namespace Psycho
 
             // load all replaces
             Transform building = GameObject.Find("YARD/Building").transform;
-            _bundle.GetAllAssetNames().ToList().ForEach(v =>
+            foreach (string name in _bundle.GetAllAssetNames())
             {
-                if (v.Contains("assets/replaces")) // load texture & sound replaces
+                if (name.Contains("assets/replaces")) // load texture & sound replaces
                 {
-                    if (v.Contains("/horror"))
+                    if (name.Contains("/horror"))
                     { // load replaces for horror world
                         replaces.Add(
-                            v.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
-                            LoadAsset<Texture>(_bundle, v)
+                            name.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            LoadAsset<Texture>(_bundle, name)
                         );
                     }
-                    else if (v.Contains("/sounds")) // replaces for flies sounds in horror world
-                        horror_flies.Add(LoadAsset<AudioClip>(_bundle, v));
-                    else if (v.Contains("/allworlds"))
+                    else if (name.Contains("/sounds")) // replaces for flies sounds in horror world
+                        horror_flies.Add(LoadAsset<AudioClip>(_bundle, name));
+                    else if (name.Contains("/allworlds"))
                     { // load texture used independently of world
                         indep_textures.Add(
-                            v.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
-                            LoadAsset<Texture>(_bundle, v)
+                            name.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            LoadAsset<Texture>(_bundle, name)
                         );
                     }
                 }
-                else if (v.Contains("assets/pictures")) // load textures for picture in frame
-                    pictures.Add(LoadAsset<Texture>(_bundle, v));
-                else if (v.Contains("assets/audio/screamers"))
+                else if (name.Contains("assets/pictures")) // load textures for picture in frame
+                    pictures.Add(LoadAsset<Texture>(_bundle, name));
+                else if (name.Contains("assets/audio/screamers"))
                 { // load sounds for night screamer
-                    string item = v.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
+                    string item = name.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
                     GameObject emptyPoint = new GameObject($"ScreamPoint({item})");
                     AudioSource source = emptyPoint.AddComponent<AudioSource>();
-                    source.clip = LoadAsset<AudioClip>(_bundle, v);
+                    source.clip = LoadAsset<AudioClip>(_bundle, name);
                     source.loop = true;
-                    source.volume = v.Contains("crying") ? 0.4f : 0.9f;
+                    source.volume = name.Contains("crying") ? 0.4f : 0.9f;
                     source.priority = 0;
                     source.rolloffMode = AudioRolloffMode.Logarithmic;
                     source.minDistance = 1.5f;
@@ -339,44 +340,44 @@ namespace Psycho
                     source.spread = 0;
                     source.dopplerLevel = 1;
 
-                    if (!v.Contains("door_knock") && !v.Contains("kitchen_water"))
+                    if (!name.Contains("door_knock") && !name.Contains("kitchen_water"))
                         emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
 
                     emptyPoint.transform.SetParent(building, worldPositionStays: false);
                     emptyPoint.transform.position = pointsPos[item];
-                    SoundManager.ScreamPoints.Add(emptyPoint);
+                    SoundManager.ScreamPoints.Add(source);
                 }
+                else if (name.Contains("screens/"))
+                    mailScreens.Add(LoadAsset<Texture>(_bundle, name));
+            }
+
+            mailScreens.Sort(delegate (Texture item, Texture target) {
+                return (int.Parse(item.name) < int.Parse(target.name)) ? -1 : 0;
             });
 
-            //Utils.PrintDebug(eConsoleColors.YELLOW, $"Horror textures loaded: {Globals.replaces.Count}");
-            //Utils.PrintDebug(eConsoleColors.YELLOW, $"Independently textures loaded: {Globals.indep_textures.Count}");
-
             // load smoking replaces
-            Texture cig_texture = Globals.LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
+            Texture cig_texture = LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
             models_replaces.Add("cigarette_filter".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Filter",
-                mesh = Globals.LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_filter.obj"),
+                mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_filter.obj"),
                 texture = cig_texture
             });
 
             models_replaces.Add("cigarette_shaft".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft",
-                mesh = Globals.LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
+                mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
                 texture = cig_texture
             });
 
             // Load death sound
             AudioSource src = GameObject.Find("Systems").AddComponent<AudioSource>();
-            src.clip = Globals.LoadAsset<AudioClip>(_bundle, "assets/audio/heart_stop.wav");
+            src.clip = LoadAsset<AudioClip>(_bundle, "assets/audio/heart_stop.wav");
             src.loop = false;
             src.volume = 1.75f;
             src.priority = 0;
             SoundManager.DeathSound = src;
-
-            // load screenshots for indicate a pills position in letter
-            LoadAllScreens(_bundle);
         }
 
         static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
@@ -392,21 +393,6 @@ namespace Psycho
                 ModConsole.Error($"Unable to load asset {path} from embedded resource;\n{e.GetFullMessage()}");
             }
             return null;
-        }
-
-        public static void LoadAllScreens(AssetBundle bundle)
-        {
-            // load all screens
-            foreach (string v in bundle.GetAllAssetNames())
-            {
-                if (!v.Contains("screens/")) continue;
-                mailScreens.Add(LoadAsset<Texture>(bundle, v));
-            }
-
-            // sort screens from 0 to *, for correct display this in the letter
-            mailScreens.Sort(delegate(Texture item, Texture target) {
-                return (int.Parse(item.name) < int.Parse(target.name)) ? -1 : 0;
-            });
         }
 
         public static GameObject AddPentaItem(GameObject prefab)
@@ -426,10 +412,10 @@ namespace Psycho
 
         public static void SavePool(ref byte[] array, int offset)
         {
-            IEnumerable<GameObject> toSave = penta_pool.Where(v => v != null && v.transform.parent == null);
-            BitConverter.GetBytes(toSave.Count()).CopyTo(array, offset);
+            List<GameObject> toSave = penta_pool.Where(v => v != null && v.transform.parent == null).ToList();
+            BitConverter.GetBytes(toSave.Count).CopyTo(array, offset);
             offset += 4;
-            Utils.PrintDebug($"[SavePool]: Length == {toSave.Count()}");
+            Utils.PrintDebug($"[SavePool]:[{offset}]: Length == {toSave.Count}");
 
             foreach (GameObject item in toSave)
             {

@@ -1,6 +1,4 @@
 ﻿#if DEBUG
-using System.Linq;
-
 using MSCLoader;
 using UnityEngine;
 
@@ -41,7 +39,7 @@ namespace Psycho.Commands
                 return;
             }
 
-            player.transform.position = Globals.pills_positions.ElementAtOrDefault(index);
+            player.transform.position = Globals.pills_positions[index];
         }
 
         void PrintHelp()

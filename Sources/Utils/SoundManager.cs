@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+
 using MSCLoader;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Psycho.Internal
     internal sealed class SoundManager
     {
         public static AudioSource DeathSound;
-        public static List<GameObject> ScreamPoints = new List<GameObject>();
+        public static List<AudioSource> ScreamPoints = new List<AudioSource>();
 
         public static void PlayHeartbeat(bool state)
         {
@@ -42,15 +43,9 @@ namespace Psycho.Internal
             if (rand == -1)
                 rand = Random.Range(0, ScreamPoints.Count);
 
-
             StopAllScreamSounds();
-            AudioSource source = ScreamPoints[rand]?.GetComponent<AudioSource>();
-            if (!source)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, $"Scream AudioSource with idx {rand} is broken!");
-                return;
-            }
-
+            
+            AudioSource source = ScreamPoints[rand];
             if (source.isPlaying) return;
             
             source.loop = true;
@@ -60,33 +55,18 @@ namespace Psycho.Internal
         }
 
         public static void StopScreamSound(string name)
-        {
-            AudioSource source = ScreamPoints.First(v => v.name.Contains(name))?.GetComponent<AudioSource>();
-            if (source?.isPlaying == false) return;
-            source?.Stop();
-        }
+            => ScreamPoints.First(v => v.gameObject.name.Contains(name))?.Stop();
 
         public static bool AnyScreamSoundIsPlaying()
+            => ScreamPoints.Any(v => v.isPlaying);
+
+        public static void StopAllScreamSounds()
         {
-            foreach(GameObject scream in ScreamPoints)
+            foreach (AudioSource point in ScreamPoints)
             {
-                AudioSource src = scream?.GetComponent<AudioSource>();
-                if (!src) continue;
-                if (src?.isPlaying == false) continue;
-
-                return true;
+                point.loop = false;
+                point.Stop();
             }
-
-            return false;
-        }
-
-        public static void StopAllScreamSounds() {
-            ScreamPoints.ForEach(v => {
-                AudioSource source = v?.GetComponent<AudioSource>();
-                if (!source) return;
-                source.loop = false;
-                source.Stop();
-            });
         }
 
         public static void ChangeFliesSounds()

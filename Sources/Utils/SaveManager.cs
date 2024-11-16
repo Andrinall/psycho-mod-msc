@@ -6,8 +6,6 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Features;
-using Object = UnityEngine.Object;
-using Psycho.Extensions;
 
 
 namespace Psycho.Internal
@@ -93,7 +91,7 @@ namespace Psycho.Internal
                 return;
             }
 
-            Globals.pills_list.ElementAtOrDefault(0)?.WriteData(ref array, 12);
+            Globals.pills_list.First()?.WriteData(ref array, 12);
             File.WriteAllBytes(_saveDataPath, array);
         }
 

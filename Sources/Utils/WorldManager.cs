@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -78,7 +77,10 @@ namespace Psycho.Internal
 
         public static bool GetElecMeterSwitchState()
         {
-            return GameObject.Find("Systems/ElectricityBills").GetComponent<PlayMakerFSM>().GetVariable<FsmBool>("MainSwitch").Value;
+            return GameObject.Find("Systems/ElectricityBills")
+                .GetComponent<PlayMakerFSM>()
+                .GetVariable<FsmBool>("MainSwitch")
+                .Value;
         }
 
         public static void CopyScreamHand()
@@ -302,8 +304,8 @@ namespace Psycho.Internal
             ClonedPhantom.transform.eulerAngles = Vector3.zero;
         }
 
-        public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback) =>
-            StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);
+        public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback)
+            => StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);
 
         public static void CloseDoor(string path)
         {
@@ -494,7 +496,7 @@ namespace Psycho.Internal
                 MeshRenderer renderer = obj.GetComponent<MeshRenderer>();
                 if (!renderer) return;
 
-                Material material = renderer.materials.ElementAt(index);
+                Material material = renderer.materials[index];
                 if (name.Length > 0) material.name = name;
                 material.mainTexture = texture;
             }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
@@ -24,7 +23,7 @@ namespace Psycho.Features
         ~PillsItem()
         {
             if (self == null) return;
-            UnityEngine.Object.Destroy(self);
+            Object.Destroy(self);
         }
         
         void TryCreatePills(int index, Vector3 position, Vector3 euler)
@@ -42,10 +41,10 @@ namespace Psycho.Features
 
         void CreatePillsItem(Vector3 position, Vector3 euler)
         {
-            var chips = Resources.FindObjectsOfTypeAll<Transform>()
+            Transform chips = Resources.FindObjectsOfTypeAll<Transform>()
                 .First(v => v.gameObject.name == "potato chips" && v.IsPrefab());
 
-            self = UnityEngine.Object.Instantiate(chips.gameObject);
+            self = Object.Instantiate(chips.gameObject);
             self.name = "pills(itemx)";
             self.transform.position = position;
             self.transform.eulerAngles = euler;
@@ -61,8 +60,8 @@ namespace Psycho.Features
                 pillsPrefab.GetComponent<MeshRenderer>().material.mainTexture
             );
 
-            var collider = self.GetComponent<BoxCollider>();
-            var pcoll = Globals.Pills_prefab.GetComponent<BoxCollider>();
+            BoxCollider collider = self.GetComponent<BoxCollider>();
+            BoxCollider pcoll = Globals.Pills_prefab.GetComponent<BoxCollider>();
             collider.contactOffset = pcoll.contactOffset;
             collider.center = pcoll.center;
             collider.name = pcoll.name;
@@ -75,7 +74,7 @@ namespace Psycho.Features
             fsm.GetState("Destroy").ClearActions();
 
             StateHook.Inject(self, "Use", "Eat", _ => EatState());
-            StateHook.Inject(self, "Use", "Destroy", -1, _ => UnityEngine.Object.Destroy(self));
+            StateHook.Inject(self, "Use", "Destroy", -1, _ => Object.Destroy(self));
         }
 
         void EatState()
