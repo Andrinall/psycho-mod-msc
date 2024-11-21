@@ -16,6 +16,7 @@ namespace Psycho.Features
         public GameObject self;
         public int index;
         
+
         public PillsItem(int index) => this.TryCreatePills(index, Vector3.zero, Vector3.zero);
         public PillsItem(int index, Vector3 position) => this.TryCreatePills(index, position, Vector3.zero);
         public PillsItem(int index, Vector3 position, Vector3 euler) => this.TryCreatePills(index, position, euler);

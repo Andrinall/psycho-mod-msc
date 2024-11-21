@@ -12,6 +12,7 @@ namespace Psycho.Commands
         public override string Name => "ptp";
         public override string Help => "Teleport a player to pills; [ ptp index ]";
 
+
         public override void Run(string[] args)
         {
             if (args.Length == 0 || string.IsNullOrEmpty(args[0]))

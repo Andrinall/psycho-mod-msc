@@ -27,6 +27,7 @@ namespace Psycho.Screamers
 
         bool animPlayed = false;
 
+
         void Awake()
         {
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();

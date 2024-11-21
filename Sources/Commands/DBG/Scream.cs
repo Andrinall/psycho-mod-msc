@@ -15,6 +15,7 @@ namespace Psycho.Commands
 
         public override string Help => "";
 
+
         public override void Run(string[] args)
         {
             if (args.Length == 0 || string.IsNullOrEmpty(args[0])) return;

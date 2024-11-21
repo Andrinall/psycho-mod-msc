@@ -9,6 +9,7 @@ namespace Psycho.Commands
 
         public override string Help => "finish shiz game";
 
+
         public override void Run(string[] args)
             => Logic.FinishShizGame();
     }

@@ -16,6 +16,7 @@ namespace Psycho.Internal
             public PlayMakerFSM component;
             public string path;
 
+
             public override void OnEnter()
             {
                 try {

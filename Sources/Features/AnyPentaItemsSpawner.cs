@@ -1,5 +1,4 @@
-﻿using MSCLoader;
-using UnityEngine;
+﻿using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
@@ -59,7 +58,7 @@ namespace Psycho.Features
         ) {
             if (!spawned && day == spawnDay && parent.childCount == 0)
             {
-                GameObject cloned = Globals.AddPentaItem(prefab);
+                GameObject cloned = ItemsPool.AddItem(prefab);
                 cloned.transform.SetParent(parent, worldPositionStays: false);
                 cloned.transform.localPosition = pos;
 
@@ -88,7 +87,7 @@ namespace Psycho.Features
             if (parent.childCount != 0)
             {
                 GameObject obj = parent.GetChild(0).gameObject;
-                Globals.RemovePentaItem(obj);
+                ItemsPool.RemoveItem(obj);
                 Destroy(obj);
             }
 

@@ -3,6 +3,7 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Features;
+using Psycho.Internal;
 
 
 namespace Psycho.Commands
@@ -14,6 +15,7 @@ namespace Psycho.Commands
         public override string Help => "";
 
         Pentagram penta;
+
 
         public override void Run(string[] args)
         {
@@ -60,19 +62,19 @@ namespace Psycho.Commands
             switch (item)
             {
                 case "churchcandle":
-                    Globals.AddPentaItem(Globals.Candle_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.Candle_prefab, pos, Vector3.zero);
                     break;
                 case "fernflower":
-                    Globals.AddPentaItem(Globals.FernFlower_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.FernFlower_prefab, pos, Vector3.zero);
                     break;
                 case "mushroom":
-                    Globals.AddPentaItem(Globals.Mushroom_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.Mushroom_prefab, pos, Vector3.zero);
                     break;
                 case "blackegg":
-                    Globals.AddPentaItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
                     break;
-                case "walnut": 
-                    Globals.AddPentaItem(Globals.Walnut_prefab, pos, Vector3.zero);
+                case "walnut":
+                    ItemsPool.AddItem(Globals.Walnut_prefab, pos, Vector3.zero);
                     break;
 
                 default:

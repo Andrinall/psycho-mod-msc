@@ -18,6 +18,7 @@ namespace Psycho.Features
 
         bool m_bInstalled = false;
 
+
         void OnEnable()
         {
             if (m_bInstalled) return;

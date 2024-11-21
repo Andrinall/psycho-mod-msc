@@ -17,6 +17,7 @@ namespace Psycho.Internal
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
 
+
         internal static void ChangeSmokingModel()
         {
             try
@@ -81,6 +82,8 @@ namespace Psycho.Internal
             Logic.knockOut = null;
             Logic.shizAnimPlayer = null;
             Logic._hud = null;
+
+            UnityEngine.Object.Destroy(Logic._hud);
 
             Resources.UnloadAsset(Globals.Suicidal_prefab);
             Globals.Suicidal_prefab = null;

@@ -15,6 +15,7 @@ namespace Psycho.Screamers
         bool m_bBlowed = false;
         float Distance = 3.5f;
 
+
         void Awake()
         {
             _player = GameObject.Find("PLAYER").transform;

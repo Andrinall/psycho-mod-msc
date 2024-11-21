@@ -117,6 +117,7 @@
     <Compile Include="Sources\Utils\CatchedComponent.cs" />
     <Compile Include="Sources\Utils\Extensions.cs" />
     <Compile Include="Sources\Utils\ItemsCloner.cs" />
+    <Compile Include="Sources\Utils\ItemsPool.cs" />
     <Compile Include="Sources\Utils\SaveManager.cs" />
     <Compile Include="Sources\Utils\SoundManager.cs" />
     <Compile Include="Sources\Utils\FliesChanger.cs" />

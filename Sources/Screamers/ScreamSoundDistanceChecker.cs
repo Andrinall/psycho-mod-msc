@@ -14,6 +14,7 @@ namespace Psycho.Screamers
 
         public float TargetDistance = 1.75f;
 
+
         void Awake()
         {
             Source = GetComponent<AudioSource>();

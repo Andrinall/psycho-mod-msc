@@ -23,7 +23,6 @@ namespace Psycho.Features
         Transform Candles;
         Transform SpawnerPos;
 
-
         Dictionary<string, float> Events = new Dictionary<string, float>
         {
             { "Very good", 0.2f },
@@ -150,7 +149,7 @@ namespace Psycho.Features
         {
             foreach (PentaTrigger trigger in Triggers)
             {
-                Globals.RemovePentaItem(trigger.Item);
+                ItemsPool.RemoveItem(trigger.Item);
                 Destroy(trigger.Item);
                 trigger.Item = null;
                 trigger.IsItemIn = false;

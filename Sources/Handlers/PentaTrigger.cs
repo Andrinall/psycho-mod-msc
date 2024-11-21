@@ -18,6 +18,7 @@ namespace Psycho.Handlers
         internal GameObject Item = null;
         internal bool IsItemIn = false;
 
+
         void Awake()
         {
             penta = transform.parent.parent.GetComponent<Pentagram>();

@@ -21,6 +21,7 @@ namespace Psycho.Screamers
 
         bool switched = false;
 
+
         void Awake()
         {
             TapDrink = transform.Find("TapDrink").gameObject;

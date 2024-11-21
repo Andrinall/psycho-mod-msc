@@ -33,6 +33,7 @@ namespace Psycho.Screamers
         int elapsedFrames = 0;
         int neededFrames = 200;
 
+
         void Awake()
         {
             SwitchObj = GameObject.Find("YARD/Building/LIVINGROOM/TV/Switch");

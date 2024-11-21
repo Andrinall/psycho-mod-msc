@@ -18,6 +18,7 @@ namespace Psycho.Features
         FsmInt GlobalDay;
         FsmFloat SUN_hours;
 
+
         void Awake()
         {
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
@@ -47,7 +48,7 @@ namespace Psycho.Features
         internal void SpawnRandomFlower()
         {
             GameObject point = Flowers[Random.Range(0, Flowers.Count)];
-            GameObject flower = Globals.AddPentaItem(Globals.FernFlower_prefab);
+            GameObject flower = ItemsPool.AddItem(Globals.FernFlower_prefab);
 
             flower.transform.SetParent(point.transform, worldPositionStays: false);
             flower.transform.localPosition = Vector3.zero;
@@ -65,7 +66,7 @@ namespace Psycho.Features
                 if (!flower.activeSelf || flower.transform.childCount == 0) goto setActive;
 
                 GameObject child = flower.transform.GetChild(0).gameObject;
-                Globals.RemovePentaItem(child);
+                ItemsPool.RemoveItem(child);
                 Destroy(child);
             setActive:
                 flower.SetActive(false);

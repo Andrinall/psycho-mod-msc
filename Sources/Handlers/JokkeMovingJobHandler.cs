@@ -10,6 +10,7 @@ namespace Psycho.Handlers
         GameObject _payMoney;
         bool m_bInstalled = false;
 
+
         internal override void Awaked()
         {
             _payMoney = transform.Find("HitcherPivotNew/JokkeHiker1")?.Find("Pivot/Char")

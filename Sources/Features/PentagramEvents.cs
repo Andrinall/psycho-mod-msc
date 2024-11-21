@@ -36,6 +36,7 @@ namespace Psycho.Features
 
         Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
 
+
         internal override void Awaked()
         {
             penta = GetComponent<Pentagram>();

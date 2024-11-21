@@ -12,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal class PhoneRing : MonoBehaviour
+    internal sealed class PhoneRing : MonoBehaviour
     {
         GameObject Ring;
         GameObject Callers;
@@ -26,6 +26,7 @@ namespace Psycho.Screamers
 
         short elapsedFrames = 0;
         short neededFrames = 400;
+
 
         void Awake()
         {

@@ -2,10 +2,11 @@
 
 namespace Psycho.Internal
 {
-    public class ItemRenamer : MonoBehaviour
+    internal sealed class ItemRenamer : MonoBehaviour
     {
-        public string TargetName;
-        public string FinalName;
+        internal string TargetName;
+        internal string FinalName;
+
 
         void Update()
         {
@@ -14,10 +15,7 @@ namespace Psycho.Internal
             if (name != TargetName) return;
             if (name == FinalName) return;
 
-            SetName(FinalName);
+            name = FinalName;
         }
-
-        public virtual void SetName(string _name)
-            => name = _name;
     }
 }

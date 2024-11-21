@@ -15,6 +15,7 @@ namespace Psycho.Internal
         public static AudioSource DeathSound;
         public static List<AudioSource> ScreamPoints = new List<AudioSource>();
 
+
         public static void PlayHeartbeat(bool state)
         {
             Globals.HeartbeatSound.enabled = state;

@@ -24,6 +24,7 @@ namespace Psycho.Features
 
         PlayMakerFSM Hand;
 
+
         internal override void Awaked()
         {
             AudioSource[] sources = GetComponents<AudioSource>();
@@ -67,7 +68,7 @@ namespace Psycho.Features
 
             Applyed = true;
             Activate(false);
-            Globals.AddPentaItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
+            ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
         }
 
         void Activate(bool state)

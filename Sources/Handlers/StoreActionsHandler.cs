@@ -25,10 +25,10 @@ namespace Psycho.Handlers
             GameObject windowStore = _GFX_Store.Find("BreakableWindows/BreakableWindow")?.gameObject;
 
             if (windowPub != null)
-                StateHook.Inject(windowPub, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK_INCREASE"));
+                StateHook.Inject(windowPub, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK"));
 
             if (windowStore != null)
-                StateHook.Inject(windowStore, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK_INCREASE"));
+                StateHook.Inject(windowStore, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK"));
 
             StateHook.Inject(_Teimo.Find("Speak").gameObject, "Speak", "State 1", _ => Logic.PlayerCommittedOffence("TEIMO_SWEARS"));
             StateHook.Inject(_Teimo.Find("FacePissTrigger").gameObject, "Reaction", "State 2", _ => Logic.PlayerCommittedOffence("TEIMO_PISS"));

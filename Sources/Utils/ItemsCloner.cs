@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal sealed class ItemsCloner
+    internal static class ItemsCloner
     {
-        public static GameObject CloneItem(string path)
+        internal static GameObject CloneItem(string path)
         {
             try
             {
