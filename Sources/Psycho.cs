@@ -21,13 +21,27 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9-beta_0.4";
+        public override string Version => "0.9-beta_0.5";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
 
-
         SettingsDropDownList lang;
+
+        Transform _player;
+        Transform _houseFire;
+        Transform _bells;
+        
+        FsmState _bellsState;
+        FsmFloat SUN_minutes;
+        FsmFloat SUN_hours;
+        
+        FsmBool m_bHouseBurningState;
+        bool m_bHouseOnFire = false;
+
+        bool m_bBellsActivated = false;
+        Vector3 bellsOrigPos;
+
 
         // setup mod settings
         public override void ModSettings()
@@ -47,7 +61,9 @@ namespace Psycho
         }
 
         public override void ModSettingsLoaded() => _changeSettingName();
-        
+        //
+
+
         public override void OnNewGame()
         {
             SaveManager.RemoveFile();
@@ -65,28 +81,48 @@ namespace Psycho
             _bundle.Unload(false);
 
             SaveManager.LoadData();
-
+            
             // add global handler & job handlers (what is not possible for use in second pass)
-            AddComponent<GlobalHandler>("PLAYER");
+            //AddComponent<GlobalHandler>("PLAYER");
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
+
+            m_bHouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
+            _houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
+            _player = GameObject.Find("PLAYER").transform;
+
+            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
+            SUN_hours = sun.GetVariable<FsmFloat>("Hours");
+            SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
+
+            _bells = GameObject.Find("PERAJARVI/CHURCH/Bells").transform;
+            _bellsState = _bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
+            bellsOrigPos = _bells.position;
+
+            StateHook.Inject(GameObject.Find("fridge_paper"), "Use", "Wait button", -1,
+                _player => Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang]);
         }
 
         public override void SecondPassOnLoad()
         {
             _registerCommands();
 
-            // add component for make hangover in horror world
-            GameObject camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").gameObject;
-            camera.AddComponent<Hangover>();
+            Logic._hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
+            Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", Logic._hud.GetIndexByName("Money"));
+            Logic._hud.Structurize();
+            Logic.SetPoints(Logic.Points);
 
+            // add component for make hangover in horror world
+            Transform camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
+            camera.gameObject.AddComponent<Hangover>();
+            
             Logic.shizAnimPlayer = AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
             Logic.death = GameObject.Find("Systems").transform.Find("Death").gameObject; // cache ingame player death system
 
             _addHandlers();
             _applyHorrorIfNeeded();
-            _setupActions(camera.transform);
+            _setupActions(camera);
 
             WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
 
@@ -113,6 +149,35 @@ namespace Psycho
 
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
             Resources.UnloadUnusedAssets(); // tested (for remove in release version)
+        }
+
+        public override void FixedUpdate()
+        {
+            if (Logic.GameFinished) return;
+
+            Logic.Tick();
+            if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
+            {
+                if (Vector3.Distance(_houseFire.position, _player.position) > 4f) return;
+                Logic.PlayerCommittedOffence("HOUSE_BURNING");
+                m_bHouseOnFire = true;
+                return;
+            }
+
+            if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
+            {
+                (_bellsState.Actions[0] as ActivateGameObject).activate = true;
+                _bells.gameObject.SetActive(true);
+                _bells.position = GameObject.Find("PLAYER").transform.position;
+                m_bBellsActivated = true;
+            }
+            else if (m_bBellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
+            {
+                (_bellsState.Actions[0] as ActivateGameObject).activate = false;
+                _bells.gameObject.SetActive(false);
+                _bells.position = bellsOrigPos;
+                m_bBellsActivated = false;
+            }
         }
 
         public override void OnSave()
@@ -229,30 +294,50 @@ namespace Psycho
         void _setupActions(Transform camera)
         {
             // fix for the items scale (1, 1, 1) after pick them up and drop
-            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand")?.transform
-                ?.ClearActions("PickUp", "Wait", 2);
+            camera.parent.Find("1Hand_Assemble/Hand")?.transform?.ClearActions("PickUp", "Wait", 2);
 
             // add fatigue increasing by drink milk
             Transform drink = camera.Find("Drink");
             PlayMakerFSM drinkfsm = drink.GetPlayMaker("Drink");
             FsmState drink_state = drinkfsm.GetState("Activate 3");
 
-            var actions = new List<FsmStateAction>(drink_state.Actions); // copy actions list
-            actions.Insert(9, new FloatAdd // insert action
+            var actions1 = new List<FsmStateAction>(drink_state.Actions); // copy actions list
+            actions1.Insert(9, new FloatAdd // insert action
             {
                 add = 2.5f,
                 floatVariable = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue"),
                 everyFrame = true,
                 perSecond = true
             });
-            drink_state.Actions = actions.ToArray(); // replace actions list
+            drink_state.Actions = actions1.ToArray(); // replace actions list
             drink_state.SaveActions(); // save changes
 
+
+            PlayMakerFSM functions = camera.parent.GetPlayMaker("PlayerFunctions");
+            functions.Fsm.InitData();
+            FsmState fn_finger = functions.GetState("Finger");
+            
+            var actions2 = new List<FsmStateAction>(fn_finger.Actions);
+            actions2.Insert(10, new AddToFsmInt
+            {
+                gameObject = new FsmOwnerDefault
+                {
+                    GameObject = GameObject.Find("Systems/Statistics"),
+                    OwnerOption = OwnerDefaultOption.SpecifyGameObject
+                },
+                fsmName = "Data",
+                variableName = "SwearwordsUsed",
+                add = 1,
+                everyFrame = false
+            });
+            fn_finger.Actions = actions2.ToArray();
+            fn_finger.SaveActions();
+
             // 
-            _injectStateHooks(drink);
+            _injectStateHooks(camera, drink);
         }
 
-        void _injectStateHooks(Transform drink)
+        void _injectStateHooks(Transform camera, Transform drink)
         {
             // add milk usage handler (used for skip night screamers)
             StateHook.Inject(drink.gameObject, "Drink", "Activate 3", _ =>
@@ -261,28 +346,42 @@ namespace Psycho
                 Logic.milkUseTime = DateTime.Now;
             });
 
-            StateHook.Inject( // add FITTAN crash handler (crime) (-points)
+            // add FITTAN crash handler (crime) (-points)
+            StateHook.Inject(
                 GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN").transform.Find("CrashEvent").gameObject,
                 "Crash", "Crime",
                 _ => Logic.PlayerCommittedOffence("FITTAN_CRASH")
             );
 
-            StateHook.Inject( // add handler for mission delivery Granny to church (+points)
+            // add handler for mission delivery Granny to church (+points)
+            StateHook.Inject(
                 GameObject.Find("ChurchGrandma/GrannyHiker"), "Logic", "Start walking",
                 _ => Logic.PlayerCompleteJob("GRANNY_CHURCH")
             );
 
-            StateHook.Inject( // add Granny angry handler (-points)
+            // add Granny angry handler (-points)
+            StateHook.Inject(
                 GameObject.Find("JOBS/Mummola/TalkEngine"), "Granny", "Speak 27",
                 _ => Logic.PlayerCommittedOffence("GRANNY_ANGRY")
             );
 
-            StateHook.Inject( // add arrest handler for horror world
-                GameObject.Find("Systems/PlayerWanted"), "Activate", "State 2",
-                _ => {
-                    if (!Logic.inHorror) return;
-                    Logic.KillHeartAttack();
-                });
+            // add arrest handler for horror world
+            StateHook.Inject(GameObject.Find("Systems/PlayerWanted"), "Activate", "State 2", _ =>
+            {
+                if (!Logic.inHorror) return;
+                Logic.KillHeartAttack();
+            });
+
+            // player swears trigger
+            StateHook.Inject(camera.parent.Find("SpeakDatabase").gameObject, "Speech", "Swear", 7, _ => Logic.PlayerCommittedOffence("PLAYER_SWEARS"));
+            StateHook.Inject(camera.parent.gameObject, "PlayerFunctions", "Finger", 11, _ => Logic.PlayerCommittedOffence("PLAYER_SWEARS"));
+
+            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle", 2, _ => Logic.BeerBottlesDrunked++);
+            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle 1", 2, _ => Logic.PlayerCommittedOffence("DRUNK_BOOZE"));
+
+            GameObject farmer_walker = GameObject.Find("HUMANS/Farmer/Walker");
+            if (!farmer_walker) return;
+            StateHook.Inject(farmer_walker, "Speak", "Done", _ => Logic.PlayerCompleteJob("FARMER_QUEST"));
         }
 
         T AddComponent<T>(string path) where T : Component

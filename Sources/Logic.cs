@@ -29,6 +29,7 @@ namespace Psycho
 
         private static float _value = 100f;
         private static float _points = 0f;
+        private static int beer_bottles_drunked = 0;
 
         public static bool milkUsed = false;
         public static bool isDead = false;
@@ -41,30 +42,33 @@ namespace Psycho
         internal static GameObject knockOut = null;
         internal static ShizAnimPlayer shizAnimPlayer = null;
         internal static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
-        
+
         internal static readonly Dictionary<string, float> config = new Dictionary<string, float>
         {
             // Increase
-            ["GRANNY_DELIVERY"] = 1f,
-            ["GRANNY_CHURCH"] = 1f,
-            ["TEIMO_ADS"] = 1f,
-            ["FARMER_QUEST"] = 5f,
-            ["SEPTIC_TANK"] = 0.2f,
-            ["YOKKE_DROPOFF"] = 1f,
+            ["FARMER_QUEST"]     = 5f,
             ["YOKKE_RELOCATION"] = 2f,
-            ["JUNK_YARD"] = 0.25f,
+            ["GRANNY_CHURCH"]    = 0.3f,
+            ["JUNK_YARD"]        = 0.25f,
+            ["TEIMO_ADS"]        = 0.2f,
+            ["YOKKE_DROPOFF"]    = 0.2f,
+            ["GRANNY_DELIVERY"]  = 0.2f,
+            ["SEPTIC_TANK"]      = 0.1f,
 
             // Decrease
-            ["WINDOW_BREAK_INCREASE"] = 0.5f,
-            ["TEIMO_PISS"] = 0.5f,
-            ["TEIMO_SWEARS"] = 0.1f,
-            ["NPC_HIT"] = 1f,
-            ["GRANNY_ANGRY"] = 2f,
-            ["HOUSE_BURNING"] = 3f,
-            ["SPILL_SHIT"] = 3f,
             ["GRAB_SUITCASE"] = 7.1f,
-            ["FITTAN_CRASH"] = 3f,
-            ["SUSKI_HIT"] = 3f
+            ["HOUSE_BURNING"] = 3f,
+            ["FITTAN_CRASH"]  = 3f,
+            ["SPILL_SHIT"]    = 3f,
+            ["SUSKI_HIT"]     = 3f,
+            ["GRANNY_ANGRY"]  = 2f,
+            ["NPC_HIT"]       = 1f,
+            ["WINDOW_BREAK"]  = 0.5f,
+            ["TEIMO_PISS"]    = 0.5f,
+            ["DRUNK_BOOZE"]   = 0.2f,
+            ["TEIMO_SWEARS"]  = 0.1f,
+            ["DRUNK_BEER"]    = 0.05f,
+            ["PLAYER_SWEARS"] = 0.01f
         };
 
         public static bool GameFinished { get; private set; }
@@ -117,6 +121,23 @@ namespace Psycho
                 Utils.PrintDebug(eConsoleColors.YELLOW, $"New value for points {value}; prev: {prev}");
             }
         }
+
+        internal static int BeerBottlesDrunked
+        {
+            get => beer_bottles_drunked;
+            set
+            {
+                if (value == 5)
+                {
+                    PlayerCommittedOffence("DRUNK_BEER");
+                    beer_bottles_drunked = 0;
+                    return;
+                }
+
+                beer_bottles_drunked = value;
+            }
+        }
+
 
         public static void SetValue(float value) => Value = value;
         public static void SetPoints(float points) => Points = points;
