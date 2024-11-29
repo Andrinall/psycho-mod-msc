@@ -42,7 +42,7 @@ namespace Psycho.Screamers
             smokes.transform.localScale = new Vector3(0.0075f, 0.0075f, 0.0075f);
 
             audio?.Play();
-            Globals.HeartbeatSound?.Play();
+            Globals.Heartbeat_source?.Play();
 
             var timer = new System.Timers.Timer(3000);
             timer.Elapsed += (sender, e) =>
@@ -51,7 +51,7 @@ namespace Psycho.Screamers
                 transform.Find("Char").gameObject.SetActive(false);
 
                 audio?.Stop();
-                Globals.HeartbeatSound?.Stop();
+                Globals.Heartbeat_source?.Stop();
 
                 timer.Stop();
                 Destroy(smokes);

@@ -30,10 +30,9 @@ namespace Psycho.Internal
                 Logic.SetValue(BitConverter.ToSingle(value, 3));
                 Logic.SetPoints(BitConverter.ToSingle(value, 7));
                 Logic.BeerBottlesDrunked = BitConverter.ToInt32(value, 11);
+                Logic.lastDayMinigame = BitConverter.ToInt32(value, 15);
                 GameObject.Find("rooster_poster(Clone)")
-                    .GetComponent<AngryRoosterPoster>().Applyed = BitConverter.ToBoolean(value, 15);
-
-                ItemsPool.Load(value, 48);
+                    .GetComponent<AngryRoosterPoster>().Applyed = BitConverter.ToBoolean(value, 19);
 
                 Utils.PrintDebug($"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
                 if (Logic.isDead)
@@ -48,11 +47,13 @@ namespace Psycho.Internal
 
                 // spawn pills in needed
                 PillsItem item = new PillsItem(0);
-                item.ReadData(ref value, 16);
+                item.ReadData(ref value, 20);
                 item.self.SetActive(Logic.inHorror);
                 Globals.pills_list.Add(item);
 
             SkipLoadPills:
+                ItemsPool.Load(value, 48);
+
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             catch (Exception e)
@@ -84,19 +85,18 @@ namespace Psycho.Internal
             BitConverter.GetBytes(Logic.Value).CopyTo(array, 3); // 4
             BitConverter.GetBytes(Logic.Points).CopyTo(array, 7); // 4
             BitConverter.GetBytes(Logic.BeerBottlesDrunked).CopyTo(array, 11);
-            BitConverter.GetBytes(GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>().Applyed).CopyTo(array, 15);
+            BitConverter.GetBytes(Logic.lastDayMinigame).CopyTo(array, 15);
+            BitConverter.GetBytes(GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>().Applyed).CopyTo(array, 19);
 
             Utils.PrintDebug($"[{Logic.isDead}];[{Logic.inHorror}];[{Logic.envelopeSpawned}];[{Logic.Value}];[{Logic.Points}];[{Logic.BeerBottlesDrunked}]");
 
-            ItemsPool.Save(ref array, 48);
-
-            if (!Logic.inHorror || Logic.envelopeSpawned)
+            if (Logic.inHorror && !Logic.envelopeSpawned)
             {
-                File.WriteAllBytes(_saveDataPath, array);
+                Globals.pills_list.First()?.WriteData(ref array, 20);
                 return;
             }
 
-            Globals.pills_list.First()?.WriteData(ref array, 16);
+            ItemsPool.Save(ref array, 48);
             File.WriteAllBytes(_saveDataPath, array);
         }
 

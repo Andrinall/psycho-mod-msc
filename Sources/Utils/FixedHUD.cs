@@ -16,7 +16,7 @@ namespace Psycho.Internal
         readonly List<string> _default = new List<string> {
             "Mortal", "Day", "Thrist",
             "Hunger", "Stress", "Urine",
-            "Fatigue", "Dirty", "Money", "Jailtime"
+            "Fatigue", "Dirty", "Health", "Money", "Jailtime"
         };
 
         Vector3 _start = Vector3.zero;

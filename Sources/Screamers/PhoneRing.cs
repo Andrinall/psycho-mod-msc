@@ -75,7 +75,7 @@ namespace Psycho.Screamers
         void _addAudios()
         {
             var source = Player.gameObject.AddComponent<AudioSource>();
-            source.clip = Globals.ScreamCallClip;
+            source.clip = Globals.ScreamCall_clip;
             source.loop = false;
             source.priority = 128;
             source.volume = 1f;
@@ -90,7 +90,7 @@ namespace Psycho.Screamers
             CallScreamer = source;
 
             var source2 = Player.gameObject.AddComponent<AudioSource>();
-            source2.clip = Globals.PhantomScreamSound;
+            source2.clip = Globals.PhantomScream_clip;
             source2.loop = false;
             source2.priority = 128;
             source2.volume = 1;
@@ -102,7 +102,7 @@ namespace Psycho.Screamers
             source2.spread = 0;
             source2.minDistance = 1.5f;
             source2.maxDistance = 12f;
-            Globals.PhantomScream = source2;
+            Globals.PhantomScream_source = source2;
         }
 
         void _addRingStateForScreamer()

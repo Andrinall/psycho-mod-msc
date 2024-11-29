@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1837195438
+CRC: 2493455552
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d7ef3db6bec9ceed83c71b3d69341dec
+    Hash: 739e189e84a26e2831d8158fdc787206
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5df2726dc7e915492e5fb50c12be224a
@@ -46,12 +46,15 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
+- Assets/Textures/newspaper.png
 - Assets/Screens/42.png
 - Assets/Replaces/AllWorlds/ATLAS_HOME.png
 - Assets/Replaces/Horror/fabric18.png
 - Assets/Pictures/2.png
 - Assets/Replaces/Horror/wood_panel3.png
+- Assets/Textures/Album/Album13.png
 - Assets/Pictures/1.png
+- Assets/Textures/Album/Album8.png
 - Assets/Replaces/Horror/wood.png
 - Assets/Replaces/Horror/Bush_fence.png
 - Assets/Screens/17.png
@@ -79,10 +82,12 @@ Assets:
 - Assets/Screens/32.png
 - Assets/Replaces/Horror/soil13.png
 - Assets/Prefabs/ChurchCandle.prefab
+- Assets/Audio/housekeeper_laughs.wav
 - Assets/Screens/33.png
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
 - Assets/Replaces/AllWorlds/smiley_no.png
+- Assets/Textures/postcard0.png
 - Assets/Audio/acid_burn.mp3
 - Assets/Screens/6.png
 - Assets/Replaces/Horror/store_floor.png
@@ -95,15 +100,19 @@ Assets:
 - Assets/Replaces/Horror/fabric21.png
 - Assets/Screens/19.png
 - Assets/Audio/screamcall.wav
+- Assets/Textures/Taro/Virtue3.png
 - Assets/Materials/suicidal/char_face01.png
 - Assets/Materials/suicidal/char_face01.mat
 - Assets/Screens/39.png
 - Assets/Replaces/Horror/brickwall.png
 - Assets/Screens/38.png
+- Assets/Textures/Taro/Virtue6.png
 - Assets/Replaces/AllWorlds/ATLAS_OFFICE.png
 - Assets/Screens/35.png
 - Assets/Prefabs/Picture.prefab
+- Assets/Textures/Album/Album5.png
 - Assets/Screens/34.png
+- Assets/Textures/postcard1.png
 - Assets/Replaces/Horror/char_face02.png
 - Assets/Replaces/Horror/charred_wood.png
 - Assets/Replaces/Horror/concrete_wall.png
@@ -112,11 +121,13 @@ Assets:
 - Assets/Screens/24.png
 - Assets/Replaces/Horror/wood_panel12.png
 - Assets/Replaces/Horror/wood_panel7.png
+- Assets/Textures/Taro/Sin2.png
 - Assets/Prefabs/Ferns.prefab
 - Assets/Screens/15.png
 - Assets/Screens/21.png
 - Assets/Replaces/Horror/ATLAS_DOORS.png
 - Assets/Pictures/4.png
+- Assets/Textures/Album/Album2.png
 - Assets/Audio/crows/crow_ambient.wav
 - Assets/Replaces/Horror/store_banners.png
 - Assets/Replaces/Horror/fabric.png
@@ -132,8 +143,11 @@ Assets:
 - Assets/Textures/rooster1.png
 - Assets/Prefabs/Mushroom.prefab
 - Assets/Screens/31.png
+- Assets/Textures/Album/Album3.png
+- Assets/Textures/Album/Album10.png
 - Assets/Screens/14.png
 - Assets/Prefabs/Penta.prefab
+- Assets/Textures/Album/Album4.png
 - Assets/Screens/36.png
 - Assets/Replaces/Horror/treecollection.png
 - Assets/Screens/26.png
@@ -145,13 +159,20 @@ Assets:
 - Assets/Replaces/Horror/basketball2.png
 - Assets/Screens/11.png
 - Assets/Replaces/Horror/terrace_shade.png
+- Assets/Prefabs/minigame.prefab
 - Assets/Replaces/Horror/fabric_zebra.png
 - Assets/Replaces/Horror/brickwall2.png
 - Assets/Prefabs/Background.prefab
+- Assets/Textures/Taro/Sin4.png
 - Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
 - Assets/Prefabs/FernFlower.prefab
+- Assets/Textures/Album/Album7.png
+- Assets/Textures/Taro/Sin3.png
+- Assets/Textures/Album/Album11.png
+- Assets/Textures/Taro/Virtue1.png
 - Assets/Replaces/Horror/tiles.png
+- Assets/Textures/page(1-13).png
 - Assets/Replaces/Horror/fabric10.png
 - Assets/Replaces/Horror/paint1.png
 - Assets/Replaces/Horror/char_face09.png
@@ -159,10 +180,12 @@ Assets:
 - Assets/Audio/screamers/door_knock.mp3
 - Assets/Prefabs/Coffin.prefab
 - Assets/Replaces/Horror/fabric2.png
+- Assets/Textures/Taro/Sin7.png
 - Assets/Replaces/Horror/fabric_suomi.png
 - Assets/Replaces/Horror/beer_bottle.png
 - Assets/Screens/18.png
 - Assets/Replaces/Horror/ATLAS_GARAGE.png
+- Assets/Textures/page14.png
 - Assets/Replaces/Horror/cardboard.png
 - Assets/Replaces/Horror/wall_rock.png
 - Assets/Replaces/Horror/car_radios_emission.png
@@ -171,10 +194,15 @@ Assets:
 - Assets/Replaces/Horror/fabric24.png
 - Assets/Audio/screamers/glass2.mp3
 - Assets/Replaces/Horror/treewall2.png
+- Assets/Textures/Album/Album6.png
 - Assets/Materials/suicidal/char_pants01.png
+- Assets/Textures/Album/Album9.png
 - Assets/Replaces/Horror/wood_panel10.png
 - Assets/Screens/41.png
+- Assets/Textures/Taro/Virtue5.png
 - Assets/Screens/46.png
+- Assets/Textures/page0.png
+- Assets/Textures/page15(false).png
 - Assets/Pictures/0.png
 - Assets/Replaces/Horror/bathroomfloor.png
 - Assets/Replaces/Horror/dancehallpainting.png
@@ -191,12 +219,15 @@ Assets:
 - Assets/Replaces/Horror/char_face01.png
 - Assets/Audio/screamers/glass1.mp3
 - Assets/Screens/10.png
+- Assets/Textures/Album/Album12.png
 - Assets/Prefabs/Pills.prefab
 - Assets/Screens/47.png
 - Assets/Replaces/Horror/brickwall3.png
+- Assets/Textures/Taro/Virtue7.png
 - Assets/Materials/suicidal/char_pants01.mat
 - Assets/Replaces/Horror/char_face07.png
 - Assets/Screens/30.png
+- Assets/Textures/Taro/Sin1.png
 - Assets/Screens/40.png
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
@@ -226,14 +257,18 @@ Assets:
 - Assets/Screens/2.png
 - Assets/Replaces/Sounds/Hear_My_Voice.mp3
 - Assets/Screens/43.png
+- Assets/Textures/Taro/Virtue4.png
 - Assets/Screens/16.png
+- Assets/Textures/Taro/Virtue2.png
 - Assets/Replaces/Horror/ATLAS_ART.png
 - Assets/Replaces/Smoking/cigarette_filter.obj
+- Assets/Textures/Taro/Sin6.png
 - Assets/Screens/0.png
 - Assets/Replaces/Horror/char_face04.png
 - Assets/Replaces/Horror/ATLAS_GROCERIES.png
 - Assets/Audio/TVScreamer.mp3
 - Assets/Pictures/6.png
+- Assets/Textures/Taro/Sin5.png
 - Assets/Screens/9.png
 - Assets/Materials/suicidal/char_shirt01.png
 - Assets/Replaces/Horror/wood_panel13.png
@@ -246,6 +281,7 @@ Assets:
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
+- Assets/Textures/Album/Album1.png
 - Assets/Prefabs/Suicidal.prefab
 - Assets/Replaces/Horror/panel_wall.png
 - Assets/Screens/1.png

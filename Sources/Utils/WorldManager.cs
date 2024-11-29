@@ -9,6 +9,7 @@ using HutongGames.PlayMaker.Actions;
 using Psycho.Screamers;
 using Psycho.Extensions;
 using Object = UnityEngine.Object;
+using Psycho.Features;
 
 
 namespace Psycho.Internal
@@ -18,10 +19,23 @@ namespace Psycho.Internal
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
         public static GameObject ClonedPhantom;
+        public static GameObject minigame;
 
         static int elapsedFrames = 0;
 
-        
+        public static void InitializeCottageMinigame()
+        {
+            GameObject bottlehide = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/bottlehide");
+            Object.Destroy(bottlehide);
+            
+            GameObject minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
+            minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
+            minigame.AddComponent<Minigame>();
+
+            // other logic
+            // ... ...
+        }
+         
         public static void ShowCrows(bool state)
             => GameObject.Find("CrowsList(Clone)")?.SetActive(state);
 
@@ -48,7 +62,7 @@ namespace Psycho.Internal
             ClonedPhantom.SetActive(false);
             elapsedFrames = 0;
 
-            Globals.PhantomScream?.Play();
+            Globals.PhantomScream_source?.Play();
             callback?.Invoke();
             SoundManager.PlayHeartbeat(false);
             return false;

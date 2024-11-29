@@ -125,11 +125,12 @@ namespace Psycho
             _setupActions(camera);
 
             WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
+            WorldManager.InitializeCottageMinigame();
 
             // add inactive audio source for play in screamer
             GameObject _grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
             AudioSource source = _grandma.AddComponent<AudioSource>(); // add burn sound to grandma, used for night screamer
-            source.clip = Globals.AcidBurnSound;
+            source.clip = Globals.AcidBurn_clip;
             source.loop = false;
             source.volume = 2f;
             source.priority = 5;
@@ -286,6 +287,7 @@ namespace Psycho
             ConsoleCommand.Add(new Scream());
             ConsoleCommand.Add(new Finish());
             ConsoleCommand.Add(new Penta());
+            ConsoleCommand.Add(new MinigameCMD());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());

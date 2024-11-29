@@ -45,6 +45,8 @@ namespace Psycho
         public static List<PillsItem> pills_list { get; private set; } = new List<PillsItem> { };
         public static List<Texture> mailScreens { get; private set; } = new List<Texture> { };
 
+        public static List<Texture> TaroCards { get; private set; } = new List<Texture> { };
+
         public static Dictionary<int, ModelData> models_cached { get; private set; } = new Dictionary<int, ModelData> { };
         public static Dictionary<int, ModelData> models_replaces { get; private set; } = new Dictionary<int, ModelData> { };
 
@@ -72,17 +74,20 @@ namespace Psycho
         public static GameObject Coffin_prefab = null;
         public static GameObject Suicidal_prefab = null;
         public static GameObject SmokeParticleSystem_prefab = null;
+        public static GameObject CottageMinigame_prefab = null;
+
         public static GameObject mailboxSheet = null;
         public static GameObject envelopeObject = null;
 
-        public static AudioClip AcidBurnSound = null;
-        public static AudioClip ScreamCallClip = null;
-        public static AudioClip PhantomScreamSound = null;
-        public static AudioClip TVScreamSound = null;
-        public static AudioClip UncleScreamSound = null;
+        public static AudioClip AcidBurn_clip = null;
+        public static AudioClip ScreamCall_clip = null;
+        public static AudioClip PhantomScream_clip = null;
+        public static AudioClip TVScream_clip = null;
+        public static AudioClip UncleScream_clip = null;
+        public static AudioClip HousekeeperLaughs_clip = null;
 
-        public static AudioSource PhantomScream = null;
-        public static AudioSource HeartbeatSound = null;
+        public static AudioSource PhantomScream_source = null;
+        public static AudioSource Heartbeat_source = null;
 
         public static int CurrentLang = 0;
 
@@ -261,11 +266,14 @@ namespace Psycho
             Picture_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
             Coffin_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
             SmokeParticleSystem_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
-            AcidBurnSound = LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
-            ScreamCallClip = LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
-            PhantomScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
-            TVScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
-            UncleScreamSound = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
+            CottageMinigame_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/minigame.prefab");
+
+            AcidBurn_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
+            ScreamCall_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
+            PhantomScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
+            TVScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
+            UncleScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
+            HousekeeperLaughs_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/housekeeper_laughs.wav");
 
             GameObject penta = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab"));
             penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
@@ -290,15 +298,14 @@ namespace Psycho
             heartbeat.minDistance = 1.5f;
             heartbeat.maxDistance = 12f;
             
-            HeartbeatSound = heartbeat;
+            Heartbeat_source = heartbeat;
             heartbeat.enabled = false;
 
             GameObject clonedlist = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
             WorldManager.CopySuicidal(clonedlist); // copy first suicidal from list for use in night screamer
             clonedlist.SetActive(false); // hide suicidals list
 
-
-            // load all replaces
+                // load all replaces
             Transform building = GameObject.Find("YARD/Building").transform;
             foreach (string name in _bundle.GetAllAssetNames())
             {
@@ -348,6 +355,8 @@ namespace Psycho
                 }
                 else if (name.Contains("screens/"))
                     mailScreens.Add(LoadAsset<Texture>(_bundle, name));
+                else if (name.Contains("textures/taro"))
+                    TaroCards.Add(LoadAsset<Texture>(_bundle, name));
             }
 
             mailScreens.Sort(delegate (Texture item, Texture target) {

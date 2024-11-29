@@ -68,13 +68,8 @@ namespace Psycho.Internal
             for (int i = 0; i < count; i++)
             {
                 string sName = "".GetFromBytes(array, ref offset); // 1
-                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: name: \"{sName}\"");
-
-                Vector3 pos = Vector3.zero.GetFromBytes(array, ref offset);
-                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: pos: \"{pos}\"");
-
-                Vector3 rot = Vector3.zero.GetFromBytes(array, ref offset); // 3
-                Utils.PrintDebug($"[LoadPool]:[{i}]:[{offset}]: pos: \"{rot}\"");
+                Vector3 pos = new Vector3().GetFromBytes(array, ref offset);
+                Vector3 rot = new Vector3().GetFromBytes(array, ref offset);
 
                 GameObject prefab = null;
                 switch (sName)
@@ -99,7 +94,7 @@ namespace Psycho.Internal
                         break;
                 }
 
-                Utils.PrintDebug($"[LoadPool]:[{i}]: prefab: \"{prefab}\"");
+                Utils.PrintDebug($"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
                 if (prefab == null)
                 {
                     Utils.PrintDebug($"Loaded item {sName} has null prefab");

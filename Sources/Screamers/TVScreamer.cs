@@ -118,7 +118,7 @@ namespace Psycho.Screamers
             if (ScreamEnabled) return;
             
             _setTexture();
-            _setAudioClip(Globals.TVScreamSound);
+            _setAudioClip(Globals.TVScream_clip);
             ScreamEnabled = true;
 
             Utils.PrintDebug(eConsoleColors.YELLOW, "TVScreamer hook called; screamer enabled;");

@@ -18,8 +18,8 @@ namespace Psycho.Internal
 
         public static void PlayHeartbeat(bool state)
         {
-            Globals.HeartbeatSound.enabled = state;
-            if (state) Globals.HeartbeatSound.Play();
+            Globals.Heartbeat_source.enabled = state;
+            if (state) Globals.Heartbeat_source.Play();
         }
 
         public static void PlayDeathSound()
