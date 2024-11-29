@@ -54,7 +54,7 @@ namespace Psycho.Internal
 
                 PrintDebug(eConsoleColors.YELLOW, $"Generated pills: {idx}, {Image.name}");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModConsole.Error($"Failed to create a random pills;\n{e.GetFullMessage()}");
             }
@@ -85,38 +85,29 @@ namespace Psycho.Internal
 
             UnityEngine.Object.Destroy(Logic._hud);
 
-            Resources.UnloadAsset(Globals.Suicidal_prefab);
-            Globals.Suicidal_prefab = null;
+            foreach (var field in typeof(Globals).GetFields())
+            {
+                string fieldName = field.Name;
+                string fieldType = field.FieldType.Name;
+                if (!fieldName.Contains("_clip") && !fieldName.Contains("_prefab")) continue;
 
-            Resources.UnloadAsset(Globals.Pentagram_prefab);
-            Globals.Pentagram_prefab = null;
+                if (fieldType == "GameObject")
+                {
+                    Resources.UnloadAsset((GameObject)field.GetValue(null));
+                    field.SetValue(null, null);
+                    continue;
+                }
+                
+                if (fieldType == "AudioClip")
+                {
+                    Resources.UnloadAsset((AudioClip)field.GetValue(null));
+                    field.SetValue(null, null);
+                    continue;
+                }
+            }
 
-            Resources.UnloadAsset(Globals.AcidBurnSound);
-            Globals.AcidBurnSound = null;
-
-            Resources.UnloadAsset(Globals.ScreamCallClip);
-            Globals.ScreamCallClip = null;
-
-            Resources.UnloadAsset(Globals.PhantomScreamSound);
-            Globals.PhantomScreamSound = null;
-
-            Resources.UnloadAsset(Globals.TVScreamSound);
-            Globals.TVScreamSound = null;
-
-            Resources.UnloadAsset(Globals.UncleScreamSound);
-            Globals.UncleScreamSound = null;
-
-            Resources.UnloadAsset(Globals.HeartbeatSound);
-            Globals.HeartbeatSound = null;
-
-            Resources.UnloadAsset(Globals.SmokeParticleSystem_prefab);
-            Globals.SmokeParticleSystem_prefab = null;
-
-            Resources.UnloadAsset(Globals.Background_prefab);
-            Globals.Background_prefab = null;
-
-            Resources.UnloadAsset(Globals.Pills_prefab);
-            Globals.Pills_prefab = null;
+            Resources.UnloadAsset(Globals.Heartbeat_source);
+            Globals.Heartbeat_source = null;
 
             Resources.UnloadAsset(Globals.mailboxSheet);
             Globals.mailboxSheet = null;
@@ -124,17 +115,8 @@ namespace Psycho.Internal
             Resources.UnloadAsset(Globals.envelopeObject);
             Globals.envelopeObject = null;
 
-            Resources.UnloadAsset(Globals.Crow_prefab);
-            Globals.Crow_prefab = null;
-
             Resources.UnloadAsset(SoundManager.DeathSound);
             SoundManager.DeathSound = null;
-
-            Resources.UnloadAsset(Globals.Picture_prefab);
-            Globals.Picture_prefab = null;
-
-            Resources.UnloadAsset(Globals.Coffin_prefab);
-            Globals.Coffin_prefab = null;
 
             Globals.pills_list.Clear();
             Globals.models_cached.Clear();
