@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2493455552
+CRC: 24586193
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 739e189e84a26e2831d8158fdc787206
+    Hash: 8ed363ac9faa441eb917d8b31d6afb29
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 5df2726dc7e915492e5fb50c12be224a
+    Hash: f1d18720294351cc304d9152a6f9e658
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -35,7 +35,11 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 83
   Script: {instanceID: 0}
+- Class: 102
+  Script: {instanceID: 0}
 - Class: 108
+  Script: {instanceID: 0}
+- Class: 128
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -201,6 +205,7 @@ Assets:
 - Assets/Screens/41.png
 - Assets/Textures/Taro/Virtue5.png
 - Assets/Screens/46.png
+- Assets/Prefabs/NotebookPage.prefab
 - Assets/Textures/page0.png
 - Assets/Textures/page15(false).png
 - Assets/Pictures/0.png
