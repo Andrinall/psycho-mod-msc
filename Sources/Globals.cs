@@ -42,22 +42,24 @@ namespace Psycho
 
     public static class Globals
     {
-        public static List<PillsItem> pills_list { get; private set; } = new List<PillsItem> { };
-        public static List<Texture> mailScreens { get; private set; } = new List<Texture> { };
+        public static readonly List<PillsItem> pills_list = new List<PillsItem> { };
+        public static readonly List<Texture> mailScreens = new List<Texture> { };
 
-        public static List<Texture> TaroCards { get; private set; } = new List<Texture> { };
+        public static readonly List<Texture> TaroCards = new List<Texture> { };
 
-        public static Dictionary<int, ModelData> models_cached { get; private set; } = new Dictionary<int, ModelData> { };
-        public static Dictionary<int, ModelData> models_replaces { get; private set; } = new Dictionary<int, ModelData> { };
+        public static readonly Dictionary<int, ModelData> models_cached = new Dictionary<int, ModelData> { };
+        public static readonly Dictionary<int, ModelData> models_replaces = new Dictionary<int, ModelData> { };
 
-        public static Dictionary<int, object> cached { get; private set; } = new Dictionary<int, object> { };
-        public static Dictionary<int, Texture> replaces { get; private set; } = new Dictionary<int, Texture> { };
-        public static Dictionary<int, Texture> indep_textures { get; private set; } = new Dictionary<int, Texture> { };
+        public static readonly Dictionary<int, object> cached = new Dictionary<int, object> { };
+        public static readonly Dictionary<int, Texture> replaces = new Dictionary<int, Texture> { };
+        public static readonly Dictionary<int, Texture> indep_textures = new Dictionary<int, Texture> { };
 
-        public static List<AudioClip> flies_cached { get; private set; } = new List<AudioClip> { };
-        public static List<AudioClip> horror_flies { get; private set; } = new List<AudioClip> { };
+        public static readonly List<AudioClip> flies_cached = new List<AudioClip> { };
+        public static readonly List<AudioClip> horror_flies = new List<AudioClip> { };
 
-        public static List<Texture> pictures { get; private set; } = new List<Texture> { };
+        public static readonly List<Texture> pictures = new List<Texture> { };
+        
+        public static readonly List<Texture> SketchbookPages = new List<Texture> { };
 
         public static GameObject Pentagram_prefab = null;
         public static GameObject Candle_prefab = null;
@@ -75,6 +77,15 @@ namespace Psycho
         public static GameObject Suicidal_prefab = null;
         public static GameObject SmokeParticleSystem_prefab = null;
         public static GameObject CottageMinigame_prefab = null;
+        
+        public static GameObject Notebook_prefab = null;
+        public static GameObject NotebookPage_prefab = null;
+        public static GameObject NotebookGUI_prefab = null;
+
+        public static GameObject Sketchbook_prefab = null;
+        public static GameObject SketchbookGUI_prefab = null;
+
+        public static GameObject Postcard_prefab = null;
 
         public static GameObject mailboxSheet = null;
         public static GameObject envelopeObject = null;
@@ -88,6 +99,12 @@ namespace Psycho
 
         public static AudioSource PhantomScream_source = null;
         public static AudioSource Heartbeat_source = null;
+
+        public static Texture NotebookPages_texture = null;
+        public static Texture NotebookStartPage_texture = null;
+        public static Texture NotebookFinalPage_texture = null;
+
+        internal static NotebookMain Notebook = null;
 
         public static int CurrentLang = 0;
 
@@ -268,6 +285,19 @@ namespace Psycho
             SmokeParticleSystem_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
             CottageMinigame_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/minigame.prefab");
 
+            Notebook_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebook.prefab");
+            NotebookPage_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebook page.prefab");
+            NotebookGUI_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebookgui.prefab");
+
+            NotebookPages_texture = LoadAsset<Texture>(_bundle, "assets/textures/page(1-13)(notebook).png");
+            NotebookStartPage_texture = LoadAsset<Texture>(_bundle, "assets/textures/page14.png");
+            NotebookFinalPage_texture = LoadAsset<Texture>(_bundle, "assets/textures/page15(false).png");
+
+            Sketchbook_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/sketchbook.prefab");
+            SketchbookGUI_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/sketchbookgui.prefab");
+
+            Postcard_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/postcard.prefab");
+
             AcidBurn_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
             ScreamCall_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
             PhantomScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
@@ -357,6 +387,8 @@ namespace Psycho
                     mailScreens.Add(LoadAsset<Texture>(_bundle, name));
                 else if (name.Contains("textures/taro"))
                     TaroCards.Add(LoadAsset<Texture>(_bundle, name));
+                else if (name.Contains("textures/album"))
+                    SketchbookPages.Add(LoadAsset<Texture>(_bundle, name));
             }
 
             mailScreens.Sort(delegate (Texture item, Texture target) {

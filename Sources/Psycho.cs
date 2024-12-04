@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -21,7 +22,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9-beta_0.5";
+        public override string Version => "0.9-beta_0.8";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
@@ -49,18 +50,29 @@ namespace Psycho
             lang = Settings.AddDropDownList(this,
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
-                0, _changeSettingName);
+                0, _changeSetting);
         }
 
-        void _changeSettingName()
+        void _changeSetting()
         {
             Globals.CurrentLang = lang.GetSelectedItemIndex();
 
             bool blang = Globals.CurrentLang == 0;
             lang.Instance.Name = blang ? "Language select" : "Выбор языка";
+
+            Resources.FindObjectsOfTypeAll<GameObject>()
+                .Where(v => v.name.Contains("Notebook Page"))
+                .ToList()
+                .ForEach(v => v.GetComponent<NotebookPageComponent>()?.UpdatePageText());
+
+            Globals.Notebook?.UpdatePageText();
+
+            TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
+            if (postcardText != null)
+                postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
         }
 
-        public override void ModSettingsLoaded() => _changeSettingName();
+        public override void ModSettingsLoaded() => _changeSetting();
         //
 
 
@@ -288,6 +300,7 @@ namespace Psycho
             ConsoleCommand.Add(new Finish());
             ConsoleCommand.Add(new Penta());
             ConsoleCommand.Add(new MinigameCMD());
+            ConsoleCommand.Add(new NotebookCMD());
 #endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());

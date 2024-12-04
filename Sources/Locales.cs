@@ -30,21 +30,29 @@ namespace Psycho
             }
         };
 
+        public static readonly string[] POSTCARD_TEXT = new string[]
+        {
+            "Son! We hope\nyou're doing well!\nWe'll be back soon,\ndon't be bored!",
+            "Сынок! Надеемся,\nчто у тебя все\nхорошо!\nСкоро вернемся,\nне скучай!"
+        };
+
+
         public static readonly string[] DEFAULT_PAGE = new string[]
         {
             "My notes... they're gone.\nIt's all him!\nHe stole them!\nI have to find him!",
             "Мои записи... они пропали.\nЭто все он!\nОн их украл!\nЯ должен его найти!"
         };
 
+        // [idx, (0 - true, 1 - false), lang]
         public static readonly string[,] FINAL_PAGE = new string[,]
         {
+            { // true ending
+                "My parents sent me a postcard!\nThey are fine\nand will be home soon!",
+                "Родители\nприслали открытку!\nС ними все хорошо\nи скоро они будут дома!"
+            },
             { // false ending
                 "My parents won't come back.\nThey left 10 years ago.\nI'm tired of waiting for them.\nI have to end all this.",
                 "Родители не вернутся.\nОни уехали 10 лет назад.\nЯ устал их ждать.\nЯ должен все это закончить."
-            },
-            { // true ending
-                "My parents sent me a postcard!\nThey are fine\nand will be home soon!",
-                "Родители прислали открытку!\nС ними все хорошо\nи скоро они будут дома!"
             }
         };
 
@@ -57,127 +65,127 @@ namespace Psycho
                 },
                 {
                     "I hear strange things.\nI see strange things.\nSometimes I go to a strange\nworld. I don't usually like it,\nbut today it was fun.\nThe barn was burning\nso brightly!",
-                    "Я слышу странное.\r\nЯ вижу странное.\r\nИногда я перемещаюсь\r\nв странный мир.\r\nОбычно мне это не нравится,\r\nно сегодня было весело.\r\nКоровник горел так ярко!"
+                    "Я слышу странное.\nЯ вижу странное.\nИногда я перемещаюсь\nв странный мир.\nОбычно мне это не нравится,\nно сегодня было весело.\nКоровник горел так ярко!"
                 }
             },
             {
                 {
-                    "Uncle Toivo came to visit today.\r\nMy parents say that he drinks\r\na lot and that's why his wife\r\nleft him and now there's\r\nno one to raise Penti.\r\nThey said that Penti\r\nis becoming brainless.\r\nI don't understand what\r\nthat means.",
-                    "Сегодня в гости приходил\r\nдядя Тойво.\r\nРодители говорят, что он\r\nмного пьет и поэтому от\r\nнего ушла жена, и теперь\r\nнекому воспитывать Пенти.\r\nОни сказали, что Пенти\r\nстановится безголовым.\r\nНе понимаю, что это\r\nзначит."
+                    "Uncle Toivo came to visit today.\nMy parents say that he drinks\na lot and that's why his wife\nleft him and now there's\nno one to raise Penti.\nThey said that Penti\nis becoming brainless.\nI don't understand what\nthat means.",
+                    "Сегодня в гости приходил\nдядя Тойво.\nРодители говорят, что он\nмного пьет и поэтому от\nнего ушла жена, и теперь\nнекому воспитывать Пенти.\nОни сказали, что Пенти\nстановится безголовым.\nНе понимаю, что это\nзначит."
                 }, 
                 {
-                    "Uncle Toivo now lives alone.\r\nWhat did he do to his wife?\r\nWhy did Penty lose his head?\r\nUncle is bad.",
-                    "Дядя Тойво теперь живет\r\nодин. Что он сделал со своей\r\nженой? Почему Пенти\r\nостался без головы?\r\nДядя - плохой."
+                    "Uncle Toivo now lives alone.\nWhat did he do to his wife?\nWhy did Penty lose his head?\nUncle is bad.",
+                    "Дядя Тойво теперь живет\nодин. Что он сделал со своей\nженой? Почему Пенти\nостался без головы?\nДядя - плохой."
                 } 
             },
             { 
                 {
-                    "Today my grandmother took\r\nme to church.\r\nIt is a strange and boring place.",
-                    "Сегодня бабушка взяла меня\r\nс собой в церковь.\r\nЭто странное и скучное\r\nместо."
+                    "Today my grandmother took\nme to church.\nIt is a strange and boring place.",
+                    "Сегодня бабушка взяла меня\nс собой в церковь.\nЭто странное и скучное\nместо."
                 }, 
                 {
-                    "My grandmother took me to\r\nchurch. They said that all\r\npeople will die, that I will die,\r\nthat we are all bad and that\r\nI am bad too. I had to pray\r\nand ask for forgiveness.\r\nI DON'T WANT TO GO THERE!",
-                    "Бабушка повела меня в\r\nцерковь. Там говорили, что\r\nвсе люди умрут, что я умру,\r\nчто мы все плохие и что я\r\nтоже плохой. Нужно было\r\nмолиться и просить\r\nпрощения.\r\nЯ НЕ ХОЧУ ТУДА ХОДИТЬ!"
+                    "My grandmother took me to\nchurch. They said that all\npeople will die, that I will die,\nthat we are all bad and that\nI am bad too. I had to pray\nand ask for forgiveness.\nI DON'T WANT TO GO THERE!",
+                    "Бабушка повела меня в\nцерковь. Там говорили, что\nвсе люди умрут, что я умру,\nчто мы все плохие и что я\nтоже плохой. Нужно было\nмолиться и просить\nпрощения.\nЯ НЕ ХОЧУ ТУДА ХОДИТЬ!"
                 } 
             },
             { 
                 {
-                    "Uncle Yokki came to visit us\r\ntoday. Everyone had fun when\r\nhe was drunk and dancing on\r\nthe table. But grandma didn't\r\nlike it.\r\nGrandma doesn't like drunks.",
-                    "Сегодня к нам в гости\r\nприходил дядя Йоуко.\r\nВсем было весело, когда он\r\nпьяный танцевал на столе.\r\nНо бабушке это не\r\nпонравилось.\r\nБабушка не любит пьяных."
+                    "Uncle Yokki came to visit us\ntoday. Everyone had fun when\nhe was drunk and dancing on\nthe table. But grandma didn't\nlike it.\nGrandma doesn't like drunks.",
+                    "Сегодня к нам в гости\nприходил дядя Йоуко.\nВсем было весело, когда он\nпьяный танцевал на столе.\nНо бабушке это не\nпонравилось.\nБабушка не любит пьяных."
                 },
                 {
-                    "Uncle Jouko came, Grandma\r\nsaid that he would end badly\r\nand the bottle would kill him.\r\nGrandma doesn't like anyone.\r\nBut Grandma didn't like that.\r\nShe said that he would end\r\nhis life in agony and commit\r\nsuicide.\r\nGrandma is EVIL!",
-                    "Приходил дядя Йоуко,\r\nбабушка сказала, что он\r\nплохо кончит и его погубит\r\nбутылка. Бабушке никто\r\nне нравится. Но бабушке это\r\nне понравилось. Она сказала,\r\nчто он закончит свою жизнь\r\nв муках и станет\r\nсамоубийцей.\r\nБабушка ЗЛАЯ!"
+                    "Uncle Jouko came, Grandma\nsaid that he would end badly\nand the bottle would kill him.\nGrandma doesn't like anyone.\nShe said that he would end\nhis life in agony and commit\nsuicide.\nGrandma is EVIL!",
+                    "Приходил дядя Йоуко,\nбабушка сказала, что он\nплохо кончит и его погубит\nбутылка. Бабушке никто\nне нравится. Она сказала,\nчто он закончит свою жизнь\nв муках и станет\nсамоубийцей.\nБабушка ЗЛАЯ!"
                 } 
             },
             { 
                 {
-                    "The doctor said that I have\r\nbad dreams about my\r\ngrandmother because I feel\r\nguilty. I should visit her more\r\noften. I don't really like to do\r\nit because she grumbles\r\nall the time.",
-                    "Доктор сказал, что я вижу\r\nплохие сны про бабушку\r\nпотому, что испытываю\r\nчувство вины. Я должен чаще\r\nездить к ней в гости.\r\nЯ не очень люблю это делать\r\nпотому, что она\r\nвсе время ворчит."
+                    "The doctor said that I have\nbad dreams about my\ngrandmother because I feel\nguilty. I should visit her more\noften. I don't really like to do\nit because she grumbles\nall the time.",
+                    "Доктор сказал, что я вижу\nплохие сны про бабушку\nпотому, что испытываю\nчувство вины. Я должен чаще\nездить к ней в гости.\nЯ не очень люблю это делать\nпотому, что она\nвсе время ворчит."
                 },
                 {
-                    "They think grandma is good,\r\nbut she's bad! She's a witch!\r\nShe's always walking on my\r\nceiling! I see her outside my\r\nwindow!\r\nI know she's EVIL!\r\nSHE'S A WITCH!",
-                    "Они думают, что бабушка\r\nхорошая, но она плохая!\r\nЭто ведьма!\r\nОна постоянно ходит\r\nпо моему потолку!\r\nЯ вижу ее за окном!\r\nЯ знаю - она ЗЛАЯ!\r\nОНА ВЕДЬМА!"
+                    "They think grandma is good,\nbut she's bad! She's a witch!\nShe's always walking on my\nceiling! I see her outside my\nwindow!\nI know she's EVIL!\nSHE'S A WITCH!",
+                    "Они думают, что бабушка\nхорошая, но она плохая!\nЭто ведьма!\nОна постоянно ходит\nпо моему потолку!\nЯ вижу ее за окном!\nЯ знаю - она ЗЛАЯ!\nОНА ВЕДЬМА!"
                 } 
             },
             { 
                 {
-                    "Doctor Hollberg came.\r\nHe said he could cure me,\r\nbut I had to be obedient and\r\ntake pills. The pills would\r\nhelp me come back\r\nfrom the bad world.",
-                    "Приходил доктор Холлберг.\r\nОн сказал, что может меня\r\nвылечить, но я должен быть\r\nпослушным и пить\r\nтаблетки. Они помогут мне\r\nвозвращаться из\r\nнехорошего мира."
+                    "Doctor Hollberg came.\nHe said he could cure me,\nbut I had to be obedient and\ntake pills. The pills would\nhelp me come back\nfrom the bad world.",
+                    "Приходил доктор Холлберг.\nОн сказал, что может меня\nвылечить, но я должен быть\nпослушным и пить\nтаблетки. Они помогут мне\nвозвращаться из\nнехорошего мира."
                 }, 
                 {
-                    "I'm forbidden to do anything!\r\nI'm not allowed to hide my\r\nhands under the blanket!\r\nI'm not allowed to go near my\r\nparents' room when their bed\r\ncreaks! If I take a shower,\r\nsomeone is always standing\r\nbehind me!\r\nAND I HAVE TO EAT\r\nTHESE DAMN PILLS!!!",
-                    "Мне всё запрещают!\r\nМне нельзя прятать руки\r\nпод одеялом! Мне нельзя\r\nподходить к комнате\r\nродителей, когда у них\r\nскрипит кровать!\r\nЕсли я принимаю душ, то\r\nкто-нибудь обязательно\r\nстоит за спиной!\r\nА ЕЩЕ Я ДОЛЖЕН ЖРАТЬ\r\nЭТИ ЧЕРТОВЫ ТАБЛЕТКИ!!!"
+                    "I'm forbidden to do anything!\nI'm not allowed to hide my\nhands under the blanket!\nI'm not allowed to go near my\nparents' room when their bed\ncreaks! If I take a shower,\nsomeone is always standing\nbehind me!\nAND I HAVE TO EAT\nTHESE DAMN PILLS!!!",
+                    "Мне всё запрещают!\nМне нельзя прятать руки\nпод одеялом! Мне нельзя\nподходить к комнате\nродителей, когда у них\nскрипит кровать!\nЕсли я принимаю душ, то\nкто-нибудь обязательно\nстоит за спиной!\nА ЕЩЕ Я ДОЛЖЕН ЖРАТЬ\r\nЭТИ ЧЕРТОВЫ ТАБЛЕТКИ!!!"
                 } 
             },
             { 
                 {
-                    "I am admitted to hospital.\r\nI jump at every phone call or\r\nknock on the door.\r\nMy mother says it will be\r\nbetter this way. Maybe.",
-                    "Меня кладут в больницу.\r\nЯ вздрагиваю от каждого\r\nтелефонного звонка или\r\nстука в дверь. Мама говорит,\r\nчто так будет лучше.\r\nМожет быть."
+                    "I am admitted to hospital.\nI jump at every phone call or\nknock on the door.\nMy mother says it will be\nbetter this way. Maybe.",
+                    "Меня кладут в больницу.\nЯ вздрагиваю от каждого\nтелефонного звонка или\nстука в дверь. Мама говорит,\nчто так будет лучше.\nМожет быть."
                 }, 
                 {
-                    "They decided to lock me up in\r\na mental hospital! Damn, I'm\r\nsitting here shaking.\r\nEvery phone call, every knock\r\non the door - it could be the\r\ndoctors. They say it's better\r\nthis way! Ha!\r\nThey'd be better off dead!",
-                    "Они решили упрятать меня\r\nв психушку! Черт, я сижу и\r\nтрясусь.\r\nКаждый телефонный звонок,\r\nкаждый стук в дверь - это\r\nмогут быть врачи.\r\nОни говорят, что так будет\r\nлучше! Ха!\r\nЛучше бы было им умереть!"
+                    "They decided to lock me up in\na mental hospital! Damn, I'm\nsitting here shaking.\nEvery phone call, every knock\non the door - it could be the\ndoctors. They say it's better\nthis way! Ha!\nThey'd be better off dead!",
+                    "Они решили упрятать меня\nв психушку! Черт, я сижу и\nтрясусь.\nКаждый телефонный звонок,\nкаждый стук в дверь - это\nмогут быть врачи.\nОни говорят, что так будет\nлучше! Ха!\nЛучше бы было им умереть!"
                 } 
             },
             { 
                 {
-                    "Today I finally came home\r\nfrom the hospital!\r\nIt was so nice to eat\r\nhome-cooked food and go for\r\na walk! The doctor said I was\r\nalmost healthy, although\r\nflare-ups could return\r\nin the future.",
-                    "Сегодня я наконец-то\r\nвернулся домой из больницы!\r\nКак приятно поесть\r\nдомашней еды и погулять!\r\nДоктор сказал, что я\r\nпочти здоров, хотя\r\nобострения могут вернуться\r\nв будущем."
+                    "Today I finally came home\nfrom the hospital!\nIt was so nice to eat\nhome-cooked food and go for\na walk! The doctor said I was\nalmost healthy, although\nflare-ups could return\r\nin the future.",
+                    "Сегодня я наконец-то\nвернулся домой из больницы!\nКак приятно поесть\nдомашней еды и погулять!\nДоктор сказал, что я\nпочти здоров, хотя\nобострения могут вернуться\nв будущем."
                 }, 
                 {
-                    "Fuck! They finally let me go!\r\nThey forbid everything in this\r\nfucking hospital!\r\nThey'll feed me some pills\r\nand be happy.\r\nI know I'm okay.",
-                    "Бля! Наконец-то меня\r\nотпустили!\r\nВ этой сраной больнице все\r\nзапрещают! Накормят\r\nтаблетками и рады.\r\nЯ-то знаю,\r\nчто со мной все в порядке."
+                    "Fuck! They finally let me go!\nThey forbid everything in this\nfucking hospital!\nThey'll feed me some pills\nand be happy.\nI know I'm okay.",
+                    "Бля! Наконец-то меня\nотпустили!\nВ этой сраной больнице все\nзапрещают! Накормят\nтаблетками и рады.\nЯ-то знаю,\nчто со мной все в порядке."
                 } 
             },
             { 
                 {
-                    "Today my parents went on\r\nvacation. They deserved it.\r\nMom didn't want to leave me,\r\nbut the illness has receded,\r\nmore than two years have\r\npassed, I don't think anything\r\nbad will happen.",
-                    "Сегодня родители уехали в\r\nотпуск. Они это заслужили.\r\nМама не хотела меня\r\nоставлять, но болезнь\r\nотступила, прошло больше\r\nдвух лет, не думаю,\r\nчто случится что-то\r\nдурное."
+                    "Today my parents went on\nvacation. They deserved it.\nMom didn't want to leave me,\nbut the illness has receded,\nmore than two years have\npassed, I don't think anything\nbad will happen.",
+                    "Сегодня родители уехали в\nотпуск. Они это заслужили.\nМама не хотела меня\nоставлять, но болезнь\nотступила, прошло больше\nдвух лет, не думаю,\nчто случится что-то\nдурное."
                 }, 
                 {
-                    "Finally, I'm alone!\r\nWithout this care, without this\r\nsupervision. Damn, I haven't\r\nbeen a child for a long time!\r\nI've been healthy for a long\r\ntime! I'm going to have a\r\nblast this summer!",
-                    "Наконец-то я остался один!\r\nБез этой опеки, без этого\r\nнадзора. Черт, я давно уже\r\nне ребенок! Я давно уже здоров!\r\nОторвусь в это лето\r\nпо полной!"
+                    "Finally, I'm alone!\nWithout this care, without this\nsupervision. Damn, I haven't\nbeen a child for a long time!\nI've been healthy for a long\ntime! I'm going to have a\nblast this summer!",
+                    "Наконец-то я остался один!\nБез этой опеки, без этого\nнадзора. Черт, я давно уже\nне ребенок! Я давно уже здоров!\nОторвусь в это лето\nпо полной!"
                 } 
             },
             { 
                 {
-                    "I remember how my father\r\nand I were messing around in\r\nthe garage, fixing the car and\r\nlistening to music. I think\r\nI can still sometimes hear\r\nhis footsteps.",
-                    "Помню, как мы с отцом\r\nвозились в гараже, чинили\r\nмашину и слушали музыку.\r\nМне кажется, что я до сих\r\nпор иногда слышу,\r\nкак звучат его шаги."
+                    "I remember how my father\nand I were messing around in\nthe garage, fixing the car and\nlistening to music. I think\nI can still sometimes hear\nhis footsteps.",
+                    "Помню, как мы с отцом\nвозились в гараже, чинили\nмашину и слушали музыку.\nМне кажется, что я до сих\nпор иногда слышу,\nкак звучат его шаги."
                 }, 
                 {
-                    "I accidentally broke the bottle\r\nthat dad kept in the garage.\r\nIf he finds out, he'll kill me.\r\nI hear his footsteps...\r\nHe's searching.",
-                    "Я случайно разбил бутылку,\r\nкоторую папа хранил\r\nв гараже. Если он узнает,\r\nто убьет меня.\r\nЯ слышу его шаги...\r\nОн ищет меня."
+                    "I accidentally broke the bottle\nthat dad kept in the garage.\nIf he finds out, he'll kill me.\nI hear his footsteps...\nHe's searching.",
+                    "Я случайно разбил бутылку,\nкоторую папа хранил\nв гараже. Если он узнает,\nто убьет меня.\nЯ слышу его шаги...\nОн ищет меня."
                 } 
             },
             { 
                 {
-                    "I think it's starting again.\r\nToday I woke up to the sound\r\nof dripping water, but there\r\nwas no dripping anywhere.\r\nAnd footsteps in the garage,\r\nalthough there is no one there.\r\nIs my childhood illness\r\ncoming back?",
-                    "Мне кажется, что это снова\r\nначинается. Сегодня я\r\nпроснулся от звука\r\nкапающей воды, но нигде\r\nничего не капало. А еще\r\nшаги в гараже, хотя там\r\nникого нет. Неужели мое\r\nдетское заболевание\r\nвозвращается?"
+                    "I think it's starting again.\nToday I woke up to the sound\nof dripping water, but there\nwas no dripping anywhere.\nAnd footsteps in the garage,\nalthough there is no one there.\nIs my childhood illness\ncoming back?",
+                    "Мне кажется, что это снова\nначинается. Сегодня я\nпроснулся от звука\nкапающей воды, но нигде\nничего не капало. А еще\nшаги в гараже, хотя там\nникого нет. Неужели мое\nдетское заболевание\nвозвращается?"
                 },
                 {
-                    "It seems I see it all again.\r\nIt's like an epiphany!\r\nAs if back then, in the\r\nhospital, they stitched up\r\nmy third eye. Never mind,\r\nI'll get back at them\r\nfor everything.",
-                    "Похоже я снова вижу все это.\r\nЭто похоже на прозрение!\r\nБудто тогда, в больнице,\r\nони зашили мне третий\r\nглаз.\r\nНичего, я им за все отомщу."
+                    "It seems I see it all again.\nIt's like an epiphany!\nAs if back then, in the\nhospital, they stitched up\nmy third eye. Never mind,\nI'll get back at them\nfor everything.",
+                    "Похоже я снова вижу все это.\nЭто похоже на прозрение!\nБудто тогда, в больнице,\nони зашили мне третий\nглаз.\nНичего, я им за все отомщу."
                 } 
             },
             { 
                 {
-                    "Found Dr. Hollberg's phone\r\nnumber. Unfortunately,\r\nmy pills are no longer\r\nofficially available.\r\nBut he promised to help.\r\nIt's a big risk for him,\r\nso he'll hide the medicine\r\nin different places and\r\nsend me the coordinates\r\nof these places by mail.",
-                    "Нашел телефон доктора\r\nХоллберга. К сожалению\r\nмоих таблеток больше нет\r\nв официальной продаже.\r\nНо, он обещал помочь.\r\nЭто большой риск для него,\r\nпоэтому он будет прятать\r\nлекарство в разных местах\r\nи отсылать мне по почте\r\nкоординаты этих мест."
+                    "Found Dr. Hollberg's phone\nnumber. Unfortunately,\nmy pills are no longer\nofficially available.\nBut he promised to help.\nIt's a big risk for him,\nso he'll hide the medicine\nin different places and\nsend me the coordinates\nof these places by mail.",
+                    "Нашел телефон доктора\nХоллберга. К сожалению\nмоих таблеток больше нет\nв официальной продаже.\nНо, он обещал помочь.\nЭто большой риск для него,\nпоэтому он будет прятать\nлекарство в разных местах\nи отсылать мне по почте\nкоординаты этих мест."
                 },
                 {
-                    "Yes, I have regained my power!\r\nNow I know it for sure!\r\nBut for now I still need pills\r\nto return. The fool of a doctor\r\nagreed to sell them to me\r\nillegally. True, I will have to\r\nrun around, finding where\r\nhe hid the next dose.",
-                    "Да, я снова обрел свою силу!\r\nТеперь знаю это наверняка!\r\nНо пока мне все еще нужны\r\nтаблетки, чтобы\r\nвозвращаться.\r\nДурак-доктор согласился\r\nнелегально продавать мне их.\r\nПравда придется побегать,\r\nотыскивая куда он\r\nприпрятал очередную дозу."
+                    "Yes, I have regained my power!\nNow I know it for sure!\nBut for now I still need pills\nto return. The fool of a doctor\r\nagreed to sell them to me\r\nillegally. True, I will have to\r\nrun around, finding where\r\nhe hid the next dose.",
+                    "Да, я снова обрел свою силу!\nТеперь знаю это наверняка!\nНо пока мне все еще нужны\nтаблетки, чтобы\r\nвозвращаться.\r\nДурак-доктор согласился\r\nнелегально продавать мне их.\r\nПравда придется побегать,\r\nотыскивая куда он\r\nприпрятал очередную дозу."
                 } 
             },
             { 
                 {
-                    "The doctor said that in\r\naddition to taking pills,\r\nI also need psychotherapy.\r\nAs if there is a feeling of guilt\r\nhanging over me and I need to\r\nget rid of it. To do this,\r\nI need to help people, do good\r\ndeeds. Maybe this will help\r\nme overcome the disease.",
-                    "Доктор сказал, что помимо\r\nприема таблеток, мне еще\r\nнужна психотерапия.\r\nБудто бы надо мной висит\r\nчувство вины и я должен\r\nизбавиться от него.\r\nДля этого нужно помогать\r\nлюдям, совершать хорошие\r\nпоступки.\r\nВозможно это поможет мне\r\nпобедить болезнь."
+                    "The doctor said that in\naddition to taking pills,\nI also need psychotherapy.\nAs if there is a feeling of guilt\nhanging over me and I need to\nget rid of it. To do this,\nI need to help people, do good\ndeeds. Maybe this will help\nme overcome the disease.",
+                    "Доктор сказал, что помимо\nприема таблеток, мне еще\nнужна психотерапия.\nБудто бы надо мной висит\nчувство вины и я должен\nизбавиться от него.\nДля этого нужно помогать\nлюдям, совершать хорошие\nпоступки.\nВозможно это поможет мне\nпобедить болезнь."
                 },
                 {
-                    "It's all the fault of these\r\nbastards who want to make me\r\ntheir servant! What, Mom?\r\nNot drink alcohol?\r\nWhat, Grandma?\r\nTake you to church?\r\nWhat, Mr. Teimo?\r\nDeliver your leaflets?\r\nGO TO HELL!\r\nIT'S ALL BECAUSE OF YOU!",
-                    "Всему виной эти ублюдки,\r\nкоторые хотят сделать из\r\nменя своего слугу!\r\nЧто, мама?\r\nНе пить алкоголь?\r\nЧто, бабушка?\r\nОтвезти тебя в церковь?\r\nЧто мистер Теймо?\r\nРазвезти твои листовки?\r\nКАТИТЕСЬ К ЧЕРТУ!\r\nВСЕ ИЗ-ЗА ВАС!"
+                    "It's all the fault of these\nbastards who want to make me\ntheir servant! What, Mom?\nNot drink alcohol?\nWhat, Grandma?\nTake you to church?\nWhat, Mr. Teimo?\nDeliver your leaflets?\nGO TO HELL!\nIT'S ALL BECAUSE OF YOU!",
+                    "Всему виной эти ублюдки,\nкоторые хотят сделать из\nменя своего слугу!\nЧто, мама?\nНе пить алкоголь?\nЧто, бабушка?\nОтвезти тебя в церковь?\nЧто мистер Теймо?\nРазвезти твои листовки?\nКАТИТЕСЬ К ЧЕРТУ!\nВСЕ ИЗ-ЗА ВАС!"
                 } 
             },
         };

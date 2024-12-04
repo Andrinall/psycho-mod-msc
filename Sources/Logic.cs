@@ -32,6 +32,7 @@ namespace Psycho
         private static int beer_bottles_drunked = 0;
 
         public static int lastDayMinigame = 0;
+        public static int numberOfSpawnedPages = 0;
         public static bool milkUsed = false;
         public static bool isDead = false;
         public static bool inHorror = false;

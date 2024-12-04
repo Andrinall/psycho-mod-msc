@@ -1,40 +1,54 @@
 ﻿using UnityEngine;
 
-namespace Psycho.Sources.Features
+using Psycho.Internal;
+
+
+namespace Psycho.Features
 {
-    internal class NotebookPage : MonoBehaviour
+    internal class NotebookPage
     {
-        public int currentPageIndex;
-        public bool isDefaultPage;
-        public bool isFinalPage;
-        public bool isTruePage;
+        public int index = -1;
+        public bool isTruePage = false;
+        public bool isDefaultPage = false;
+        public bool isFinalPage = false;
 
-        TextMesh textMesh;
-        NotebookMain Notebook;
-
-        void Awake()
+        public NotebookPage() { }
+        public NotebookPage(NotebookPage parent)
         {
-            Notebook = GameObject.Find("").GetComponent<NotebookMain>();
-        }
-
-        public void UpdatePageText()
-        {
-            int lang = Globals.CurrentLang;
-
-            if (isDefaultPage)
-            {
-                textMesh.text = Locales.DEFAULT_PAGE[lang];
-                return;
-            }
-
-            if (isFinalPage)
-            {
-                bool isTrueFinal = Notebook.CalcTruePages() > 7;
-                textMesh.text = Locales.FINAL_PAGE[isTrueFinal ? 0 : 1, lang];
-                return;
-            }
-
-            textMesh.text = Locales.PAGES[currentPageIndex, isTruePage ? 0 : 1, Globals.CurrentLang];
+            index = parent.index;
+            isTruePage = parent.isTruePage;
+            isDefaultPage = parent.isDefaultPage;
+            isFinalPage = parent.isFinalPage;
         }
     }
+
+
+    internal class NotebookPageComponent : MonoBehaviour
+    {
+        public NotebookPage page;
+
+        NotebookMain notebook;
+        TextMesh pageText;
+        Material pageTextMat;
+
+        void OnEnable()
+        {
+            notebook = GameObject.Find("Notebook(Clone)")?.GetComponent<NotebookMain>();
+
+            Transform text = transform.Find("Text");
+            pageText = text?.GetComponent<TextMesh>();
+            Utils.PrintDebug(pageText.ToString());
+
+            MeshRenderer renderer = text.GetComponent<MeshRenderer>();
+            pageTextMat = renderer.material;
+            pageTextMat.shader = Shader.Find("GUI/3D Text Shader");
+            pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
+        }
+
+        void OnDisable() => Destroy(gameObject);
+
+        public void UpdatePageText()
+            => pageText.text = Locales.PAGES[page.index - 1, page.isTruePage ? 0 : 1, Globals.CurrentLang];
+    }
 }
+ 

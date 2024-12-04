@@ -26,6 +26,7 @@ namespace Psycho.Commands
             }
             else if (args[0] == "uh")
             {
+                Logic.lastDayMinigame--;
                 minigame.UpdateHousekeeperCard();
                 return;
             }

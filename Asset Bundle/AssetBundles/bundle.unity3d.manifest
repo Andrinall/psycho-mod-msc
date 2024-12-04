@@ -1,17 +1,19 @@
 ManifestFileVersion: 0
-CRC: 24586193
+CRC: 1117141950
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8ed363ac9faa441eb917d8b31d6afb29
+    Hash: cb0820ebe56d40fe45bc950214a670cb
   TypeTreeHash:
     serializedVersion: 2
-    Hash: f1d18720294351cc304d9152a6f9e658
+    Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
+  Script: {instanceID: 0}
+- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -40,6 +42,8 @@ ClassTypes:
 - Class: 108
   Script: {instanceID: 0}
 - Class: 128
+  Script: {instanceID: 0}
+- Class: 135
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -75,6 +79,7 @@ Assets:
 - Assets/Replaces/Horror/reg_plate3.png
 - Assets/Screens/12.png
 - Assets/Replaces/Horror/fabric8.png
+- Assets/Prefabs/Sketchbook.prefab
 - Assets/Replaces/Horror/wallpaper.png
 - Assets/Prefabs/Nut.prefab
 - Assets/Screens/3.png
@@ -91,9 +96,10 @@ Assets:
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
 - Assets/Replaces/AllWorlds/smiley_no.png
-- Assets/Textures/postcard0.png
+- Assets/Materials/Postcard/postcard0.png
 - Assets/Audio/acid_burn.mp3
 - Assets/Screens/6.png
+- Assets/Prefabs/Notebook Page.prefab
 - Assets/Replaces/Horror/store_floor.png
 - Assets/Audio/screamers/crying_female.mp3
 - Assets/Replaces/Horror/wood_panel6.png
@@ -116,11 +122,12 @@ Assets:
 - Assets/Prefabs/Picture.prefab
 - Assets/Textures/Album/Album5.png
 - Assets/Screens/34.png
-- Assets/Textures/postcard1.png
+- Assets/Materials/Postcard/postcard1.png
 - Assets/Replaces/Horror/char_face02.png
 - Assets/Replaces/Horror/charred_wood.png
 - Assets/Replaces/Horror/concrete_wall.png
 - Assets/Screens/5.png
+- Assets/Prefabs/Notebook.prefab
 - Assets/Screens/45.png
 - Assets/Screens/24.png
 - Assets/Replaces/Horror/wood_panel12.png
@@ -143,8 +150,9 @@ Assets:
 - Assets/Audio/heartbeat.wav
 - Assets/Replaces/Horror/wood5.png
 - Assets/Screens/28.png
+- Assets/Prefabs/SketchbookGUI.prefab
 - Assets/Screens/8.png
-- Assets/Textures/rooster1.png
+- Assets/Materials/RoosterPoster/rooster1.png
 - Assets/Prefabs/Mushroom.prefab
 - Assets/Screens/31.png
 - Assets/Textures/Album/Album3.png
@@ -176,7 +184,6 @@ Assets:
 - Assets/Textures/Album/Album11.png
 - Assets/Textures/Taro/Virtue1.png
 - Assets/Replaces/Horror/tiles.png
-- Assets/Textures/page(1-13).png
 - Assets/Replaces/Horror/fabric10.png
 - Assets/Replaces/Horror/paint1.png
 - Assets/Replaces/Horror/char_face09.png
@@ -184,6 +191,7 @@ Assets:
 - Assets/Audio/screamers/door_knock.mp3
 - Assets/Prefabs/Coffin.prefab
 - Assets/Replaces/Horror/fabric2.png
+- Assets/Prefabs/Postcard.prefab
 - Assets/Textures/Taro/Sin7.png
 - Assets/Replaces/Horror/fabric_suomi.png
 - Assets/Replaces/Horror/beer_bottle.png
@@ -205,8 +213,7 @@ Assets:
 - Assets/Screens/41.png
 - Assets/Textures/Taro/Virtue5.png
 - Assets/Screens/46.png
-- Assets/Prefabs/NotebookPage.prefab
-- Assets/Textures/page0.png
+- Assets/Materials/Notebook/page0.png
 - Assets/Textures/page15(false).png
 - Assets/Pictures/0.png
 - Assets/Replaces/Horror/bathroomfloor.png
@@ -236,6 +243,7 @@ Assets:
 - Assets/Screens/40.png
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
+- Assets/Prefabs/NotebookGUI.prefab
 - Assets/Replaces/Horror/ATLAS_BUILDINGS.png
 - Assets/Replaces/Horror/kitchentaso.png
 - Assets/Replaces/Horror/wood_panel4.png
@@ -250,6 +258,7 @@ Assets:
 - Assets/Audio/screamers/crying_kid.mp3
 - Assets/Audio/screamers/footsteps.mp3
 - Assets/Pictures/7.png
+- Assets/Textures/page(1-13)(notebook).png
 - Assets/Replaces/Horror/wood_panel9.png
 - Assets/Prefabs/CustomSuicidals.prefab
 - Assets/Screens/22.png
@@ -282,7 +291,7 @@ Assets:
 - Assets/Audio/screamers/kitchen_water.mp3
 - Assets/Replaces/Horror/wood7.png
 - Assets/Replaces/Smoking/cigarette_shaft.obj
-- Assets/Textures/rooster0.png
+- Assets/Materials/RoosterPoster/rooster0.png
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
