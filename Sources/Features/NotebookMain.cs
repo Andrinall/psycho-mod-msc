@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Psycho.Internal;
 using Psycho.Extensions;
+using Psycho.Handlers;
+using MSCLoader.Helper;
 
 
 namespace Psycho.Features
@@ -145,11 +147,14 @@ namespace Psycho.Features
         {
             Pages.Sort((v, t) => (v.index < t.index) ? -1 : 1);
             MAX_PAGE = Pages.Count - 1;
+
+            if (Pages.Any(v => v.isFinalPage) && GameObject.Find("Postcard(Clone)") == null)
+                SpawnPostcard();
         }
 
         public void TryCreateFinalPage()
         {
-            if (Pages.Count != 14) return;
+            if (GetMaxPageIndex() == 15) return;
 
             int truePages = CalcTruePages();
             Pages.Add(new NotebookPage
@@ -160,11 +165,17 @@ namespace Psycho.Features
             });
 
             Pages.Remove(Pages.First(v => v.isDefaultPage));
-            
-            GameObject postcard = ItemsPool.AddItem(Globals.Postcard_prefab);
-            Utils.InitPostcard(postcard);
+            SpawnPostcard();
 
             Utils.PrintDebug($"Final page added with (true? {truePages > 7})");
+        }
+
+        void SpawnPostcard()
+        {
+            GameObject postcard = ItemsPool.AddItem(Globals.Postcard_prefab);
+            postcard.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
+            postcard.AddComponent<ItemsGravityEnabler>();
+            Utils.InitPostcard(postcard);
         }
 
         public int GetMaxPageIndex()

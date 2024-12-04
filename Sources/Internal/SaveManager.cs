@@ -124,7 +124,7 @@ namespace Psycho.Internal
                 Globals.Notebook?.SortPages();
 
                 Utils.PrintDebug("Pages loaded!");
-                NotebookMain.Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}"));
+                NotebookMain.Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; final? {v.isFinalPage}"));
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace Psycho.Internal
         internal static void SaveData()
         {
             // save data
-            byte[] array = new byte[80 + (ItemsPool.Length * 90)];
+            byte[] array = new byte[80 + (ItemsPool.Length * 90) + 4 + (6 * NotebookMain.Pages.Count)];
             // [(values + picture + pills + empty space) + (penta pool len * penta pool alloc)]
 
             BitConverter.GetBytes(Logic.isDead).CopyTo(array, 0); // 1

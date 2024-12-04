@@ -8,6 +8,7 @@ using UnityEngine;
 using Psycho.Extensions;
 using Object = UnityEngine.Object;
 using Psycho.Features;
+using Psycho.Handlers;
 
 
 namespace Psycho.Internal
@@ -116,7 +117,7 @@ namespace Psycho.Internal
         }
 
         public static int GetCountInSave(byte[] array)
-            => BitConverter.ToInt32(array, 48);
+            => BitConverter.ToInt32(array, base_offset);
 
         public static int GetSizeInSave(byte[] array)
             => GetCountInSave(array) * 90;
@@ -127,7 +128,10 @@ namespace Psycho.Internal
             if (prefab.name == "Notebook")
                 Globals.Notebook = cloned.AddComponent<NotebookMain>();
             if (prefab.name == "Postcard")
+            {
+                cloned.AddComponent<ItemsGravityEnabler>();
                 Utils.InitPostcard(cloned);
+            }
 
             cloned.MakePickable();
 
