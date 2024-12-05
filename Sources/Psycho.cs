@@ -60,11 +60,8 @@ namespace Psycho
             bool blang = Globals.CurrentLang == 0;
             lang.Instance.Name = blang ? "Language select" : "Выбор языка";
 
-            Resources.FindObjectsOfTypeAll<GameObject>()
-                .Where(v => v.name.Contains("Notebook Page"))
-                .ToList()
-                .ForEach(v => v.GetComponent<NotebookPageComponent>()?.UpdatePageText());
-
+            if (Application.loadedLevelName != "GAME") return;
+            GameObject.Find("Notebook Page(Clone)")?.GetComponent<NotebookPageComponent>()?.UpdatePageText();
             Globals.Notebook?.UpdatePageText();
 
             TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();

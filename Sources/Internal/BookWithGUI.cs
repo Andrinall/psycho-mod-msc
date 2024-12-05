@@ -61,7 +61,7 @@ namespace Psycho.Internal
         internal override void OnFixedUpdate()
         {
             if (Camera.main == null) return;
-            if (MAX_PAGE == -1) return;
+            if (GUI == null) return;
 
             if (GUI.activeSelf && Input.GetKeyUp(KeyCode.Escape))
             {
