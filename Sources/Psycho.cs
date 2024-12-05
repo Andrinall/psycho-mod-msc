@@ -91,7 +91,7 @@ namespace Psycho
 
             SaveManager.LoadData();
             
-            // add global handler & job handlers (what is not possible for use in second pass)
+            // add job handlers (what is not possible for use in second pass)
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
@@ -114,10 +114,15 @@ namespace Psycho
 
         public override void SecondPassOnLoad()
         {
-            _registerCommands();
+            // register crutch command
+            ConsoleCommand.Add(new FixBrokenHUD());
+
+#if DEBUG
+            _registerDebugCommands();
+#endif
 
             Logic._hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
-            Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", Logic._hud.GetIndexByName("Money"));
+            Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
             Logic._hud.Structurize();
             Logic.SetPoints(Logic.Points);
 
@@ -285,9 +290,9 @@ namespace Psycho
             }
         }
 
-        void _registerCommands()
-        {
 #if DEBUG
+        void _registerDebugCommands()
+        {
             // register debug commands
             ConsoleCommand.Add(new TeleportToPills());
             ConsoleCommand.Add(new ChangeWorld());
@@ -297,10 +302,8 @@ namespace Psycho
             ConsoleCommand.Add(new Penta());
             ConsoleCommand.Add(new MinigameCMD());
             ConsoleCommand.Add(new NotebookCMD());
-#endif
-            // register crutch command
-            ConsoleCommand.Add(new FixBrokenHUD());
         }
+#endif
 
         void _setupActions(Transform camera)
         {

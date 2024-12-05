@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Psycho.Internal
+namespace Psycho.Handlers
 {
     internal sealed class ItemRenamer : MonoBehaviour
     {

@@ -3,6 +3,7 @@
 using MSCLoader;
 using UnityEngine;
 
+using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Extensions;
 

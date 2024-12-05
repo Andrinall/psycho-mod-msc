@@ -103,9 +103,9 @@ namespace Psycho.Internal
         }
 
         /// <summary>
-        /// 
+        /// Activate object GUI
         /// </summary>
-        /// <param name="state">state of gui active</param>
+        /// <param name="state">State of gui active</param>
         public void ActivateGUI(bool state)
         {
             PlayerInMenu.Value = state;
@@ -120,9 +120,13 @@ namespace Psycho.Internal
         }
 
         /// <summary>
-        /// 
+        /// Switch current selected page for +1 or -1 using bool param
+        /// <code>
+        /// obj.SelectPage(true) // to next page
+        /// obj.SelectPage(false) // to prev page
+        /// </code>
         /// </summary>
-        /// <param name="next">go to next page? (false - previous)</param>
+        /// <param name="next">Go to next page? (false - previous)</param>
         public void SelectPage(bool next)
         {
             CurrentPage += next ? 1 : -1;
@@ -135,24 +139,24 @@ namespace Psycho.Internal
         }
 
         /// <summary>
-        /// called after GUI instantiate & all fields filled with data
+        /// <b>(Callback for override)</b> Called after GUI instantiate & all fields filled with data
         /// </summary>
         public virtual void AfterAwake() { }
 
         /// <summary>
-        /// called after switch CurrentPage and PlayPageTurn();
+        /// <b>(Callback for override)</b> Called after switch CurrentPage and PlayPageTurn();
         /// </summary>
-        /// <param name="next"></param>
+        /// <param name="next">Go to next page? (false - previous)</param>
         public virtual void PageSelected(bool next) { }
 
         /// <summary>
-        /// called after apply activate gui state
+        /// <b>(Callback for override)</b> Called after apply activate gui state
         /// </summary>
-        /// <param name="state">state of activate gui</param>
+        /// <param name="state">State of activate gui</param>
         public virtual void GUIActivated(bool state) { }
 
         /// <summary>
-        /// called when object (where have this component) used by mouseOver & click `Use` button
+        /// <b>(Callback for override)</b> Called when object (where have this component) used by mouseOver & click `Use` button
         /// </summary>
         public virtual void ObjectUsed()
         {

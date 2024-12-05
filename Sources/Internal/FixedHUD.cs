@@ -35,9 +35,33 @@ namespace Psycho.Internal
         }
 
         void OnDestroy() => _struct.Clear();
+
+        /// <summary>
+        /// Get element in "GUI/HUD/..."
+        /// </summary>
+        /// <param name="name">GameObject element name</param>
+        /// <returns>GameObject which finds or null</returns>
         GameObject GetElement(string name) => transform.Find(name)?.gameObject;
+
+        /// <summary>
+        /// Get element in class local storage (constructed from sorted "GUI/HUD")<br/>
+        /// </summary>
+        /// <param name="name">GameObject element name</param>
+        /// <returns>GameObject which finds or null</returns>
         GameObject GetElementLocal(string name) => _struct.Find(v => v.name == name);
-        
+
+        /// <summary>
+        /// Add element to "GUI/HUD" && local storage, cloned from selected parent
+        /// </summary>
+        /// <param name="cloneFrom">Clone RECT or TEXT field of HUD ?</param>
+        /// <param name="name">Name for new HUD element</param>
+        /// <param name="index">This parameter selects a parent.<br/>Use GetIndexByName(string name) for this, where name is element name in HUD</param>
+        /// <example>
+        /// GameObject guiHud = GameObject.Find("GUI/HUD");
+        /// FixedHUD hud = guiHud.GetComponent<FixedHUD>() ?? guiHud.AddComponent<FixedHUD>();
+        /// hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", hud.GetIndexByName("Money"));
+        /// hud.Structurize();
+        /// </example>
         public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
             if (name.Length == 0) return;
@@ -60,6 +84,26 @@ namespace Psycho.Internal
             Structurize();
         }
 
+        /// <summary>
+        /// Add element to GUI/HUD && local storage
+        /// </summary>
+        /// <param name="cloneFrom">Clone RECT or TEXT field of HUD ?</param>
+        /// <param name="name">Name for new HUD element</param>
+        /// <param name="parent">This parameter selects a parent (use name of element in HUD)</param>
+        /// <example>
+        /// GameObject guiHud = GameObject.Find("GUI/HUD");
+        /// FixedHUD hud = guiHud.GetComponent<FixedHUD>() ?? guiHud.AddComponent<FixedHUD>();
+        /// hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", "Money");
+        /// hud.Structurize();
+        /// </example>
+        public void AddElement(eHUDCloneType cloneFrom, string name, string parent)
+            => AddElement(cloneFrom, name, GetIndexByName(parent));
+
+        /// <summary>
+        /// Check if element exists by element name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool IsElementExist(string name) => _struct.Exists(v =>
         {
             if (v != null) return v.name == name;
@@ -67,6 +111,12 @@ namespace Psycho.Internal
             return false;
         });
 
+        /// <summary>
+        /// Move element in local storage and change position<br/>
+        /// of element based on position in storage
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="index">New index (<) maximum storage size</param>
         public void MoveElement(string name, int index)
         {
             if (index < 0 || index > _struct.Capacity) return;
@@ -80,6 +130,10 @@ namespace Psycho.Internal
             Structurize();
         }
 
+        /// <summary>
+        /// Remove element from storage & HUD
+        /// </summary>
+        /// <param name="name">Name of element to destroy</param>
         public void RemoveElement(string name)
         {
             if (!IsElementExist(name)) return;
@@ -90,37 +144,79 @@ namespace Psycho.Internal
             Structurize();
         }
 
+        /// <summary>
+        /// Set selected element active
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="hide">State of visible</param>
         public void HideElement(string name, bool hide)
         {
             if (!IsElementExist(name)) return;
             GetElementLocal(name).SetActive(!hide);
         }
 
+        /// <summary>
+        /// Set element TextMesh.text if used eHUDCloneType.TEXT for AddElement
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="text">New element text</param>
         public void SetElementText(string name, string text)
         {
             if (!IsElementExist(name)) return;
             Transform label = GetElement($"{name}/HUDLabel").transform;
-            label.GetComponent<TextMesh>().text = text;
+            TextMesh mesh = label.GetComponent<TextMesh>();
+            
+            if (mesh == null) return;
+            mesh.text = text;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
         }
 
+        /// <summary>
+        /// Set element color if used eHUDCloneType.RECT for AddElement
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="color">New element color</param>
         public void SetElementColor(string name, Color color)
         {
             if (!IsElementExist(name)) return;
-            GetElement($"{name}/Pivot/HUDBar")
-                .GetComponent<MeshRenderer>()
-                .material.color = color;
+            GameObject element = GetElement($"{name}/Pivot/HUDBar");
+            
+            if (element == null) return;
+            element.GetComponent<MeshRenderer>().material.color = color;
         }
 
+        /// <summary>
+        /// Set pivot scale for RECT element.<br/>
+        /// Automatically clamped to 0-1 range.
+        /// </summary>
+        /// <param name="name">Name of element</param>
+        /// <param name="scale">New pivot scale</param>
         public void SetElementScale(string name, Vector3 scale)
         {
             if (!IsElementExist(name)) return;
-            GetElement($"{name}/Pivot").transform.localScale = scale;
+            GameObject pivot = GetElement($"{name}/Pivot");
+            if (pivot == null) return;
+
+            Vector3 clampedScale = new Vector3(
+                Mathf.Clamp(0, 1, scale.x),
+                Mathf.Clamp(0, 1, scale.y),
+                Mathf.Clamp(0, 1, scale.z)
+            );
+
+            pivot.transform.localScale = clampedScale;
         }
 
+        /// <summary>
+        /// Get element index by element name
+        /// </summary>
+        /// <param name="name">Name of element in HUD</param>
+        /// <returns></returns>
         public int GetIndexByName(string name)
             => _struct.FindIndex(v => v.name == name);
 
+        /// <summary>
+        /// Structurize positions of GUI/HUD childs
+        /// </summary>
         public void Structurize()
         {
             int inactive_items = 0;

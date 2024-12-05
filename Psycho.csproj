@@ -127,8 +127,8 @@
     <Compile Include="Sources\Internal\ItemsPool.cs" />
     <Compile Include="Sources\Internal\SaveManager.cs" />
     <Compile Include="Sources\Internal\SoundManager.cs" />
-    <Compile Include="Sources\Internal\FliesChanger.cs" />
-    <Compile Include="Sources\Internal\Hangover.cs" />
+    <Compile Include="Sources\Handlers\FliesChanger.cs" />
+    <Compile Include="Sources\Handlers\Hangover.cs" />
     <Compile Include="Sources\Handlers\CrashHandler.cs" />
     <Compile Include="Sources\Handlers\HouseShitHandler.cs" />
     <Compile Include="Sources\Handlers\JunkYardJobHandler.cs" />
@@ -141,7 +141,7 @@
     <Compile Include="Sources\Logic.cs" />
     <Compile Include="Sources\Internal\FixedHUD.cs" />
     <Compile Include="Sources\Globals.cs" />
-    <Compile Include="Sources\Internal\ItemRenamer.cs" />
+    <Compile Include="Sources\Handlers\ItemRenamer.cs" />
     <Compile Include="Sources\Features\MailBoxEnvelope.cs" />
     <Compile Include="Sources\Features\PillsItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
