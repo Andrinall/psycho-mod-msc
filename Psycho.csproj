@@ -140,7 +140,6 @@
     <Compile Include="Sources\Psycho.cs" />
     <Compile Include="Sources\Logic.cs" />
     <Compile Include="Sources\Internal\FixedHUD.cs" />
-    <Compile Include="Sources\Handlers\GlobalHandler.cs" />
     <Compile Include="Sources\Globals.cs" />
     <Compile Include="Sources\Internal\ItemRenamer.cs" />
     <Compile Include="Sources\Features\MailBoxEnvelope.cs" />

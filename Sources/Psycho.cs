@@ -45,6 +45,8 @@ namespace Psycho
 
 
         // setup mod settings
+        public override void ModSettingsLoaded() => _changeSetting();
+
         public override void ModSettings()
         {
             lang = Settings.AddDropDownList(this,
@@ -68,8 +70,6 @@ namespace Psycho
             if (postcardText != null)
                 postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
         }
-
-        public override void ModSettingsLoaded() => _changeSetting();
         //
 
 
@@ -92,7 +92,6 @@ namespace Psycho
             SaveManager.LoadData();
             
             // add global handler & job handlers (what is not possible for use in second pass)
-            //AddComponent<GlobalHandler>("PLAYER");
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
