@@ -120,6 +120,20 @@ namespace Psycho.Extensions
             return default(T);
         }
         
+        public static Vector3 Clamp(this Vector3 self, float min, float max)
+            => new Vector3(
+                Mathf.Clamp(self.x, min, max),
+                Mathf.Clamp(self.y, min, max),
+                Mathf.Clamp(self.z, min, max)
+            );
+
+        public static Vector3 Clamp(this Vector3 self, Vector3 min, Vector3 max)
+            => new Vector3(
+                Mathf.Clamp(self.x, min.x, max.x),
+                Mathf.Clamp(self.y, min.y, max.y),
+                Mathf.Clamp(self.z, min.z, max.z)
+            );
+
         public static void CopyBytes(this Vector3 self, ref byte[] array, ref int offset)
         {
             BitConverter.GetBytes(self.x).CopyTo(array, offset);

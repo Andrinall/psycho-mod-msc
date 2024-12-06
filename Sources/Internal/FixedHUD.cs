@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Psycho.Extensions;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -197,13 +198,7 @@ namespace Psycho.Internal
             GameObject pivot = GetElement($"{name}/Pivot");
             if (pivot == null) return;
 
-            Vector3 clampedScale = new Vector3(
-                Mathf.Clamp(0, 1, scale.x),
-                Mathf.Clamp(0, 1, scale.y),
-                Mathf.Clamp(0, 1, scale.z)
-            );
-
-            pivot.transform.localScale = clampedScale;
+            pivot.transform.localScale = scale.Clamp(0f, 1f); ;
         }
 
         /// <summary>

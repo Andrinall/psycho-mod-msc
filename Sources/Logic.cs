@@ -73,7 +73,7 @@ namespace Psycho
             ["PLAYER_SWEARS"] = 0.01f
         };
 
-        public static bool GameFinished { get; private set; }
+        public static bool GameFinished { get; private set; } = false;
 
         public static float Value
         {
