@@ -7,7 +7,6 @@ using UnityEngine;
 using Psycho.Internal;
 using Psycho.Extensions;
 using Psycho.Handlers;
-using MSCLoader.Helper;
 
 
 namespace Psycho.Features
@@ -121,7 +120,7 @@ namespace Psycho.Features
 
             NotebookPageComponent newPage = pageObj.GetComponent<NotebookPageComponent>();
             NotebookPage page = new NotebookPage(newPage.page);
-            Destroy(newPage.gameObject);
+            Destroy(pageObj);
 
             Pages.Add(page);
             TryCreateFinalPage();
@@ -138,7 +137,7 @@ namespace Psycho.Features
         public void ClearPages()
         {
             Pages.Clear();
-            Pages.Add(new NotebookPage { index = 14, isDefaultPage = true });
+            AddDefaultPage();
             MAX_PAGE = 0;
             CurrentPage = MAX_PAGE;
         }
@@ -157,18 +156,26 @@ namespace Psycho.Features
             if (GetMaxPageIndex() == 15) return;
 
             int truePages = CalcTruePages();
+            bool isTrueStory = (truePages > 7);
             Pages.Add(new NotebookPage
             {
                 index = 15,
-                isTruePage = (truePages > 7),
+                isTruePage = isTrueStory,
                 isFinalPage = true
             });
 
+            if (isTrueStory)
+                SpawnPostcard();
+
             Pages.Remove(Pages.First(v => v.isDefaultPage));
-            SpawnPostcard();
+            Destroy(GameObject.Find("COTTAGE/minigame(Clone)"));
 
             Utils.PrintDebug($"Final page added with (true? {truePages > 7})");
+            Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; final? {v.isFinalPage}"));
         }
+
+        public static void AddDefaultPage()
+            => Pages.Add(new NotebookPage { index = 14, isDefaultPage = true });
 
         void SpawnPostcard()
         {

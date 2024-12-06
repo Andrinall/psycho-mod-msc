@@ -42,6 +42,12 @@ namespace Psycho.Features
             PlayerCardMat = PlayerCard.GetComponent<MeshRenderer>().material;
 
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
+
+            if (NotebookMain.Pages.Count >= 14)
+            {
+                Destroy(gameObject);
+                return;
+            }
         }
 
         internal override void OnFixedUpdate()

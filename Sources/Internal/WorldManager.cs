@@ -10,6 +10,7 @@ using Psycho.Features;
 using Psycho.Screamers;
 using Psycho.Extensions;
 using Object = UnityEngine.Object;
+using System.Linq;
 
 
 namespace Psycho.Internal
@@ -30,12 +31,10 @@ namespace Psycho.Internal
             Vector3 bottlehideRot = bottlehide.transform.eulerAngles;
             Object.Destroy(bottlehide);
 
+            if (NotebookMain.Pages.Any(v => v.isFinalPage)) return;
             GameObject minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
             minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
             minigame.AddComponent<Minigame>();
-
-            // other logic
-            // ... ...
         }
          
         public static void ShowCrows(bool state)
