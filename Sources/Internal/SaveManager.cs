@@ -96,7 +96,7 @@ namespace Psycho.Internal
 
         internal static void LoadNotebookPages(byte[] value)
         {
-            Globals.Notebook?.ClearPages();
+            NotebookMain.Pages.Clear();
 
             try
             {
@@ -109,7 +109,7 @@ namespace Psycho.Internal
                 {
                     int idx = BitConverter.ToInt32(value, offset);
                     bool isTrue = BitConverter.ToBoolean(value, offset + 4);
-                    bool isFinal = BitConverter.ToBoolean(value, offset + 6);
+                    bool isFinal = BitConverter.ToBoolean(value, offset + 5);
 
                     NotebookMain.Pages.Add(new NotebookPage
                     {
@@ -120,6 +120,9 @@ namespace Psycho.Internal
 
                     offset += 6;
                 }
+
+                if (!NotebookMain.Pages.Any(v => v.isFinalPage))
+                    NotebookMain.AddDefaultPage();
 
                 Globals.Notebook?.SortPages();
 
@@ -141,9 +144,9 @@ namespace Psycho.Internal
         {
             int itemsPoolSize = ItemsPool.GetSizeInSave(array);
             int offset = ItemsPool.base_offset + itemsPoolSize + 4; // (items pool base offset) + (items pool size) + (spacing)
-            int pagesCount = NotebookMain.Pages.Count - 1;
+            int pagesCount = NotebookMain.Pages.Count - (NotebookMain.Pages.Any(v => v.isDefaultPage) ? 1 : 0);
 
-            BitConverter.GetBytes(pagesCount).CopyTo(array, offset);
+            BitConverter.GetBytes(NotebookMain.Pages.Count).CopyTo(array, offset);
             offset += 4;
 
             foreach (NotebookPage item in NotebookMain.Pages)
