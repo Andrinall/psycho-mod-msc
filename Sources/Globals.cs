@@ -104,6 +104,8 @@ namespace Psycho
         public static Texture NotebookStartPage_texture = null;
         public static Texture NotebookFinalPage_texture = null;
 
+        public static Texture NewsPaper_texture = null;
+
         internal static NotebookMain Notebook = null;
 
         public static int CurrentLang = 0;
@@ -304,6 +306,8 @@ namespace Psycho
             TVScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
             UncleScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
             HousekeeperLaughs_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/housekeeper_laughs.wav");
+
+            NewsPaper_texture = LoadAsset<Texture>(_bundle, "assets/textures/newspaper.png");
 
             GameObject penta = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab"));
             penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house

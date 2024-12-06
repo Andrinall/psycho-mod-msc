@@ -13,7 +13,7 @@ using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
 using Psycho.Extensions;
-
+using Object = UnityEngine.Object;
 
 namespace Psycho
 {
@@ -90,6 +90,19 @@ namespace Psycho
             _bundle.Unload(false);
 
             SaveManager.LoadData();
+
+            Transform newspaperFrame = Object.Instantiate(Globals.Picture_prefab).transform;
+            newspaperFrame.gameObject.name = "Newspaper(Clone)";
+            Object.Destroy(newspaperFrame.GetComponent<Rigidbody>());
+            Object.Destroy(newspaperFrame.GetComponent<MeshCollider>());
+
+            newspaperFrame.SetParent(GameObject.Find("STORE").transform);
+            newspaperFrame.position = new Vector3(-1552.66f, 5.261985f, 1182.463f);
+            newspaperFrame.eulerAngles = new Vector3(-0.651f, 58.264f, 90f);
+            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
+
+            MeshRenderer renderer = newspaperFrame.GetComponent<MeshRenderer>();
+            renderer.materials[1].SetTexture("_MainTex", Globals.NewsPaper_texture);
             
             // add job handlers (what is not possible for use in second pass)
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
