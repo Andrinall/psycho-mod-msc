@@ -30,16 +30,14 @@ namespace Psycho.Features
 
         void FixedUpdate()
         {
-            if (((GlobalDay.Value % 7) == 3) && (SUN_hours.Value > 18 || SUN_hours.Value < 4))
-            {
-                if (AnyFlowerIsSpawned()) return;
+            int day = GlobalDay.Value % 7;
+
+            if (day == 3 && SUN_hours.Value > 18)
                 SpawnRandomFlower();
-            }
+            else if (day == 4 && SUN_hours.Value < 4)
+                SpawnRandomFlower();
             else
-            {
-                if (!AnyFlowerIsSpawned()) return;
                 DespawnItems();
-            }
         }
 
         internal bool AnyFlowerIsSpawned()
@@ -47,6 +45,8 @@ namespace Psycho.Features
 
         internal void SpawnRandomFlower()
         {
+            if (AnyFlowerIsSpawned()) return;
+
             GameObject point = Flowers[Random.Range(0, Flowers.Count)];
             GameObject flower = ItemsPool.AddItem(Globals.FernFlower_prefab);
 
@@ -61,6 +61,8 @@ namespace Psycho.Features
 
         void DespawnItems()
         {
+            if (!AnyFlowerIsSpawned()) return;
+
             foreach (GameObject flower in Flowers)
             {
                 if (!flower.activeSelf || flower.transform.childCount == 0) goto setActive;
