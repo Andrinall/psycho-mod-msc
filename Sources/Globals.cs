@@ -90,6 +90,8 @@ namespace Psycho
         public static GameObject mailboxSheet = null;
         public static GameObject envelopeObject = null;
 
+        public static GameObject suicidalsList = null;
+
         public static AudioClip AcidBurn_clip = null;
         public static AudioClip ScreamCall_clip = null;
         public static AudioClip PhantomScream_clip = null;
@@ -335,11 +337,11 @@ namespace Psycho
             Heartbeat_source = heartbeat;
             heartbeat.enabled = false;
 
-            GameObject clonedlist = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
-            WorldManager.CopySuicidal(clonedlist); // copy first suicidal from list for use in night screamer
-            clonedlist.SetActive(false); // hide suicidals list
+            suicidalsList = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
+            WorldManager.CopySuicidal(suicidalsList); // copy first suicidal from list for use in night screamer
+            suicidalsList.SetActive(false); // hide suicidals list
 
-                // load all replaces
+            // load all replaces
             Transform building = GameObject.Find("YARD/Building").transform;
             foreach (string name in _bundle.GetAllAssetNames())
             {
