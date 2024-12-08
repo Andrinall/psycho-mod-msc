@@ -53,7 +53,7 @@ namespace Psycho.Internal
             source.loop = true;
             source.Play();
 
-            Utils.PrintDebug($"Played sound {source.clip.name}; idx[{rand}]");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Played sound {source.clip.name}; idx[{rand}]");
         }
 
         public static void StopScreamSound(string name)

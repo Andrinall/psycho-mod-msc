@@ -34,7 +34,7 @@ namespace Psycho.Internal
                 GameObject.Find("rooster_poster(Clone)")
                     .GetComponent<AngryRoosterPoster>().Applyed = BitConverter.ToBoolean(value, 23);
 
-                Utils.PrintDebug($"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
                 if (Logic.isDead)
                 {
                     Logic.isDead = false;
@@ -58,7 +58,7 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error("<color=red>Unable to load Save Data, resetting to default</color>");
+                ModConsole.Error("Unable to load Save Data, resetting to default");
                 Utils.PrintDebug(eConsoleColors.RED, e.GetFullMessage());
 
                 Logic.SetDefaultValues(); // reset data if savedata not loaded
@@ -108,10 +108,12 @@ namespace Psycho.Internal
                 for (int i = 0; i < pagesCount; i++)
                 {
                     int idx = BitConverter.ToInt32(value, offset);
+                    if (idx == 0) continue;
+
                     bool isTrue = BitConverter.ToBoolean(value, offset + 4);
                     bool isFinal = BitConverter.ToBoolean(value, offset + 5);
 
-                    NotebookMain.Pages.Add(new NotebookPage
+                    bool result = NotebookMain.TryAddPage(new NotebookPage
                     {
                         index = idx,
                         isTruePage = isTrue,
@@ -126,8 +128,8 @@ namespace Psycho.Internal
 
                 Globals.Notebook?.SortPages();
 
-                Utils.PrintDebug("Pages loaded!");
-                NotebookMain.Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; final? {v.isFinalPage}"));
+                Utils.PrintDebug(eConsoleColors.GREEN, "Notebook Pages Loaded!");
+                NotebookMain.Pages.ForEach(v => Utils.PrintDebug(eConsoleColors.YELLOW, $"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}"));
             }
             catch (Exception ex)
             {
@@ -135,7 +137,7 @@ namespace Psycho.Internal
                 Logic.lastDayMinigame = 0;
                 Globals.Notebook?.ClearPages();
 
-                Utils.PrintDebug(eConsoleColors.RED, "Error while loading notebook pages");
+                ModConsole.Error("Error while loading notebook pages");
                 ModConsole.Error($"{ex.GetFullMessage()}\n{ex.StackTrace}");
             }
         }
@@ -146,7 +148,7 @@ namespace Psycho.Internal
             int offset = ItemsPool.base_offset + itemsPoolSize + 4; // (items pool base offset) + (items pool size) + (spacing)
             int pagesCount = NotebookMain.Pages.Count - (NotebookMain.Pages.Any(v => v.isDefaultPage) ? 1 : 0);
 
-            BitConverter.GetBytes(NotebookMain.Pages.Count).CopyTo(array, offset);
+            BitConverter.GetBytes(pagesCount).CopyTo(array, offset);
             offset += 4;
 
             foreach (NotebookPage item in NotebookMain.Pages)
@@ -178,7 +180,7 @@ namespace Psycho.Internal
             BitConverter.GetBytes(Logic.numberOfSpawnedPages).CopyTo(array, 19);
             BitConverter.GetBytes(GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>().Applyed).CopyTo(array, 23);
 
-            Utils.PrintDebug($"[{Logic.isDead}];[{Logic.inHorror}];[{Logic.envelopeSpawned}];[{Logic.Value}];[{Logic.Points}];[{Logic.BeerBottlesDrunked}]");
+            Utils.PrintDebug($"dead: [{Logic.isDead}]; horror: [{Logic.inHorror}]; envelope: [{Logic.envelopeSpawned}];\nvalue: [{Logic.Value}]; points: [{Logic.Points}]; bottles: [{Logic.BeerBottlesDrunked}]");
 
             if (Logic.inHorror && !Logic.envelopeSpawned)
             {

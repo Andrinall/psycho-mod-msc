@@ -62,7 +62,7 @@ namespace Psycho.Internal
             int count = BitConverter.ToInt32(array, offset);
             offset += 4;
 
-            Utils.PrintDebug($"[LoadPool]: pool size: {count}");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"[LoadPool]: pool size: {count}");
             if (count == 0)
             {
                 Utils.PrintDebug(eConsoleColors.RED, "[LoadPool]: is empty; loading stopped");
@@ -105,10 +105,10 @@ namespace Psycho.Internal
                         break;
                 }
 
-                Utils.PrintDebug($"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
                 if (prefab == null)
                 {
-                    Utils.PrintDebug($"Loaded item {sName} has null prefab");
+                    Utils.PrintDebug(eConsoleColors.RED, $"Loaded item {sName} has null prefab");
                     continue;
                 }
 

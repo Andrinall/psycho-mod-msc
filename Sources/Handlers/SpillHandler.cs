@@ -23,7 +23,6 @@ namespace Psycho.Handlers
         {
             if (m_bIsCrime?.Value == false) return;
             Logic.PlayerCommittedOffence("SPILL_SHIT");
-            Utils.PrintDebug(eConsoleColors.WHITE, "Points decreased by crimed spill shit");
         }
     }
 }

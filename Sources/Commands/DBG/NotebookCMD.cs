@@ -55,7 +55,7 @@ namespace Psycho.Commands
             }
             Globals.Notebook?.SortPages();
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Pages list filled with (true? {state}) pages");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Pages list filled with ({state}) pages");
         }
     }
 }

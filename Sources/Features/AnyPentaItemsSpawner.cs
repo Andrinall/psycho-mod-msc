@@ -71,21 +71,17 @@ namespace Psycho.Features
                 spawned = true;
             }
             else if (spawnDay != MushroomDay && spawned && day != spawnDay)
-            {
-                Utils.PrintDebug("destroy 1");
                 _destroy(parent, ref spawned);
-            }
             else if (spawnDay == MushroomDay && spawned && day != spawnDay && day >= 0)
-            {
-                Utils.PrintDebug("destroy 2");
                 _destroy(parent, ref spawned);
-            }
         }
 
         void _destroy(Transform parent, ref bool spawned)
         {
             if (parent.childCount != 0)
             {
+                Utils.PrintDebug($"Item {parent.name} destroyed, because not picked up.");
+
                 GameObject obj = parent.GetChild(0).gameObject;
                 ItemsPool.RemoveItem(obj);
                 Destroy(obj);

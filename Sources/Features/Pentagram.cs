@@ -124,7 +124,7 @@ namespace Psycho.Features
 
         void SpawnRandomEvent()
         {
-            Utils.PrintDebug("all penta items in trigger");
+            Utils.PrintDebug(eConsoleColors.GREEN, "All ritual items in trigger.");
             string _mainEvent = Events.RandomElementByWeight(_weightSelector).Key;
             string[] _innerEvents = InnerEvents[_mainEvent];
             string _innerEvent = _innerEvents[Random.Range(0, _innerEvents.Length)];

@@ -340,7 +340,7 @@ namespace Psycho.Features
             if (IsEventCalled || !IsEventFinished) return;
             if (string.IsNullOrEmpty(_event)) return;
             if (!penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
-            Utils.PrintDebug("Activate called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
             IsEventCalled = true;
             IsEventFinished = false;
@@ -354,7 +354,7 @@ namespace Psycho.Features
 
         void _finishEvent()
         {
-            Utils.PrintDebug("_finishEvent called");
+            Utils.PrintDebug(eConsoleColors.GREEN, "[event] _finishEvent called");
             IsEventCalled = false;
             IsEventFinished = true;
             penta.SetCandlesFireActive(false, true);
@@ -362,7 +362,7 @@ namespace Psycho.Features
 
         void _abortEvent()
         {
-            Utils.PrintDebug("_abortEvent called");
+            Utils.PrintDebug(eConsoleColors.RED, "[event] _abortEvent called");
             _playSound("aborted");
             _finishEvent();
         }
@@ -373,7 +373,7 @@ namespace Psycho.Features
 
             if (!sounds.TryGetValue(soundcase, out AudioClip clip))
             {
-                Utils.PrintDebug($"soundcase {soundcase} doesn't exist in sounds list");
+                Utils.PrintDebug(eConsoleColors.RED, $"[event] Soundcase {soundcase} doesn't exist in sounds list");
                 return;
             }
 
@@ -382,13 +382,13 @@ namespace Psycho.Features
 
         void _destroyItems()
         {
-            Utils.PrintDebug("_destroyItems called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _destroyItems called");
             penta.DestroyItems();
         }
 
         void _processEvents(string _event)
         {
-            Utils.PrintDebug($"_processEvents called: {_event}");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _processEvents called: {_event}");
             switch (_event)
             {
                 case "money":
@@ -413,7 +413,7 @@ namespace Psycho.Features
 
                         list.ForEach(item =>
                         {
-                            Utils.PrintDebug(eConsoleColors.YELLOW, $"{item.gameObject.name} spoiled");
+                            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] {item.gameObject.name} spoiled");
                             item.GetVariable<FsmFloat>("Condition").Value = .5f;
                             item.SendEvent("UPDATE");
                             item.SendEvent("BAD");
@@ -502,7 +502,7 @@ namespace Psycho.Features
         {
             if (!objects.TryGetValue(item, out GameObject prefab))
             {
-                Utils.PrintDebug($"_spawnItem object {item} doesn't exist in pool");
+                Utils.PrintDebug(eConsoleColors.RED, $"[event] _spawnItem object {item} doesn't exist in pool");
                 _abortEvent();
                 return;
             }
@@ -513,7 +513,7 @@ namespace Psycho.Features
                 Quaternion.Euler(Vector3.zero)
             );
 
-            Utils.PrintDebug($"_spawnItem cloned item {cloned}");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"[event] _spawnItem cloned item {cloned}");
         }
 
         FsmFloat _getFuelLevel(string path)
@@ -521,7 +521,7 @@ namespace Psycho.Features
 
         IEnumerator _playFireAnimation()
         {
-            Utils.PrintDebug($"_playFireAnimation called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _playFireAnimation called");
             
             Fire.SetActive(true);            
             yield return new WaitForSeconds(2f);
@@ -542,7 +542,7 @@ namespace Psycho.Features
 
         IEnumerator _eventGrannyCoroutine(Action _action)
         {
-            Utils.PrintDebug("_eventGrannyCoroutine called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventGrannyCoroutine called");
             Fire.SetActive(true);
             
             yield return new WaitForSeconds(2f);
@@ -573,7 +573,7 @@ namespace Psycho.Features
 
         IEnumerator _eventCoroutine(Action _action, string sound = "")
         {
-            Utils.PrintDebug("_eventCoroutine called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventCoroutine called");
             yield return StartCoroutine(_playFireAnimation());
 
             try

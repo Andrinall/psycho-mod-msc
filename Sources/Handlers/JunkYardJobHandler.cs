@@ -25,7 +25,7 @@ namespace Psycho.Handlers
 
         void UsePayMoneyTicket()
         {
-            Utils.PrintDebug(eConsoleColors.WHITE, $"Delivered {m_iCarsNumber} cars in one of time");            
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"Delivered {m_iCarsNumber} cars in one of time");            
             Logic.PlayerCompleteJob("JUNK_YARD", m_iCarsNumber, $"Delivered {m_iCarsNumber} JunkCars");
             m_iCarsNumber = 0;
         }

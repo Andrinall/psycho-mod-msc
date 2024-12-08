@@ -30,7 +30,7 @@ namespace Psycho.Screamers
 
             Source.loop = false;
             Source.Stop();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"{name} - audio clip stopped by distance checker!");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"{name} - AudioClip stopped by distance checker!");
         }
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using System.IO;
 
 
 namespace Psycho.Features
@@ -36,7 +35,6 @@ namespace Psycho.Features
             TaroUsable = transform.Find("TaroUsable/Handle").gameObject;
             HousekeeperCard = transform.Find("Cards/HousekeeperCard").gameObject;
             PlayerCard = transform.Find("Cards/PlayerCard").gameObject;
-            Utils.PrintDebug($"{TaroUsable}, {PlayerCard}, {HousekeeperCard}");
 
             HousekeeperCardMat = HousekeeperCard.GetComponent<MeshRenderer>().material;
             PlayerCardMat = PlayerCard.GetComponent<MeshRenderer>().material;
@@ -137,7 +135,7 @@ namespace Psycho.Features
             if (index < 0)
                 yield break;
 
-            if (index == 13)
+            if (index >= 13)
             {
                 Utils.PrintDebug(eConsoleColors.RED, "Notebook contains a max count of pages. Spawn new page aborted.");
                 yield break;
@@ -160,7 +158,7 @@ namespace Psycho.Features
             pageObj.MakePickable();
 
             Logic.numberOfSpawnedPages++;
-            Utils.PrintDebug($"[{index+1}] {(isFake ? "Fake" : "True")} page spawned");
+            Utils.PrintDebug($"{(isFake ? "Fake" : "True")} Page spawned with index {index + 1}");
         }
 
         void PlayHousekeeperLaughing()

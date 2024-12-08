@@ -24,7 +24,7 @@ namespace Psycho.Internal
                 }
                 catch (Exception e)
                 {
-                    Utils.PrintDebug(eConsoleColors.RED, $"Error in StateHook action delegate: {path}");
+                    ModConsole.Error($"Error in StateHook action delegate: {path}");
                     ModConsole.Error(e.GetFullMessage());
                 }
 

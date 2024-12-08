@@ -76,7 +76,7 @@ namespace Psycho.Features
             }
             catch (System.Exception e)
             {
-                Utils.PrintDebug(eConsoleColors.RED, $"error in MailBoxEnvelope:OnEnable(): {e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Error in MailBoxEnvelope:OnEnable(): {e.GetFullMessage()}");
             }
         }
     }

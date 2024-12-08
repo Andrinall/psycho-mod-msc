@@ -111,7 +111,7 @@ namespace Psycho.Internal
                 Texture texture = Globals.mailScreens.Find(v => v.name == idx.ToString());
                 Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
 
-                PrintDebug(eConsoleColors.YELLOW, $"Generated pills: {idx}, {Image.name}");
+                PrintDebug(eConsoleColors.GREEN, $"Generated pills: {idx}, {Image.name}");
             }
             catch (Exception e)
             {
@@ -131,7 +131,7 @@ namespace Psycho.Internal
             Material material = picture.GetComponent<MeshRenderer>().materials[1];
             if (material.GetTexture("_MainTex")?.name == texture.name) return;
 
-            PrintDebug($"SetPictureImage [{idx}]");
+            PrintDebug(eConsoleColors.YELLOW, $"SetPictureImage [{idx}]");
             material.SetTexture("_MainTex", texture);
         }
 
