@@ -45,6 +45,15 @@ namespace Psycho.Screamers
             StateHook.Inject(transform.Find("UseHandle").gameObject, "Use", "Close phone", 0, _closePhoneHook);
 
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.PHONE) return;
+
+            enabled = true;
         }
 
         void _closePhoneHook(PlayMakerFSM _)
@@ -56,7 +65,6 @@ namespace Psycho.Screamers
             Topic.Value = "SCREAMCALL";
             PhoneLogic.SetActive(false);
             Ring.SetActive(true);
-            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
@@ -65,7 +73,7 @@ namespace Psycho.Screamers
             PhoneLogic.SetActive(true);
             Topic.Value = "";
             elapsedFrames = 0;
-            WorldManager.ShowCrows(true);
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
         }
 
         void FixedUpdate()

@@ -27,7 +27,8 @@ namespace Psycho
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
 
-        SettingsDropDownList lang;
+        internal static SettingsDropDownList lang;
+        internal static bool IsLoaded = false;
 
         Transform _player;
         Transform _houseFire;
@@ -57,14 +58,11 @@ namespace Psycho
 
         void _changeSetting()
         {
-            Globals.CurrentLang = lang.GetSelectedItemIndex();
-
-            bool blang = Globals.CurrentLang == 0;
-            lang.Instance.Name = blang ? "Language select" : "Выбор языка";
-
+            EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
+            
             if (Application.loadedLevelName != "GAME") return;
-            GameObject.Find("Notebook Page(Clone)")?.GetComponent<NotebookPageComponent>()?.UpdatePageText();
-            Globals.Notebook?.UpdatePageText();
+            //GameObject.Find("Notebook Page(Clone)")?.GetComponent<NotebookPageComponent>()?.UpdatePageText();
+            //Globals.Notebook?.UpdatePageText();
 
             TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
             if (postcardText != null)
@@ -176,6 +174,7 @@ namespace Psycho
 
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
             Resources.UnloadUnusedAssets(); // tested (for remove in release version)
+            IsLoaded = true;
         }
 
         public override void FixedUpdate()
@@ -247,7 +246,7 @@ namespace Psycho
             WorldManager.StopCloudsOrRandomize();
 
             SoundManager.ChangeFliesSounds();
-            GameObject.Find("CustomSuicidals").SetActive(true); // activate suicidals 
+            Globals.suicidalsList.SetActive(true); // activate suicidals 
         }
 
         void _addHandlers()

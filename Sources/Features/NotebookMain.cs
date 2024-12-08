@@ -46,13 +46,15 @@ namespace Psycho.Features
 
             MAX_PAGE = Pages.Count - 1;
             CurrentPage = MAX_PAGE;
+
+            EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
         }
 
         public override void ObjectUsed()
         {
             if (PlayerHand.childCount == 0)
             {
-                Utils.PrintDebug("Open notebook");
+                Utils.PrintDebug(eConsoleColors.GREEN, "Notebook opened");
                 base.ObjectUsed();
                 return;
             }
@@ -60,7 +62,6 @@ namespace Psycho.Features
             Transform itemInHand = PlayerHand?.GetChild(0);
             if (itemInHand != null && itemInHand?.gameObject?.name?.Contains("Notebook Page") == true)
             {
-                Utils.PrintDebug("Add new notebook page");
                 HandFsm?.CallGlobalTransition("DROP_PART");
                 AddNewPage(itemInHand.gameObject);
                 return;
@@ -69,24 +70,27 @@ namespace Psycho.Features
        
         public override void PageSelected(bool next)
         {
-            NotebookPage page = Pages[CurrentPage];
-
             UpdatePageText();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"SelectNextPage called; selected {CurrentPage}:{Pages.Count}");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"CurrentPage: {CurrentPage}; MAX_PAGE :{MAX_PAGE}");
         }
 
-        public override void GUIActivated(bool state)
+        public override void GUIOpened()
         {
-            if (state)
-                UpdatePageText();
+            UpdatePageText();
+            base.GUIOpened();
+        }
+
+        public static bool TryAddPage(NotebookPage page)
+        {
+            if (Pages.Any(v => v.index == page.index)) return false;
+            Pages.Add(page);
+            return true;
         }
 
 
         public void UpdatePageText()
         {
             if (CurrentPage < 0 || CurrentPage >= Pages.Count) return;
-
-            Utils.PrintDebug($"C:{CurrentPage}; M:{MAX_PAGE}");
 
             NotebookPage page = Pages[CurrentPage];
             bool isTrueEnding = page.isTruePage;
@@ -127,7 +131,7 @@ namespace Psycho.Features
             SortPages();
 
             PlayPageTurn();
-            Utils.PrintDebug($"Page added into notebook\nidx: {page.index}, default: {page.isDefaultPage}, final: {page.isFinalPage}, true: {page.isTruePage}");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Page added into notebook\nidx: {page.index}, default: {page.isDefaultPage}, final: {page.isFinalPage}, true: {page.isTruePage}");
             return true;
         }
 
@@ -154,10 +158,12 @@ namespace Psycho.Features
         public void TryCreateFinalPage()
         {
             if (GetMaxPageIndex() == 15) return;
+            if (Pages.Count < 14) return;
 
             int truePages = CalcTruePages();
             bool isTrueStory = (truePages > 7);
-            Pages.Add(new NotebookPage
+
+            TryAddPage(new NotebookPage
             {
                 index = 15,
                 isTruePage = isTrueStory,
@@ -170,8 +176,8 @@ namespace Psycho.Features
             Pages.Remove(Pages.First(v => v.isDefaultPage));
             Destroy(GameObject.Find("COTTAGE/minigame(Clone)"));
 
-            Utils.PrintDebug($"Final page added with (true? {truePages > 7})");
-            Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; final? {v.isFinalPage}"));
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({truePages > 7} story)");
+            Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}"));
         }
 
         public static void AddDefaultPage()

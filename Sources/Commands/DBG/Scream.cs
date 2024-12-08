@@ -3,14 +3,13 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Screamers;
+using Psycho.Internal;
 
 
 namespace Psycho.Commands
 {
     internal class Scream : ConsoleCommand
     {
-        ScreamsInitiator initiator;
-
         public override string Name => "scream";
 
         public override string Help => "";
@@ -19,8 +18,6 @@ namespace Psycho.Commands
         public override void Run(string[] args)
         {
             if (args.Length == 0 || string.IsNullOrEmpty(args[0])) return;
-            if (!initiator)
-                initiator = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<ScreamsInitiator>();
 
             switch (args[0])
             {
@@ -39,9 +36,9 @@ namespace Psycho.Commands
         void ApplyScreamer(string[] args, ScreamTimeType type)
         {
             if (args.Length > 1 && int.TryParse(args[1], out int res))
-                initiator.ApplyScreamer(type, res);
+                EventsManager.TriggerNightScreamer(type, res);
             else
-                initiator.ApplyScreamer(type);
+                EventsManager.TriggerNightScreamer(type, 0);
         }
     }
 }

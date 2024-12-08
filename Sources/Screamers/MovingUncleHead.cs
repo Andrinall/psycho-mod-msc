@@ -52,6 +52,15 @@ namespace Psycho.Screamers
             ScreamSound = source;
 
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.KESSELI) return;
+
+            enabled = true;
         }
 
         void OnEnable()
@@ -61,7 +70,6 @@ namespace Psycho.Screamers
             CameraOrigs = Utils.SetCameraLookAt(Head.position);
             Char.gameObject.SetActive(true);
             Head.gameObject.SetActive(false);
-            WorldManager.ShowCrows(false);
         }
         
         void OnDisable()
@@ -69,7 +77,7 @@ namespace Psycho.Screamers
             animPlayed = false;
             Char.gameObject.SetActive(false);
             elapsedFrames = 0;
-            WorldManager.ShowCrows(true);
+            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
         }
 
         void FixedUpdate()

@@ -45,7 +45,10 @@ namespace Psycho.Screamers
 
 
         void Awake()
-            => SetupSleepTriggerHooks();
+        {
+            SetupSleepTriggerHooks();
+            EventsManager.OnScreamerFinished.AddListener(ScreamerFinished);
+        }
 
         void FixedUpdate()
         {
@@ -59,13 +62,12 @@ namespace Psycho.Screamers
             m_bStopped = true;
             m_bApplyed = false;
 
-            Utils.PrintDebug($"All scream sounds stopped");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"All scream sounds stopped");
         }
 
 
-        public void ApplyScreamer(ScreamTimeType rand, int variation = -1)
+        public void ApplyScreamer(ScreamTimeType rand, int variation = 0)
         {
-            Utils.PrintDebug("ApplyScreamer called");
             m_bApplyed = true;
             m_bTrigger = false;
 
@@ -78,64 +80,17 @@ namespace Psycho.Screamers
                 SoundManager.PlayRandomScreamSound(variation);
                 StartScream = DateTime.Now;
                 m_bStopped = false;
-                Utils.PrintDebug($"rand == Time.SOUNDS; variation == {variation}");
+
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{rand} : {variation}]");
                 return;
             }
 
-            if (rand == ScreamTimeType.FEAR) // 4:00
-            {
-                Utils.PrintDebug($"rand == Time.FEAR; variation = {(ScreamFearType)variation}");
-                WorldManager.ShowCrows(false);
-                switch (variation)
-                {
-                    case (int)ScreamFearType.GRANNY:
-                        ChangeGrandmaPosition(new Vector3(-9.980711f, -0.593821f, 4.589845f));
-                        break;
-                    case (int)ScreamFearType.SUICIDAL:
-                        _startScreamerComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
-                        break;
-                    case (int)ScreamFearType.WATERKITCHEN:
-                        _startScreamerComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
-                        break;
-                    case (int)ScreamFearType.WATERBATHROOM:
-                        _startScreamerComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
-                        break;
-                    case (int)ScreamFearType.TV:
-                        _startScreamerComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
-                        break;
-                    case (int)ScreamFearType.PHONE:
-                        _startScreamerComponent<PhoneRing>("YARD/Building/LIVINGROOM/Telephone/Logic");
-                        break;
-                    default:
-                        WorldManager.ShowCrows(true);
-                        ModConsole.Error($"Variation is {variation} for ScreamTimeType.FEAR in ScreamInitiator.ApplyHorror");
-                        break;
-                }
-                return;
-            }
-
-            if (rand == ScreamTimeType.PARALYSIS) // 1:00
-            {
-                switch (variation)
-                {
-                    case (int)ScreamParalysisType.GRANNY: // granny crawl screamer
-                        _startScreamerComponent<MummolaCrawl>("GrannyScreamHiker");
-                        break;
-                    case (int)ScreamParalysisType.HAND: // hand screamer
-                        _startScreamerComponent<MovingHand>("YARD/Building/BEDROOM1/ScreamHand");
-                        break;
-                    case (int)ScreamParalysisType.KESSELI: // kesseli screamer
-                        _startScreamerComponent<MovingUncleHead>("YARD/Building/BEDROOM1/ScreamUncle");
-                        break;
-                }
-            }
+            WorldManager.ShowCrows(false);
+            EventsManager.TriggerNightScreamer(rand, variation);
         }
 
-        void _startScreamerComponent<T>(string path) where T : MonoBehaviour
-        {
-            GameObject.Find(path).GetComponent<T>().enabled = true;
-            Utils.PrintDebug($"_startScreamerComponent ({path})");
-        }
+        void ScreamerFinished()
+            => WorldManager.ShowCrows(true);
 
         void SetupSleepTriggerHooks()
         {
@@ -162,7 +117,7 @@ namespace Psycho.Screamers
                 m_iRand = Random.Range(0, 3);
 
                 int day = (m_iGlobalDay.Value + 1) % 7;
-                Utils.PrintDebug($"Day: {m_iGlobalDay.Value}[{day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {m_iGlobalDay.Value}[next {day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
 #if !TEST
                 if (!m_liDays[m_iRand].Contains(day)) return;
 #endif
@@ -171,7 +126,7 @@ namespace Psycho.Screamers
                 int time = m_iTimeOfDay.Value;
                 int calc = time + sleepTime.Value - 24;
 
-                Utils.PrintDebug($"SleepTime orig[{sleepTime.Value}]; new[{24 - time + m_liTimes[m_iRand]}]; time[{time}]; calc[{calc}]; rand[{(ScreamTimeType)m_iRand}]");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{sleepTime.Value}]; new[{24 - time + m_liTimes[m_iRand]}]; time[{time}]; calc[{calc}]; rand[{(ScreamTimeType)m_iRand}]");
                 if (calc < m_liTimes[m_iRand] || calc == 2) return;
 
                 sleepTime.Value = 24 - time + m_liTimes[m_iRand];
@@ -217,20 +172,9 @@ namespace Psycho.Screamers
             });
         }
 
-        void ChangeGrandmaPosition(Vector3 position)
-        {
-            GameObject grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
-            if (!grandma) return;
-
-            grandma.transform.position = position;
-            grandma.transform.Find("Char").gameObject.SetActive(true);
-            grandma.AddComponent<GrandmaDistanceChecker>();
-            Utils.PrintDebug("Grandma add component distance checker");
-        }
-
         void _enablePhoneCord()
         {
-            Utils.PrintDebug("SCREAMTRIGGER called");
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Phone cord enabled.");
             _phoneCord.gameObject.transform.parent.gameObject.SetActive(true);
             _phoneCord.CallGlobalTransition("SCREAMTRIGGER");
         }

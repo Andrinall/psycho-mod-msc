@@ -50,6 +50,15 @@ namespace Psycho.Screamers
             newSource.maxDistance = 12f;
 
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.SUICIDAL) return;
+
+            enabled = true;
         }
 
         void OnEnable()
@@ -57,14 +66,13 @@ namespace Psycho.Screamers
             enableTime = DateTime.Now;
             suicidal.SetActive(true);
             lamp.SetActive(false);
-            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
         {
             suicidal.SetActive(false);
             lamp.SetActive(true);
-            WorldManager.ShowCrows(true);
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
         }
 
         void FixedUpdate()

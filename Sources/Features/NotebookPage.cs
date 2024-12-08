@@ -31,13 +31,17 @@ namespace Psycho.Features
         TextMesh pageText;
         Material pageTextMat;
 
+        void Awake()
+        {
+            EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
+        }
+
         void OnEnable()
         {
             notebook = GameObject.Find("Notebook(Clone)")?.GetComponent<NotebookMain>();
 
             Transform text = transform.Find("Text");
             pageText = text?.GetComponent<TextMesh>();
-            Utils.PrintDebug(pageText.ToString());
 
             MeshRenderer renderer = text.GetComponent<MeshRenderer>();
             pageTextMat = renderer.material;

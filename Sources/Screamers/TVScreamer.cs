@@ -65,6 +65,8 @@ namespace Psycho.Screamers
             TVAudio = NightProgram.GetComponent<AudioSource>();
             OrigAudioClip = TVAudio.clip;
 
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+
             enabled = false;
         }
 
@@ -75,14 +77,10 @@ namespace Psycho.Screamers
             TVSwitch.CallGlobalTransition("SCREAM_ON");
 
             fullEnable = true;
-            WorldManager.ShowCrows(false);
-            Utils.PrintDebug(eConsoleColors.GREEN, "TVScreamer enabled");
         }
 
         void OnDisable()
         {
-            if (!fullEnable) return;
-
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = true;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = true;
             TVSwitch.CallGlobalTransition("GLOBALEVENT");
@@ -93,8 +91,7 @@ namespace Psycho.Screamers
             ScreamEnabled = false;
             fullEnable = false;
 
-            WorldManager.ShowCrows(true);
-            Utils.PrintDebug(eConsoleColors.RED, "TVScreamer disabled");
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
 
         void FixedUpdate()
@@ -106,9 +103,20 @@ namespace Psycho.Screamers
                 return;
             }
 
+            Utils.PrintDebug(eConsoleColors.YELLOW, "elapsed == needed; Enable original TVSwitch.");
             enabled = false;
-            Utils.PrintDebug(eConsoleColors.YELLOW, "elapsed == needed; TVSwitch enabled, component disabled");
         }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR) return;
+            if ((ScreamFearType)variation != ScreamFearType.TV) return;
+
+            enabled = true;
+        }
+
+
+
 
         void _hook(PlayMakerFSM _fsm)
         {
@@ -116,20 +124,18 @@ namespace Psycho.Screamers
             
             _fsm.SendEvent("FINISHED");
             if (ScreamEnabled) return;
-            
+
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
+
             _setTexture();
             _setAudioClip(Globals.TVScream_clip);
             ScreamEnabled = true;
-
-            Utils.PrintDebug(eConsoleColors.YELLOW, "TVScreamer hook called; screamer enabled;");
         }
 
         void _setTexture()
         {
             (NightFSM.GetState("State 4").Actions[0] as SetMaterialTexture)
                 .material.Value.SetTexture("_MainTex", ReplaceTexture);
-
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Texture setted");
         }
 
         void _setAudioClip(AudioClip clip)
@@ -137,7 +143,7 @@ namespace Psycho.Screamers
             TVAudio.Stop();
             TVAudio.clip = clip;
             TVAudio.Play();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Audio clip setted with name {clip.name}");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip({clip.name}) is played");
         }
     }
 }

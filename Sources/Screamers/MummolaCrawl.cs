@@ -37,6 +37,15 @@ namespace Psycho.Screamers
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.GRANNY) return;
+
+            enabled = true;
         }
 
         void OnEnable()
@@ -49,7 +58,6 @@ namespace Psycho.Screamers
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
-            WorldManager.ShowCrows(false);
         }
         
         void OnDisable()
@@ -60,7 +68,7 @@ namespace Psycho.Screamers
             Char.gameObject.SetActive(false);            
             ResetHeadRotation();
             SoundManager.PlayHeartbeat(false);
-            WorldManager.ShowCrows(true);
+            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.GRANNY);
         }
         
         void FixedUpdate()

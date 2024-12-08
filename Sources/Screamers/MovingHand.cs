@@ -40,6 +40,15 @@ namespace Psycho.Screamers
             
             StartPoint = Armature.position;
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.HAND) return;
+
+            enabled = true;
         }
 
         void OnEnable()
@@ -51,7 +60,6 @@ namespace Psycho.Screamers
             Armature.gameObject.SetActive(true);
             Rigged.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
-            WorldManager.ShowCrows(false);
         }
 
         void OnDisable()
@@ -62,7 +70,7 @@ namespace Psycho.Screamers
 
             Armature.gameObject.SetActive(false);
             Rigged.gameObject.SetActive(false);
-            WorldManager.ShowCrows(true);
+            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
         }
 
         void FixedUpdate()

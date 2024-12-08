@@ -33,23 +33,31 @@ namespace Psycho.Screamers
 
             StateHook.Inject(Switch, "Use", "OFF", 0, _showerHook);
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
+
 
         void OnEnable()
         {
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
-            WorldManager.ShowCrows(false);
         }
 
-        void OnDisable()
-            => WorldManager.ShowCrows(true);
+        void OnDisable() => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
 
         void FixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.WATERKITCHEN) return;
+
+            enabled = true;
         }
 
 

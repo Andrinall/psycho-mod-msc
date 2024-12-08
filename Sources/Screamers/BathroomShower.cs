@@ -38,16 +38,13 @@ namespace Psycho.Screamers
 
             StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", 0, _showerHook);
             enabled = false;
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void OnEnable()
-        {
-            SwitchValve(true);
-            WorldManager.ShowCrows(false);
-        }
+        void OnEnable() => SwitchValve(true);
 
-        void OnDisable()
-            => WorldManager.ShowCrows(true);
+        void OnDisable() => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
 
         void FixedUpdate()
         {
@@ -55,6 +52,12 @@ namespace Psycho.Screamers
             WorldManager.ClonedPhantomTick(200, _phantomCallback);
         }
 
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.WATERBATHROOM) return;
+
+            enabled = true;
+        }
 
         void SwitchValve(bool state)
         {
