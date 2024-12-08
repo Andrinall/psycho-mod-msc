@@ -7,6 +7,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using HutongGames.PlayMaker.Actions;
 
 
 namespace Psycho
@@ -111,10 +112,7 @@ namespace Psycho
                 if (isDead) return;
 
                 Utils.SetPictureImage();
-
-                if (prev > value)
-                    ResetValue();
-
+                
                 if (value > 7.0f)
                     FinishShizGame();
                 else if (value < -7.0f)
@@ -143,7 +141,9 @@ namespace Psycho
 
         public static void SetValue(float value) => Value = value;
         public static void SetPoints(float points) => Points = points;
-        public static void ResetValue(float min = 0f, float max = 100f) => Value = inHorror ? min : max;
+        public static void ResetValue(float horror = 0f, float main = 100f)
+            => Value = Mathf.Clamp(Value + (inHorror ? -horror : main), 0f, 100f);
+
         public static void ResetPoints() => Points = 0;
 
         public static void SetDefaultValues()
@@ -204,13 +204,19 @@ namespace Psycho
         internal static void PlayerCompleteJob(string job, int multiplier = 1, string comment = default)
         {
             Points += config.GetValueSafe(job) * multiplier;
-            Utils.PrintDebug($"Player complete job : {job}[X{multiplier}] \"{comment}\"");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Player complete job : {job} [mult X{multiplier}] \"{comment}\"");
         }
 
         internal static void PlayerCommittedOffence(string offence, string comment = default)
         {
-            Points -= config.GetValueSafe(offence);
-            Utils.PrintDebug($"Player committed offence : {offence}[X1] \"{comment}\"");
+            float previous = Points;
+            float newValue = Points - config.GetValueSafe(offence);
+
+            if (newValue < previous && offence != "PLAYER_SWEARS" && !offence.Contains("DRUNK"))
+                ResetValue(horror: 25, main: 15f);
+
+            Points = newValue;
+            Utils.PrintDebug(eConsoleColors.RED, $"Player committed offence : {offence} \"{comment}\"");
         }
 
         internal static void KillUsingTrain()
@@ -269,7 +275,7 @@ namespace Psycho
             _hud.RemoveElement("Psycho");
             _hud.Structurize();
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Shiz game finished!");
+            Utils.PrintDebug(eConsoleColors.GREEN, "Shiz game finished!");
         }
 
 
