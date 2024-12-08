@@ -58,7 +58,7 @@ namespace Psycho.Internal
             AfterAwake();
         }
 
-        internal override void OnFixedUpdate()
+        internal override void OnUpdate()
         {
             if (Camera.main == null) return;
             if (GUI == null) return;
@@ -114,9 +114,12 @@ namespace Psycho.Internal
             OpenMenu.enabled = !state;
             GUI.SetActive(state);
 
-            SetMainCamera(state ? GUICamera : OriginalCamera);
+            if (state)
+                GUIOpened();
+            else
+                GUIClosed();
 
-            GUIActivated(state);
+            SetMainCamera(state ? GUICamera : OriginalCamera);
         }
 
         /// <summary>
@@ -153,7 +156,9 @@ namespace Psycho.Internal
         /// <b>(Callback for override)</b> Called after apply activate gui state
         /// </summary>
         /// <param name="state">State of activate gui</param>
-        public virtual void GUIActivated(bool state) { }
+        public virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Opened");
+
+        public virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Closed");
 
         /// <summary>
         /// <b>(Callback for override)</b> Called when object (where have this component) used by mouseOver & click `Use` button
