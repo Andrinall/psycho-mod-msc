@@ -9,7 +9,6 @@ using Psycho.Internal;
 using Psycho.Handlers;
 using Psycho.Extensions;
 
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 
@@ -72,8 +71,8 @@ namespace Psycho.Features
             for (int i = 0; i < Candles.childCount; i++)
             {
                 Transform _candleFire = Candles.GetChild(i).GetChild(0);
-                GameObject _clonedFireParticle = Object.Instantiate(_fireParticle);
-                Object.Destroy(_clonedFireParticle.GetComponent<PlayMakerFSM>());
+                GameObject _clonedFireParticle = Instantiate(_fireParticle);
+                Destroy(_clonedFireParticle.GetComponent<PlayMakerFSM>());
 
                 _clonedFireParticle.transform.SetParent(_candleFire, worldPositionStays: false);
                 _clonedFireParticle.transform.localPosition = new Vector3(-0.0003f, -0.0003f, 0.0242f);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -81,6 +80,7 @@ namespace Psycho
 
         public override void OnLoad()
         {
+            IsLoaded = false;
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");

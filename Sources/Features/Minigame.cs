@@ -41,6 +41,11 @@ namespace Psycho.Features
 
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
+            GameObject _fireParticle = GameObject.Find("ITEMS/lantern(itemx)/light/particle");
+            GameObject clonedFire = Instantiate(_fireParticle);
+            clonedFire.transform.SetParent(transform.Find("Candle"), false);
+            clonedFire.transform.localPosition = new Vector3(0, 0, 0.06f);
+            
             if (NotebookMain.Pages.Count >= 14)
             {
                 Destroy(gameObject);
@@ -48,7 +53,7 @@ namespace Psycho.Features
             }
         }
 
-        internal override void OnFixedUpdate()
+        internal override void OnUpdate()
         {
             if (!CheckDayChanged()) return;
             if (PlayerCard?.activeSelf == true) return;
