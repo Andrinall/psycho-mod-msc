@@ -1,4 +1,5 @@
-﻿using UnityEngine.Events;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 
 namespace Psycho.Internal
@@ -17,6 +18,12 @@ namespace Psycho.Internal
         {
             Globals.CurrentLang = lang;
             Psycho.lang.Instance.Name = lang == 0 ? "Language select" : "Выбор языка";
+
+            if (Application.loadedLevelName != "GAME") return;
+            
+            TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
+            if (postcardText != null)
+                postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
 
             OnLanguageChanged.Invoke();
         }

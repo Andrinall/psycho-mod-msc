@@ -14,6 +14,7 @@ using Psycho.Screamers;
 using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
+
 namespace Psycho
 {
     public sealed class Psycho : Mod
@@ -56,17 +57,7 @@ namespace Psycho
         }
 
         void _changeSetting()
-        {
-            EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
-            
-            if (Application.loadedLevelName != "GAME") return;
-            //GameObject.Find("Notebook Page(Clone)")?.GetComponent<NotebookPageComponent>()?.UpdatePageText();
-            //Globals.Notebook?.UpdatePageText();
-
-            TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
-            if (postcardText != null)
-                postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
-        }
+            => EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
         //
 
 
@@ -81,6 +72,8 @@ namespace Psycho
         public override void OnLoad()
         {
             IsLoaded = false;
+
+            IsLoaded = true;
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
@@ -97,7 +90,7 @@ namespace Psycho
             newspaperFrame.SetParent(GameObject.Find("STORE").transform);
             newspaperFrame.position = new Vector3(-1552.66f, 5.261985f, 1182.463f);
             newspaperFrame.eulerAngles = new Vector3(-0.651f, 58.264f, 90f);
-            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
+            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f); 
 
             MeshRenderer renderer = newspaperFrame.GetComponent<MeshRenderer>();
             renderer.materials[1].SetTexture("_MainTex", Globals.NewsPaper_texture);
@@ -163,6 +156,7 @@ namespace Psycho
             source.maxDistance = 5f;
             source.spatialBlend = 1f;
             source.spread = 0f;
+            _grandma.AddComponent<GrandmaDistanceChecker>();
 
             // whisp spawn
             /*
@@ -173,7 +167,7 @@ namespace Psycho
              */
 
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
-            Resources.UnloadUnusedAssets(); // tested (for remove in release version)
+            //Resources.UnloadUnusedAssets(); // tested (for remove in release version)
             IsLoaded = true;
         }
 
@@ -208,6 +202,8 @@ namespace Psycho
 
         public override void OnSave()
         {
+            IsLoaded = false;
+
             // restore original game textures for materials (avoid game crash)
             WorldManager.ChangeWorldTextures(false);
             WorldManager.ChangeIndepTextures(true);
