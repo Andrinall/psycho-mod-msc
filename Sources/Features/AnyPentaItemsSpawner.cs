@@ -2,6 +2,7 @@
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using Psycho.Handlers;
 
 
 namespace Psycho.Features
@@ -76,6 +77,7 @@ namespace Psycho.Features
             if (spawnDay == CandleDay)
                 cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);
 
+            cloned.AddComponent<ItemsGravityEnabler>();
             spawned = true;
             Utils.PrintDebug($"Item {cloned.name} spawned!");
         }
