@@ -66,7 +66,7 @@ namespace Psycho.Internal
 
         internal static void InitPostcard(GameObject cloned)
         {
-            Shader text3D = Shader.Find("GUI/3D Text Shader");
+            Shader text3D = Shader.Instantiate(Shader.Find("GUI/3D Text Shader"));
             Transform text = cloned.transform.Find("Text");
 
             Material material = text.GetComponent<MeshRenderer>().material;

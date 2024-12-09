@@ -45,7 +45,7 @@ namespace Psycho.Features
 
             MeshRenderer renderer = text.GetComponent<MeshRenderer>();
             pageTextMat = renderer.material;
-            pageTextMat.shader = Shader.Find("GUI/3D Text Shader");
+            pageTextMat.shader = Instantiate(Shader.Find("GUI/3D Text Shader"));
             pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
 
