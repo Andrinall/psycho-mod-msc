@@ -12,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class PhoneRing : MonoBehaviour
+    internal sealed class PhoneRing : CatchedComponent
     {
         GameObject Ring;
         GameObject Callers;
@@ -28,8 +28,9 @@ namespace Psycho.Screamers
         short neededFrames = 400;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
             Ring = transform.Find("Ring").gameObject;
             Callers = GameObject.Find("MasterAudio/Callers");
             PhoneLogic = transform.Find("PhoneLogic").gameObject;
@@ -43,11 +44,30 @@ namespace Psycho.Screamers
             _addEventAndTransitionToScreamerState();
 
             StateHook.Inject(transform.Find("UseHandle").gameObject, "Use", "Close phone", 0, _closePhoneHook);
-
-            enabled = false;
-
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
+
+        internal override void Enabled()
+        {
+            Topic.Value = "SCREAMCALL";
+            PhoneLogic.SetActive(false);
+            Ring.SetActive(true);
+        }
+
+        internal override void Disabled()
+        {
+            if (Ring == null) return;
+
+            Ring.SetActive(false);
+            PhoneLogic.SetActive(true);
+            Topic.Value = "";
+            elapsedFrames = 0;
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
+        }
+
+        internal override void OnFixedUpdate()
+            => WorldManager.ClonedPhantomTick(200, _phantomHideCallback);
+
 
         void TriggerScreamer(ScreamTimeType type, int variation)
         {
@@ -58,27 +78,6 @@ namespace Psycho.Screamers
 
         void _closePhoneHook(PlayMakerFSM _)
            => WorldManager.ClonedPhantomTick(0, _phantomHideCallback);
-
-
-        void OnEnable()
-        {
-            Topic.Value = "SCREAMCALL";
-            PhoneLogic.SetActive(false);
-            Ring.SetActive(true);
-        }
-
-        void OnDisable()
-        {
-            Ring.SetActive(false);
-            PhoneLogic.SetActive(true);
-            Topic.Value = "";
-            elapsedFrames = 0;
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
-        }
-
-        void FixedUpdate()
-            => WorldManager.ClonedPhantomTick(200, _phantomHideCallback);
-
 
         void _addAudios()
         {

@@ -12,7 +12,7 @@ using Psycho.Extensions;
 
 namespace Psycho.Screamers
 {
-    public sealed class TVScreamer : MonoBehaviour
+    internal sealed class TVScreamer : CatchedComponent
     {
         GameObject SwitchObj;
         Transform NightProgram;
@@ -34,8 +34,10 @@ namespace Psycho.Screamers
         int neededFrames = 200;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
+
             SwitchObj = GameObject.Find("YARD/Building/LIVINGROOM/TV/Switch");
 
             TVSwitch = SwitchObj.GetComponent<PlayMakerFSM>();
@@ -66,11 +68,9 @@ namespace Psycho.Screamers
             OrigAudioClip = TVAudio.clip;
 
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
-
-            enabled = false;
         }
 
-        void OnEnable()
+        internal override void Enabled()
         {
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = false;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
@@ -79,8 +79,10 @@ namespace Psycho.Screamers
             fullEnable = true;
         }
 
-        void OnDisable()
+        internal override void Disabled()
         {
+            if (SwitchObj == null) return;
+
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = true;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = true;
             TVSwitch.CallGlobalTransition("GLOBALEVENT");
@@ -94,7 +96,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (!ScreamEnabled) return;
             if (elapsedFrames <= neededFrames)
@@ -107,6 +109,9 @@ namespace Psycho.Screamers
             enabled = false;
         }
 
+
+
+
         void TriggerScreamer(ScreamTimeType type, int variation)
         {
             if (type != ScreamTimeType.FEAR) return;
@@ -114,9 +119,6 @@ namespace Psycho.Screamers
 
             enabled = true;
         }
-
-
-
 
         void _hook(PlayMakerFSM _fsm)
         {

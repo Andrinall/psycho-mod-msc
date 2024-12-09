@@ -1,4 +1,4 @@
-﻿//#define TEST
+﻿#define TEST
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using Random = UnityEngine.Random;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    public sealed class ScreamsInitiator : MonoBehaviour
+    internal sealed class ScreamsInitiator : CatchedComponent
     {
         PlayMakerFSM _fsm;
         PlayMakerFSM _phoneCord;
@@ -44,13 +44,13 @@ namespace Psycho.Screamers
         bool m_bTrigger = false;
 
 
-        void Awake()
+        internal override void Awaked()
         {
             SetupSleepTriggerHooks();
             EventsManager.OnScreamerFinished.AddListener(ScreamerFinished);
         }
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (!m_bApplyed) return;
             if (m_bStopped) return;
@@ -89,8 +89,7 @@ namespace Psycho.Screamers
             EventsManager.TriggerNightScreamer(rand, variation);
         }
 
-        void ScreamerFinished()
-            => WorldManager.ShowCrows(true);
+        void ScreamerFinished() => WorldManager.ShowCrows(true);
 
         void SetupSleepTriggerHooks()
         {
@@ -146,7 +145,8 @@ namespace Psycho.Screamers
                 Logic.milkUsed = false;
                 if (!m_bTrigger) return;
 #if TEST
-                ApplyScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
+                //Utils.PrintDebug("Apply screamer");
+                ApplyScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
 #else
                 int[] temp = new int[2] {
                     Enum.GetValues(typeof(ScreamFearType)).Length,

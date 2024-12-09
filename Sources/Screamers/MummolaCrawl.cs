@@ -6,7 +6,7 @@ using Psycho.Extensions;
 
 namespace Psycho.Screamers
 {
-    public sealed class MummolaCrawl : MonoBehaviour
+    internal sealed class MummolaCrawl : CatchedComponent
     {
         Transform Char;
         Transform Head;
@@ -31,24 +31,17 @@ namespace Psycho.Screamers
         Vector3[] cameraOrigs;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
             Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
-            enabled = false;
 
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.GRANNY) return;
-
-            enabled = true;
-        }
-
-        void OnEnable()
+        internal override void Enabled()
         {
             Fsm.enabled = false;
             transform.position = StartPoint;
@@ -60,22 +53,31 @@ namespace Psycho.Screamers
             SoundManager.PlayHeartbeat(true);
         }
         
-        void OnDisable()
+        internal override void Disabled()
         {
+            if (Char == null) return;
+
             ElapsedFrames = 0;
             AnimPlayed = false;
-            
+
             Char.gameObject.SetActive(false);            
             ResetHeadRotation();
             SoundManager.PlayHeartbeat(false);
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.GRANNY);
         }
         
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (AnimPlayed) return;
             if (!transform.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;
             RotateHeadPivot();
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.GRANNY) return;
+
+            enabled = true;
         }
 
         void ResetHeadRotation()

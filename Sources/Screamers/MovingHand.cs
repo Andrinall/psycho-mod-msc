@@ -6,7 +6,7 @@ using Psycho.Extensions;
 
 namespace Psycho.Screamers
 {
-    public sealed class MovingHand : MonoBehaviour
+    internal sealed class MovingHand : CatchedComponent
     {
         Transform Armature;
         Transform Rigged;
@@ -32,26 +32,20 @@ namespace Psycho.Screamers
         Vector3[] CameraOrigs;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
+
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Armature = transform.Find("Armature");
             Rigged = transform.Find("hand_rigged");
             
             StartPoint = Armature.position;
-            enabled = false;
 
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.HAND) return;
-
-            enabled = true;
-        }
-
-        void OnEnable()
+        internal override void Enabled()
         {
             _fsm.enabled = false;
             Armature.position = StartPoint;
@@ -62,7 +56,7 @@ namespace Psycho.Screamers
             SoundManager.PlayHeartbeat(true);
         }
 
-        void OnDisable()
+        internal override void Disabled()
         {
             animPlayed = false;
             movingStage = 0;
@@ -73,7 +67,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
         }
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (animPlayed) return;
 
@@ -108,6 +102,13 @@ namespace Psycho.Screamers
                     _fsm.CallGlobalTransition("SCREAMSTOP");
                 });
             }
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.HAND) return;
+
+            enabled = true;
         }
     }
 }

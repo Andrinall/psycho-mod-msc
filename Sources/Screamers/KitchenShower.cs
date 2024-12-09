@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    public sealed class KitchenShower : MonoBehaviour
+    internal sealed class KitchenShower : CatchedComponent
     {
         GameObject ParticleDrink;
         GameObject Switch;
@@ -21,8 +21,9 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
             ParticleDrink = transform.Find("ParticleDrink").gameObject;
             Switch = transform.Find("Trigger").gameObject;
             SwitchFSM = Switch.GetComponent<PlayMakerFSM>();
@@ -32,22 +33,21 @@ namespace Psycho.Screamers
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
             StateHook.Inject(Switch, "Use", "OFF", 0, _showerHook);
-            enabled = false;
-
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
 
-        void OnEnable()
+        internal override void Enabled()
         {
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
         }
 
-        void OnDisable() => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
+        internal override void Disabled()
+            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

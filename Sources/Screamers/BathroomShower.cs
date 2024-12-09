@@ -7,7 +7,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class BathroomShower : MonoBehaviour
+    internal sealed class BathroomShower : CatchedComponent
     {
         GameObject TapDrink;
         EllipsoidParticleEmitter TapParticle;
@@ -22,8 +22,9 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
             TapDrink = transform.Find("TapDrink").gameObject;
             TapParticle = transform.Find("TapParticle").GetComponent<EllipsoidParticleEmitter>();
             ShowerPower = transform.parent.Find("LOD_bathroom/Power/shower_power");
@@ -37,16 +38,15 @@ namespace Psycho.Screamers
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
             StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", 0, _showerHook);
-            enabled = false;
-
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void OnEnable() => SwitchValve(true);
+        internal override void Enabled() => SwitchValve(true);
 
-        void OnDisable() => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
+        internal override void Disabled()
+            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

@@ -6,7 +6,7 @@ using Psycho.Extensions;
 
 namespace Psycho.Screamers
 {
-    public sealed class MovingUncleHead : MonoBehaviour
+    internal sealed class MovingUncleHead : CatchedComponent
     {
         Transform Head;
         Transform Char;
@@ -28,8 +28,10 @@ namespace Psycho.Screamers
         bool animPlayed = false;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
+
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot/head");
@@ -51,19 +53,10 @@ namespace Psycho.Screamers
             source.maxDistance = 12f;
             ScreamSound = source;
 
-            enabled = false;
-
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.KESSELI) return;
-
-            enabled = true;
-        }
-
-        void OnEnable()
+        internal override void Enabled()
         {
             _fsm.enabled = false;
             Head.position = StartPoint;
@@ -72,15 +65,17 @@ namespace Psycho.Screamers
             Head.gameObject.SetActive(false);
         }
         
-        void OnDisable()
+        internal override void Disabled()
         {
+            if (Char == null) return;
+
             animPlayed = false;
             Char.gameObject.SetActive(false);
             elapsedFrames = 0;
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
         }
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (elapsedFrames < neededFrames)
             {
@@ -104,6 +99,13 @@ namespace Psycho.Screamers
                 Utils.ResetCameraLook(CameraOrigs);
                 _fsm.CallGlobalTransition("SCREAMSTOP");
             });
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.KESSELI) return;
+
+            enabled = true;
         }
     }
 }

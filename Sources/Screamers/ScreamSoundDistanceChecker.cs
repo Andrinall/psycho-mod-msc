@@ -6,7 +6,7 @@ using Psycho.Internal;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    internal sealed class ScreamSoundDistanceChecker : MonoBehaviour
+    internal sealed class ScreamSoundDistanceChecker : CatchedComponent
     {
         Transform Player;
         AudioSource Source;
@@ -15,13 +15,13 @@ namespace Psycho.Screamers
         public float TargetDistance = 1.75f;
 
 
-        void Awake()
+        internal override void Awaked()
         {
             Source = GetComponent<AudioSource>();
             Player = GameObject.Find("PLAYER").transform;
         }
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (!Source.isPlaying) return;
             Distance = Vector3.Distance(transform.position, Player.position);

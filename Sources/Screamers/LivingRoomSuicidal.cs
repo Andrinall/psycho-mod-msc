@@ -7,7 +7,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    public sealed class LivingRoomSuicidal : MonoBehaviour
+    internal sealed class LivingRoomSuicidal : CatchedComponent
     {
         GameObject suicidal;
         GameObject lamp;
@@ -15,8 +15,9 @@ namespace Psycho.Screamers
         TimeSpan span;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
             suicidal = transform.Find("SuicidalCustom(Clone)").gameObject;
             lamp = transform.Find("livingroom_lamp").gameObject;
 
@@ -28,10 +29,7 @@ namespace Psycho.Screamers
             )?.GetComponent<AudioSource>();
 
             if (!origSource)
-            {
-                enabled = false;
                 return;
-            }
 
             AudioSource newSource = suicidal.AddComponent<AudioSource>();
             newSource.clip = AudioClip.Instantiate(origSource.clip);
@@ -49,9 +47,30 @@ namespace Psycho.Screamers
             newSource.spread = 0f;
             newSource.maxDistance = 12f;
 
-            enabled = false;
-
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+        }
+
+        internal override void Enabled()
+        {
+            enableTime = DateTime.Now;
+            suicidal.SetActive(true);
+            lamp.SetActive(false);
+        }
+
+        internal override void Disabled()
+        {
+            if (suicidal == null) return;
+
+            suicidal.SetActive(false);
+            lamp.SetActive(true);
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
+        }
+
+        internal override void OnFixedUpdate()
+        {
+            span = (DateTime.Now - enableTime);
+            if (span.Minutes == 2 && span.Seconds > 30) // 2 minutes & 30 seconds
+                enabled = false; // disable component
         }
 
         void TriggerScreamer(ScreamTimeType type, int variation)
@@ -59,27 +78,6 @@ namespace Psycho.Screamers
             if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.SUICIDAL) return;
 
             enabled = true;
-        }
-
-        void OnEnable()
-        {
-            enableTime = DateTime.Now;
-            suicidal.SetActive(true);
-            lamp.SetActive(false);
-        }
-
-        void OnDisable()
-        {
-            suicidal.SetActive(false);
-            lamp.SetActive(true);
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
-        }
-
-        void FixedUpdate()
-        {
-            span = (DateTime.Now - enableTime);
-            if (span.Minutes == 2 && span.Seconds > 30) // 2 minutes & 30 seconds
-                enabled = false; // disable component
         }
     }
 }

@@ -8,7 +8,7 @@ using Psycho.Internal;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    internal sealed class GrandmaDistanceChecker : MonoBehaviour
+    internal sealed class GrandmaDistanceChecker : CatchedComponent
     {
         Transform _player;
         AudioSource audio;
@@ -16,19 +16,20 @@ namespace Psycho.Screamers
         float Distance = 3.5f;
 
 
-        void Awake()
+        internal override void Awaked()
         {
+            enabled = false;
+
             _player = GameObject.Find("PLAYER").transform;
             audio = transform.GetComponent<AudioSource>();
+
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        void OnEnable()
-            => WorldManager.ShowCrows(false);
-        
-        void OnDestroy()
-            => WorldManager.ShowCrows(true);
+        internal override void Disabled()
+            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.GRANNY);
 
-        void FixedUpdate()
+        internal override void OnFixedUpdate()
         {
             if (m_bBlowed) return;
             if (Vector3.Distance(transform.position, _player.position) > Distance) return;
@@ -55,11 +56,22 @@ namespace Psycho.Screamers
 
                 timer.Stop();
                 Destroy(smokes);
-                Destroy(this);
+                enabled = false;
             };
             timer.Start();
             
             m_bBlowed = true;
+        }
+
+        void TriggerScreamer(ScreamTimeType type, int variation)
+        {
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.GRANNY) return;
+
+            transform.position = new Vector3(-9.980711f, -0.593821f, 4.589845f);
+            transform.Find("Char").gameObject.SetActive(true);
+
+            enabled = true;
+            m_bBlowed = false;
         }
     }
 }
