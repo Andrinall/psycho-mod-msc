@@ -108,7 +108,7 @@ namespace Psycho.Internal
                 for (int i = 0; i < pagesCount; i++)
                 {
                     int idx = BitConverter.ToInt32(value, offset);
-                    if (idx == 0) continue;
+                    if (idx <= 0 || idx > 15) continue;
 
                     bool isTrue = BitConverter.ToBoolean(value, offset + 4);
                     bool isFinal = BitConverter.ToBoolean(value, offset + 5);
