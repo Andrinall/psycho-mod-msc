@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2059159924
+CRC: 1322041509
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 540f1283f236994211a68282f6c26900
+    Hash: ca99a10afad1342e87967f37d4ef9852
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
@@ -95,7 +95,6 @@ Assets:
 - Assets/Screens/33.png
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
-- Assets/Replaces/AllWorlds/smiley_no.png
 - Assets/Materials/Postcard/postcard0.png
 - Assets/Audio/acid_burn.mp3
 - Assets/Screens/6.png
@@ -176,7 +175,6 @@ Assets:
 - Assets/Replaces/Horror/brickwall2.png
 - Assets/Prefabs/Background.prefab
 - Assets/Textures/Taro/Sin4.png
-- Assets/Replaces/AllWorlds/smiley_yes.png
 - Assets/Replaces/Horror/char_face04_woman.png
 - Assets/Prefabs/FernFlower.prefab
 - Assets/Textures/Album/Album7.png
