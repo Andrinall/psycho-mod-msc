@@ -6,9 +6,9 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Extensions;
-using Object = UnityEngine.Object;
 using Psycho.Features;
 using Psycho.Handlers;
+using Object = UnityEngine.Object;
 
 
 namespace Psycho.Internal
@@ -79,7 +79,7 @@ namespace Psycho.Internal
                 GameObject prefab = null;
                 switch (sName)
                 {
-                    case "Candle":
+                    case "ChurchCandle":
                         prefab = Globals.Candle_prefab;
                         break;
                     case "FernFlower":
