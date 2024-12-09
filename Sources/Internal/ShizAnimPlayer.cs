@@ -7,13 +7,13 @@ using UnityEngine;
 namespace Psycho.Internal
 {
     [RequireComponent(typeof(Animation))]
-    internal sealed class ShizAnimPlayer : MonoBehaviour
+    internal sealed class ShizAnimPlayer : CatchedComponent
     {
         GameObject _eyes = null;
         Animation m_oAnimation = null;
 
 
-        void OnEnable()
+        internal override void Awaked()
         {
             _eyes = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/SleepEyes");
             m_oAnimation = _eyes.GetComponent<Animation>();
@@ -34,11 +34,8 @@ namespace Psycho.Internal
             PlayMode mode,
             Action finish_callback
         ) {
-            if (m_oAnimation.isPlaying)
-                yield return new WaitForSeconds(1f);
-
-            if (!_eyes.activeSelf)
-                _eyes.SetActive(true);
+            m_oAnimation.Stop();
+            _eyes.SetActive(true);
 
             m_oAnimation.Play(animation, mode);
             while (m_oAnimation.isPlaying)
@@ -47,9 +44,7 @@ namespace Psycho.Internal
             if (waitSeconds > 0f)
                 yield return new WaitForSeconds(waitSeconds);
 
-            if (disable && _eyes.activeSelf)
-                _eyes.SetActive(false);
-
+            m_oAnimation.Stop();
             finish_callback?.Invoke();
         }
     }
