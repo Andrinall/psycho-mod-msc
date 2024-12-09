@@ -326,6 +326,7 @@ namespace Psycho.Internal
         {
             PlayMakerFSM door = GameObject.Find(path)?.GetPlayMaker("Use");
             if (!door) return;
+
             door.GetVariable<FsmBool>("DoorOpen").Value = true;
             door.SendEvent("GLOBALEVENT");
         }
@@ -396,9 +397,9 @@ namespace Psycho.Internal
 
             return v => {
                 
-                if (v.sharedMaterials.Length == 0) return false;
+                if (v.materials.Length == 0) return false;
 
-                return v.sharedMaterials.Any(m => {
+                return v.materials.Any(m => {
                     if (m == null) return false;
 
                     Texture main = m.GetTexture("_MainTex");
@@ -429,9 +430,9 @@ namespace Psycho.Internal
             bool b_state = (state > 1 ? (state == 3) : (state == 1));
 
             return (v) => {
-                if (v.sharedMaterials.Length == 0) return false;
+                if (v.materials.Length == 0) return false;
 
-                return v.sharedMaterials.Any(m => {
+                return v.materials.Any(m => {
                     if (m == null) return false;
 
                     Texture main = m.GetTexture("_MainTex");

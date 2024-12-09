@@ -37,7 +37,9 @@ namespace Psycho.Handlers
 
             IsItemIn = true;
             Item = other.gameObject;
-            Item.transform.position = transform.position;
+            Vector3 pos = transform.position;
+            Item.transform.localEulerAngles = new Vector3(0, 90f, 0);
+            Item.transform.position = new Vector3(pos.x, pos.y, pos.z + 0.001f);
 
             penta.TryTriggerEvent();
             Utils.PrintDebug(eConsoleColors.YELLOW, $"Item {other.gameObject.name} enter trigger {name};");
