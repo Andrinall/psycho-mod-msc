@@ -27,7 +27,11 @@ namespace Psycho.Screamers
         }
 
         internal override void Disabled()
-            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.GRANNY);
+        {
+            if (audio == null) return;
+
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.GRANNY);
+        }
 
         internal override void OnFixedUpdate()
         {

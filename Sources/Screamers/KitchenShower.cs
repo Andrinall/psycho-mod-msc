@@ -45,7 +45,10 @@ namespace Psycho.Screamers
         }
 
         internal override void Disabled()
-            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
+        {
+            if (ParticleDrink == null) return;
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
+        }
 
         internal override void OnFixedUpdate()
         {

@@ -44,7 +44,11 @@ namespace Psycho.Screamers
         internal override void Enabled() => SwitchValve(true);
 
         internal override void Disabled()
-            => EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
+        {
+            if (TapDrink == null) return;
+
+            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
+        }
 
         internal override void OnFixedUpdate()
         {
