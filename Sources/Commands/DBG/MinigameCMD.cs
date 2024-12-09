@@ -4,6 +4,7 @@ using UnityEngine;
 using Psycho.Features;
 using Psycho.Internal;
 
+
 namespace Psycho.Commands
 {
     internal class MinigameCMD : ConsoleCommand

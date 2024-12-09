@@ -57,33 +57,37 @@ namespace Psycho.Features
             Transform parent, GameObject prefab, Vector3 pos
         ) {
             if (!spawned && day == spawnDay && parent.childCount == 0)
-            {
-                GameObject cloned = ItemsPool.AddItem(prefab);
-                cloned.transform.SetParent(parent, worldPositionStays: false);
-                cloned.transform.localPosition = pos;
-
-                if (spawnDay == MushroomDay)
-                    mushroom_pos = mushroom_rand[Random.Range(0, mushroom_rand.Length)];
-
-                if (spawnDay == CandleDay)
-                    cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);
-
-                spawned = true;
-            }
+                SpawnItem(prefab, parent, pos, spawnDay, ref spawned);
             else if (spawnDay != MushroomDay && spawned && day != spawnDay)
-                _destroy(parent, ref spawned);
+                DestroyItem(parent, ref spawned);
             else if (spawnDay == MushroomDay && spawned && day != spawnDay && day >= 0)
-                _destroy(parent, ref spawned);
+                DestroyItem(parent, ref spawned);
         }
 
-        void _destroy(Transform parent, ref bool spawned)
+        void SpawnItem(GameObject prefab, Transform parent, Vector3 pos, int spawnDay, ref bool spawned)
+        {
+            GameObject cloned = ItemsPool.AddItem(prefab);
+            cloned.transform.SetParent(parent, worldPositionStays: false);
+            cloned.transform.localPosition = pos;
+
+            if (spawnDay == MushroomDay)
+                mushroom_pos = mushroom_rand[Random.Range(0, mushroom_rand.Length)];
+
+            if (spawnDay == CandleDay)
+                cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);
+
+            spawned = true;
+            Utils.PrintDebug($"Item {cloned.name} spawned!");
+        }
+
+        void DestroyItem(Transform parent, ref bool spawned)
         {
             if (parent.childCount != 0)
             {
-                Utils.PrintDebug($"Item {parent.name} destroyed, because not picked up.");
 
                 GameObject obj = parent.GetChild(0).gameObject;
                 ItemsPool.RemoveItem(obj);
+                Utils.PrintDebug($"Item {obj.name} destroyed, because not picked up.");
                 Destroy(obj);
             }
 

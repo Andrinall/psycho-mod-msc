@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -8,9 +7,6 @@ using UnityEngine;
 using Psycho.Features;
 using Psycho.Internal;
 using Psycho.Screamers;
-using Psycho.Extensions;
-
-using Object = UnityEngine.Object;
 
 
 namespace Psycho
@@ -356,13 +352,11 @@ namespace Psycho
                     }
                     else if (name.Contains("/sounds")) // replaces for flies sounds in horror world
                         horror_flies.Add(LoadAsset<AudioClip>(_bundle, name));
-                    else if (name.Contains("/allworlds"))
-                    { // load texture used independently of world
+                    else if (name.Contains("/allworlds")) // load texture used independently of world
                         indep_textures.Add(
                             name.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
                             LoadAsset<Texture>(_bundle, name)
                         );
-                    }
                 }
                 else if (name.Contains("assets/pictures")) // load textures for picture in frame
                     pictures.Add(LoadAsset<Texture>(_bundle, name));

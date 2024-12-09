@@ -5,8 +5,8 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Internal;
-using Psycho.Extensions;
 using Psycho.Handlers;
+using Psycho.Extensions;
 
 
 namespace Psycho.Features

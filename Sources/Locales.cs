@@ -1,7 +1,4 @@
-﻿using System.Runtime.ConstrainedExecution;
-using System.Security.Cryptography;
-using UnityEngine;
-
+﻿
 namespace Psycho
 {
     public sealed class Locales

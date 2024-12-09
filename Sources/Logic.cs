@@ -7,7 +7,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using HutongGames.PlayMaker.Actions;
 
 
 namespace Psycho
@@ -183,8 +182,8 @@ namespace Psycho
                 envelopeSpawned = true;
             }
 
+            Utils.PrintDebug(eConsoleColors.GREEN, $"World changed to {(type == eWorldType.MAIN ? "MAIN" : "HORROR")}");
             KnockOutPlayer();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"World changed to {(type == 0 ? "MAIN" : "HORROR")}");
         }
 
 

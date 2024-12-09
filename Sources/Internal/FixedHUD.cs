@@ -1,7 +1,8 @@
-﻿using Psycho.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
+
+using Psycho.Extensions;
 
 
 namespace Psycho.Internal
