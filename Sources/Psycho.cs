@@ -22,7 +22,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9-beta_0.8";
+        public override string Version => "0.9.3-beta";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
@@ -73,7 +73,6 @@ namespace Psycho
         {
             IsLoaded = false;
 
-            IsLoaded = true;
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
@@ -90,7 +89,7 @@ namespace Psycho
             newspaperFrame.SetParent(GameObject.Find("STORE").transform);
             newspaperFrame.position = new Vector3(-1552.66f, 5.261985f, 1182.463f);
             newspaperFrame.eulerAngles = new Vector3(-0.651f, 58.264f, 90f);
-            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f); 
+            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
 
             MeshRenderer renderer = newspaperFrame.GetComponent<MeshRenderer>();
             renderer.materials[1].SetTexture("_MainTex", Globals.NewsPaper_texture);

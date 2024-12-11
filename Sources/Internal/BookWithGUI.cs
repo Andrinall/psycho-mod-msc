@@ -80,16 +80,11 @@ namespace Psycho.Internal
                 if (Input.GetMouseButtonUp(0))
                 {
                     if (hitted == ButtonNext)
-                    {
                         SelectPage(true);
-                        return;
-                    }
-
-                    if (hitted == ButtonPrev)
-                    {
+                    else if (hitted == ButtonPrev)
                         SelectPage(false);
-                        return;
-                    }
+
+                    return;
                 }
             }
 
@@ -154,11 +149,13 @@ namespace Psycho.Internal
         public virtual void PageSelected(bool next) { }
 
         /// <summary>
-        /// <b>(Callback for override)</b> Called after apply activate gui state
+        /// <b>(Callback for override)</b> Called after apply activate gui state (true)
         /// </summary>
-        /// <param name="state">State of activate gui</param>
         public virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Opened");
 
+        /// <summary>
+        /// <b>(Callback for override)</b> Called after apply activate gui state (false)
+        /// </summary>
         public virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Closed");
 
         /// <summary>
@@ -170,6 +167,11 @@ namespace Psycho.Internal
             ActivateGUI(true);
         }
 
+        /// <summary>
+        /// Play page turn sound
+        /// </summary>
+        public void PlayPageTurn()
+            => AudioSource.PlayClipAtPoint(PageTurn, Player.position);
 
 
         void SetMainCamera(GameObject newCamera)
@@ -180,7 +182,5 @@ namespace Psycho.Internal
             newCamera.tag = "MainCamera";
         }
 
-        public void PlayPageTurn()
-            => AudioSource.PlayClipAtPoint(PageTurn, Player.position);
     }
 }
