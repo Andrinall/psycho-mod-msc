@@ -158,9 +158,10 @@ namespace Psycho
         public static void ChangeWorld(eWorldType type)
         {
             if (GameFinished) return;
+            
+            inHorror = type == eWorldType.HORROR;
             if (type == eWorldType.MAIN)
             {
-                inHorror = false;
                 Value = 100f;
 
                 if (Globals.envelopeObject?.activeSelf == true)
@@ -168,18 +169,16 @@ namespace Psycho
                     Globals.envelopeObject.SetActive(false);
                     envelopeSpawned = false;
                 }
-
-                KnockOutPlayer();
-                return;
             }
-
-            inHorror = true;
-            Value = 0f;
-
-            if (Globals.envelopeObject == null || Globals.envelopeObject?.activeSelf == false)
+            else
             {
-                Globals.envelopeObject.SetActive(true);
-                envelopeSpawned = true;
+                Value = 0f;
+
+                if (Globals.envelopeObject == null || Globals.envelopeObject?.activeSelf == false)
+                {
+                    Globals.envelopeObject.SetActive(true);
+                    envelopeSpawned = true;
+                }
             }
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"World changed to {(type == eWorldType.MAIN ? "MAIN" : "HORROR")}");
@@ -283,13 +282,17 @@ namespace Psycho
             try
             {
                 GameObject player = GameObject.Find("PLAYER");
+                
                 CharacterMotor motor = player.GetComponent<CharacterMotor>();
                 motor.canControl = false;
 
+                FsmFloat volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");
+                volume.Value = 0;
+
                 shizAnimPlayer?.PlayAnimation("sleep_knockout", default, 8f, default, () =>
                 {
-                    player.transform.position = new Vector3(-11.12955f, -0.2938208f, 13.61279f);
-                    player.transform.eulerAngles = new Vector3(0f, 158.85f, 0f);
+                    //player.transform.position = new Vector3(-11.12955f, -0.2938208f, 13.61279f);
+                    //player.transform.eulerAngles = new Vector3(0f, 158.85f, 0f);
 
                     WorldManager.ChangeWorldTextures(inHorror);
                     WorldManager.ChangeBedroomModels();
@@ -303,7 +306,10 @@ namespace Psycho
                     GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
                     _changeFittanDriverHeadPivotRotation();
 
-                    shizAnimPlayer?.PlayAnimation("sleep_off", true, default, default, () => motor.canControl = true);
+                    shizAnimPlayer?.PlayAnimation("sleep_off", true, default, default, () => {
+                        motor.canControl = true;
+                        volume.Value = 1;
+                    });
                 });
             }
             catch (Exception e)
