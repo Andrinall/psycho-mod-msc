@@ -90,13 +90,6 @@ namespace Psycho.Internal
             mainswitch.Find("Pivot").localEulerAngles = new Vector3(25f, 0);
         }
 
-        public static bool GetElecMeterSwitchState()
-        {
-            return GameObject.Find("Systems/ElectricityBills")
-                .GetComponent<PlayMakerFSM>()
-                .GetVariable<FsmBool>("MainSwitch")
-                .Value;
-        }
 
         public static void CopyScreamHand()
         {
@@ -384,91 +377,20 @@ namespace Psycho.Internal
             }
         }
 
+
+        /// <summary>
+        /// Setup independently textures
+        /// </summary>
+        /// <param name="onSave">if true - reset to default textures</param>
         public static void ChangeIndepTextures(bool onSave)
-        {
-            Func<MeshRenderer, bool> fn = WhereMesh(Globals.indep_textures, onSave ? 2 : 3);
-            foreach (var item in Resources.FindObjectsOfTypeAll<MeshRenderer>())
-                fn(item);
-        }
+            => ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.indep_textures, onSave ? 2 : 3);
 
-        static Func<MeshRenderer, bool> WhereMesh(Dictionary<int, Texture> container, int state)
-        {
-            bool b_state = (state > 1 ? (state == 3) : (state == 1));
-
-            return v => {
-                
-                if (v.materials.Length == 0) return false;
-
-                return v.materials.Any(m => {
-                    if (m == null) return false;
-
-                    Texture main = m.GetTexture("_MainTex");
-                    if (main == null) return false;
-
-                    int hash = main.name.ToLower().GetHashCode();
-                    if (!container.ContainsKey(hash)) return false;
-                    
-                    if (b_state)
-                    {
-                        if (main == container[hash]) return false;
-                        _cache(hash, main);
-                        m.SetTexture("_MainTex", container[hash]);
-                        return true;
-                    }
-                    
-                    if (!Globals.cached.ContainsKey(hash)) return false;
-                    if (main == Globals.cached[hash] as Texture) return false;
-
-                    m.SetTexture("_MainTex", Globals.cached[hash] as Texture);
-                    return true;
-                });
-            };
-        }
-
-        static Func<SkinnedMeshRenderer, bool> WhereSkinned(Dictionary<int, Texture> container, int state)
-        {
-            bool b_state = (state > 1 ? (state == 3) : (state == 1));
-
-            return (v) => {
-                if (v.materials.Length == 0) return false;
-
-                return v.materials.Any(m => {
-                    if (m == null) return false;
-
-                    Texture main = m.GetTexture("_MainTex");
-                    if (main == null) return false;
-
-                    int hash = main.name.ToLower().GetHashCode();
-                    if (!container.ContainsKey(hash)) return false;
-
-                    if (b_state)
-                    {
-                        if (main == container[hash]) return false;
-                        _cache(hash, main);
-                        m.SetTexture("_MainTex", container[hash]);
-                        return true;
-                    }
-
-                    if (!Globals.cached.ContainsKey(hash)) return false;
-                    if (main == Globals.cached[hash] as Texture) return false;
-                    m.SetTexture("_MainTex", Globals.cached[hash] as Texture);
-                    return true;
-                });
-            };
-        }
 
         public static void ChangeWorldTextures(bool state)
         {
-            int lenMesh = Resources.FindObjectsOfTypeAll<MeshRenderer>()
-                .Where(WhereMesh(Globals.replaces, state ? 1 : 0))
-                .ToArray().Length;
-
-            int lenSkin = Resources.FindObjectsOfTypeAll<SkinnedMeshRenderer>()
-                .Where(WhereSkinned(Globals.replaces, state ? 1 : 0))
-                .ToArray().Length;
-
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Replaced {lenMesh} textures in MeshRenderer's");
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Replaced {lenSkin} textures in SkinnedMeshRenderer's");
+            int i_state = state ? 1 : 0;
+            ReplaceTexturesForAllMaterials<MeshRenderer>(Globals.replaces, i_state);
+            ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.replaces, i_state);
         }
 
         public static void ChangeBedroomModels()
@@ -502,22 +424,6 @@ namespace Psycho.Internal
             SetMaterial(obj, 0, texture.name, texture);
         }
 
-        public static void SetMesh(GameObject obj, Mesh mesh)
-        {
-            try
-            {
-                MeshFilter filter = obj.GetComponent<MeshFilter>();
-                if (filter == null) return;
-
-                filter.mesh = mesh;
-                filter.sharedMesh = mesh;
-            }
-            catch (Exception e)
-            {
-                ModConsole.Error($"Unable to change mesh for {obj?.name}, mesh {mesh?.name};\n{e.GetFullMessage()}");
-            }
-        }
-
         public static void StopCloudsOrRandomize()
         {
             try
@@ -547,7 +453,8 @@ namespace Psycho.Internal
             }
         }
 
-        public static void SetMaterial(GameObject obj, int index, string name, Texture texture)
+
+        static void SetMaterial(GameObject obj, int index, string name, Texture texture)
         {
             try
             {
@@ -561,6 +468,22 @@ namespace Psycho.Internal
             catch (Exception e)
             {
                 ModConsole.Error($"Unable to change material for {obj?.name}, idx {index}, name {name}, tex {texture?.name};\n{e.GetFullMessage()}");
+            }
+        }
+
+        static void SetMesh(GameObject obj, Mesh mesh)
+        {
+            try
+            {
+                MeshFilter filter = obj.GetComponent<MeshFilter>();
+                if (filter == null) return;
+
+                filter.mesh = mesh;
+                filter.sharedMesh = mesh;
+            }
+            catch (Exception e)
+            {
+                ModConsole.Error($"Unable to change mesh for {obj?.name}, mesh {mesh?.name};\n{e.GetFullMessage()}");
             }
         }
 
@@ -601,10 +524,46 @@ namespace Psycho.Internal
             return false;
         }
 
-        static void _cache(int hash, Texture tex)
+        static bool _cache(int hash, Texture tex)
         {
-            if (Globals.cached.ContainsKey(hash)) return;
+            if (Globals.cached.ContainsKey(hash)) return false;
             Globals.cached.Add(hash, tex);
+            return true;
+        }
+
+
+        static void ReplaceTexturesForAllMaterials<T>(Dictionary<int, Texture> container, int state) where T : Renderer
+        {
+            bool b_state = (state > 1 ? (state == 3) : (state == 1));
+            foreach (T renderer in Resources.FindObjectsOfTypeAll<T>())
+            {
+                if (renderer.materials.Length == 0) continue;
+                if (!renderer.materials.Any(t => t != null && t.mainTexture != null && container.ContainsKey(t.mainTexture.name.ToLower().GetHashCode()))) continue;
+
+
+                foreach (Material item in renderer.materials)
+                {
+                    if (item == null) continue;
+                    if (item.mainTexture == null) continue;
+
+                    Texture texture = item.mainTexture;
+                    int hash = texture.name.ToLower().GetHashCode();
+                    if (!container.ContainsKey(hash)) continue;
+
+                    if (b_state)
+                    {
+                        if (texture == container[hash]) continue;
+                        _cache(hash, texture);
+                        item.SetTexture("_MainTex", container[hash]);
+                    }
+                    else
+                    {
+                        if (!Globals.cached.ContainsKey(hash)) continue;
+                        if (texture == Globals.cached[hash] as Texture) continue;
+                        item.SetTexture("_MainTex", Globals.cached[hash] as Texture);
+                    }
+                }
+            }
         }
     }
 }
