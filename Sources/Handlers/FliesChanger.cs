@@ -23,8 +23,8 @@ namespace Psycho.Handlers
 
                 _changeAmbienceSoundsState();
                 _createGlobalVariableIfNotExists();
-                _changeActionsData(fliesfsm);
                 _replaceAudioClips(fliesfsm);
+                _changeActionsData(fliesfsm);
             }
             catch (System.Exception e)
             {
@@ -87,7 +87,7 @@ namespace Psycho.Handlers
 
             FsmState fly6 = _fsm.GetState("Fly6");
             FloatCompare compare6 = (fly6.Actions[2] as FloatCompare);
-            compare6.float1 = Logic.psycho;
+            compare6.float1 = Logic.inHorror ? Logic.psycho : dirtiness;
             compare6.float2 = 90f;
 
         }
