@@ -16,6 +16,7 @@ namespace Psycho.Internal
         public static AudioSource DeathSound;
         public static List<AudioSource> ScreamPoints = new List<AudioSource>();
 
+        static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
 
         public static void PlayHeartbeat(bool state)
         {
@@ -42,12 +43,9 @@ namespace Psycho.Internal
             if (DeathSound.isPlaying) return;
             if (rand >= ScreamPoints.Count) return;
 
-            if (rand == -1)
-                rand = Random.Range(0, ScreamPoints.Count);
-
             StopAllScreamSounds();
             
-            AudioSource source = ScreamPoints[rand];
+            AudioSource source = rand == -1 ? RandomPoint : ScreamPoints[rand];
             if (source.isPlaying) return;
             
             source.loop = true;
@@ -58,9 +56,6 @@ namespace Psycho.Internal
 
         public static void StopScreamSound(string name)
             => ScreamPoints.First(v => v.gameObject.name.Contains(name))?.Stop();
-
-        public static bool AnyScreamSoundIsPlaying()
-            => ScreamPoints.Any(v => v.isPlaying);
 
         public static void StopAllScreamSounds()
         {

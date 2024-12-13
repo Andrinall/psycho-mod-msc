@@ -10,8 +10,6 @@ namespace Psycho.Internal
 {
     internal class CatchedComponent : MonoBehaviour
     {
-        internal virtual bool tested => false;
-
         void Awake() => _callVirtual(Awaked, "Awake");
         void OnEnable() => _callVirtual(Enabled, "OnEnable");
         void OnDisable() => _callVirtual(Disabled, "OnDisable");

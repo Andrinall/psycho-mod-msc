@@ -11,13 +11,9 @@ namespace Psycho.Handlers
     internal sealed class SleepTriggerHandler : CatchedComponent
     {
         FsmFloat m_fPlayerFatigue;
-        bool m_bInstalled = false;
-
 
         internal override void Awaked()
         {
-            if (m_bInstalled) return;
-
             m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 
             transform.ClearActions("Activate", "Calc rates", 6);
@@ -25,8 +21,6 @@ namespace Psycho.Handlers
                 "Activate", "Calc rates", -1, _ =>
                     m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)
             );
-
-            m_bInstalled = true;
         }
     }
 }

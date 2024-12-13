@@ -90,7 +90,7 @@ namespace Psycho.Internal
 
                 WorldManager.ChangeWorldModels(smoking.gameObject);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 ModConsole.Error($"Failed to change cigarette model after moving between worlds;\n{e.GetFullMessage()}");
             }

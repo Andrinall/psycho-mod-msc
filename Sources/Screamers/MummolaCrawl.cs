@@ -20,7 +20,8 @@ namespace Psycho.Screamers
 
         int HeadInterpolationFrames = 240;
         int ElapsedFrames = 0;
-        
+        float InterpolationRatio => (float)ElapsedFrames / HeadInterpolationFrames;
+
         float TargetDistance = 0.1f;
         float MaxSpeed = 0.9f;
 
@@ -97,8 +98,7 @@ namespace Psycho.Screamers
                 return;
             }
 
-            float interpolationRatio = (float)ElapsedFrames / HeadInterpolationFrames;
-            Head.localEulerAngles = Vector3.Lerp(Head.localEulerAngles, HeadEndRotation, interpolationRatio);
+            Head.localEulerAngles = Vector3.Lerp(Head.localEulerAngles, HeadEndRotation, InterpolationRatio);
             ElapsedFrames++;
         }
     }

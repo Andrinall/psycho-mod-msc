@@ -28,7 +28,7 @@ namespace Psycho.Commands
             switch (args[0])
             {
                 case "light":
-                    penta.SetCandlesFireActive(!penta.GetCandlesFireActive());
+                    penta.SetCandlesFireActive(!penta.LightsEnabled);
                     break;
 
                 case "visible":

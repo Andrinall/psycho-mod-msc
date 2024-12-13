@@ -55,7 +55,7 @@ namespace Psycho.Features
 
         internal override void OnUpdate()
         {
-            if (!CheckDayChanged()) return;
+            if (!CheckDayChangedAndUpdateHousekeeperCard()) return;
             if (PlayerCard?.activeSelf == true) return;
             if (Camera.main == null) return;
 
@@ -113,7 +113,7 @@ namespace Psycho.Features
                 Destroy(this);
         }
 
-        bool CheckDayChanged()
+        bool CheckDayChangedAndUpdateHousekeeperCard()
         {
             if (GlobalDay == null) return false;
             if (Logic.lastDayMinigame == GlobalDay.Value) return false;

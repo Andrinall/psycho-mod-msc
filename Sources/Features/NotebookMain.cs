@@ -28,6 +28,8 @@ namespace Psycho.Features
         Transform PlayerHand;
         PlayMakerFSM HandFsm;
 
+        Transform ItemInHand => PlayerHand.childCount > 0 ? PlayerHand.GetChild(0) : null;
+
         void OnDestroy() => MAX_PAGE = -1;
         void OnEnable() => MAX_PAGE = prevMax;
         void OnDisable()
@@ -59,11 +61,10 @@ namespace Psycho.Features
                 return;
             }
 
-            Transform itemInHand = PlayerHand?.GetChild(0);
-            if (itemInHand != null && itemInHand?.gameObject?.name?.Contains("Notebook Page") == true)
+            if (ItemInHand?.gameObject?.name?.Contains("Notebook Page") == true)
             {
                 HandFsm?.CallGlobalTransition("DROP_PART");
-                AddNewPage(itemInHand.gameObject);
+                AddNewPage(ItemInHand.gameObject);
                 return;
             }
         }
@@ -82,19 +83,21 @@ namespace Psycho.Features
 
         public static bool TryAddPage(NotebookPage page)
         {
-            if (Pages.Any(v => v.index == page.index)) return false;
+            if (IsPageExists(page.index)) return false;
             Pages.Add(page);
             return true;
         }
 
+        public static bool IsPageExists(int index) => Pages.Any(v => v.index == index);
 
         public void UpdatePageText()
         {
             if (CurrentPage < 0 || CurrentPage >= Pages.Count) return;
 
-            NotebookPage page = Pages[CurrentPage];
-            bool isTrueEnding = page.isTruePage;
+            NotebookPage page = Pages.ElementAt(CurrentPage);
+            if (page == null) return;
 
+            bool isTrueEnding = page.isTruePage;
             if (page.index == 15) // final page
             {
                 NotebookGUIText.text = Locales.FINAL_PAGE[isTrueEnding ? 0 : 1, Globals.CurrentLang];

@@ -54,7 +54,7 @@ namespace Psycho.Features
         FsmFloat SUN_hours;
         FsmFloat SUN_minutes;
         PlayMakerFSM Hand;
-        bool LightsEnabled = false;
+        public bool LightsEnabled { get; private set; } = false;
 
 
         internal override void Awaked()
@@ -105,8 +105,6 @@ namespace Psycho.Features
             LightsEnabled = state;
         }
 
-        public bool GetCandlesFireActive() => LightsEnabled;
-
         public bool CheckItems()
             => Triggers.All(v =>
                 v.IsItemIn
@@ -115,10 +113,11 @@ namespace Psycho.Features
                 && Triggers.Select(n => n.Item?.name).Distinct().ToList().Count == 5
             );
 
-        public void TryTriggerEvent()
+        public bool TryTriggerEvent()
         {
-            if (!CheckItems()) return;
+            if (!CheckItems()) return false;
             SpawnRandomEvent();
+            return true;
         }
 
         void SpawnRandomEvent()

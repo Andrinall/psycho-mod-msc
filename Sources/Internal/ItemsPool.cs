@@ -18,7 +18,8 @@ namespace Psycho.Internal
         static List<GameObject> Pool = new List<GameObject>();
         public static int base_offset { get; } = 56;
 
-        internal static int Length { get => _getSortedPoolCount(); }
+        static List<GameObject> ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToList();
+        internal static int Length => ItemsForSave.Count;
 
         internal static GameObject AddItem(GameObject prefab)
             => _addItemToLocalPool(prefab, Vector3.zero, Vector3.zero);
@@ -35,7 +36,7 @@ namespace Psycho.Internal
         internal static void Save(ref byte[] array)
         {
             int offset = base_offset;
-            List<GameObject> toSave = Pool.Where(v => v != null && v.transform.parent == null).ToList();
+            List<GameObject> toSave = ItemsForSave;
             BitConverter.GetBytes(toSave.Count).CopyTo(array, offset);
 
             offset += 4;
@@ -76,42 +77,14 @@ namespace Psycho.Internal
                 Vector3 pos = new Vector3().GetFromBytes(array, ref offset);
                 Vector3 rot = new Vector3().GetFromBytes(array, ref offset);
 
-                GameObject prefab = null;
-                switch (sName)
-                {
-                    case "ChurchCandle":
-                        prefab = Globals.Candle_prefab;
-                        break;
-                    case "FernFlower":
-                        prefab = Globals.FernFlower_prefab;
-                        break;
-                    case "Mushroom":
-                        prefab = Globals.Mushroom_prefab;
-                        break;
-                    case "Walnut":
-                        prefab = Globals.Walnut_prefab;
-                        break;
-                    case "BlackEgg":
-                        prefab = Globals.BlackEgg_prefab;
-                        break;
-                    case "Picture":
-                        prefab = Globals.Picture_prefab;
-                        break;
-                    case "Notebook":
-                        prefab = Globals.Notebook_prefab;
-                        break;
-                    case "Postcard":
-                        prefab = Globals.Postcard_prefab;
-                        break;
-                }
-
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
+                GameObject prefab = GetPrefabByItemName(sName);
                 if (prefab == null)
                 {
                     Utils.PrintDebug(eConsoleColors.RED, $"Loaded item {sName} has null prefab");
                     continue;
                 }
 
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
                 _addItemToLocalPool(prefab, pos, rot);
             }
         }
@@ -139,7 +112,28 @@ namespace Psycho.Internal
             return cloned;
         }
 
-        private static int _getSortedPoolCount()
-            => Pool.Where(v => v != null && v.transform.parent == null).ToList().Count;
+        private static GameObject GetPrefabByItemName(string item)
+        {
+            switch (item)
+            {
+                case "ChurchCandle":
+                    return Globals.Candle_prefab;
+                case "FernFlower":
+                    return Globals.FernFlower_prefab;
+                case "Mushroom":
+                    return Globals.Mushroom_prefab;
+                case "Walnut":
+                    return Globals.Walnut_prefab;
+                case "BlackEgg":
+                    return Globals.BlackEgg_prefab;
+                case "Picture":
+                    return Globals.Picture_prefab;
+                case "Notebook":
+                    return Globals.Notebook_prefab;
+                case "Postcard":
+                    return Globals.Postcard_prefab;
+                default: return null;
+            }
+        }
     }
 }

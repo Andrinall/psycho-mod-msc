@@ -11,13 +11,10 @@ namespace Psycho.Handlers
     [RequireComponent(typeof(PlayMakerFSM))]
     internal sealed class NPCHitHandler : CatchedComponent
     {
-        bool m_bInstalled = false;
-
+        bool HasCrimeAction => transform.GetPlayMaker("CarHit").FsmStates.First(v => v.Name == "Crime") != null;
 
         internal override void Awaked()
-        {
-            if (m_bInstalled) return;
-            
+        {            
             if (transform.parent.parent.gameObject.name == "JokkeHiker1")
                 return;
 
@@ -31,25 +28,19 @@ namespace Psycho.Handlers
                     _ => Logic.PlayerCommittedOffence("SUSKI_HIT")
                 );
 
-                goto SkipOther;
+                return;
             }
 
             SetupCarHitCrime();
             SetupPlayerHitCrime(transform.childCount);
-            
-            SkipOther:
-            m_bInstalled = true;
         }
 
         void SetupCarHitCrime()
         {
             try
             {
-                bool crime = transform.GetPlayMaker("CarHit").FsmStates
-                    .First(v => v.Name == "Crime") == null;
-
                 StateHook.Inject(gameObject, "CarHit",
-                    crime ? "Crime 2" : "Crime",
+                    HasCrimeAction ? "Crime" : "Crime 2",
                     _ => Logic.PlayerCommittedOffence("NPC_HIT")
                 );
             }

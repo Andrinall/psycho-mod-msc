@@ -6,9 +6,11 @@ namespace Psycho.Handlers
     [RequireComponent(typeof(Rigidbody))]
     internal sealed class ItemsGravityEnabler : MonoBehaviour
     {
+        Rigidbody rb;
+
         void OnEnable()
         {
-            Rigidbody rb = GetComponent<Rigidbody>();
+            rb = GetComponent<Rigidbody>();
             rb.useGravity = false;
             rb.isKinematic = true;
         }
@@ -17,7 +19,6 @@ namespace Psycho.Handlers
         {
             if (transform.parent != null) return;
             
-            Rigidbody rb = GetComponent<Rigidbody>();
             rb.useGravity = true;
             rb.isKinematic = false;
 

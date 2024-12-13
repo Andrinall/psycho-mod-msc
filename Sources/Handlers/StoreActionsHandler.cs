@@ -11,13 +11,9 @@ namespace Psycho.Handlers
         Transform _GFX_Pub;
         Transform _Teimo;
 
-        bool m_bInstalled = false;
-
 
         internal override void Awaked()
-        {
-            if (m_bInstalled) return;
-
+        { 
             _GFX_Store = transform.FindChild("LOD/GFX_Store");
             _GFX_Pub = transform.FindChild("LOD/GFX_Pub");
             _Teimo = transform.FindChild("TeimoInShop").Find("Pivot");
@@ -38,8 +34,6 @@ namespace Psycho.Handlers
             GameObject adv = transform.Find("LOD/ActivateStore/PayMoneyAdvert").gameObject;
             StateHook.Inject(adv, "Use", "Good", _ => Logic.PlayerCompleteJob("TEIMO_ADS"));
             StateHook.Inject(adv, "Use", "Average", _ => Logic.PlayerCompleteJob("TEIMO_ADS"));
-
-            m_bInstalled = true;
         }
     }
 }

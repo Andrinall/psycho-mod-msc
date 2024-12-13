@@ -336,7 +336,7 @@ namespace Psycho.Features
 
         public void Activate(string _event)
         {
-            if (!penta.GetCandlesFireActive()) return;
+            if (!penta.LightsEnabled) return;
             if (IsEventCalled || !IsEventFinished) return;
             if (string.IsNullOrEmpty(_event)) return;
             if (!penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;

@@ -161,10 +161,10 @@ namespace Psycho.Internal
             Transform _head = _char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
 
             Object.Destroy(ClonedGrannyHiker.transform.GetPlayMaker("Logic"));
-            Object.Destroy(_char.Find("HeadTarget/LookAt").GetPlayMaker("Random"));
-            Object.Destroy(_head.GetPlayMaker("Look"));
             Object.Destroy(ClonedGrannyHiker.transform.Find("Ray").gameObject);
             Object.Destroy(ClonedGrannyHiker.transform.Find("RagDoll2").gameObject);
+            Object.Destroy(_head.GetPlayMaker("Look"));
+            Object.Destroy(_char.Find("HeadTarget/LookAt").GetPlayMaker("Random"));
             Object.Destroy(_char.Find("RagDollCar").gameObject);
             Object.Destroy(_char.Find("HeadTarget").gameObject);
             Object.Destroy(_char.Find("HumanTriggerCrime").gameObject);
@@ -265,6 +265,14 @@ namespace Psycho.Internal
                     .GetComponent<Animation>()
                     .GetClip("venttipig_pig_walk")
             );
+        }
+
+        public static bool GetElecMeterSwitchState()
+        {
+            return GameObject.Find("Systems/ElectricityBills")
+                .GetComponent<PlayMakerFSM>()
+                .GetVariable<FsmBool>("MainSwitch")
+                .Value;
         }
 
         public static void ChangeWalkersAnimation()

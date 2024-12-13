@@ -20,6 +20,30 @@ namespace Psycho.Features
             isDefaultPage = parent.isDefaultPage;
             isFinalPage = parent.isFinalPage;
         }
+
+        public static bool operator ==(NotebookPage o1, NotebookPage o2)
+        {
+            return o1.index == o2.index;
+        }
+
+        public static bool operator !=(NotebookPage o1, NotebookPage o2)
+        {
+            return o1.index != o2.index;
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is NotebookPage)) return false;
+            return (other as NotebookPage).index == this.index;
+        }
+
+        public override int GetHashCode()
+        {
+            return index.GetHashCode()
+                ^ (isTruePage.GetHashCode() << 2)
+                / (isDefaultPage.GetHashCode() << 4)
+                + (isFinalPage.GetHashCode() << 6);
+        }
     }
 
 
@@ -31,6 +55,7 @@ namespace Psycho.Features
         TextMesh pageText;
         Material pageTextMat;
 
+        
         void Awake()
         {
             EventsManager.OnLanguageChanged.AddListener(UpdatePageText);

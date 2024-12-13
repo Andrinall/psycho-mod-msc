@@ -114,8 +114,7 @@ namespace Psycho.Screamers
 
         void TriggerScreamer(ScreamTimeType type, int variation)
         {
-            if (type != ScreamTimeType.FEAR) return;
-            if ((ScreamFearType)variation != ScreamFearType.TV) return;
+            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.TV) return;
 
             enabled = true;
         }

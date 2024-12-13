@@ -124,7 +124,6 @@
     <Compile Include="Sources\Internal\BookWithGUI.cs" />
     <Compile Include="Sources\Internal\CatchedComponent.cs" />
     <Compile Include="Sources\Extensions.cs" />
-    <Compile Include="Sources\Internal\ItemsCloner.cs" />
     <Compile Include="Sources\Internal\ItemsPool.cs" />
     <Compile Include="Sources\Internal\SaveManager.cs" />
     <Compile Include="Sources\Internal\SoundManager.cs" />

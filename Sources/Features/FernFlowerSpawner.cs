@@ -14,6 +14,8 @@ namespace Psycho.Features
     internal sealed class FernFlowerSpawner : MonoBehaviour
     {
         List<GameObject> Flowers = new List<GameObject>();
+        GameObject RandomFlower => Flowers[Random.Range(0, Flowers.Count)];
+        bool IsFlowerSpawned => Flowers.Any(v => v.activeSelf);
 
         FsmInt GlobalDay;
         FsmFloat SUN_hours;
@@ -40,14 +42,12 @@ namespace Psycho.Features
                 DespawnItems();
         }
 
-        internal bool AnyFlowerIsSpawned()
-            => Flowers.Any(v => v.activeSelf);
 
         internal void SpawnRandomFlower()
         {
-            if (AnyFlowerIsSpawned()) return;
+            if (IsFlowerSpawned) return;
 
-            GameObject point = Flowers[Random.Range(0, Flowers.Count)];
+            GameObject point = RandomFlower;
             GameObject flower = ItemsPool.AddItem(Globals.FernFlower_prefab);
 
             flower.transform.SetParent(point.transform, worldPositionStays: false);
@@ -61,7 +61,7 @@ namespace Psycho.Features
 
         void DespawnItems()
         {
-            if (!AnyFlowerIsSpawned()) return;
+            if (!IsFlowerSpawned) return;
 
             foreach (GameObject flower in Flowers)
             {

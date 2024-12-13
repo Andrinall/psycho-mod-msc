@@ -19,7 +19,8 @@ namespace Psycho.Internal
 
             public override void OnEnter()
             {
-                try {
+                try
+                {
                     hook?.Invoke(component);
                 }
                 catch (Exception e)

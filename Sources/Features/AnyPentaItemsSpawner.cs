@@ -32,6 +32,8 @@ namespace Psycho.Features
             new Vector3(16.171f, -2.27f, -7.681f)
         };
 
+        Vector3 NewRandomizedPosition => mushroom_rand[Random.Range(0, mushroom_rand.Length)];
+
         Vector3 walnut_pos = new Vector3(.071f, 0, .653f);
         Vector3 candle_pos = new Vector3(-11.264f, .089f, -3.158f);
         Vector3 mushroom_pos = mushroom_rand[0];
@@ -72,7 +74,7 @@ namespace Psycho.Features
             cloned.transform.localPosition = pos;
 
             if (spawnDay == MushroomDay)
-                mushroom_pos = mushroom_rand[Random.Range(0, mushroom_rand.Length)];
+                mushroom_pos = NewRandomizedPosition;
 
             if (spawnDay == CandleDay)
                 cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);

@@ -10,9 +10,10 @@ namespace Psycho.Screamers
     {
         Transform Player;
         AudioSource Source;
-        float Distance;
+        float TargetDistance = 1.75f;
 
-        public float TargetDistance = 1.75f;
+        float Distance => Vector3.Distance(transform.position, Player.position);
+
 
 
         internal override void Awaked()
@@ -23,9 +24,7 @@ namespace Psycho.Screamers
 
         internal override void OnFixedUpdate()
         {
-            if (!Source.isPlaying) return;
-            Distance = Vector3.Distance(transform.position, Player.position);
-            
+            if (!Source.isPlaying) return;            
             if (Distance > TargetDistance) return;
 
             Source.loop = false;

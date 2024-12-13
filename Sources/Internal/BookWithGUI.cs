@@ -12,7 +12,7 @@ namespace Psycho.Internal
 
         public virtual GameObject GUIPrefab => null;
 
-        public RaycastHit hitInfo;
+        RaycastHit hitInfo;
 
         public GameObject GUI;
         public GameObject ButtonNext;
@@ -29,6 +29,9 @@ namespace Psycho.Internal
 
         AudioClip PageTurn;
         Transform Player;
+
+        Ray Ray => Camera.main.ScreenPointToRay(Input.mousePosition);
+        int Layer => LayerMask.GetMask("Parts", "GUI");
 
         internal override void Awaked()
         {
@@ -70,8 +73,7 @@ namespace Psycho.Internal
                 return;
             }
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (!Physics.Raycast(ray, out hitInfo, 1.5f, LayerMask.GetMask("Parts", "GUI"))) return;
+            if (!Physics.Raycast(Ray, out hitInfo, 1.5f, Layer)) return;
             if (hitInfo.collider == null) return;
 
             GameObject hitted = hitInfo.collider?.gameObject;
