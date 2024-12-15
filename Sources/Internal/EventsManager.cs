@@ -6,7 +6,7 @@ namespace Psycho.Internal
 {
     public sealed class ScreamerEvent : UnityEvent<ScreamTimeType, int> { } // crutch
 
-    public class EventsManager
+    public static class EventsManager
     {
         public static UnityEvent OnLanguageChanged = new UnityEvent();
 

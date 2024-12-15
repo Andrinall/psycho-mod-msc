@@ -7,17 +7,17 @@ namespace Psycho.Internal
 {
     internal abstract class BookWithGUI : CatchedComponent
     {
-        public int CurrentPage { get; set; } = 0;
-        public virtual int MAX_PAGE { get; set; } = 0;
+        protected int CurrentPage { get; set; } = 0;
+        protected virtual int MAX_PAGE { get; set; } = 0;
 
-        public virtual GameObject GUIPrefab => null;
+        protected virtual GameObject GUIPrefab => null;
+        protected GameObject GUI { get; private set; }
+        protected GameObject ButtonNext { get; private set; }
+        protected GameObject ButtonPrev { get; private set; }
+        protected Material Background { get; private set; }
+
 
         RaycastHit hitInfo;
-
-        public GameObject GUI;
-        public GameObject ButtonNext;
-        public GameObject ButtonPrev;
-        public Material Background;
 
         GameObject GUICamera;
         GameObject OriginalCamera;

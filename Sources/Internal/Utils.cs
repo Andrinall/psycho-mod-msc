@@ -14,7 +14,7 @@ namespace Psycho.Internal
 {
     internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
 
-    internal sealed class Utils
+    internal static class Utils
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
 
@@ -186,11 +186,9 @@ namespace Psycho.Internal
             Globals.models_cached.Clear();
             Globals.flies_cached.Clear();
             Globals.cached.Clear();
-            //Globals.SketchbookPages.Clear();
-            SoundManager.ScreamPoints.Clear();
             
-            Globals.mailScreens.ForEach(v => Resources.UnloadAsset(v));
-            Globals.mailScreens.Clear();
+            SoundManager.ScreamPoints.Clear();
+            TexturesManager.Cache.Clear();
 
             foreach (var item in Globals.models_replaces)
             {
@@ -198,17 +196,6 @@ namespace Psycho.Internal
                 Resources.UnloadAsset(item.Value.texture);
             }
             Globals.models_replaces.Clear();
-
-            foreach (var item in Globals.replaces)
-                Resources.UnloadAsset(item.Value);
-            Globals.replaces.Clear();
-
-            foreach (var item in Globals.indep_textures)
-                Resources.UnloadAsset(item.Value);
-            Globals.indep_textures.Clear();
-
-            Globals.horror_flies.ForEach(v => Resources.UnloadAsset(v));
-            Globals.horror_flies.Clear();
         }
         
         internal static void PrintDebug(string msg) =>

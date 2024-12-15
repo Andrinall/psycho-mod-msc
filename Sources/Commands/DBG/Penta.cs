@@ -48,7 +48,7 @@ namespace Psycho.Commands
                     break;
 
                 case "items":
-                    foreach (string itemname in penta.recipe)
+                    foreach (string itemname in Globals.PentaRecipe)
                         SpawnItem(itemname);
                     break;
             }

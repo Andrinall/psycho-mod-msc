@@ -47,8 +47,8 @@ namespace Psycho
         public static readonly Dictionary<int, ModelData> models_replaces = new Dictionary<int, ModelData> { };
 
         public static readonly Dictionary<int, object> cached = new Dictionary<int, object> { };
-        public static readonly Dictionary<int, Texture> replaces = new Dictionary<int, Texture> { };
-        public static readonly Dictionary<int, Texture> indep_textures = new Dictionary<int, Texture> { };
+        public static readonly List<Texture> replaces = new List<Texture> { };
+        public static readonly List<Texture> indep_textures = new List<Texture> { };
 
         public static readonly List<AudioClip> flies_cached = new List<AudioClip> { };
         public static readonly List<AudioClip> horror_flies = new List<AudioClip> { };
@@ -255,6 +255,8 @@ namespace Psycho
             // end house section
         };
 
+        public static readonly string[] PentaRecipe = new string[5] { "churchcandle", "fernflower", "mushroom", "blackegg", "walnut" };
+
 
         public static void LoadAssets(AssetBundle _bundle)
         {
@@ -346,7 +348,7 @@ namespace Psycho
                     if (name.Contains("/horror"))
                     { // load replaces for horror world
                         replaces.Add(
-                            name.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            //name.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
                             LoadAsset<Texture>(_bundle, name)
                         );
                     }
@@ -354,7 +356,7 @@ namespace Psycho
                         horror_flies.Add(LoadAsset<AudioClip>(_bundle, name));
                     else if (name.Contains("/allworlds")) // load texture used independently of world
                         indep_textures.Add(
-                            name.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
+                            //name.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
                             LoadAsset<Texture>(_bundle, name)
                         );
                 }

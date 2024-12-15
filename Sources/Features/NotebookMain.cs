@@ -20,7 +20,7 @@ namespace Psycho.Features
 
         int prevMax = 0;
 
-        public override GameObject GUIPrefab => Globals.NotebookGUI_prefab;
+        protected override GameObject GUIPrefab => Globals.NotebookGUI_prefab;
 
         TextMesh NotebookGUIText;
         TextMesh NotebookGUIPage;

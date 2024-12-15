@@ -28,6 +28,7 @@ namespace Psycho
         public override bool SecondPass => true;
 
         internal static SettingsDropDownList lang;
+        internal static Keybind fastOpen;
         internal static bool IsLoaded = false;
 
         Transform _player;
@@ -54,6 +55,8 @@ namespace Psycho
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
                 0, _changeSetting);
+
+            fastOpen = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
         }
 
         void _changeSetting()
@@ -72,7 +75,6 @@ namespace Psycho
         public override void OnLoad()
         {
             IsLoaded = false;
-
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
@@ -175,12 +177,12 @@ namespace Psycho
             if (Logic.GameFinished) return;
 
             Logic.Tick();
+
             if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
             {
                 if (Vector3.Distance(_houseFire.position, _player.position) > 4f) return;
                 Logic.PlayerCommittedOffence("HOUSE_BURNING");
                 m_bHouseOnFire = true;
-                return;
             }
 
             if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
@@ -197,19 +199,30 @@ namespace Psycho
                 _bells.position = bellsOrigPos;
                 m_bBellsActivated = false;
             }
+
+            if (fastOpen.GetKeybindUp() && Logic.inHorror && !Logic.envelopeSpawned)
+            {
+                GameObject mailBackground = GameObject.Find("YARD/PlayerMailBox/DoctorMail");
+                if (mailBackground == null) return;
+                mailBackground.SetActive(true);
+            }
         }
 
         public override void OnSave()
         {
-            IsLoaded = false;
-
             // restore original game textures for materials (avoid game crash)
+            OnUnload();
+
+            SaveManager.SaveData();
+        }
+
+        void OnUnload()
+        {
             WorldManager.ChangeWorldTextures(false);
             WorldManager.ChangeIndepTextures(true);
             Utils.ChangeSmokingModel();
             SoundManager.ChangeFliesSounds();
-
-            SaveManager.SaveData();
+            TexturesManager.Cache.Clear();
         }
 
         void _applyHorrorIfNeeded()
@@ -403,6 +416,11 @@ namespace Psycho
             GameObject farmer_walker = GameObject.Find("HUMANS/Farmer/Walker");
             if (!farmer_walker) return;
             StateHook.Inject(farmer_walker, "Speak", "Done", _ => Logic.PlayerCompleteJob("FARMER_QUEST"));
+
+            Transform systems = GameObject.Find("Systems").transform;
+            Transform menu = systems.Find("OptionsMenu/Menu");
+            Transform btnconfirm = menu.Find("Btn_ConfirmQuit");
+            StateHook.Inject(btnconfirm.Find("Button").gameObject, "Button", "State 3", 0, _ => OnUnload());
         }
 
         T AddComponent<T>(string path) where T : Component

@@ -15,7 +15,7 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Internal
 {
-    internal sealed class WorldManager
+    internal static class WorldManager
     {
         public static AnimationClip PigWalkAnimation;
         public static GameObject ClonedGrannyHiker;
@@ -279,6 +279,7 @@ namespace Psycho.Internal
         {
             Transform _walkers = GameObject.Find("HUMANS/Randomizer/Walkers").transform;
             _walkers.gameObject.SetActive(false);
+
             for (int i = 0; i < _walkers.childCount; i++)
             {
                 Transform _child = _walkers.GetChild(i);
@@ -286,6 +287,8 @@ namespace Psycho.Internal
                 if (!_anim.GetClip("venttipig_pig_walk"))
                     _anim.AddClip(PigWalkAnimation, "venttipig_pig_walk");
 
+                var angles = _anim.transform.parent.localEulerAngles;
+                _anim.transform.parent.localEulerAngles = new Vector3(angles.x, angles.y, Logic.inHorror ? 0 : 90);
                 (_child.GetPlayMaker("Move").GetState("Walking").Actions[0] as PlayAnimation).animName.Value =
                     Logic.inHorror ? "venttipig_pig_walk" : "fat_walk";
             }
@@ -391,14 +394,24 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="onSave">if true - reset to default textures</param>
         public static void ChangeIndepTextures(bool onSave)
-            => ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.indep_textures, onSave ? 2 : 3);
+        {
+            if (onSave)
+                TexturesManager.RestoreDefaults(Globals.indep_textures);
+            else
+                TexturesManager.ReplaceTextures(Globals.indep_textures);
+        }
 
 
         public static void ChangeWorldTextures(bool state)
         {
-            int i_state = state ? 1 : 0;
-            ReplaceTexturesForAllMaterials<MeshRenderer>(Globals.replaces, i_state);
-            ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.replaces, i_state);
+            if (state)
+                TexturesManager.ReplaceTextures(Globals.replaces);
+            else
+                TexturesManager.RestoreDefaults(Globals.replaces);
+
+            //int i_state = state ? 1 : 0;
+            //ReplaceTexturesForAllMaterials<MeshRenderer>(Globals.replaces, i_state);
+            //ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.replaces, i_state);
         }
 
         public static void ChangeBedroomModels()

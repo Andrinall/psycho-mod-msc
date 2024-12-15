@@ -33,6 +33,12 @@ namespace Psycho.Internal
         internal static bool RemoveItem(GameObject obj)
             => Pool.Remove(obj);
 
+        internal static bool RemoveItem(Func<GameObject, bool> callback)
+            => Pool.Remove(Pool.First(callback));
+
+        internal static void RemoveItems(Func<GameObject, bool> callback)
+            => Pool.Where(callback).ToList().ForEach(v => Pool.Remove(v));
+
         internal static void Save(ref byte[] array)
         {
             int offset = base_offset;
@@ -70,12 +76,14 @@ namespace Psycho.Internal
                 return;
             }
 
-
             for (int i = 0; i < count; i++)
             {
                 string sName = "".GetFromBytes(array, ref offset); // 1
-                Vector3 pos = new Vector3().GetFromBytes(array, ref offset);
-                Vector3 rot = new Vector3().GetFromBytes(array, ref offset);
+                if (Logic.isDead && Globals.PentaRecipe.Contains(sName.ToLower())) continue;
+
+                Vector3 temp = new Vector3();
+                Vector3 pos = temp.GetFromBytes(array, ref offset);
+                Vector3 rot = temp.GetFromBytes(array, ref offset);
 
                 GameObject prefab = GetPrefabByItemName(sName);
                 if (prefab == null)

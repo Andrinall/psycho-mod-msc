@@ -225,12 +225,8 @@ namespace Psycho
                 GameObject player = GameObject.Find("PLAYER");
                 player.GetComponent<CharacterMotor>().canControl = false;
 
-                StateHook.Inject(train.gameObject, "Player", "Die 2", -1, _ =>
-                {
-                    Transform paper = death.transform.Find("GameOverScreen/Paper/Train");
-                    paper.Find("TextFI").GetComponent<TextMesh>().text = PAPER_TEXT_FI_POINTS;
-                    paper.Find("TextEN").GetComponent<TextMesh>().text = Locales.DEATH_PAPER[1, Globals.CurrentLang]; // PAPER_TEXT_EN_POINTS;
-                });
+                StateHook.Inject(train.gameObject, "Player", "Die 2", -1,
+                    _ => KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS));
 
                 train.SendEvent("FINISHED"); // reset current state
                 while (train.ActiveStateName != "State 2")
@@ -256,7 +252,7 @@ namespace Psycho
             {
                 SoundManager.PlayDeathSound();
                 shizAnimPlayer.PlayAnimation("sleep_knockout", default, default, default,
-                    () => KillCustom(Locales.DEATH_PAPER[0, Globals.CurrentLang], PAPER_TEXT_FI_MAX)
+                    () => KillCustom("Fatigue", Locales.DEATH_PAPER[0, Globals.CurrentLang], PAPER_TEXT_FI_MAX)
                 );
             }
             catch (Exception e)
@@ -338,13 +334,13 @@ namespace Psycho
             _head.Find("eye_glasses_regular").gameObject.SetActive(!inHorror);
         }
 
-        static void KillCustom(string en, string fi)
+        static void KillCustom(string palette, string en, string fi)
         {
             if (isDead) return;
 
             try
             {
-                Transform paper = death.transform.Find("GameOverScreen/Paper/Fatigue");
+                Transform paper = death.transform.Find("GameOverScreen/Paper/" + palette);
                 paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
                 paper.Find("TextEN").GetComponent<TextMesh>().text = en;
                 death.SetActive(true);

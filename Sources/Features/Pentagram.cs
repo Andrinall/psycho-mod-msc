@@ -49,8 +49,6 @@ namespace Psycho.Features
             { "knockout", "bursttires", "outoffuel", "blindless" }
         };
         
-        public readonly string[] recipe = new string[5] { "churchcandle", "fernflower", "mushroom", "blackegg", "walnut" };
-
         FsmFloat SUN_hours;
         FsmFloat SUN_minutes;
         PlayMakerFSM Hand;
@@ -109,7 +107,7 @@ namespace Psycho.Features
             => Triggers.All(v =>
                 v.IsItemIn
                 && v.Item != null
-                && recipe.Contains(v.Item.name.Replace("(Clone)", "").ToLower())
+                && Globals.PentaRecipe.Contains(v.Item.name.Replace("(Clone)", "").ToLower())
                 && Triggers.Select(n => n.Item?.name).Distinct().ToList().Count == 5
             );
 

@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace Psycho.Internal
 {
-    internal sealed class SoundManager
+    internal static class SoundManager
     {
         public static AudioSource DeathSound;
         public static List<AudioSource> ScreamPoints = new List<AudioSource>();

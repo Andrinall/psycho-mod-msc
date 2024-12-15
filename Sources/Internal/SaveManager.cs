@@ -10,7 +10,7 @@ using Psycho.Features;
 
 namespace Psycho.Internal
 {
-    internal sealed class SaveManager
+    internal static class SaveManager
     {
         static string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
 
@@ -38,6 +38,9 @@ namespace Psycho.Internal
                 if (Logic.isDead)
                 {
                     Logic.isDead = false;
+                    Logic.inHorror = false;
+                    Logic.BeerBottlesDrunked = 0;
+                    Logic.numberOfSpawnedPages = 0;
                     Logic.ResetValue();
                     Logic.SetPoints(0);
                 }
@@ -53,7 +56,7 @@ namespace Psycho.Internal
 
             SkipLoadPills:
                 ItemsPool.Load(value);
-                LoadNotebookPages(value);
+                if (!Logic.isDead) LoadNotebookPages(value);
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             catch (Exception e)

@@ -7,7 +7,7 @@ namespace Psycho.Features
 {
     internal sealed class Sketchbook : BookWithGUI
     {
-        public override GameObject GUIPrefab => Globals.SketchbookGUI_prefab;
+        protected override GameObject GUIPrefab => Globals.SketchbookGUI_prefab;
 
         public override void AfterAwake()
             => MAX_PAGE = Globals.SketchbookPages.Count - 1;

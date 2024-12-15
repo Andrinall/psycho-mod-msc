@@ -27,25 +27,19 @@ namespace Psycho.Features
     {
         public NotebookPage page;
 
-        NotebookMain notebook;
         TextMesh pageText;
-        Material pageTextMat;
 
         
         void Awake()
-        {
-            EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
-        }
+            => EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
 
         void OnEnable()
         {
-            notebook = GameObject.Find("Notebook(Clone)")?.GetComponent<NotebookMain>();
-
             Transform text = transform.Find("Text");
             pageText = text?.GetComponent<TextMesh>();
 
             MeshRenderer renderer = text.GetComponent<MeshRenderer>();
-            pageTextMat = renderer.material;
+            Material pageTextMat = renderer.material;
             pageTextMat.shader = Instantiate(Shader.Find("GUI/3D Text Shader"));
             pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
