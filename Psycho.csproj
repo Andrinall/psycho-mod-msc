@@ -106,6 +106,7 @@
     <Compile Include="Sources\Features\PentagramEvents.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
     <Compile Include="Sources\Internal\EventsManager.cs" />
+    <Compile Include="Sources\Internal\FsmHookAction.cs" />
     <Compile Include="Sources\Internal\TexturesManager.cs" />
     <Compile Include="Sources\Locales.cs" />
     <Compile Include="Sources\Features\AnyPentaItemsSpawner.cs" />
