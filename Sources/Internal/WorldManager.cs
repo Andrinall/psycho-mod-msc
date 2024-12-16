@@ -408,10 +408,6 @@ namespace Psycho.Internal
                 TexturesManager.ReplaceTextures(Globals.replaces);
             else
                 TexturesManager.RestoreDefaults(Globals.replaces);
-
-            //int i_state = state ? 1 : 0;
-            //ReplaceTexturesForAllMaterials<MeshRenderer>(Globals.replaces, i_state);
-            //ReplaceTexturesForAllMaterials<SkinnedMeshRenderer>(Globals.replaces, i_state);
         }
 
         public static void ChangeBedroomModels()
@@ -522,69 +518,6 @@ namespace Psycho.Internal
 
             rain.GetFsmFloat("FogOn").Value = fogOn;
             rain.GetFsmFloat("FogOff").Value = fogOff;
-        }
-
-        static bool _check(Component comp)
-        {
-            if (comp is MeshRenderer)
-            {
-                MeshRenderer renderer = (MeshRenderer)comp;
-                if (renderer == null) return false;
-                if (renderer?.materials?.Length == 0) return false;
-
-                return true;
-            }
-            else if (comp is SkinnedMeshRenderer)
-            {
-                SkinnedMeshRenderer renderer = (SkinnedMeshRenderer)comp;
-                if (renderer == null) return false;
-                if (renderer?.materials?.Length == null || renderer.materials.Length == 0) return false;
-
-                return true;
-            }
-            return false;
-        }
-
-        static bool _cache(int hash, Texture tex)
-        {
-            if (Globals.cached.ContainsKey(hash)) return false;
-            Globals.cached.Add(hash, tex);
-            return true;
-        }
-
-
-        static void ReplaceTexturesForAllMaterials<T>(Dictionary<int, Texture> container, int state) where T : Renderer
-        {
-            bool b_state = (state > 1 ? (state == 3) : (state == 1));
-            foreach (T renderer in Resources.FindObjectsOfTypeAll<T>())
-            {
-                if (renderer.materials.Length == 0) continue;
-                if (!renderer.materials.Any(t => t != null && t.mainTexture != null && container.ContainsKey(t.mainTexture.name.ToLower().GetHashCode()))) continue;
-
-
-                foreach (Material item in renderer.materials)
-                {
-                    if (item == null) continue;
-                    if (item.mainTexture == null) continue;
-
-                    Texture texture = item.mainTexture;
-                    int hash = texture.name.ToLower().GetHashCode();
-                    if (!container.ContainsKey(hash)) continue;
-
-                    if (b_state)
-                    {
-                        if (texture == container[hash]) continue;
-                        _cache(hash, texture);
-                        item.SetTexture("_MainTex", container[hash]);
-                    }
-                    else
-                    {
-                        if (!Globals.cached.ContainsKey(hash)) continue;
-                        if (texture == Globals.cached[hash] as Texture) continue;
-                        item.SetTexture("_MainTex", Globals.cached[hash] as Texture);
-                    }
-                }
-            }
         }
     }
 }

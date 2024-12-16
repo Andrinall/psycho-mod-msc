@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Features;
 using Psycho.Extensions;
-using System.Collections.Generic;
 
 
 namespace Psycho.Internal
@@ -20,6 +20,12 @@ namespace Psycho.Internal
 
         static FsmBool GUIuse;
         static FsmString GUIinteraction;
+
+        internal static string GetMethodPath(MethodInfo method)
+        {
+            Type declaringType = method.DeclaringType;
+            return $"{declaringType.Namespace}::{declaringType.Name}.{method.Name}";
+        }
 
         internal static void SetupFSM(GameObject obj, string name, string[] eventNames, string startState, Func<PlayMakerFSM, List<FsmEvent>, FsmState[]> callback)
         {
@@ -96,29 +102,6 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void CreateRandomPills()
-        {
-            try
-            {
-            Generate:
-                int idx = UnityEngine.Random.Range(0, Globals.pills_positions.Count - 1);
-                if (Globals.pills_list.Any(v => v.index == idx))
-                    goto Generate;
-
-                Globals.pills_list.Add(new PillsItem(idx, Globals.pills_positions.ElementAt(idx)));
-
-                Transform Image = Globals.mailboxSheet.transform.Find("Background/Image");
-                Texture texture = Globals.mailScreens.Find(v => v.name == idx.ToString());
-                Image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", texture);
-
-                PrintDebug(eConsoleColors.GREEN, $"Generated pills: {idx}, {Image.name}");
-            }
-            catch (Exception e)
-            {
-                ModConsole.Error($"Failed to create a random pills;\n{e.GetFullMessage()}");
-            }
-        }
-
         internal static void SetPictureImage()
         {
             GameObject picture = GameObject.Find("Picture(Clone)");
@@ -182,7 +165,6 @@ namespace Psycho.Internal
             Resources.UnloadAsset(SoundManager.DeathSound);
             SoundManager.DeathSound = null;
 
-            Globals.pills_list.Clear();
             Globals.models_cached.Clear();
             Globals.flies_cached.Clear();
             Globals.cached.Clear();
@@ -234,13 +216,6 @@ namespace Psycho.Internal
 
             fpsCamera.localPosition = origs[0];
             fpsCamera.localEulerAngles = origs[1];
-        }
-
-        internal static GameObject FindPrefab(string name)
-        {
-            return Resources.FindObjectsOfTypeAll<Transform>()
-                .First(v => v.IsPrefab() && v?.gameObject?.name == name)
-                ?.gameObject ?? null;
         }
 
         static string _getColor(eConsoleColors color)
