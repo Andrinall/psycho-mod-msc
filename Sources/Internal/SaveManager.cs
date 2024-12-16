@@ -49,10 +49,7 @@ namespace Psycho.Internal
                     goto SkipLoadPills;
 
                 // spawn pills in needed
-                PillsItem item = new PillsItem(0);
-                item.ReadData(ref value, 24);
-                item.self.SetActive(Logic.inHorror);
-                Globals.pills_list.Add(item);
+                Globals.pills = PillsItem.ReadData(ref value, 24);
 
             SkipLoadPills:
                 ItemsPool.Load(value);
@@ -173,6 +170,9 @@ namespace Psycho.Internal
             byte[] array = new byte[80 + (ItemsPool.Length * 90) + 4 + (6 * NotebookMain.Pages.Count)];
             // [(values + picture + pills + empty space) + (penta pool len * penta pool alloc)]
 
+            if (Globals.pills == null && Logic.inHorror)
+                Logic.envelopeSpawned = true;
+
             BitConverter.GetBytes(Logic.isDead).CopyTo(array, 0); // 1
             BitConverter.GetBytes(Logic.inHorror).CopyTo(array, 1); // 1
             BitConverter.GetBytes(Logic.envelopeSpawned).CopyTo(array, 2); // 1
@@ -187,8 +187,8 @@ namespace Psycho.Internal
 
             if (Logic.inHorror && !Logic.envelopeSpawned)
             {
-                Globals.pills_list.First()?.WriteData(ref array, 24);
-                return;
+                Globals.pills?.WriteData(ref array, 24);
+                Globals.pills = null;
             }
 
             ItemsPool.Save(ref array);

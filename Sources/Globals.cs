@@ -38,7 +38,6 @@ namespace Psycho
 
     public static class Globals
     {
-        public static readonly List<PillsItem> pills_list = new List<PillsItem> { };
         public static readonly List<Texture> mailScreens = new List<Texture> { };
 
         public static readonly List<Texture> TaroCards = new List<Texture> { };
@@ -56,6 +55,8 @@ namespace Psycho
         public static readonly List<Texture> pictures = new List<Texture> { };
         
         public static readonly List<Texture> SketchbookPages = new List<Texture> { };
+
+        internal static PillsItem pills = null;
 
         public static GameObject Pentagram_prefab = null;
         public static GameObject Candle_prefab = null;

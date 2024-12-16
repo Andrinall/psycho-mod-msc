@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -11,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    public sealed class MailBoxEnvelope : MonoBehaviour
+    public sealed class MailBoxEnvelope : CatchedComponent
     {
         public GameObject MailboxEnvelope;
         public GameObject EnvelopeSheet;
@@ -19,7 +20,7 @@ namespace Psycho.Features
         bool m_bInstalled = false;
 
 
-        void OnEnable()
+        public override void Enabled()
         {
             if (m_bInstalled) return;
 
@@ -38,7 +39,6 @@ namespace Psycho.Features
                 EnvelopeSheet.SetActive(true);
 
                 Transform old_back = EnvelopeSheet.transform.GetChild(1);
-                old_back.parent = null;
                 Destroy(old_back.gameObject);
 
                 GameObject _background = Instantiate(Globals.Background_prefab);
@@ -62,22 +62,59 @@ namespace Psycho.Features
                 if (!Logic.envelopeSpawned)
                     MailboxEnvelope.SetActive(false);
 
-                StateHook.Inject(MailboxEnvelope, "Use", "Open ad", -1, _ => Utils.CreateRandomPills());
-                StateHook.Inject(EnvelopeSheet, "Setup", "State 2", _ => {
-                    MailboxEnvelope.SetActive(false);
-                    Logic.envelopeSpawned = false;
-                });
+                StateHook.Inject(MailboxEnvelope, "Use", "Open ad", CreateRandomPills, -1);
+                StateHook.Inject(EnvelopeSheet, "Setup", "State 2", DisableStrangeLetter, -1);
                 EnvelopeSheet.SetActive(false);
 
                 Globals.mailboxSheet = EnvelopeSheet;
                 Globals.envelopeObject = MailboxEnvelope;
-                
+
+                if (Globals.pills != null)
+                    SetBackgroundScreenForLetter(Globals.pills.index);
+
                 m_bInstalled = true;
             }
             catch (System.Exception e)
             {
                 Utils.PrintDebug(eConsoleColors.RED, $"Error in MailBoxEnvelope:OnEnable(): {e.GetFullMessage()}");
             }
+        }
+
+        void DisableStrangeLetter()
+        {
+            MailboxEnvelope.SetActive(false);
+            Logic.envelopeSpawned = false;
+        }
+
+        void CreateRandomPills()
+        {
+            try
+            {
+                if (Globals.pills != null)
+                {
+                    Destroy(Globals.pills.self);
+                    Globals.pills = null;
+                    Utils.PrintDebug(eConsoleColors.YELLOW, "Removed previous pills");
+                }
+
+                int idx = UnityEngine.Random.Range(0, Globals.pills_positions.Count - 1);
+                Globals.pills = new PillsItem(idx, Globals.pills_positions[idx]);
+
+                SetBackgroundScreenForLetter(idx);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Generated pills: {idx}");
+            }
+            catch (Exception e)
+            {
+                ModConsole.Error($"Failed to create a random pills;\n{e.GetFullMessage()}");
+            }
+        }
+
+        void SetBackgroundScreenForLetter(int index)
+        {
+            Transform image = EnvelopeSheet.transform.Find("Background/Image");
+            Texture newTexture = Globals.mailScreens.Find(v => v.name == index.ToString());
+            image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", newTexture);
+            Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {newTexture.name} idx");
         }
     }
 }
