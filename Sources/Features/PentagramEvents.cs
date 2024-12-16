@@ -37,7 +37,7 @@ namespace Psycho.Features
         Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
@@ -162,37 +162,33 @@ namespace Psycho.Features
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             rb.detectCollisions = true;
 
-            FsmFloat playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
-            FsmFloat money = new FsmFloat() { Name = "Money", Value = 100f };
 
-            PlayMakerFSM fsm = obj.AddComponent<PlayMakerFSM>();
-            fsm.InitializeFSM();
-            fsm.enabled = false;
-            fsm.Fsm.Name = "Use";
-            fsm.AddVariable(money);
-            fsm.AddEvent("FINISHED");
-            fsm.AddEvent("USE");
-
-            FsmEvent finished = fsm.Fsm.Events[0];
-            FsmEvent useEvent = fsm.Fsm.Events[1];
-
-            FsmString GUIinteraction = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
-            FsmBool GUIuse = Utils.GetGlobalVariable<FsmBool>("GUIuse");
-
-            FsmOwnerDefault owner = new FsmOwnerDefault() { OwnerOption = OwnerDefaultOption.UseOwner };
-            FsmInt[] layerMask = new FsmInt[1] { new FsmInt() { Value = 19 } };
-
-            FsmState waitPlayer = new FsmState(fsm.Fsm)
+            Utils.SetupFSM(obj, "Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
             {
-                Name = "Wait player",
-                Transitions = new FsmTransition[1] {
+                FsmFloat playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
+                FsmFloat money = new FsmFloat() { Name = "Money", Value = 100f };
+                _fsm.AddVariable(money);
+
+                FsmEvent finished = events[0];
+                FsmEvent useEvent = events[1];
+
+                FsmString GUIinteraction = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
+                FsmBool GUIuse = Utils.GetGlobalVariable<FsmBool>("GUIuse");
+
+                FsmOwnerDefault owner = new FsmOwnerDefault() { OwnerOption = OwnerDefaultOption.UseOwner };
+                FsmInt[] layerMask = new FsmInt[1] { new FsmInt() { Value = 19 } };
+
+                FsmState waitPlayer = new FsmState(_fsm.Fsm)
+                {
+                    Name = "Wait player",
+                    Transitions = new FsmTransition[1] {
                     new FsmTransition()
                     {
                         FsmEvent = finished,
                         ToState = "Wait button"
                     }
                 },
-                Actions = new FsmStateAction[3]
+                    Actions = new FsmStateAction[3]
                 {
                     new SetStringValue()
                     { stringVariable = GUIinteraction, stringValue = "", everyFrame = false },
@@ -207,17 +203,17 @@ namespace Psycho.Features
                         invertMask = false, everyFrame = true
                     }
                 }
-            };
-            waitPlayer.SaveActions();
+                };
+                waitPlayer.SaveActions();
 
-            FsmState waitButton = new FsmState(fsm.Fsm)
-            {
-                Name = "Wait button",
-                Transitions = new FsmTransition[2] {
+                FsmState waitButton = new FsmState(_fsm.Fsm)
+                {
+                    Name = "Wait button",
+                    Transitions = new FsmTransition[2] {
                     new FsmTransition() { FsmEvent = finished, ToState = "Wait player" },
                     new FsmTransition() { FsmEvent = useEvent, ToState = "Use item" }
                 },
-                Actions = new FsmStateAction[4]
+                    Actions = new FsmStateAction[4]
                 {
                     new SetStringValue()
                     { stringVariable = GUIinteraction, stringValue = "RANDOM GIFT MONEY", everyFrame = true },
@@ -234,13 +230,13 @@ namespace Psycho.Features
 
                     new GetButtonDown() { buttonName = "Use", sendEvent = useEvent, storeResult = false }
                 }
-            };
-            waitButton.SaveActions();
+                };
+                waitButton.SaveActions();
 
-            FsmState useItem = new FsmState(fsm.Fsm)
-            {
-                Name = "Use item",
-                Actions = new FsmStateAction[5]
+                FsmState useItem = new FsmState(_fsm.Fsm)
+                {
+                    Name = "Use item",
+                    Actions = new FsmStateAction[5]
                 {
                     new RandomFloat()
                     { min = 200, max = 1000, storeResult = money },
@@ -256,13 +252,12 @@ namespace Psycho.Features
 
                     new DestroySelf() { detachChildren = false }
                 }
-            };
-            useItem.SaveActions();
+                };
+                useItem.SaveActions();
 
-            fsm.Fsm.States = new FsmState[3] { waitPlayer, waitButton, useItem };
-            fsm.Fsm.StartState = "Wait player";
-            fsm.Fsm.Start();
-            fsm.enabled = true;
+
+                return new FsmState[3] { waitPlayer, waitButton, useItem };
+            });
         }
 
         void createSpiritBottle()
@@ -558,7 +553,7 @@ namespace Psycho.Features
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Exception in PrentagramEvents._eventGrannyCoroutine()::_action.Invoke()");
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(_action.Method)}");
                 ModConsole.Error(ex.GetFullMessage());
             }
 
@@ -582,10 +577,10 @@ namespace Psycho.Features
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, "Exception in PrentagramEvents._eventCoroutine()::_action.Invoke()");
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(_action.Method)}");
                 ModConsole.Error(ex.GetFullMessage());
             }
-            
+
             if (!string.IsNullOrEmpty(sound))
                 _playSound(sound);
 
