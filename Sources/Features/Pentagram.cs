@@ -8,7 +8,6 @@ using HutongGames.PlayMaker;
 using Psycho.Internal;
 using Psycho.Handlers;
 using Psycho.Extensions;
-
 using Random = UnityEngine.Random;
 
 
@@ -55,7 +54,7 @@ namespace Psycho.Features
         public bool LightsEnabled { get; private set; } = false;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             Player = GameObject.Find("PLAYER").transform;
             Candles = transform.Find("Candles");
@@ -83,7 +82,7 @@ namespace Psycho.Features
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (!LightsEnabled && SUN_hours.Value >= 20 || SUN_hours.Value < 5)
                 SetCandlesFireActive(true);

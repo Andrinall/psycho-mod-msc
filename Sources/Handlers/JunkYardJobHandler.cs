@@ -10,14 +10,16 @@ namespace Psycho.Handlers
         int m_iCarsNumber = 0;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             GameObject Fleetari = GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari");
             for (int i = 1; i < 5; i++)
-                StateHook.Inject(Fleetari, "Work", $"Car {i}", _ => m_iCarsNumber += 1);
+                StateHook.Inject(Fleetari, "Work", $"Car {i}", IncreaseCars);
 
-            StateHook.Inject(gameObject, "Use", "State 1", -1, _ => UsePayMoneyTicket());
+            StateHook.Inject(gameObject, "Use", "State 1", UsePayMoneyTicket, -1);
         }
+
+        void IncreaseCars() => m_iCarsNumber += 1;
 
         void UsePayMoneyTicket()
         {

@@ -11,9 +11,9 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class FliesChanger : MonoBehaviour
+    internal sealed class FliesChanger : CatchedComponent
     {
-        void OnEnable() => Change();
+        public override void Enabled() => Change();
 
         public void Change()
         {

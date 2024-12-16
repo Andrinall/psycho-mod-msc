@@ -225,8 +225,7 @@ namespace Psycho
                 GameObject player = GameObject.Find("PLAYER");
                 player.GetComponent<CharacterMotor>().canControl = false;
 
-                StateHook.Inject(train.gameObject, "Player", "Die 2", -1,
-                    _ => KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS));
+                StateHook.Inject(train.gameObject, "Player", "Die 2", () => KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
 
                 train.SendEvent("FINISHED"); // reset current state
                 while (train.ActiveStateName != "State 2")
@@ -248,6 +247,7 @@ namespace Psycho
 
         internal static void KillHeartAttack()
         {
+            if (!inHorror) return;
             try
             {
                 SoundManager.PlayDeathSound();

@@ -32,7 +32,7 @@ namespace Psycho.Screamers
         Vector3[] CameraOrigs;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
 
@@ -45,7 +45,7 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             _fsm.enabled = false;
             Armature.position = StartPoint;
@@ -56,7 +56,7 @@ namespace Psycho.Screamers
             SoundManager.PlayHeartbeat(true);
         }
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             animPlayed = false;
             movingStage = 0;
@@ -67,7 +67,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (animPlayed) return;
 

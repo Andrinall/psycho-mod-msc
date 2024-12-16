@@ -49,13 +49,13 @@ namespace Psycho.Screamers
         };
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             SetupSleepTriggerHooks();
             EventsManager.OnScreamerFinished.AddListener(ScreamerFinished);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (!_soundApplyed) return;
             if (m_bStopped) return;
@@ -122,43 +122,52 @@ namespace Psycho.Screamers
             m_fSunHours = sun.GetVariable<FsmFloat>("Hours");
             m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
 
-            StateHook.Inject(gameObject, "Activate", "Check time of day", 3, _ => {
-                if (Logic.GameFinished) return;
-                if (Logic.inHorror) return;
-                if (Logic.milkUsed && (DateTime.Now - Logic.milkUseTime).Seconds < 60) return;
+            StateHook.Inject(gameObject, "Activate", "Check time of day", CheckTimeOfDay, 3);
 
-                m_iRand = Random.Range(0, 3);
-                if (m_iRand == 3) return;
+            StateHook.Inject(gameObject, "Activate", "Does call?", DoesCall);
 
-                int day = (m_iGlobalDay.Value + 1) % 7;
+            StateHook.Inject(gameObject, "Activate", "Phone", DisableScreamerIfPhone, -1);
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {m_iGlobalDay.Value}[next {day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
-                if (!m_liDays[m_iRand].Contains(day)) return;
+            StateHook.Inject(gameObject, "Activate", "Wake up 2", WakeUp);
+        }
 
-                FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime"); // 10
-                int timeOfDay = m_iTimeOfDay.Value;
+        void CheckTimeOfDay()
+        {
+            if (Logic.GameFinished) return;
+            if (Logic.inHorror) return;
+            if (Logic.milkUsed && (DateTime.Now - Logic.milkUseTime).Seconds < 60) return;
 
-                sleepTime.Value = (24 + m_liTimes[m_iRand]) - timeOfDay;
-                m_bTrigger = true;
+            m_iRand = Random.Range(0, 3);
+            if (m_iRand == 3) return;
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{sleepTime.Value}]; new[{sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)m_iRand}]");
-            });
+            int day = (m_iGlobalDay.Value + 1) % 7;
 
-            StateHook.Inject(gameObject, "Activate", "Does call?", 0, fsm =>
-            {
-                if (m_bTrigger)
-                    fsm.SendEvent("NOCALL");
-            });
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {m_iGlobalDay.Value}[next {day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
+            if (!m_liDays[m_iRand].Contains(day)) return;
 
-            StateHook.Inject(gameObject, "Activate", "Phone", -1, _ => m_bTrigger = false);
+            FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime"); // 10
+            int timeOfDay = m_iTimeOfDay.Value;
 
-            StateHook.Inject(gameObject, "Activate", "Wake up 2", _ =>
-            {
-                Logic.milkUsed = false;
-                if (!m_bTrigger) return;
+            sleepTime.Value = (24 + m_liTimes[m_iRand]) - timeOfDay;
+            m_bTrigger = true;
 
-                ApplyScreamer((ScreamTimeType)m_iRand, Random.Range(0, _maxScreamTypes[m_iRand]));
-            });
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{sleepTime.Value}]; new[{sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)m_iRand}]");
+        }
+
+        void DoesCall(PlayMakerFSM fsm)
+        {
+            if (!m_bTrigger) return;
+            fsm.SendEvent("NOCALL");
+        }
+
+        void DisableScreamerIfPhone() => m_bTrigger = false;
+
+        void WakeUp()
+        {
+            Logic.milkUsed = false;
+            if (!m_bTrigger) return;
+
+            ApplyScreamer((ScreamTimeType)m_iRand, Random.Range(0, _maxScreamTypes[m_iRand]));
         }
 
         void _enablePhoneCord()

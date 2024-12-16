@@ -9,7 +9,7 @@ namespace Psycho.Internal
 {
     public enum eHUDCloneType { RECT, TEXT }
 
-    public sealed class FixedHUD : MonoBehaviour
+    public sealed class FixedHUD : CatchedComponent
     {
         readonly List<GameObject> _struct = new List<GameObject>();
         readonly List<string> _blacklisted = new List<string> {
@@ -24,7 +24,7 @@ namespace Psycho.Internal
         Vector3 _start = Vector3.zero;
 
 
-        private void OnEnable()
+        public override void Enabled()
         {
             _start = transform.Find("Mortal").localPosition;
 
@@ -36,7 +36,7 @@ namespace Psycho.Internal
             }
         }
 
-        void OnDestroy() => _struct.Clear();
+        public override void Destroyed() => _struct.Clear();
 
         /// <summary>
         /// Get element in "GUI/HUD/..."

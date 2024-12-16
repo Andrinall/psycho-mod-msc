@@ -6,6 +6,8 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
+using Psycho.Internal;
+
 
 namespace Psycho.Extensions
 {
@@ -38,7 +40,16 @@ namespace Psycho.Extensions
             for (int i = 0; i < obj.childCount; i++)
             {
                 Transform child = obj.GetChild(i);
-                handler?.Invoke(child);
+                try
+                {
+                    handler?.Invoke(child);
+                }
+                catch (Exception ex)
+                {
+                    
+
+                    Utils.PrintDebug(eConsoleColors.RED, $"Error in IterateAllChilds handler delegate ({handler.Method.DeclaringType.Name}");
+                }
 
                 if (child.childCount == 0) continue;
                 child.IterateAllChilds(handler);

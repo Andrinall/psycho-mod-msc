@@ -32,7 +32,7 @@ namespace Psycho.Screamers
         Vector3[] cameraOrigs;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
             Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
@@ -42,7 +42,7 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             Fsm.enabled = false;
             transform.position = StartPoint;
@@ -53,8 +53,8 @@ namespace Psycho.Screamers
             Char.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
         }
-        
-        internal override void Disabled()
+
+        public override void Disabled()
         {
             if (Char == null) return;
 
@@ -66,8 +66,8 @@ namespace Psycho.Screamers
             SoundManager.PlayHeartbeat(false);
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.GRANNY);
         }
-        
-        internal override void OnFixedUpdate()
+
+        public override void OnFixedUpdate()
         {
             if (AnimPlayed) return;
             if (!transform.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;

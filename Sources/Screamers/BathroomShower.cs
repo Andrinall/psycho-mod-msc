@@ -22,7 +22,7 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
             TapDrink = transform.Find("TapDrink").gameObject;
@@ -37,20 +37,20 @@ namespace Psycho.Screamers
             ValveSwitch = SwitchFSM.GetVariable<FsmBool>("Valve");
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
-            StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", 0, _showerHook);
+            StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", _showerHook);
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled() => SwitchValve(true);
+        public override void Enabled() => SwitchValve(true);
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             if (TapDrink == null) return;
 
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

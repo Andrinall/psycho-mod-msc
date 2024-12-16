@@ -12,7 +12,7 @@ namespace Psycho.Handlers
         Transform _Teimo;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         { 
             _GFX_Store = transform.FindChild("LOD/GFX_Store");
             _GFX_Pub = transform.FindChild("LOD/GFX_Pub");
@@ -21,19 +21,24 @@ namespace Psycho.Handlers
             GameObject windowStore = _GFX_Store.Find("BreakableWindows/BreakableWindow")?.gameObject;
 
             if (windowPub != null)
-                StateHook.Inject(windowPub, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK"));
+                StateHook.Inject(windowPub, "Shatter", WindowBreaked);
 
             if (windowStore != null)
-                StateHook.Inject(windowStore, "Shatter", () => Logic.PlayerCommittedOffence("WINDOW_BREAK"));
+                StateHook.Inject(windowStore, "Shatter", WindowBreaked);
 
-            StateHook.Inject(_Teimo.Find("Speak").gameObject, "Speak", "State 1", _ => Logic.PlayerCommittedOffence("TEIMO_SWEARS"));
-            StateHook.Inject(_Teimo.Find("FacePissTrigger").gameObject, "Reaction", "State 2", _ => Logic.PlayerCommittedOffence("TEIMO_PISS"));
-            StateHook.Inject(_Teimo.Find("TeimoCollider").gameObject, "Reaction", "State 1", _ => Logic.PlayerCommittedOffence("TEIMO_PISS"));
+            StateHook.Inject(_Teimo.Find("Speak").gameObject, "Speak", "State 1", TeimoSwears);
+            StateHook.Inject(_Teimo.Find("FacePissTrigger").gameObject, "Reaction", "State 2", PissedOnTeimo);
+            StateHook.Inject(_Teimo.Find("TeimoCollider").gameObject, "Reaction", "State 1", PissedOnTeimo);
 
             // 10+ adv sended
             GameObject adv = transform.Find("LOD/ActivateStore/PayMoneyAdvert").gameObject;
-            StateHook.Inject(adv, "Use", "Good", _ => Logic.PlayerCompleteJob("TEIMO_ADS"));
-            StateHook.Inject(adv, "Use", "Average", _ => Logic.PlayerCompleteJob("TEIMO_ADS"));
+            StateHook.Inject(adv, "Use", "Good", AdsJobCompleted);
+            StateHook.Inject(adv, "Use", "Average", AdsJobCompleted);
         }
+
+        void WindowBreaked() => Logic.PlayerCommittedOffence("WINDOW_BREAK");
+        void TeimoSwears() => Logic.PlayerCommittedOffence("TEIMO_SWEARS");
+        void PissedOnTeimo() => Logic.PlayerCommittedOffence("TEIMO_PISS");
+        void AdsJobCompleted() => Logic.PlayerCompleteJob("TEIMO_ADS");
     }
 }

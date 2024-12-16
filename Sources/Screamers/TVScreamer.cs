@@ -34,14 +34,14 @@ namespace Psycho.Screamers
         int neededFrames = 200;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
 
             SwitchObj = GameObject.Find("YARD/Building/LIVINGROOM/TV/Switch");
 
             TVSwitch = SwitchObj.GetComponent<PlayMakerFSM>();
-            StateHook.Inject(SwitchObj, "Use", "Switch", 0, _hook);
+            StateHook.Inject(SwitchObj, "Use", "Switch", _hook);
 
             TVSwitch.Fsm.InitData();
             TVSwitch.AddEvent("SCREAM_ON");
@@ -70,7 +70,7 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = false;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
@@ -79,7 +79,7 @@ namespace Psycho.Screamers
             fullEnable = true;
         }
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             if (SwitchObj == null) return;
 
@@ -96,7 +96,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (!ScreamEnabled) return;
             if (elapsedFrames <= neededFrames)

@@ -10,7 +10,7 @@ using Psycho.Extensions;
 
 namespace Psycho.Handlers
 {
-    internal sealed class PentaTrigger : MonoBehaviour
+    internal sealed class PentaTrigger : CatchedComponent
     {
         Pentagram penta;
         PlayMakerFSM Hand;
@@ -21,7 +21,7 @@ namespace Psycho.Handlers
         Vector3 Position => transform.position;
 
 
-        void Awake()
+        public override void Awaked()
         {
             penta = transform.parent.parent.GetComponent<Pentagram>();
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");

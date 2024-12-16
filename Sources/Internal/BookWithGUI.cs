@@ -33,7 +33,7 @@ namespace Psycho.Internal
         Ray Ray => Camera.main.ScreenPointToRay(Input.mousePosition);
         int Layer => LayerMask.GetMask("Parts", "GUI");
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             CurrentPage = 0;
 
@@ -62,7 +62,7 @@ namespace Psycho.Internal
             AfterAwake();
         }
 
-        internal override void OnUpdate()
+        public override void OnUpdate()
         {
             if (Camera.main == null) return;
             if (GUI == null) return;

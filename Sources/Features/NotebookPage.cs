@@ -23,28 +23,28 @@ namespace Psycho.Features
     }
 
 
-    internal class NotebookPageComponent : MonoBehaviour
+    internal class NotebookPageComponent : CatchedComponent
     {
         public NotebookPage page;
 
         TextMesh pageText;
 
-        
-        void Awake()
+
+        public override void Awaked()
             => EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
 
-        void OnEnable()
+        public override void Enabled()
         {
             Transform text = transform.Find("Text");
             pageText = text?.GetComponent<TextMesh>();
 
             MeshRenderer renderer = text.GetComponent<MeshRenderer>();
             Material pageTextMat = renderer.material;
-            pageTextMat.shader = Instantiate(Shader.Find("GUI/3D Text Shader"));
+            pageTextMat.shader = Shader.Find("GUI/3D Text Shader");
             pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
 
-        void OnDisable() => Destroy(gameObject);
+        public override void Disabled() => Destroy(gameObject);
 
         public void UpdatePageText()
             => pageText.text = Locales.PAGES[page.index - 1, page.isTruePage ? 0 : 1, Globals.CurrentLang];

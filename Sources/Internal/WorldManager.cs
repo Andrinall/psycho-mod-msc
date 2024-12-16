@@ -323,7 +323,7 @@ namespace Psycho.Internal
             ClonedPhantom.transform.eulerAngles = Vector3.zero;
         }
 
-        public static void AddDoorOpenCallback(string path, Action<PlayMakerFSM> callback)
+        public static void AddDoorOpenCallback(string path, Action callback)
             => StateHook.Inject(GameObject.Find(path).transform.Find("Pivot/Handle").gameObject, "Use", "Open door", callback);
 
         public static void CloseDoor(string path)

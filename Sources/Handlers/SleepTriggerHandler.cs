@@ -12,15 +12,14 @@ namespace Psycho.Handlers
     {
         FsmFloat m_fPlayerFatigue;
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 
             transform.ClearActions("Activate", "Calc rates", 6);
-            StateHook.Inject(gameObject,
-                "Activate", "Calc rates", -1, _ =>
-                    m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f)
-            );
+            StateHook.Inject(gameObject, "Activate", "Calc rates", UpdateFatigue, -1);
         }
+
+        void UpdateFatigue() => m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f);
     }
 }

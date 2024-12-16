@@ -11,7 +11,7 @@ using Psycho.Handlers;
 
 namespace Psycho.Features
 {
-    internal sealed class FernFlowerSpawner : MonoBehaviour
+    internal sealed class FernFlowerSpawner : CatchedComponent
     {
         List<GameObject> Flowers = new List<GameObject>();
         GameObject RandomFlower => Flowers[Random.Range(0, Flowers.Count)];
@@ -21,7 +21,7 @@ namespace Psycho.Features
         FsmFloat SUN_hours;
 
 
-        void Awake()
+        public override void Awaked()
         {
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
             SUN_hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
@@ -30,7 +30,7 @@ namespace Psycho.Features
                 Flowers.Add(transform.GetChild(i).GetChild(1).gameObject);
         }
 
-        void FixedUpdate()
+        public override void OnFixedUpdate()
         {
             int day = GlobalDay.Value % 7;
 

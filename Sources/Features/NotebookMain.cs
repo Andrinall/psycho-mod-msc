@@ -30,9 +30,11 @@ namespace Psycho.Features
 
         Transform ItemInHand => PlayerHand.childCount > 0 ? PlayerHand.GetChild(0) : null;
 
-        void OnDestroy() => MAX_PAGE = -1;
-        void OnEnable() => MAX_PAGE = prevMax;
-        void OnDisable()
+        public override void Destroyed() => MAX_PAGE = -1;
+
+        public override void Enabled() => MAX_PAGE = prevMax;
+
+        public override void Disabled()
         {
             prevMax = MAX_PAGE;
             MAX_PAGE = -1;

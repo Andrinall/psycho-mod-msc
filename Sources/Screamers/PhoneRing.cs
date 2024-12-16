@@ -28,7 +28,7 @@ namespace Psycho.Screamers
         short neededFrames = 400;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
             Ring = transform.Find("Ring").gameObject;
@@ -43,18 +43,18 @@ namespace Psycho.Screamers
             _addRingStateForScreamer();
             _addEventAndTransitionToScreamerState();
 
-            StateHook.Inject(transform.Find("UseHandle").gameObject, "Use", "Close phone", 0, _closePhoneHook);
+            StateHook.Inject(transform.Find("UseHandle").gameObject, "Use", "Close phone", _closePhoneHook);
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             Topic.Value = "SCREAMCALL";
             PhoneLogic.SetActive(false);
             Ring.SetActive(true);
         }
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             if (Ring == null) return;
 
@@ -65,7 +65,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
             => WorldManager.ClonedPhantomTick(200, _phantomHideCallback);
 
 
@@ -123,7 +123,7 @@ namespace Psycho.Screamers
             (newState.Actions[2] as Wait).time.Value = 4f;
             RingFSM.Fsm.States = new List<FsmState>(RingFSM.Fsm.States) { newState }.ToArray();
 
-            StateHook.Inject(Ring, "Ring", "Night screamer", 2, _spawnPhantomBehindPlayer);
+            StateHook.Inject(Ring, "Ring", "Night screamer", _spawnPhantomBehindPlayer, 2);
         }
 
         void _addEventAndTransitionToScreamerState()

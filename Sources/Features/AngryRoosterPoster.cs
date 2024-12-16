@@ -25,7 +25,7 @@ namespace Psycho.Features
         PlayMakerFSM Hand;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             AudioSource[] sources = GetComponents<AudioSource>();
             AngrySounds = sources[0];
@@ -40,7 +40,7 @@ namespace Psycho.Features
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
         }
 
-        void FixedUpdate()
+        public override void OnFixedUpdate()
         {
             int day = GlobalDay.Value % 7;
             if (!Status && !Applyed && day == 6 && SUN_hours.Value > 4 && SUN_hours.Value < 16)

@@ -30,7 +30,7 @@ namespace Psycho.Features
         const int MAX_PAGES = 13;
         const int MAX_CARD = 14;
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             TaroUsable = transform.Find("TaroUsable/Handle").gameObject;
             HousekeeperCard = transform.Find("Cards/HousekeeperCard").gameObject;
@@ -53,7 +53,7 @@ namespace Psycho.Features
             }
         }
 
-        internal override void OnUpdate()
+        public override void OnUpdate()
         {
             if (!CheckDayChangedAndUpdateHousekeeperCard()) return;
             if (PlayerCard?.activeSelf == true) return;

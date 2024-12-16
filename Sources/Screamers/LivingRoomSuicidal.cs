@@ -15,7 +15,7 @@ namespace Psycho.Screamers
         TimeSpan span;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
             suicidal = transform.Find("SuicidalCustom(Clone)").gameObject;
@@ -50,14 +50,14 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             enableTime = DateTime.Now;
             suicidal.SetActive(true);
             lamp.SetActive(false);
         }
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             if (suicidal == null) return;
 
@@ -66,7 +66,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             span = (DateTime.Now - enableTime);
             if (span.Minutes == 2 && span.Seconds > 30) // 2 minutes & 30 seconds

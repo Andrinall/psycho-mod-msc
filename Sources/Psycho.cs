@@ -22,7 +22,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.5-beta";
+        public override string Version => "0.9.7-beta";
         public override string Description => "Adds a schizophrenia for your game character";
         public override bool UseAssetsFolder => false;
         public override bool SecondPass => true;
@@ -31,6 +31,9 @@ namespace Psycho
         internal static Keybind fastOpen;
         internal static bool IsLoaded = false;
 
+        GameObject LoaderMenu;
+        internal bool IsLoaderMenuOpened => LoaderMenu?.activeSelf == true;
+
         Transform _player;
         Transform _houseFire;
         Transform _bells;
@@ -38,13 +41,13 @@ namespace Psycho
         FsmState _bellsState;
         FsmFloat SUN_minutes;
         FsmFloat SUN_hours;
+        FsmString GUIsubtitle;
         
         FsmBool m_bHouseBurningState;
         bool m_bHouseOnFire = false;
 
         bool m_bBellsActivated = false;
         Vector3 bellsOrigPos;
-
 
         // setup mod settings
         public override void ModSettingsLoaded() => _changeSetting();
@@ -75,6 +78,7 @@ namespace Psycho
         public override void OnLoad()
         {
             IsLoaded = false;
+            LoaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
@@ -113,9 +117,11 @@ namespace Psycho
             _bellsState = _bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
             bellsOrigPos = _bells.position;
 
-            StateHook.Inject(GameObject.Find("fridge_paper"), "Use", "Wait button", -1,
-                _player => Utils.GetGlobalVariable<FsmString>("GUIsubtitle").Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang]);
+            GUIsubtitle = Utils.GetGlobalVariable<FsmString>("GUIsubtitle");
+            StateHook.Inject(GameObject.Find("fridge_paper"), "Use", "Wait button", UpdateFridgePaperText, -1);
         }
+
+        void UpdateFridgePaperText() => GUIsubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
 
         public override void SecondPassOnLoad()
         {
@@ -200,11 +206,9 @@ namespace Psycho
                 m_bBellsActivated = false;
             }
 
-            if (fastOpen.GetKeybindUp() && Logic.inHorror && !Logic.envelopeSpawned)
+            if (fastOpen.GetKeybindUp() && !IsLoaderMenuOpened && Logic.inHorror && !Logic.envelopeSpawned)
             {
-                GameObject mailBackground = GameObject.Find("YARD/PlayerMailBox/DoctorMail");
-                if (mailBackground == null) return;
-                mailBackground.SetActive(true);
+                Globals.mailboxSheet?.SetActive(true);
             }
         }
 
@@ -270,12 +274,12 @@ namespace Psycho
             AddComponent<AnyPentaItemsSpawner>("PLAYER");
 
             // add door callbacks for disable night screamer sounds
-            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", _ => {
+            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", () => {
                 SoundManager.StopScreamSound("door_knock");
                 SoundManager.StopScreamSound("footsteps");
             });
 
-            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", _ => {
+            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", () => {
                 SoundManager.StopScreamSound("bedroom");
                 SoundManager.StopScreamSound("crying_kid");
                 SoundManager.StopScreamSound("glass1");
@@ -374,54 +378,58 @@ namespace Psycho
         void _injectStateHooks(Transform camera, Transform drink)
         {
             // add milk usage handler (used for skip night screamers)
-            StateHook.Inject(drink.gameObject, "Drink", "Activate 3", _ =>
-            {
-                Logic.milkUsed = true;
-                Logic.milkUseTime = DateTime.Now;
-            });
+            StateHook.Inject(drink.gameObject, "Drink", "Activate 3", MilkUsed);
 
             // add FITTAN crash handler (crime) (-points)
             StateHook.Inject(
                 GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN").transform.Find("CrashEvent").gameObject,
-                "Crash", "Crime",
-                _ => Logic.PlayerCommittedOffence("FITTAN_CRASH")
+                "Crash", "Crime", FittanCrashedByPlayer
             );
 
             // add handler for mission delivery Granny to church (+points)
-            StateHook.Inject(
-                GameObject.Find("ChurchGrandma/GrannyHiker"), "Logic", "Start walking",
-                _ => Logic.PlayerCompleteJob("GRANNY_CHURCH")
-            );
+            StateHook.Inject(GameObject.Find("ChurchGrandma/GrannyHiker"), "Logic", "Start walking", PlayerDropOffGrandma);
 
             // add Granny angry handler (-points)
-            StateHook.Inject(
-                GameObject.Find("JOBS/Mummola/TalkEngine"), "Granny", "Speak 27",
-                _ => Logic.PlayerCommittedOffence("GRANNY_ANGRY")
-            );
+            StateHook.Inject(GameObject.Find("JOBS/Mummola/TalkEngine"), "Granny", "Speak 27", GrandmaAngry);
 
             // add arrest handler for horror world
-            StateHook.Inject(GameObject.Find("Systems/PlayerWanted"), "Activate", "State 2", _ =>
-            {
-                if (!Logic.inHorror) return;
-                Logic.KillHeartAttack();
-            });
+            StateHook.Inject(GameObject.Find("Systems/PlayerWanted"), "Activate", "State 2", Logic.KillHeartAttack);
 
             // player swears trigger
-            StateHook.Inject(camera.parent.Find("SpeakDatabase").gameObject, "Speech", "Swear", 7, _ => Logic.PlayerCommittedOffence("PLAYER_SWEARS"));
-            StateHook.Inject(camera.parent.gameObject, "PlayerFunctions", "Finger", 11, _ => Logic.PlayerCommittedOffence("PLAYER_SWEARS"));
+            StateHook.Inject(camera.parent.Find("SpeakDatabase").gameObject, "Speech", "Swear", PlayerSwears, 7);
+            StateHook.Inject(camera.parent.gameObject, "PlayerFunctions", "Finger", PlayerSwears, 11);
 
-            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle", 2, _ => Logic.BeerBottlesDrunked++);
-            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle 1", 2, _ => Logic.PlayerCommittedOffence("DRUNK_BOOZE"));
+            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle", PlayerDrunkBeer, 2);
+            StateHook.Inject(drink.gameObject, "Drink", "Throw bottle 1", PlayerDrunkBooze, 2);
 
             GameObject farmer_walker = GameObject.Find("HUMANS/Farmer/Walker");
             if (!farmer_walker) return;
-            StateHook.Inject(farmer_walker, "Speak", "Done", _ => Logic.PlayerCompleteJob("FARMER_QUEST"));
+            StateHook.Inject(farmer_walker, "Speak", "Done", PlayerCompleteFarmerQuest);
 
             Transform systems = GameObject.Find("Systems").transform;
             Transform menu = systems.Find("OptionsMenu/Menu");
             Transform btnconfirm = menu.Find("Btn_ConfirmQuit");
-            StateHook.Inject(btnconfirm.Find("Button").gameObject, "Button", "State 3", 0, _ => OnUnload());
+            StateHook.Inject(btnconfirm.Find("Button").gameObject, "Button", "State 3", OnUnload);
         }
+
+        void MilkUsed()
+        {
+            Logic.milkUsed = true;
+            Logic.milkUseTime = DateTime.Now;
+        }
+
+        void FittanCrashedByPlayer() => Logic.PlayerCommittedOffence("FITTAN_CRASH");
+
+        void PlayerDropOffGrandma() => Logic.PlayerCompleteJob("GRANNY_CHURCH");
+
+        void GrandmaAngry() => Logic.PlayerCommittedOffence("GRANNY_ANGRY");
+
+        void PlayerSwears() => Logic.PlayerCommittedOffence("PLAYER_SWEARS");
+
+        void PlayerDrunkBeer() => Logic.BeerBottlesDrunked++;
+        void PlayerDrunkBooze() => Logic.PlayerCommittedOffence("DRUNK_BOOZE");
+
+        void PlayerCompleteFarmerQuest() => Logic.PlayerCompleteJob("FARMER_QUEST");
 
         T AddComponent<T>(string path) where T : Component
             => GameObject.Find(path)?.AddComponent<T>() ?? null;

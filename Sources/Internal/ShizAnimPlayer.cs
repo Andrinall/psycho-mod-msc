@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 
+using MSCLoader;
 using UnityEngine;
 
 
@@ -13,7 +14,7 @@ namespace Psycho.Internal
         Animation m_oAnimation = null;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             _eyes = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/SleepEyes");
             m_oAnimation = _eyes.GetComponent<Animation>();
@@ -34,6 +35,18 @@ namespace Psycho.Internal
             PlayMode mode,
             Action finish_callback
         ) {
+            if (m_oAnimation == null)
+            {
+                ModConsole.Error("ShizAnimPlayer.m_oAnimation == null");
+                yield break;
+            }
+
+            if (_eyes == null)
+            {
+                ModConsole.Error("ShizAnimPlayer._eyes == null");
+                yield break;
+            }
+
             m_oAnimation.Stop();
             _eyes.SetActive(true);
 
@@ -45,7 +58,15 @@ namespace Psycho.Internal
                 yield return new WaitForSeconds(waitSeconds);
 
             m_oAnimation.Stop();
-            finish_callback?.Invoke();
+            try
+            {
+                finish_callback?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(finish_callback.Method)}");
+                ModConsole.Error(ex.GetFullMessage());
+            }
         }
     }
 }

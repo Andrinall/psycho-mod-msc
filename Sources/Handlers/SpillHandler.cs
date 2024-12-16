@@ -13,10 +13,10 @@ namespace Psycho.Handlers
         FsmBool m_bIsCrime;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             m_bIsCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
-            StateHook.Inject(gameObject, "SpillPump", "Spill grow", _ => SpillShit());
+            StateHook.Inject(gameObject, "SpillPump", "Spill grow", SpillShit);
         }
 
         void SpillShit()

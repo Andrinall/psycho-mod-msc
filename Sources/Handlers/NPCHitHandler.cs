@@ -13,7 +13,7 @@ namespace Psycho.Handlers
     {
         bool HasCrimeAction => transform.GetPlayMaker("CarHit").FsmStates.First(v => v.Name == "Crime") != null;
 
-        internal override void Awaked()
+        public override void Awaked()
         {            
             if (transform.parent.parent.gameObject.name == "JokkeHiker1")
                 return;
@@ -23,11 +23,7 @@ namespace Psycho.Handlers
 
             if (parentName == "SuskiHiker")
             {
-                StateHook.Inject(
-                    transform.Find("HumanCollider").gameObject, "PlayerHit", "State 3",
-                    _ => Logic.PlayerCommittedOffence("SUSKI_HIT")
-                );
-
+                StateHook.Inject(transform.Find("HumanCollider").gameObject, "PlayerHit", "State 3", SuskiHitted);
                 return;
             }
 
@@ -35,18 +31,19 @@ namespace Psycho.Handlers
             SetupPlayerHitCrime(transform.childCount);
         }
 
+        void SuskiHitted() => Logic.PlayerCommittedOffence("SUSKI_HIT");
+        void NPCHitted() => Logic.PlayerCommittedOffence("NPC_HIT");
+
         void SetupCarHitCrime()
         {
             try
             {
-                StateHook.Inject(gameObject, "CarHit",
-                    HasCrimeAction ? "Crime" : "Crime 2",
-                    _ => Logic.PlayerCommittedOffence("NPC_HIT")
-                );
+                bool hasCrime = HasCrimeAction;
+                StateHook.Inject(gameObject, "CarHit", hasCrime ? "Crime" : "Crime 2", NPCHitted);
             }
             catch
             {
-                StateHook.Inject(gameObject, "CarHit", "Crime 2", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
+                StateHook.Inject(gameObject, "CarHit", "Crime 2", NPCHitted);
             }
         }
 
@@ -54,22 +51,14 @@ namespace Psycho.Handlers
         {
             if (name == "HumanTriggerCop")
             {
-                StateHook.Inject(gameObject, "PlayerHit", "State 2", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
+                StateHook.Inject(gameObject, "PlayerHit", "State 2", NPCHitted);
                 return;
             }
 
             if (t == 1)
-            {
-                StateHook.Inject(gameObject, "PlayerHit", "State 3", _ => Logic.PlayerCommittedOffence("NPC_HIT"));
-                return;
-            }
-
-            if (t == 2)
-            {
-                StateHook.Inject(transform.Find("HitCollider").gameObject,
-                    "PlayerHit", "State 3", _ => Logic.PlayerCommittedOffence("NPC_HIT")
-                );
-            }
+                StateHook.Inject(gameObject, "PlayerHit", "State 3", NPCHitted);
+            else if (t == 2)
+                StateHook.Inject(transform.Find("HitCollider").gameObject, "PlayerHit", "State 3", NPCHitted);
         }
     }
 }

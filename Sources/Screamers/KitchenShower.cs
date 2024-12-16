@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-
-using MSCLoader;
+﻿using MSCLoader;
+using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
@@ -21,7 +20,7 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        internal override void Awaked()
+        public override void Awaked()
         {
             enabled = false;
             ParticleDrink = transform.Find("ParticleDrink").gameObject;
@@ -32,25 +31,25 @@ namespace Psycho.Screamers
             Pivot = transform.Find("Handle/Pivot");
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
-            StateHook.Inject(Switch, "Use", "OFF", 0, _showerHook);
+            StateHook.Inject(Switch, "Use", "OFF", _showerHook);
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
 
-        internal override void Enabled()
+        public override void Enabled()
         {
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
         }
 
-        internal override void Disabled()
+        public override void Disabled()
         {
             if (ParticleDrink == null) return;
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
         }
 
-        internal override void OnFixedUpdate()
+        public override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

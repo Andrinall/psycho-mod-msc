@@ -8,25 +8,25 @@ using Psycho.Extensions;
 
 namespace Psycho.Internal
 {
-    internal class CatchedComponent : MonoBehaviour
+    public class CatchedComponent : MonoBehaviour
     {
-        void Awake() => _callVirtual(Awaked, "Awake");
-        void OnEnable() => _callVirtual(Enabled, "OnEnable");
-        void OnDisable() => _callVirtual(Disabled, "OnDisable");
-        void OnDestroy() => _callVirtual(Destroyed, "OnDestroy");
-        void Update() => _callVirtual(OnUpdate, "Update");
-        void FixedUpdate() => _callVirtual(OnFixedUpdate, "FixedUpdate");
+        void Awake() => _callVirtual(Awaked);
+        void OnEnable() => _callVirtual(Enabled);
+        void OnDisable() => _callVirtual(Disabled);
+        void OnDestroy() => _callVirtual(Destroyed);
+        void Update() => _callVirtual(OnUpdate);
+        void FixedUpdate() => _callVirtual(OnFixedUpdate);
 
 
-        internal virtual void Awaked() {}
-        internal virtual void Enabled() {}
-        internal virtual void Disabled() {}
-        internal virtual void Destroyed() {}
-        internal virtual void OnUpdate() {}
-        internal virtual void OnFixedUpdate() {}
+        public virtual void Awaked() {}
+        public virtual void Enabled() {}
+        public virtual void Disabled() {}
+        public virtual void Destroyed() {}
+        public virtual void OnUpdate() {}
+        public virtual void OnFixedUpdate() {}
 
 
-        void _callVirtual(Action method, string methodName)
+        void _callVirtual(Action method)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace Psycho.Internal
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {transform.GetPath()}::{GetType()?.Name}::{methodName}();");
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {transform.GetPath()} [ {Utils.GetMethodPath(method.Method)}() ]");
                 ModConsole.Error($"{ex.GetFullMessage()}\n{ex.StackTrace}");
             }
         }
