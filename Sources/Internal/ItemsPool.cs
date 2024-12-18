@@ -16,7 +16,7 @@ namespace Psycho.Internal
     internal static class ItemsPool
     {
         static List<GameObject> Pool = new List<GameObject>();
-        public static int base_offset { get; } = 56;
+        public static int base_offset { get; } = 64;
 
         static List<GameObject> ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToList();
         internal static int Length => ItemsForSave.Count;

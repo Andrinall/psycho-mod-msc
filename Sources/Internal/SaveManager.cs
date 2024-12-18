@@ -31,8 +31,10 @@ namespace Psycho.Internal
                 Logic.BeerBottlesDrunked = BitConverter.ToInt32(value, 11);
                 Logic.lastDayMinigame = BitConverter.ToInt32(value, 15);
                 Logic.numberOfSpawnedPages = BitConverter.ToInt16(value, 19);
-                GameObject.Find("rooster_poster(Clone)")
-                    .GetComponent<AngryRoosterPoster>().Applyed = BitConverter.ToBoolean(value, 23);
+
+                var rooster = GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>();
+                rooster.Applyed = BitConverter.ToBoolean(value, 23);
+                rooster.LastDayApplyed = BitConverter.ToInt32(value, 24);
 
                 Utils.PrintDebug(eConsoleColors.YELLOW, $"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
                 if (Logic.isDead)
@@ -49,7 +51,7 @@ namespace Psycho.Internal
                     goto SkipLoadPills;
 
                 // spawn pills in needed
-                Globals.pills = PillsItem.ReadData(ref value, 24);
+                Globals.pills = PillsItem.ReadData(ref value, 28);
 
             SkipLoadPills:
                 ItemsPool.Load(value);
@@ -181,13 +183,16 @@ namespace Psycho.Internal
             BitConverter.GetBytes(Logic.BeerBottlesDrunked).CopyTo(array, 11);
             BitConverter.GetBytes(Logic.lastDayMinigame).CopyTo(array, 15);
             BitConverter.GetBytes(Logic.numberOfSpawnedPages).CopyTo(array, 19);
-            BitConverter.GetBytes(GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>().Applyed).CopyTo(array, 23);
+
+            var rooster = GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>();
+            BitConverter.GetBytes(rooster.Applyed).CopyTo(array, 23);
+            BitConverter.GetBytes(rooster.LastDayApplyed).CopyTo(array, 24);
 
             Utils.PrintDebug($"dead: [{Logic.isDead}]; horror: [{Logic.inHorror}]; envelope: [{Logic.envelopeSpawned}];\nvalue: [{Logic.Value}]; points: [{Logic.Points}]; bottles: [{Logic.BeerBottlesDrunked}]");
 
             if (Logic.inHorror && !Logic.envelopeSpawned)
             {
-                Globals.pills?.WriteData(ref array, 24);
+                Globals.pills?.WriteData(ref array, 28);
                 Globals.pills = null;
             }
 
