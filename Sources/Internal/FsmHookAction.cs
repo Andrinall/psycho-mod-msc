@@ -3,8 +3,6 @@
 using MSCLoader;
 using HutongGames.PlayMaker;
 
-using Psycho.Extensions;
-
 
 namespace Psycho.Internal
 {

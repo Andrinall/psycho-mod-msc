@@ -2,7 +2,6 @@
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using Psycho.Extensions;
 
 
 namespace Psycho.Handlers

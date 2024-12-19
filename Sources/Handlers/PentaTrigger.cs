@@ -5,7 +5,6 @@ using UnityEngine;
 
 using Psycho.Internal;
 using Psycho.Features;
-using Psycho.Extensions;
 
 
 namespace Psycho.Handlers

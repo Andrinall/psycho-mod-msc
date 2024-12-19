@@ -3,7 +3,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using Psycho.Extensions;
 
 
 namespace Psycho.Features

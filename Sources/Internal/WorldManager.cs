@@ -9,7 +9,6 @@ using HutongGames.PlayMaker.Actions;
 
 using Psycho.Features;
 using Psycho.Screamers;
-using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
 

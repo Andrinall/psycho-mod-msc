@@ -2,8 +2,6 @@
 
 using UnityEngine;
 
-using Psycho.Extensions;
-
 
 namespace Psycho.Internal
 {

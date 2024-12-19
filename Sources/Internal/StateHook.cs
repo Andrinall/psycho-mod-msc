@@ -5,18 +5,23 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Extensions;
-
 
 namespace Psycho.Internal
 {
-    internal sealed class StateHook : FsmHook
+    internal sealed class StateHook
     {
         public static void Inject(GameObject gameObject, string stateName, Action hook)
         {
             try
             {
-                FsmInject(gameObject, stateName, hook);
+                PlayMakerFSM[] components = gameObject.GetComponents<PlayMakerFSM>();
+                if (components.Length == 0) return;
+
+                foreach (PlayMakerFSM fsm in components)
+                {
+                    if (fsm.GetState(stateName) == null) continue;
+                    gameObject.FsmInject(fsm.Fsm.Name, stateName, hook);
+                }
             }
             catch
             {

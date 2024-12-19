@@ -6,7 +6,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
-using Psycho.Extensions;
 using Psycho.Internal;
 
 

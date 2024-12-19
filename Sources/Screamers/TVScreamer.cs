@@ -7,7 +7,6 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
 using Psycho.Internal;
-using Psycho.Extensions;
 
 
 namespace Psycho.Screamers

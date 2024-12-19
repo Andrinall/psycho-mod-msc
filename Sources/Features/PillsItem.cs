@@ -6,7 +6,6 @@ using UnityEngine;
 
 using Psycho.Handlers;
 using Psycho.Internal;
-using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
 namespace Psycho.Features

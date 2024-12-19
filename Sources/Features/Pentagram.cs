@@ -7,7 +7,6 @@ using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using Psycho.Handlers;
-using Psycho.Extensions;
 using Random = UnityEngine.Random;
 
 

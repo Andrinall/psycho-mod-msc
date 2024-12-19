@@ -9,7 +9,7 @@ using HutongGames.PlayMaker;
 using Psycho.Internal;
 
 
-namespace Psycho.Extensions
+namespace Psycho
 {
     public static class Extensions
     {

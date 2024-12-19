@@ -7,8 +7,6 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Extensions;
-
 
 namespace Psycho.Internal
 {

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 
-using Psycho.Extensions;
 using Psycho.Features;
 using Psycho.Handlers;
 using Object = UnityEngine.Object;

@@ -11,7 +11,6 @@ using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
-using Psycho.Extensions;
 using Object = UnityEngine.Object;
 
 
@@ -24,15 +23,12 @@ namespace Psycho
         public override string Author => "LUAR, Andrinall, @racer";
         public override string Version => "0.9.7-beta";
         public override string Description => "Adds a schizophrenia for your game character";
-        public override bool UseAssetsFolder => false;
-        public override bool SecondPass => true;
 
         internal static SettingsDropDownList lang;
         internal static Keybind fastOpen;
         internal static bool IsLoaded = false;
 
         GameObject LoaderMenu;
-        internal bool IsLoaderMenuOpened => LoaderMenu?.activeSelf == true;
 
         Transform _player;
         Transform _houseFire;
@@ -48,26 +44,36 @@ namespace Psycho
 
         bool m_bBellsActivated = false;
         Vector3 bellsOrigPos;
+        internal bool IsLoaderMenuOpened => LoaderMenu?.activeSelf == true;
+
+        public override void ModSetup()
+        {
+            SetupFunction(Setup.OnNewGame, Mod_NewGame);
+            SetupFunction(Setup.OnSave, Mod_Save);
+
+            SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
+            SetupFunction(Setup.ModSettings, Mod_Settings);
+            SetupFunction(Setup.OnLoad, Mod_Load);
+            SetupFunction(Setup.PostLoad, Mod_SecondPassLoad);
+            SetupFunction(Setup.FixedUpdate, Mod_FixedUpdate);
+        }
 
         // setup mod settings
-        public override void ModSettingsLoaded() => _changeSetting();
+        void Mod_SettingsLoad() => ChangeSetting();
 
-        public override void ModSettings()
+        void Mod_Settings()
         {
             lang = Settings.AddDropDownList(this,
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
-                0, _changeSetting);
+                0, ChangeSetting);
 
             fastOpen = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
         }
-
-        void _changeSetting()
-            => EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
         //
 
 
-        public override void OnNewGame()
+        void Mod_NewGame()
         {
             SaveManager.RemoveFile();
             Logic.SetDefaultValues();
@@ -75,7 +81,7 @@ namespace Psycho
             Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
         }
 
-        public override void OnLoad()
+        void Mod_Load()
         {
             IsLoaded = false;
             LoaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
@@ -121,9 +127,7 @@ namespace Psycho
             StateHook.Inject(GameObject.Find("fridge_paper"), "Use", "Wait button", UpdateFridgePaperText, -1);
         }
 
-        void UpdateFridgePaperText() => GUIsubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
-
-        public override void SecondPassOnLoad()
+        void Mod_SecondPassLoad()
         {
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
@@ -178,7 +182,7 @@ namespace Psycho
             IsLoaded = true;
         }
 
-        public override void FixedUpdate()
+        void Mod_FixedUpdate()
         {
             if (Logic.GameFinished) return;
 
@@ -212,7 +216,7 @@ namespace Psycho
             }
         }
 
-        public override void OnSave()
+        void Mod_Save()
         {
             // restore original game textures for materials (avoid game crash)
             OnUnload();
@@ -411,6 +415,11 @@ namespace Psycho
             Transform btnconfirm = menu.Find("Btn_ConfirmQuit");
             StateHook.Inject(btnconfirm.Find("Button").gameObject, "Button", "State 3", OnUnload);
         }
+
+        void UpdateFridgePaperText() => GUIsubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
+
+        void ChangeSetting()
+            => EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
 
         void MilkUsed()
         {

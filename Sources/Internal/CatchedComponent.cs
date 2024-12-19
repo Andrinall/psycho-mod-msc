@@ -3,8 +3,6 @@
 using MSCLoader;
 using UnityEngine;
 
-using Psycho.Extensions;
-
 
 namespace Psycho.Internal
 {
