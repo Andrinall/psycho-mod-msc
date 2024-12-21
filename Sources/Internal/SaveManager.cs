@@ -30,7 +30,7 @@ namespace Psycho.Internal
                 Logic.SetPoints(BitConverter.ToSingle(value, 7));
                 Logic.BeerBottlesDrunked = BitConverter.ToInt32(value, 11);
                 Logic.lastDayMinigame = BitConverter.ToInt32(value, 15);
-                Logic.numberOfSpawnedPages = BitConverter.ToInt16(value, 19);
+                Logic.numberOfSpawnedPages = BitConverter.ToInt32(value, 19);
 
                 var rooster = GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>();
                 rooster.Applyed = BitConverter.ToBoolean(value, 23);
