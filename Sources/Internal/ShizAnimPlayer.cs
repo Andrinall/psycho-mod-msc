@@ -13,28 +13,32 @@ namespace Psycho.Internal
         GameObject _eyes = null;
         Animation m_oAnimation = null;
 
+        public static ShizAnimPlayer instance { get; private set; } = null;
 
         public override void Awaked()
         {
             _eyes = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/SleepEyes");
             m_oAnimation = _eyes.GetComponent<Animation>();
+            instance = this;
         }
 
-        public void PlayAnimation(
-            string animation,
-            bool disable = false,
-            float waitSeconds = 0f,
-            PlayMode mode = PlayMode.StopAll,
-            Action finish_callback = null
-        ) => StartCoroutine(PlayAnimWaited(animation, disable, waitSeconds, mode, finish_callback));
+        public override void Destroyed()
+        {
+            instance = null;
+        }
 
-        IEnumerator PlayAnimWaited(
-            string animation,
-            bool disable,
-            float waitSeconds,
-            PlayMode mode,
-            Action finish_callback
-        ) {
+        public static void PlayAnimation(string animation, bool disable = false, float waitSeconds = 0f, PlayMode mode = PlayMode.StopAll, Action finish_callback = null)
+        {
+            if (instance == null) return;
+
+            instance.PlayAnimation_internal(animation, disable, waitSeconds, mode, finish_callback);
+        }
+
+        void PlayAnimation_internal(string animation, bool disable, float waitSeconds, PlayMode mode, Action finish_callback)
+            => StartCoroutine(PlayAnimWaited(animation, disable, waitSeconds, mode, finish_callback));
+
+        IEnumerator PlayAnimWaited(string animation, bool disable, float waitSeconds, PlayMode mode, Action finish_callback)
+        {
             if (m_oAnimation == null)
             {
                 ModConsole.Error("ShizAnimPlayer.m_oAnimation == null");

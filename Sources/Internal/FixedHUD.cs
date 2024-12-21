@@ -21,6 +21,12 @@ namespace Psycho.Internal
 
         Vector3 _start = Vector3.zero;
 
+        public static FixedHUD instance { get; private set; } = null;
+
+        public override void Awaked()
+        {
+            instance = this;
+        }
 
         public override void Enabled()
         {
@@ -34,7 +40,11 @@ namespace Psycho.Internal
             }
         }
 
-        public override void Destroyed() => _struct.Clear();
+        public override void Destroyed()
+        {
+            instance = null;
+            _struct.Clear();
+        }
 
         /// <summary>
         /// Get element in "GUI/HUD/..."
@@ -62,24 +72,25 @@ namespace Psycho.Internal
         /// hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", hud.GetIndexByName("Money"));
         /// hud.Structurize();
         /// </example>
-        public void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
+        public static void AddElement(eHUDCloneType cloneFrom, string name, int index = -1)
         {
+            if (instance == null) return;
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
 
-            GameObject hudElement = Instantiate(transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
+            GameObject hudElement = Instantiate(instance.transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
             hudElement.name = name;
 
             Transform label = hudElement.transform.Find("HUDLabel");
             label.GetComponent<TextMesh>().text = name;
             label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
             Destroy(hudElement.GetComponentInChildren<PlayMakerFSM>());
-            hudElement.transform.SetParent(transform, worldPositionStays: false);
+            hudElement.transform.SetParent(instance.transform, worldPositionStays: false);
 
             if (index > 0)
-                _struct.Insert(index, hudElement);
+                instance._struct.Insert(index, hudElement);
             else
-                _struct.Add(hudElement);
+                instance._struct.Add(hudElement);
 
             Structurize();
         }
@@ -96,20 +107,28 @@ namespace Psycho.Internal
         /// hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", "Money");
         /// hud.Structurize();
         /// </example>
-        public void AddElement(eHUDCloneType cloneFrom, string name, string parent)
-            => AddElement(cloneFrom, name, GetIndexByName(parent));
+        public static void AddElement(eHUDCloneType cloneFrom, string name, string parent)
+        {
+            if (instance == null) return;
+            AddElement(cloneFrom, name, GetIndexByName(parent));
+        }
 
         /// <summary>
         /// Check if element exists by element name
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool IsElementExist(string name) => _struct.Exists(v =>
+        public static bool IsElementExist(string name)
         {
-            if (v != null) return v.name == name;
-            _struct.Remove(v);
-            return false;
-        });
+            if (instance == null) return false;
+
+            return instance._struct.Exists(v =>
+            {
+                if (v != null) return v.name == name;
+                instance._struct.Remove(v);
+                return false;
+            });
+        }
 
         /// <summary>
         /// Move element in local storage and change position<br/>
@@ -117,16 +136,17 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element</param>
         /// <param name="index">New index (<) maximum storage size</param>
-        public void MoveElement(string name, int index)
+        public static void MoveElement(string name, int index)
         {
-            if (index < 0 || index > _struct.Capacity) return;
+            if (instance == null) return;
+            if (index < 0 || index > instance._struct.Capacity) return;
             if (!IsElementExist(name)) return;
 
-            GameObject element = GetElementLocal(name);
+            GameObject element = instance.GetElementLocal(name);
             if (element == null) return;
 
-            _struct.Remove(element);
-            _struct.Insert(index, element);
+            instance._struct.Remove(element);
+            instance._struct.Insert(index, element);
             Structurize();
         }
 
@@ -134,12 +154,13 @@ namespace Psycho.Internal
         /// Remove element from storage & HUD
         /// </summary>
         /// <param name="name">Name of element to destroy</param>
-        public void RemoveElement(string name)
+        public static void RemoveElement(string name)
         {
+            if (instance == null) return;
             if (!IsElementExist(name)) return;
 
-            GameObject element = GetElementLocal(name);
-            _struct.Remove(element);
+            GameObject element = instance.GetElementLocal(name);
+            instance._struct.Remove(element);
             Destroy(element);
             Structurize();
         }
@@ -149,10 +170,11 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element</param>
         /// <param name="hide">State of visible</param>
-        public void HideElement(string name, bool hide)
+        public static void HideElement(string name, bool hide)
         {
+            if (instance == null) return;
             if (!IsElementExist(name)) return;
-            GetElementLocal(name).SetActive(!hide);
+            instance.GetElementLocal(name)?.SetActive(!hide);
         }
 
         /// <summary>
@@ -160,10 +182,11 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element</param>
         /// <param name="text">New element text</param>
-        public void SetElementText(string name, string text)
+        public static void SetElementText(string name, string text)
         {
+            if (instance == null) return;
             if (!IsElementExist(name)) return;
-            Transform label = GetElement($"{name}/HUDLabel").transform;
+            Transform label = instance.GetElement($"{name}/HUDLabel").transform;
             TextMesh mesh = label.GetComponent<TextMesh>();
             
             if (mesh == null) return;
@@ -176,10 +199,11 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element</param>
         /// <param name="color">New element color</param>
-        public void SetElementColor(string name, Color color)
+        public static void SetElementColor(string name, Color color)
         {
+            if (instance == null) return;
             if (!IsElementExist(name)) return;
-            GameObject element = GetElement($"{name}/Pivot/HUDBar");
+            GameObject element = instance.GetElement($"{name}/Pivot/HUDBar");
             
             if (element == null) return;
             element.GetComponent<MeshRenderer>().material.color = color;
@@ -191,10 +215,11 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element</param>
         /// <param name="scale">New pivot scale</param>
-        public void SetElementScale(string name, Vector3 scale)
+        public static void SetElementScale(string name, Vector3 scale)
         {
+            if (instance == null) return;
             if (!IsElementExist(name)) return;
-            GameObject pivot = GetElement($"{name}/Pivot");
+            GameObject pivot = instance.GetElement($"{name}/Pivot");
             if (pivot == null) return;
 
             pivot.transform.localScale = scale.Clamp(0f, 1f); ;
@@ -205,21 +230,23 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">Name of element in HUD</param>
         /// <returns></returns>
-        public int GetIndexByName(string name)
-            => _struct.FindIndex(v => v.name == name);
+        public static int GetIndexByName(string name)
+            => instance?._struct?.FindIndex(v => v.name == name) ?? -1;
 
         /// <summary>
         /// Structurize positions of GUI/HUD childs
         /// </summary>
-        public void Structurize()
+        public static void Structurize()
         {
+            if (instance == null) return;
             int inactive_items = 0;
 
-            foreach (GameObject child in _struct)
+            var temp = new List<GameObject>(instance._struct);
+            foreach (GameObject child in temp)
             {
                 if (child?.gameObject == null)
                 {
-                    _struct.Remove(child);
+                    instance._struct.Remove(child);
                     continue;
                 }
 
@@ -229,19 +256,19 @@ namespace Psycho.Internal
                     continue;
                 }
 
-                child.transform.localPosition = new Vector3(_start.x,
-                    _start.y - (_struct.IndexOf(child) - inactive_items) * 0.4f
+                child.transform.localPosition = new Vector3(instance._start.x,
+                    instance._start.y - (instance._struct.IndexOf(child) - inactive_items) * 0.4f
                 );
             }
 
-            if (_struct.Count == transform.childCount) return;
-            for (int i = 0; i < transform.childCount; i++)
+            if (instance._struct.Count == instance.transform.childCount) return;
+            for (int i = 0; i < instance.transform.childCount; i++)
             {
-                Transform child = transform.GetChild(i);
+                Transform child = instance.transform.GetChild(i);
                 if (child?.gameObject == null) continue;
-                if (_blacklisted.Contains(child.name)) continue;
-                if (_struct.FindIndex(v => v == child.gameObject) == -1)
-                    _struct.Add(child.gameObject);
+                if (instance._blacklisted.Contains(child.name)) continue;
+                if (instance._struct.FindIndex(v => v == child.gameObject) == -1)
+                    instance._struct.Add(child.gameObject);
             }
         }
     }

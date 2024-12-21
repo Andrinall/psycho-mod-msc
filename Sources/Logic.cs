@@ -39,10 +39,6 @@ namespace Psycho
         public static bool envelopeSpawned = false;
         public static DateTime milkUseTime = DateTime.MinValue;
 
-        internal static FixedHUD _hud = null;
-        internal static GameObject death = null;
-        internal static GameObject knockOut = null;
-        internal static ShizAnimPlayer shizAnimPlayer = null;
         internal static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
 
         internal static readonly Dictionary<string, float> config = new Dictionary<string, float>
@@ -81,20 +77,21 @@ namespace Psycho
             private set
             {
                 if (GameFinished) return;
+
                 _value = value;
                 psycho.Value = value;
-                if (_hud == null) return;
+
                 if (isDead) return;
 
                 if (value <= MIN_VALUE && !inHorror)
                     ChangeWorld(eWorldType.HORROR);
                 else if (value > MAX_VALUE)
                     KillHeartAttack();
-                else if (_hud?.IsElementExist("Psycho") == true)
+                else if (FixedHUD.IsElementExist("Psycho") == true)
                 {
                     float clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
-                    _hud.SetElementScale("Psycho", new Vector3(clamped, 1f));
-                    _hud.SetElementColor("Psycho", (clamped >= 0.85f && inHorror) ? Color.red : Color.white);
+                    FixedHUD.SetElementScale("Psycho", new Vector3(clamped, 1f));
+                    FixedHUD.SetElementColor("Psycho", (clamped >= 0.85f && inHorror) ? Color.red : Color.white);
                 }
             }
         }
@@ -105,9 +102,10 @@ namespace Psycho
             private set
             {
                 if (GameFinished) return;
+
                 float prev = _points;
                 _points = value;
-                if (_hud == null) return;
+
                 if (isDead) return;
 
                 Utils.SetPictureImage();
@@ -225,18 +223,19 @@ namespace Psycho
                 GameObject player = GameObject.Find("PLAYER");
                 player.GetComponent<CharacterMotor>().canControl = false;
 
-                StateHook.Inject(train.gameObject, "Player", "Die 2", () => KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
+                StateHook.Inject(train.gameObject, "Player", "Die 2",
+                    () => DeathSystem.KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
 
                 train.SendEvent("FINISHED"); // reset current state
                 while (train.ActiveStateName != "State 2")
                     train.SendEvent("FINISHED");
 
-                shizAnimPlayer.PlayAnimation("sleep_knockout", default, 15f, default, () =>
+                ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 15f, default, () =>
                 {
                     player.transform.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
                     player.transform.eulerAngles = new Vector3(0f, 233.4375f, 0f);
 
-                    shizAnimPlayer.PlayAnimation("sleep_off", true, 5f, default);
+                    ShizAnimPlayer.PlayAnimation("sleep_off", true, 5f, default);
                 });
             }
             catch (Exception e)
@@ -251,9 +250,7 @@ namespace Psycho
             try
             {
                 SoundManager.PlayDeathSound();
-                shizAnimPlayer.PlayAnimation("sleep_knockout", default, default, default,
-                    () => KillCustom("Fatigue", Locales.DEATH_PAPER[0, Globals.CurrentLang], PAPER_TEXT_FI_MAX)
-                );
+                DeathSystem.KillCustom("Fatigue", Locales.DEATH_PAPER[0, Globals.CurrentLang], PAPER_TEXT_FI_MAX);
             }
             catch (Exception e)
             {
@@ -266,8 +263,8 @@ namespace Psycho
             GameFinished = true;
             if (inHorror) ChangeWorld(eWorldType.MAIN);
 
-            _hud.RemoveElement("Psycho");
-            _hud.Structurize();
+            FixedHUD.RemoveElement("Psycho");
+            FixedHUD.Structurize();
 
             Utils.PrintDebug(eConsoleColors.GREEN, "Shiz game finished!");
         }
@@ -285,7 +282,7 @@ namespace Psycho
                 FsmFloat volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");
                 volume.Value = 0;
 
-                shizAnimPlayer?.PlayAnimation("sleep_knockout", default, 8f, default, () =>
+                ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 8f, default, () =>
                 {
                     //player.transform.position = new Vector3(-11.12955f, -0.2938208f, 13.61279f);
                     //player.transform.eulerAngles = new Vector3(0f, 158.85f, 0f);
@@ -302,7 +299,7 @@ namespace Psycho
                     GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
                     _changeFittanDriverHeadPivotRotation();
 
-                    shizAnimPlayer?.PlayAnimation("sleep_off", true, default, default, () => {
+                    ShizAnimPlayer.PlayAnimation("sleep_off", true, default, default, () => {
                         motor.canControl = true;
                         volume.Value = 1;
                     });
@@ -332,25 +329,6 @@ namespace Psycho
             ));
 
             _head.Find("eye_glasses_regular").gameObject.SetActive(!inHorror);
-        }
-
-        static void KillCustom(string palette, string en, string fi)
-        {
-            if (isDead) return;
-
-            try
-            {
-                Transform paper = death.transform.Find("GameOverScreen/Paper/" + palette);
-                paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
-                paper.Find("TextEN").GetComponent<TextMesh>().text = en;
-                death.SetActive(true);
-            }
-            catch (Exception e)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, $"Error in killCustom method\n{e.GetFullMessage()}");
-            }
-
-            isDead = true;
         }
     }
 }

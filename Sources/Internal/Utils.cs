@@ -118,13 +118,6 @@ namespace Psycho.Internal
 
         internal static void FreeResources()
         {
-            Logic.death = null;
-            Logic.knockOut = null;
-            Logic.shizAnimPlayer = null;
-            Logic._hud = null;
-
-            UnityEngine.Object.Destroy(Logic._hud);
-
             foreach (var field in typeof(Globals).GetFields())
             {
                 string fieldName = field.Name;
@@ -192,7 +185,7 @@ namespace Psycho.Internal
             if (animPlayed) return;
             animPlayed = true;
 
-            Logic.shizAnimPlayer.PlayAnimation("sleep_knockout", default, 4f, default, () => callback?.Invoke());
+            ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 4f, default, () => callback?.Invoke());
         }
 
         internal static Vector3[] SetCameraLookAt(Vector3 targetPoint)

@@ -12,14 +12,6 @@ namespace Psycho.Commands
 
 
         public override void Run(string[] args)
-        {
-            if (Logic._hud == null)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "HUD not initialized");
-                return;
-            }
-
-            Logic._hud.Structurize();
-        }
+            => FixedHUD.Structurize();
     }
 }

@@ -135,18 +135,17 @@ namespace Psycho
 #if DEBUG
             _registerDebugCommands();
 #endif
-
-            Logic._hud = GameObject.Find("GUI/HUD").AddComponent<FixedHUD>();
-            Logic._hud.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
-            Logic._hud.Structurize();
+            AddComponent<FixedHUD>("GUI/HUD");
+            FixedHUD.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
+            FixedHUD.Structurize();
             Logic.SetPoints(Logic.Points);
 
             // add component for make hangover in horror world
             Transform camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
             camera.gameObject.AddComponent<Hangover>();
             
-            Logic.shizAnimPlayer = AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
-            Logic.death = GameObject.Find("Systems").transform.Find("Death").gameObject; // cache ingame player death system
+            AddComponent<DeathSystem>("Systems");
+            AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
 
             _addHandlers();
             _applyHorrorIfNeeded();
