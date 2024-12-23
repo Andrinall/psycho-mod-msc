@@ -30,10 +30,10 @@ namespace Psycho.Features
         TextMesh pageText;
 
 
-        public override void Awaked()
+        protected override void Awaked()
             => EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             Transform text = transform.Find("Text");
             pageText = text?.GetComponent<TextMesh>();
@@ -44,7 +44,7 @@ namespace Psycho.Features
             pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
 
-        public override void Disabled() => Destroy(gameObject);
+        protected override void Disabled() => Destroy(gameObject);
 
         public void UpdatePageText()
             => pageText.text = Locales.PAGES[page.index - 1, page.isTruePage ? 0 : 1, Globals.CurrentLang];

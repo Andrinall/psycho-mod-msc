@@ -8,7 +8,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal sealed class StateHook
+    public sealed class StateHook
     {
         public static void Inject(GameObject gameObject, string stateName, Action hook)
         {
@@ -89,17 +89,7 @@ namespace Psycho.Internal
             }
         }
 
-        static void InsertItemWithIndex(int index, ref List<FsmStateAction> list, ref FsmHookActionWithArg item)
-        {
-            if (index > list.Count - 1 || index == -1)
-                list.Add(item);
-            else if (index < 0)
-                list.Insert(0, item);
-            else
-                list.Insert(index, item);
-        }
-
-        static void InsertItemWithIndex(int index, ref List<FsmStateAction> list, ref FsmHookAction item)
+        static void InsertItemWithIndex<T>(int index, ref List<FsmStateAction> list, ref T item) where T : FsmStateAction
         {
             if (index > list.Count - 1 || index == -1)
                 list.Add(item);

@@ -13,7 +13,7 @@ namespace Psycho.Handlers
         Transform _suitcase = null;
 
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (_suitcase == null)
             {

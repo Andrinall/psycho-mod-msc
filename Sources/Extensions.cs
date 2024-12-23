@@ -24,14 +24,14 @@ namespace Psycho
             }
             catch (Exception e)
             {
-                ModConsole.Error($"[1] Failed to clears actions;\n{e.GetFullMessage()}");
+                ModConsole.Error($"[1] Clearing actions failed (Psycho.Extensions);\n{e.GetFullMessage()}");
             }
         }
 
-        public static bool IsPrefab(this Transform tempTrans)
+        public static bool IsPrefab(this Transform obj)
         {
-            if (tempTrans.gameObject.activeInHierarchy && !tempTrans.gameObject.activeSelf) return false;
-            return tempTrans.root == tempTrans;
+            if (obj.gameObject.activeInHierarchy && !obj.gameObject.activeSelf) return false;
+            return obj.root == obj;
         }
 
         public static void IterateAllChilds(this Transform obj, Action<Transform> handler)
@@ -56,25 +56,25 @@ namespace Psycho
             }
         }
 
-        public static bool MoveTowards(this Transform transform, Vector3 targetPoint, float targetDistance, float maxSpeed)
+        public static bool MoveTowards(this Transform obj, Vector3 targetPoint, float targetDistance, float maxSpeed)
         {
-            if (_checkDistance(transform.position, targetPoint, targetDistance)) return true;
-            transform.position = Vector3.MoveTowards(transform.position, targetPoint, maxSpeed * Time.deltaTime);
+            if (_checkDistance(obj.position, targetPoint, targetDistance)) return true;
+            obj.position = Vector3.MoveTowards(obj.position, targetPoint, maxSpeed * Time.deltaTime);
             return false;
         }
 
-        public static bool MoveTowards(this Transform transform, Transform targetPoint, float targetDistance, float maxSpeed)
+        public static bool MoveTowards(this Transform obj, Transform targetPoint, float targetDistance, float maxSpeed)
         {
-            if (_checkDistance(transform.position, targetPoint.position, targetDistance)) return true;
-            transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, maxSpeed * Time.deltaTime);
+            if (_checkDistance(obj.position, targetPoint.position, targetDistance)) return true;
+            obj.position = Vector3.MoveTowards(obj.position, targetPoint.position, maxSpeed * Time.deltaTime);
             return false;
         }
 
-        public static string GetPath(this Transform current)
+        public static string GetPath(this Transform obj)
         {
-            if (current.parent == null)
-                return current.name;
-            return current.parent.GetPath() + "/" + current.name;
+            if (obj.parent == null)
+                return obj.name;
+            return obj.parent.GetPath() + "/" + obj.name;
         }
 
 
@@ -131,29 +131,29 @@ namespace Psycho
             return default(T);
         }
         
-        public static Vector3 Clamp(this Vector3 self, float min, float max)
+        public static Vector3 Clamp(this Vector3 obj, float min, float max)
             => new Vector3(
-                Mathf.Clamp(self.x, min, max),
-                Mathf.Clamp(self.y, min, max),
-                Mathf.Clamp(self.z, min, max)
+                Mathf.Clamp(obj.x, min, max),
+                Mathf.Clamp(obj.y, min, max),
+                Mathf.Clamp(obj.z, min, max)
             );
 
-        public static Vector3 Clamp(this Vector3 self, Vector3 min, Vector3 max)
+        public static Vector3 Clamp(this Vector3 obj, Vector3 min, Vector3 max)
             => new Vector3(
-                Mathf.Clamp(self.x, min.x, max.x),
-                Mathf.Clamp(self.y, min.y, max.y),
-                Mathf.Clamp(self.z, min.z, max.z)
+                Mathf.Clamp(obj.x, min.x, max.x),
+                Mathf.Clamp(obj.y, min.y, max.y),
+                Mathf.Clamp(obj.z, min.z, max.z)
             );
 
-        public static void CopyBytes(this Vector3 self, ref byte[] array, ref int offset)
+        public static void CopyBytes(this Vector3 obj, ref byte[] array, ref int offset)
         {
-            BitConverter.GetBytes(self.x).CopyTo(array, offset);
-            BitConverter.GetBytes(self.y).CopyTo(array, offset + 4);
-            BitConverter.GetBytes(self.z).CopyTo(array, offset + 8);
+            BitConverter.GetBytes(obj.x).CopyTo(array, offset);
+            BitConverter.GetBytes(obj.y).CopyTo(array, offset + 4);
+            BitConverter.GetBytes(obj.z).CopyTo(array, offset + 8);
             offset += 12;
         }
 
-        public static Vector3 GetFromBytes(this Vector3 self, byte[] array, ref int offset)
+        public static Vector3 GetFromBytes(this Vector3 obj, byte[] array, ref int offset)
         {
             float x = BitConverter.ToSingle(array, offset);
             float y = BitConverter.ToSingle(array, offset + 4);
@@ -162,13 +162,13 @@ namespace Psycho
             return new Vector3(x, y, z);
         }
 
-        public static void CopyBytes(this string self, ref byte[] array, ref int offset)
+        public static void CopyBytes(this string obj, ref byte[] array, ref int offset)
         {
-            int len = self.Length;
+            int len = obj.Length;
             BitConverter.GetBytes(len).CopyTo(array, offset);
             offset += 4;
             
-            char[] chars = self.ToCharArray();
+            char[] chars = obj.ToCharArray();
             foreach (char itc in chars)
             {
                 BitConverter.GetBytes(itc).CopyTo(array, offset);
@@ -176,7 +176,7 @@ namespace Psycho
             }
         }
 
-        public static string GetFromBytes(this string self, byte[] array, ref int offset)
+        public static string GetFromBytes(this string obj, byte[] array, ref int offset)
         {
             int len = BitConverter.ToInt32(array, offset);
             char[] chars = new char[len];

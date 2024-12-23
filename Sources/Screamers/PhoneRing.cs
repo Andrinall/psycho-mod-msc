@@ -27,7 +27,7 @@ namespace Psycho.Screamers
         short neededFrames = 400;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
             Ring = transform.Find("Ring").gameObject;
@@ -46,14 +46,14 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             Topic.Value = "SCREAMCALL";
             PhoneLogic.SetActive(false);
             Ring.SetActive(true);
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (Ring == null) return;
 
@@ -64,7 +64,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
             => WorldManager.ClonedPhantomTick(200, _phantomHideCallback);
 
 

@@ -48,13 +48,13 @@ namespace Psycho.Screamers
         };
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             SetupSleepTriggerHooks();
             EventsManager.OnScreamerFinished.AddListener(ScreamerFinished);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!_soundApplyed) return;
             if (m_bStopped) return;

@@ -14,14 +14,16 @@ namespace Psycho.Internal
     internal static class SoundManager
     {
         public static AudioSource DeathSound;
-        public static List<AudioSource> ScreamPoints = new List<AudioSource>();
+        public static List<AudioSource> ScreamPoints { get; private set; } = new List<AudioSource>();
 
         static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
 
         public static void PlayHeartbeat(bool state)
         {
             Globals.Heartbeat_source.enabled = state;
-            if (state) Globals.Heartbeat_source.Play();
+            
+            if (state)
+                Globals.Heartbeat_source.Play();
         }
 
         public static void PlayDeathSound()

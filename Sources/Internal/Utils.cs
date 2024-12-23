@@ -185,7 +185,7 @@ namespace Psycho.Internal
             if (animPlayed) return;
             animPlayed = true;
 
-            ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 4f, default, () => callback?.Invoke());
+            ShizAnimPlayer.PlayOriginalAnimation("sleep_knockout", 4f, default, () => callback?.Invoke());
         }
 
         internal static Vector3[] SetCameraLookAt(Vector3 targetPoint)

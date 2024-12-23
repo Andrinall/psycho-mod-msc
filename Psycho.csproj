@@ -102,9 +102,11 @@
     <Compile Include="Sources\Features\NotebookMain.cs" />
     <Compile Include="Sources\Features\NotebookPage.cs" />
     <Compile Include="Sources\Features\Sketchbook.cs" />
+    <Compile Include="Sources\Handlers\FirewoodJobHandler.cs" />
     <Compile Include="Sources\Handlers\ItemsGravityEnabler.cs" />
     <Compile Include="Sources\Features\PentagramEvents.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
+    <Compile Include="Sources\Handlers\SuskiHelpHandler.cs" />
     <Compile Include="Sources\Internal\DeathSystem.cs" />
     <Compile Include="Sources\Internal\EventsManager.cs" />
     <Compile Include="Sources\Internal\FsmHookAction.cs" />

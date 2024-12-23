@@ -20,7 +20,7 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
             ParticleDrink = transform.Find("ParticleDrink").gameObject;
@@ -36,20 +36,20 @@ namespace Psycho.Screamers
         }
 
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (ParticleDrink == null) return;
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

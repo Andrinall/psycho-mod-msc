@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using MSCLoader;
+
+using UnityEngine;
 using UnityEngine.Events;
 
 
@@ -8,16 +10,15 @@ namespace Psycho.Internal
 
     public static class EventsManager
     {
-        public static UnityEvent OnLanguageChanged = new UnityEvent();
+        public static UnityEvent OnLanguageChanged { get; private set; } = new UnityEvent();
 
-        public static UnityEvent<ScreamTimeType, int> OnScreamerTriggered = new ScreamerEvent();
-        public static UnityEvent OnScreamerFinished = new UnityEvent();
+        public static UnityEvent<ScreamTimeType, int> OnScreamerTriggered { get; private set; } = new ScreamerEvent();
+        public static UnityEvent OnScreamerFinished { get; private set; } = new UnityEvent();
 
 
         public static void ChangeLanguage(int lang)
         {
             Globals.CurrentLang = lang;
-            Psycho.lang.Instance.Name = lang == 0 ? "Language select" : "Выбор языка";
 
             if (Application.loadedLevelName != "GAME") return;
             
@@ -25,7 +26,7 @@ namespace Psycho.Internal
             if (postcardText != null)
                 postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
 
-            OnLanguageChanged.Invoke();
+            OnLanguageChanged?.Invoke();
         }
 
         public static void TriggerNightScreamer(ScreamTimeType type, int variation)
@@ -33,7 +34,14 @@ namespace Psycho.Internal
             if (!Psycho.IsLoaded) return;
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariant(type, variation)}]");
-            OnScreamerTriggered.Invoke(type, variation);
+            try
+            {
+                OnScreamerTriggered?.Invoke(type, variation);
+            }
+            catch (System.Exception ex)
+            {
+                ModConsole.Error($"{ex.GetFullMessage()}\n{ex.StackTrace}");
+            }
         }
 
         public static void FinishScreamer(ScreamTimeType type, int variation)
@@ -41,15 +49,31 @@ namespace Psycho.Internal
             if (!Psycho.IsLoaded) return;
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariant(type, variation)}]");
-            OnScreamerFinished.Invoke();
+            OnScreamerFinished?.Invoke();
         }
 
         
+        public static void UnSubscribeAll()
+        {
+            OnLanguageChanged.RemoveAllListeners();
+            OnScreamerTriggered.RemoveAllListeners();
+            OnScreamerFinished.RemoveAllListeners();
+        }
 
         
         static string GetScreamerVariant(ScreamTimeType type, int variation)
         {
-            return (type == ScreamTimeType.SOUNDS ? ((ScreamSoundType)variation).ToString() : (type == ScreamTimeType.FEAR ? ((ScreamFearType)variation).ToString() : ((ScreamParalysisType)variation).ToString()));
+            switch (type)
+            {
+                case ScreamTimeType.SOUNDS:
+                    return ((ScreamSoundType)variation).ToString();
+                case ScreamTimeType.FEAR:
+                    return ((ScreamFearType)variation).ToString();
+                case ScreamTimeType.PARALYSIS:
+                    return ((ScreamParalysisType)variation).ToString();
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

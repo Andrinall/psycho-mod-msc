@@ -19,7 +19,7 @@ namespace Psycho.Handlers
         string m_sUpName;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             _thisRb = GetComponent<Rigidbody>();
             _death = GameObject.Find("Systems/Death");

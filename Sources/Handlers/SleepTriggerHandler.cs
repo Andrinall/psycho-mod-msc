@@ -11,7 +11,7 @@ namespace Psycho.Handlers
     {
         FsmFloat m_fPlayerFatigue;
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 

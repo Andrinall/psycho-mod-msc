@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal static class TexturesManager
+    public static class TexturesManager
     {
         internal static Dictionary<Material, Texture> Cache = new Dictionary<Material, Texture>();
         static Material[] GlobalMaterials;
 
         const string TexProperty = "_MainTex";
 
-        internal static void ReplaceTextures(List<Texture> container)
+        public static void ReplaceTextures(List<Texture> container)
         {            
             GlobalMaterials = Resources.FindObjectsOfTypeAll<Material>();
 
@@ -27,7 +27,7 @@ namespace Psycho.Internal
             Utils.PrintDebug($"ReplaceTextures ends [replaced {replaced}][cache len: {Cache.Count}]");
         }
 
-        internal static void RestoreDefaults(List<Texture> container)
+        public static void RestoreDefaults(List<Texture> container)
         {
             if (Cache.Count == 0) return;
 

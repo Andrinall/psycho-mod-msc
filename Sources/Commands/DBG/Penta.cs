@@ -38,7 +38,7 @@ namespace Psycho.Commands
                 case "event":
                     if (args.Length == 1) return;
                     if (string.IsNullOrEmpty(args[1])) return;
-                    penta.gameObject.GetComponent<PentagramEvents>().Activate(args[1]);
+                    PentagramEvents.TriggerEvent(args[1], true);
                     break;
 
                 case "item":

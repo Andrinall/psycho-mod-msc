@@ -6,19 +6,19 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal class DeathSystem : CatchedComponent
+    public class DeathSystem : CatchedComponent
     {
-        public static DeathSystem instance { get; private set; } = null;
+        static DeathSystem instance = null;
         Transform death;
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             instance = this;
             death = transform.Find("Death");
             Utils.PrintDebug($"DeathSystem init ; {death}");
         }
 
-        public override void Destroyed()
+        protected override void Destroyed()
         {
             instance = null;
         }

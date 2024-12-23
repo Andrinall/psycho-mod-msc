@@ -5,7 +5,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal abstract class BookWithGUI : CatchedComponent
+    public class BookWithGUI : CatchedComponent
     {
         protected int CurrentPage { get; set; } = 0;
         protected virtual int MAX_PAGE { get; set; } = 0;
@@ -33,7 +33,7 @@ namespace Psycho.Internal
         Ray Ray => Camera.main.ScreenPointToRay(Input.mousePosition);
         int Layer => LayerMask.GetMask("Parts", "GUI");
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             CurrentPage = 0;
 
@@ -62,7 +62,7 @@ namespace Psycho.Internal
             AfterAwake();
         }
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             if (Camera.main == null) return;
             if (GUI == null) return;
@@ -142,28 +142,28 @@ namespace Psycho.Internal
         /// <summary>
         /// <b>(Callback for override)</b> Called after GUI instantiate & all fields filled with data
         /// </summary>
-        public virtual void AfterAwake() { }
+        protected virtual void AfterAwake() { }
 
         /// <summary>
         /// <b>(Callback for override)</b> Called after switch CurrentPage and PlayPageTurn();
         /// </summary>
         /// <param name="next">Go to next page? (false - previous)</param>
-        public virtual void PageSelected(bool next) { }
+        protected virtual void PageSelected(bool next) { }
 
         /// <summary>
         /// <b>(Callback for override)</b> Called after apply activate gui state (true)
         /// </summary>
-        public virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Opened");
+        protected virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Opened");
 
         /// <summary>
         /// <b>(Callback for override)</b> Called after apply activate gui state (false)
         /// </summary>
-        public virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Closed");
+        protected virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Closed");
 
         /// <summary>
         /// <b>(Callback for override)</b> Called when object (where have this component) used by mouseOver & click `Use` button
         /// </summary>
-        public virtual void ObjectUsed()
+        protected virtual void ObjectUsed()
         {
             PlayPageTurn();
             ActivateGUI(true);

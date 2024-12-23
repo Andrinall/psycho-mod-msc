@@ -16,7 +16,7 @@ namespace Psycho.Screamers
         float Distance = 3.5f;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
 
@@ -26,14 +26,14 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (audio == null) return;
 
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.GRANNY);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (m_bBlowed) return;
             if (Vector3.Distance(transform.position, _player.position) > Distance) return;

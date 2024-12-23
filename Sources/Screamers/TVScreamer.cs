@@ -33,7 +33,7 @@ namespace Psycho.Screamers
         int neededFrames = 200;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
 
@@ -69,7 +69,7 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = false;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
@@ -78,7 +78,7 @@ namespace Psycho.Screamers
             fullEnable = true;
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (SwitchObj == null) return;
 
@@ -95,7 +95,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!ScreamEnabled) return;
             if (elapsedFrames <= neededFrames)

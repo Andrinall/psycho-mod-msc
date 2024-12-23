@@ -36,7 +36,7 @@ namespace Psycho.Commands
                     default:
                         throw new System.NotImplementedException("Argument doesn't match in command implementation");
                 }
-                Globals.Notebook?.TryCreateFinalPage();
+                Globals.Notebook?.CreateFinalPage();
             }
             else if (args[0] == "clear")
                 Globals.Notebook?.ClearPages();

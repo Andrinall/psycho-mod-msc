@@ -21,7 +21,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.7-beta";
+        public override string Version => "0.9.8-beta";
         public override string Description => "Adds a schizophrenia for your game character";
 
         internal static SettingsDropDownList lang;
@@ -129,12 +129,12 @@ namespace Psycho
 
         void Mod_SecondPassLoad()
         {
-            // register crutch command
-            ConsoleCommand.Add(new FixBrokenHUD());
-
 #if DEBUG
             _registerDebugCommands();
 #endif
+            // register crutch command
+            ConsoleCommand.Add(new FixBrokenHUD());
+
             AddComponent<FixedHUD>("GUI/HUD");
             FixedHUD.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
             FixedHUD.Structurize();
@@ -152,7 +152,7 @@ namespace Psycho
             _setupActions(camera);
 
             WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
-            WorldManager.InitializeCottageMinigame();
+            Minigame.Initialize();
 
             // add inactive audio source for play in screamer
             GameObject _grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
@@ -230,6 +230,8 @@ namespace Psycho
             Utils.ChangeSmokingModel();
             SoundManager.ChangeFliesSounds();
             TexturesManager.Cache.Clear();
+
+            EventsManager.UnSubscribeAll();
         }
 
         void _applyHorrorIfNeeded()
@@ -271,6 +273,8 @@ namespace Psycho
             AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
             AddComponent<JunkYardJobHandler>("REPAIRSHOP/JunkYardJob/PayMoney");
             AddComponent<SuitcaseHandler>("KILJUGUY/SuitcaseSpawns");
+            AddComponent<FirewoodJobHandler>("JOBS/HouseWood1");
+            AddComponent<SuskiHelpHandler>("JOBS/Suski");
 
             AddComponent<FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter

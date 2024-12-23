@@ -16,13 +16,13 @@ namespace Psycho.Screamers
 
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             Source = GetComponent<AudioSource>();
             Player = GameObject.Find("PLAYER").transform;
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!Source.isPlaying) return;            
             if (Distance > TargetDistance) return;

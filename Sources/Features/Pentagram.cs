@@ -53,7 +53,7 @@ namespace Psycho.Features
         public bool LightsEnabled { get; private set; } = false;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             Player = GameObject.Find("PLAYER").transform;
             Candles = transform.Find("Candles");
@@ -81,7 +81,7 @@ namespace Psycho.Features
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!LightsEnabled && SUN_hours.Value >= 20 || SUN_hours.Value < 5)
                 SetCandlesFireActive(true);
@@ -123,7 +123,7 @@ namespace Psycho.Features
             string[] _innerEvents = InnerEvents[_mainEvent];
             string _innerEvent = _innerEvents[Random.Range(0, _innerEvents.Length)];
             
-            GetComponent<PentagramEvents>().Activate(_innerEvent);
+            PentagramEvents.TriggerEvent(_innerEvent);
         }
 
         public void MakeItemsUnPickable()

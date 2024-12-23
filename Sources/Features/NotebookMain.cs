@@ -10,14 +10,12 @@ using Psycho.Handlers;
 
 namespace Psycho.Features
 {
-    internal class NotebookMain : BookWithGUI
+    internal sealed class NotebookMain : BookWithGUI
     {
         public static List<NotebookPage> Pages = new List<NotebookPage>()
         {
             new NotebookPage { index = 14, isDefaultPage = true }
         };
-
-        int prevMax = 0;
 
         protected override GameObject GUIPrefab => Globals.NotebookGUI_prefab;
 
@@ -29,17 +27,19 @@ namespace Psycho.Features
 
         Transform ItemInHand => PlayerHand.childCount > 0 ? PlayerHand.GetChild(0) : null;
 
-        public override void Destroyed() => MAX_PAGE = -1;
+        int prevMax = 0;
 
-        public override void Enabled() => MAX_PAGE = prevMax;
+        protected override void Destroyed() => MAX_PAGE = -1;
 
-        public override void Disabled()
+        protected override void Enabled() => MAX_PAGE = prevMax;
+
+        protected override void Disabled()
         {
             prevMax = MAX_PAGE;
             MAX_PAGE = -1;
         }
 
-        public override void AfterAwake()
+        protected override void AfterAwake()
         {
             PlayerHand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/ItemPivot").transform;
             HandFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
@@ -53,7 +53,7 @@ namespace Psycho.Features
             EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
         }
 
-        public override void ObjectUsed()
+        protected override void ObjectUsed()
         {
             if (PlayerHand.childCount == 0)
             {
@@ -69,14 +69,14 @@ namespace Psycho.Features
                 return;
             }
         }
-       
-        public override void PageSelected(bool next)
+
+        protected override void PageSelected(bool next)
         {
             UpdatePageText();
             Utils.PrintDebug(eConsoleColors.YELLOW, $"CurrentPage: {CurrentPage}; MAX_PAGE :{MAX_PAGE}");
         }
 
-        public override void GUIOpened()
+        protected override void GUIOpened()
         {
             UpdatePageText();
             base.GUIOpened();
@@ -85,6 +85,7 @@ namespace Psycho.Features
         public static bool TryAddPage(NotebookPage page)
         {
             if (IsPageExists(page.index)) return false;
+
             Pages.Add(page);
             return true;
         }
@@ -131,7 +132,7 @@ namespace Psycho.Features
             Destroy(pageObj);
 
             Pages.Add(page);
-            TryCreateFinalPage();
+            CreateFinalPage();
             SortPages();
 
             PlayPageTurn();
@@ -140,7 +141,7 @@ namespace Psycho.Features
         }
 
 
-        public int CalcTruePages() => Pages.Count(v => !v.isFinalPage && v.isTruePage);
+        public int GetTruePagesCount() => Pages.Count(v => !v.isFinalPage && v.isTruePage);
 
         public void ClearPages()
         {
@@ -159,12 +160,12 @@ namespace Psycho.Features
                 SpawnPostcard();
         }
 
-        public void TryCreateFinalPage()
+        public void CreateFinalPage()
         {
             if (GetMaxPageIndex() == 15) return;
             if (Pages.Count < 14) return;
 
-            int truePages = CalcTruePages();
+            int truePages = GetTruePagesCount();
             bool isTrueStory = (truePages > 7);
 
             TryAddPage(new NotebookPage

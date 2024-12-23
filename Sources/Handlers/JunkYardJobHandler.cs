@@ -10,7 +10,7 @@ namespace Psycho.Handlers
         int m_iCarsNumber = 0;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             GameObject Fleetari = GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari");
             for (int i = 1; i < 5; i++)

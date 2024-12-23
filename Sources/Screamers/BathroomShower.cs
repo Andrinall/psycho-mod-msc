@@ -22,7 +22,7 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
             TapDrink = transform.Find("TapDrink").gameObject;
@@ -41,16 +41,16 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Enabled() => SwitchValve(true);
+        protected override void Enabled() => SwitchValve(true);
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (TapDrink == null) return;
 
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);

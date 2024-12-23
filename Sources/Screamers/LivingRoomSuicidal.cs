@@ -15,7 +15,7 @@ namespace Psycho.Screamers
         TimeSpan span;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
             suicidal = transform.Find("SuicidalCustom(Clone)").gameObject;
@@ -28,8 +28,8 @@ namespace Psycho.Screamers
                 "KILJUGUY/HikerPivot/JokkeHiker2/RagDoll/pelvis/spine_mid/shoulders(xxxxx)/head/Speak"
             )?.GetComponent<AudioSource>();
 
-            if (!origSource)
-                return;
+            if (origSource == null)
+                throw new NullReferenceException("Original JokkeHiker2 AudioSource not exists!");
 
             AudioSource newSource = suicidal.AddComponent<AudioSource>();
             newSource.clip = AudioClip.Instantiate(origSource.clip);
@@ -50,14 +50,14 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             enableTime = DateTime.Now;
             suicidal.SetActive(true);
             lamp.SetActive(false);
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (suicidal == null) return;
 
@@ -66,7 +66,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.SUICIDAL);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             span = (DateTime.Now - enableTime);
             if (span.Minutes == 2 && span.Seconds > 30) // 2 minutes & 30 seconds

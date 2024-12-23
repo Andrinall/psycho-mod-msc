@@ -27,7 +27,7 @@ namespace Psycho.Screamers
         bool animPlayed = false;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             enabled = false;
 
@@ -55,7 +55,7 @@ namespace Psycho.Screamers
             EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             _fsm.enabled = false;
             Head.position = StartPoint;
@@ -64,7 +64,7 @@ namespace Psycho.Screamers
             Head.gameObject.SetActive(false);
         }
 
-        public override void Disabled()
+        protected override void Disabled()
         {
             if (Char == null) return;
 
@@ -74,7 +74,7 @@ namespace Psycho.Screamers
             EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             if (elapsedFrames < neededFrames)
             {

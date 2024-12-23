@@ -21,7 +21,7 @@ namespace Psycho.Features
         FsmFloat SUN_hours;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
             SUN_hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
@@ -30,7 +30,7 @@ namespace Psycho.Features
                 Flowers.Add(transform.GetChild(i).GetChild(1).gameObject);
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             int day = GlobalDay.Value % 7;
 

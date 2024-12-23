@@ -6,7 +6,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal sealed class FsmHookActionWithArg : FsmStateAction
+    public sealed class FsmHookActionWithArg : FsmStateAction
     {
         public Action<PlayMakerFSM> hook;
         public PlayMakerFSM component;
@@ -36,7 +36,7 @@ $@"Error in StateHook action delegate!
         }
     }
 
-    internal sealed class FsmHookAction : FsmStateAction
+    public sealed class FsmHookAction : FsmStateAction
     {
         public Action hook;
         public PlayMakerFSM component;

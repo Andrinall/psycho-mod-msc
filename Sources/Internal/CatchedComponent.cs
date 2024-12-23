@@ -16,12 +16,12 @@ namespace Psycho.Internal
         void FixedUpdate() => _callVirtual(OnFixedUpdate);
 
 
-        public virtual void Awaked() {}
-        public virtual void Enabled() {}
-        public virtual void Disabled() {}
-        public virtual void Destroyed() {}
-        public virtual void OnUpdate() {}
-        public virtual void OnFixedUpdate() {}
+        protected virtual void Awaked() {}
+        protected virtual void Enabled() {}
+        protected virtual void Disabled() {}
+        protected virtual void Destroyed() {}
+        protected virtual void OnUpdate() {}
+        protected virtual void OnFixedUpdate() {}
 
 
         void _callVirtual(Action method)

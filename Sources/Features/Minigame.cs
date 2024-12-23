@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 
 using MSCLoader;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace Psycho.Features
         const int MAX_PAGES = 13;
         const int MAX_CARD = 14;
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             TaroUsable = transform.Find("TaroUsable/Handle").gameObject;
             HousekeeperCard = transform.Find("Cards/HousekeeperCard").gameObject;
@@ -53,7 +54,7 @@ namespace Psycho.Features
             }
         }
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             if (!CheckDayChangedAndUpdateHousekeeperCard()) return;
             if (PlayerCard?.activeSelf == true) return;
@@ -168,5 +169,18 @@ namespace Psycho.Features
 
         void PlayHousekeeperLaughing()
             => AudioSource.PlayClipAtPoint(Globals.HousekeeperLaughs_clip, transform.position);
+
+        public static void Initialize()
+        {
+            GameObject bottlehide = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/bottlehide");
+            Vector3 bottlehidePos = bottlehide.transform.position;
+            Vector3 bottlehideRot = bottlehide.transform.eulerAngles;
+            Destroy(bottlehide);
+
+            if (NotebookMain.Pages.Any(v => v.isFinalPage)) return;
+            GameObject minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
+            minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
+            minigame.AddComponent<Minigame>();
+        }
     }
 }

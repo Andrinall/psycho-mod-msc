@@ -36,7 +36,12 @@ namespace Psycho.Internal
                 rooster.Applyed = BitConverter.ToBoolean(value, 23);
                 rooster.LastDayApplyed = BitConverter.ToInt32(value, 24);
 
+                // spawn pills in needed
+                if (Logic.inHorror && !Logic.envelopeSpawned)
+                    Globals.pills = PillsItem.ReadData(ref value, 28);
+
                 Utils.PrintDebug(eConsoleColors.YELLOW, $"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
+                
                 if (Logic.isDead)
                 {
                     Logic.isDead = false;
@@ -46,16 +51,12 @@ namespace Psycho.Internal
                     Logic.ResetValue();
                     Logic.SetPoints(0);
                 }
+                else
+                {
+                    ItemsPool.Load(value);
+                    LoadNotebookPages(value);
+                }
 
-                if (!Logic.inHorror || Logic.envelopeSpawned)
-                    goto SkipLoadPills;
-
-                // spawn pills in needed
-                Globals.pills = PillsItem.ReadData(ref value, 28);
-
-            SkipLoadPills:
-                ItemsPool.Load(value);
-                if (!Logic.isDead) LoadNotebookPages(value);
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
             }
             catch (Exception e)

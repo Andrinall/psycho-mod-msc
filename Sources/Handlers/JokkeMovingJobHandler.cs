@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 using Psycho.Internal;
 
@@ -10,14 +12,26 @@ namespace Psycho.Handlers
         GameObject _payMoney;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
-            _payMoney = transform.Find("HitcherPivotNew/JokkeHiker1")?.Find("Pivot/Char")
-                ?.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right")
-                ?.Find("PayMoney")?.gameObject;
+            Transform _hitcherPivotNew = transform.Find("HitcherPivotNew");            
+            if (_hitcherPivotNew.childCount == 0)
+            {
+                _payMoney = transform.Find("JokkeHiker1/Pivot/Char")
+                    ?.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right")
+                    ?.Find("PayMoney")?.gameObject;
+            }
+            else
+            {
+                _payMoney = _hitcherPivotNew.Find("JokkeHiker1/Pivot/Char")
+                    ?.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right")
+                    ?.Find("PayMoney")?.gameObject;
+            }
 
-            if (!_payMoney) return;
-            StateHook.Inject(_payMoney, "Use", "Anim", JobCompleted);
+            if (_payMoney == null)
+                throw new NullReferenceException("PayMoney object not exists!");
+
+            StateHook.Inject(_payMoney.gameObject, "Use", "Anim", JobCompleted);
         }
 
         void JobCompleted() => Logic.PlayerCompleteJob("YOKKE_RELOCATION");

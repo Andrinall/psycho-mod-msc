@@ -12,7 +12,7 @@ namespace Psycho.Handlers
         Transform _Teimo;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         { 
             _GFX_Store = transform.FindChild("LOD/GFX_Store");
             _GFX_Pub = transform.FindChild("LOD/GFX_Pub");

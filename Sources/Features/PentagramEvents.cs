@@ -16,8 +16,8 @@ namespace Psycho.Features
 {
     internal sealed class PentagramEvents : CatchedComponent
     {
-        public bool IsEventCalled = false;
-        public bool IsEventFinished = true;
+        bool IsEventCalled = false;
+        bool IsEventFinished = true;
 
         Pentagram penta;
         Vector3 itemSpawnPos, GrandmaSoundOrigPos;
@@ -35,9 +35,12 @@ namespace Psycho.Features
 
         Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
 
+        static PentagramEvents instance;
 
-        public override void Awaked()
+        protected override void Awaked()
         {
+            instance = this;
+
             penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
 
@@ -54,7 +57,7 @@ namespace Psycho.Features
             HangoverCamera = FPSCamera.GetPlayMaker("Hangover");
             HangoverCamera.Fsm.InitData();
             HangoverCamera.AddEvent("PENTAEVENT");
-            HangoverCamera.AddGlobalTransition("PENTAEVENT", "Shake");
+            HangoverCamera.AddGlobalTransition("PENTAEVENT", "Randomize");
 
             Knockout = GameObject.Find("Systems/KnockOut").GetComponent<PlayMakerFSM>();
 
@@ -140,6 +143,8 @@ namespace Psycho.Features
             addSoundClip("aborted", "MasterAudio/Ruscko/shutoff");
             addSoundClip("thunder", "MAP/CloudSystem/Clouds/Thunder/GroundStrike");
         }
+
+        void OnDestroy() => instance = null;
 
         void createMoneyEnvelope()
         {
@@ -328,19 +333,31 @@ namespace Psycho.Features
             return ThisTire;
         }
 
-        public void Activate(string _event)
+        public static void TriggerEvent(string _event, bool byCommand = false)
         {
-            if (!penta.LightsEnabled) return;
-            if (IsEventCalled || !IsEventFinished) return;
+            if (instance == null) return;
             if (string.IsNullOrEmpty(_event)) return;
-            if (!penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
+            if (instance.IsEventCalled || !instance.IsEventFinished) return;
+            if (byCommand)
+            {
+                if (!instance.penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
+                Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
+
+                instance.IsEventCalled = true;
+                instance.IsEventFinished = false;
+                instance._processEvents(_event);
+                return;
+            }
+
+            if (!instance.penta.LightsEnabled) return;
+            if (!instance.penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
             Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
-            IsEventCalled = true;
-            IsEventFinished = false;
-            penta.MakeItemsUnPickable();
+            instance.IsEventCalled = true;
+            instance.IsEventFinished = false;
+            instance.penta.MakeItemsUnPickable();
 
-            _processEvents(_event);
+            instance._processEvents(_event);
         }
 
         GameObject _findPrefab(List<Transform> list, string find)
@@ -385,18 +402,20 @@ namespace Psycho.Features
             Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _processEvents called: {_event}");
             switch (_event)
             {
+                // ▼ spawn letter "RANDOM GIFT MONEY"
                 case "money":
                     _startEvent(() => createMoneyEnvelope(), "cash");
-                    return; // ▼ "spawn letter "RANDOM GIFT MONEY""
+                    return;
 
+                // ▼ fill all fuel tanks
                 case "fuel":
                     _startEvent(() => fuellevels.ForEach(v => v.Value = 300f), "accelerate");
-                    return; // ▼ "fill all fuel tanks"
+                    return;
 
+                // ▼ spoil all products
                 case "spoil":
                     _startGrannyEvent(() =>
                     {
-                        // spoil all products
                         List<PlayMakerFSM> list = Resources.FindObjectsOfTypeAll<PlayMakerFSM>()
                             .Where(v =>
                                 v.FsmName == "Use"
@@ -415,27 +434,30 @@ namespace Psycho.Features
                     });
                     return; // ▼ "spoil all products"
 
+                // ▼ activate hangover effect
                 case "hangover":
                     _startEvent(() =>
                     {
-                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenght").Value = 2;
-                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenghtMinus").Value = -2;
-                        HangoverCamera.GetVariable<FsmFloat>("TimeLeft").Value = 10;
-                        HangoverCamera.SendEvent("PENTAEVENT");
+                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenght").Value = 0.008251007f;
+                        HangoverCamera.GetVariable<FsmFloat>("TimeLeft").Value = 55f;
+                        HangoverCamera.CallGlobalTransition("PENTAEVENT");
                     }, "saatana");
-                    return; // ▼ "activate hangover"
+                    return;
 
+                // ▼ set fatigue to 110f
                 case "fatigue":
                     _startEvent(() => PlayerFatigue.Value = 110f, "yawning");
-                    return; // ▼ "set fatigue to 100"
+                    return;
 
+                // ▼ set hunger & thirst to 101f
                 case "hunger":
                     _startEvent(() => {
                         PlayerHunger.Value = 101f;
                         PlayerThirst.Value = 101f;
                     }, "nausea");
-                    return; // ▼ "set hunger to 100"
+                    return;
 
+                // ▼ blow ALL fuses in electricity point
                 case "blowfuses":
                     _startEvent(() =>
                     {
@@ -446,12 +468,14 @@ namespace Psycho.Features
                             fusePivot.GetChild(0).GetPlayMaker("Use").SendEvent("BLOWFUSE");
                         }
                     }, "thunder");
-                    return; // ▼ "blow ALL fuses"
+                    return;
 
+                // ▼ knockout player like a Jani's hit
                 case "knockout":
                     _startEvent(() => Knockout.CallGlobalTransition("GLOBALEVENT"), "saatana");
-                    return; // ▼ "knockout player like a by Jani hit"
+                    return;
 
+                // ▼ burst all tires on wheels where installed on satsuma
                 case "bursttires":
                     _startEvent(() =>
                     {
@@ -464,27 +488,31 @@ namespace Psycho.Features
                                 .Value = 0f;
                         });
                     }, "jokkeangry");
-                    return; // ▼ "burst all tires on wheels installed to satsuma"
+                    return;
 
+                // ▼ empty all fuel tanks
                 case "outoffuel":
                     _startEvent(() => fuellevels.ForEach(v => v.Value = 0f), "removal");
-                    return; // ▼ "empty all fuel tanks"
+                    return;
 
+                // ▼ BLIND BY BEE
                 case "blindless":
                     _startEvent(() =>
                     {
                         Blindless.SendEvent("BLINDBEE");
                         BlindIntensity.Value = 60f;
                     });
-                    return; // ▼ "BLIND BY BEE"
+                    return;
 
+                // ▼ spawn a spirit bottle (not booze, spirit)
                 case "spirit":
                     _startEvent(() => createSpiritBottle(), "belching");
                     return;
 
+                // ▼ spawn item from list (PentagramEvents.objects)
                 case string item when objects.Keys.Contains(item):
                     _startEvent(() => _cloneItemFromPrefab(item), "cash");
-                    return; // ▼ "spawn item"
+                    return;
             }
         }
 

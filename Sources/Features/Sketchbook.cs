@@ -5,14 +5,14 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal sealed class Sketchbook : BookWithGUI
+    public sealed class Sketchbook : BookWithGUI
     {
         protected override GameObject GUIPrefab => Globals.SketchbookGUI_prefab;
 
-        public override void AfterAwake()
+        protected override void AfterAwake()
             => MAX_PAGE = Globals.SketchbookPages.Count - 1;
 
-        public override void PageSelected(bool next)
+        protected override void PageSelected(bool next)
             => Background.SetTexture("_MainTex", Globals.SketchbookPages[CurrentPage]);
     }
 } 

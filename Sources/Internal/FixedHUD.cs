@@ -23,12 +23,12 @@ namespace Psycho.Internal
 
         public static FixedHUD instance { get; private set; } = null;
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             instance = this;
         }
 
-        public override void Enabled()
+        protected override void Enabled()
         {
             _start = transform.Find("Mortal").localPosition;
 
@@ -40,7 +40,7 @@ namespace Psycho.Internal
             }
         }
 
-        public override void Destroyed()
+        protected override void Destroyed()
         {
             instance = null;
             _struct.Clear();

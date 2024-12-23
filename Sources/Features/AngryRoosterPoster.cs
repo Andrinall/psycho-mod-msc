@@ -25,7 +25,7 @@ namespace Psycho.Features
         PlayMakerFSM Hand;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             AudioSource[] sources = GetComponents<AudioSource>();
             AngrySounds = sources[0];
@@ -38,10 +38,10 @@ namespace Psycho.Features
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
             SUN_hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
-            Utils.PrintDebug($"roosted awaked day: {GlobalDay.Value % 7}, hours: {SUN_hours.Value}, applyed");
+            Utils.PrintDebug($"rooster awaked day: {GlobalDay.Value % 7}, hours: {SUN_hours.Value}, applyed");
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
 
             int day = GlobalDay.Value % 7;

@@ -16,25 +16,11 @@ namespace Psycho.Internal
 {
     internal static class WorldManager
     {
-        public static AnimationClip PigWalkAnimation;
-        public static GameObject ClonedGrannyHiker;
-        public static GameObject ClonedPhantom;
-        public static GameObject minigame;
+        static AnimationClip PigWalkAnimation;
+        static GameObject ClonedGrannyHiker;
+        static GameObject ClonedPhantom;
 
         static int elapsedFrames = 0;
-
-        public static void InitializeCottageMinigame()
-        {
-            GameObject bottlehide = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/bottlehide");
-            Vector3 bottlehidePos = bottlehide.transform.position;
-            Vector3 bottlehideRot = bottlehide.transform.eulerAngles;
-            Object.Destroy(bottlehide);
-
-            if (NotebookMain.Pages.Any(v => v.isFinalPage)) return;
-            GameObject minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
-            minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
-            minigame.AddComponent<Minigame>();
-        }
          
         public static void ShowCrows(bool state)
             => GameObject.Find("CrowsList(Clone)")?.SetActive(state);
@@ -70,23 +56,30 @@ namespace Psycho.Internal
 
         public static void TurnOffElecMeter()
         {
-            Transform FuseTable = GameObject.Find("YARD/Building/Dynamics/FuseTable").transform;
-            Transform mainswitch = FuseTable.Find("Fusetable/MainSwitch");
-            PlayMakerFSM switchfsm = mainswitch.GetComponent<PlayMakerFSM>();
-            
+            Transform _fuseTable = GameObject.Find("YARD/Building/Dynamics/FuseTable")?.transform;
+            if (_fuseTable == null) return;
+
+            Transform _mainSwitch = _fuseTable.Find("Fusetable/MainSwitch");
+            if (_mainSwitch == null) return;
+
             // states Wait Player -> Wait Button -> Switch
-            switchfsm.GetVariable<FsmBool>("Switch").Value = false;
+            FsmBool _switchState = _mainSwitch?.GetComponent<PlayMakerFSM>()?.GetVariable<FsmBool>("Switch");
             
+            if (_switchState == null) return;
+            _switchState.Value = false;
+
             // states Position -> OFF
-            GameObject.Find("Systems/ElectricityBills")
-                .GetComponent<PlayMakerFSM>()
-                .GetVariable<FsmBool>("MainSwitch")
-                .Value = false;
+            FsmBool _elecSwitch = GameObject.Find("Systems/ElectricityBills")
+                ?.GetComponent<PlayMakerFSM>()
+                ?.GetVariable<FsmBool>("MainSwitch");
 
-            FuseTable.Find("ElectricShockPoint").gameObject.SetActive(false);
-
-            //PlayMakerFSM.BroadcastEvent("ELEC_CUTOFF");
-            mainswitch.Find("Pivot").localEulerAngles = new Vector3(25f, 0);
+            if (_elecSwitch == null) return;
+            _elecSwitch.Value = false;
+            _fuseTable.Find("ElectricShockPoint")?.gameObject?.SetActive(false);
+            Transform _switchPivot = _mainSwitch.Find("Pivot");
+            
+            if (_switchPivot == null) return;
+            _switchPivot.localEulerAngles = new Vector3(25f, 0);
         }
 
 
@@ -328,9 +321,12 @@ namespace Psycho.Internal
         public static void CloseDoor(string path)
         {
             PlayMakerFSM door = GameObject.Find(path)?.GetPlayMaker("Use");
-            if (!door) return;
+            if (door == null) return;
 
-            door.GetVariable<FsmBool>("DoorOpen").Value = true;
+            FsmBool open = door.GetVariable<FsmBool>("DoorOpen");
+            if (open == null) return;
+            
+            open.Value = true;
             door.SendEvent("GLOBALEVENT");
         }
 

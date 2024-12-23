@@ -20,7 +20,7 @@ namespace Psycho.Handlers
         Vector3 Position => transform.position;
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             penta = transform.parent.parent.GetComponent<Pentagram>();
             Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");

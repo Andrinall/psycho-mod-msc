@@ -44,14 +44,16 @@ namespace Psycho
         internal static readonly Dictionary<string, float> config = new Dictionary<string, float>
         {
             // Increase
-            ["FARMER_QUEST"]     = 5f,
-            ["YOKKE_RELOCATION"] = 2f,
-            ["GRANNY_CHURCH"]    = 0.3f,
+            ["FARMER_QUEST"]     = 5.00f,
+            ["YOKKE_RELOCATION"] = 2.00f,
+            ["SUSKI_HELP"]       = 0.30f,
+            ["GRANNY_CHURCH"]    = 0.30f,
             ["JUNK_YARD"]        = 0.25f,
-            ["TEIMO_ADS"]        = 0.2f,
-            ["YOKKE_DROPOFF"]    = 0.2f,
-            ["GRANNY_DELIVERY"]  = 0.2f,
-            ["SEPTIC_TANK"]      = 0.1f,
+            ["GRANNY_DELIVERY"]  = 0.20f,
+            ["TEIMO_ADS"]        = 0.15f,
+            ["YOKKE_DROPOFF"]    = 0.15f,
+            ["WOOD_DELIVERY"]    = 0.15f,
+            ["SEPTIC_TANK"]      = 0.10f,
 
             // Decrease
             ["GRAB_SUITCASE"] = 7.1f,
@@ -158,17 +160,7 @@ namespace Psycho
             if (GameFinished) return;
             
             inHorror = type == eWorldType.HORROR;
-            if (type == eWorldType.MAIN)
-            {
-                Value = 100f;
-
-                if (Globals.envelopeObject?.activeSelf == true)
-                {
-                    Globals.envelopeObject.SetActive(false);
-                    envelopeSpawned = false;
-                }
-            }
-            else
+            if (inHorror)
             {
                 Value = 0f;
 
@@ -176,6 +168,16 @@ namespace Psycho
                 {
                     Globals.envelopeObject.SetActive(true);
                     envelopeSpawned = true;
+                }
+            }
+            else
+            {
+                Value = 100f;
+
+                if (Globals.envelopeObject?.activeSelf == true)
+                {
+                    Globals.envelopeObject.SetActive(false);
+                    envelopeSpawned = false;
                 }
             }
 
@@ -230,12 +232,12 @@ namespace Psycho
                 while (train.ActiveStateName != "State 2")
                     train.SendEvent("FINISHED");
 
-                ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 15f, default, () =>
+                ShizAnimPlayer.PlayAnimation("sleep_knockout", 15f, default, () =>
                 {
                     player.transform.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
                     player.transform.eulerAngles = new Vector3(0f, 233.4375f, 0f);
 
-                    ShizAnimPlayer.PlayAnimation("sleep_off", true, 5f, default);
+                    ShizAnimPlayer.PlayAnimation("sleep_off", 5f, default);
                 });
             }
             catch (Exception e)
@@ -282,11 +284,8 @@ namespace Psycho
                 FsmFloat volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");
                 volume.Value = 0;
 
-                ShizAnimPlayer.PlayAnimation("sleep_knockout", default, 8f, default, () =>
+                ShizAnimPlayer.PlayAnimation("sleep_knockout", 8f, default, () =>
                 {
-                    //player.transform.position = new Vector3(-11.12955f, -0.2938208f, 13.61279f);
-                    //player.transform.eulerAngles = new Vector3(0f, 158.85f, 0f);
-
                     WorldManager.ChangeWorldTextures(inHorror);
                     WorldManager.ChangeBedroomModels();
                     Utils.ChangeSmokingModel();
@@ -299,7 +298,7 @@ namespace Psycho
                     GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
                     _changeFittanDriverHeadPivotRotation();
 
-                    ShizAnimPlayer.PlayAnimation("sleep_off", true, default, default, () => {
+                    ShizAnimPlayer.PlayAnimation("sleep_off", default, default, () => {
                         motor.canControl = true;
                         volume.Value = 1;
                     });

@@ -39,7 +39,7 @@ namespace Psycho.Features
         Vector3 mushroom_pos = mushroom_rand[0];
 
 
-        public override void Awaked()
+        protected override void Awaked()
         {
             palm = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/jukkapalm").transform;
             island = GameObject.Find("COTTAGE/SpawnToCottage").transform;
@@ -47,7 +47,7 @@ namespace Psycho.Features
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
         }
 
-        public override void OnFixedUpdate()
+        protected override void OnFixedUpdate()
         {
             int day = GlobalDay.Value % 7;
             CheckItemSpawnTimeAndSpawn(day, WalnutDay, ref WalnutSpawned, palm, Globals.Walnut_prefab, walnut_pos);

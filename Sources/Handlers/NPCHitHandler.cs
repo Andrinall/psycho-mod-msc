@@ -13,7 +13,7 @@ namespace Psycho.Handlers
     {
         bool HasCrimeAction => transform.GetPlayMaker("CarHit").FsmStates.First(v => v.Name == "Crime") != null;
 
-        public override void Awaked()
+        protected override void Awaked()
         {            
             if (transform.parent.parent.gameObject.name == "JokkeHiker1")
                 return;

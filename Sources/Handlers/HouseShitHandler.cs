@@ -6,9 +6,9 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class HouseShitHandler : CatchedComponent
+    internal sealed class HouseShitHandler : MonoBehaviour
     {
-        public override void Awaked() => StateHook.Inject(gameObject, "Use", "State 1", JobCompleted);
+        void Awake() => StateHook.Inject(gameObject, "Use", "State 1", JobCompleted);
 
         void JobCompleted() => Logic.PlayerCompleteJob("SEPTIC_TANK");
     }
