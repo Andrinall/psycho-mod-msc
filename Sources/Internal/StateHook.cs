@@ -34,11 +34,15 @@ namespace Psycho.Internal
             try
             {
                 PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
-                if (playMaker == null) throw new NullReferenceException();
+                
+                if (playMaker == null)
+                    throw new NullReferenceException();
 
                 playMaker.Fsm.InitData();
-                FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
-                if (playMakerState == null) throw new NullReferenceException();
+                FsmState playMakerState = playMaker.GetState(stateName);
+                
+                if (playMakerState == null)
+                    throw new NullReferenceException();
 
                 var list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookAction item = new FsmHookAction
@@ -64,11 +68,15 @@ namespace Psycho.Internal
             try
             {
                 PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
-                if (playMaker == null) throw new NullReferenceException();
+                
+                if (playMaker == null)
+                    throw new NullReferenceException();
 
                 playMaker.Fsm.InitData();
-                FsmState playMakerState = gameObject.GetPlayMakerState(stateName);
-                if (playMakerState == null) throw new NullReferenceException();
+                FsmState playMakerState = playMaker.GetState(stateName);
+                
+                if (playMakerState == null)
+                    throw new NullReferenceException();
 
                 var list = new List<FsmStateAction>(playMakerState.Actions);
                 FsmHookActionWithArg item = new FsmHookActionWithArg
