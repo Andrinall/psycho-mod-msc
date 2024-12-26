@@ -47,7 +47,7 @@ namespace Psycho.Commands
             Globals.Notebook?.ClearPages();
             for (int i = 1; i < 14; i++)
             {
-                NotebookMain.Pages.Add(new NotebookPage
+                Notebook.Pages.Add(new NotebookPage
                 {
                     index = i,
                     isTruePage = random ? (Random.Range(0, 2) == 1) : state

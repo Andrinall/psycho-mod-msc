@@ -99,7 +99,7 @@
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
     <Compile Include="Sources\Features\Minigame.cs" />
-    <Compile Include="Sources\Features\NotebookMain.cs" />
+    <Compile Include="Sources\Features\Notebook.cs" />
     <Compile Include="Sources\Features\NotebookPage.cs" />
     <Compile Include="Sources\Features\Sketchbook.cs" />
     <Compile Include="Sources\Handlers\FirewoodJobHandler.cs" />

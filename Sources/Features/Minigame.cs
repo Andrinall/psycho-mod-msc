@@ -47,7 +47,7 @@ namespace Psycho.Features
             clonedFire.transform.SetParent(transform.Find("Candle"), false);
             clonedFire.transform.localPosition = new Vector3(0, 0, 0.06f);
             
-            if (NotebookMain.Pages.Count >= 14)
+            if (Notebook.Pages.Count >= 14)
             {
                 Destroy(gameObject);
                 return;
@@ -110,7 +110,7 @@ namespace Psycho.Features
                 Destroy(page);
             }
 
-            if (NotebookMain.Pages.Count == 15 && Logic.numberOfSpawnedPages == 13 && page == null)
+            if (Notebook.Pages.Count == 15 && Logic.numberOfSpawnedPages == 13 && page == null)
                 Destroy(this);
         }
 
@@ -177,7 +177,7 @@ namespace Psycho.Features
             Vector3 bottlehideRot = bottlehide.transform.eulerAngles;
             Destroy(bottlehide);
 
-            if (NotebookMain.Pages.Any(v => v.isFinalPage)) return;
+            if (Notebook.Pages.Any(v => v.isFinalPage)) return;
             GameObject minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
             minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
             minigame.AddComponent<Minigame>();

@@ -105,7 +105,7 @@ namespace Psycho
 
         public static Texture NewsPaper_texture = null;
 
-        internal static NotebookMain Notebook = null;
+        internal static Notebook Notebook = null;
 
         public static int CurrentLang = 0;
 

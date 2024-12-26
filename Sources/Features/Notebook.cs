@@ -6,11 +6,12 @@ using UnityEngine;
 
 using Psycho.Internal;
 using Psycho.Handlers;
+using HutongGames.PlayMaker;
 
 
 namespace Psycho.Features
 {
-    internal sealed class NotebookMain : BookWithGUI
+    internal sealed class Notebook : BookWithGUI
     {
         public static List<NotebookPage> Pages = new List<NotebookPage>()
         {
@@ -22,10 +23,10 @@ namespace Psycho.Features
         TextMesh NotebookGUIText;
         TextMesh NotebookGUIPage;
 
-        Transform PlayerHand;
+        Transform ItemPivot;
         PlayMakerFSM HandFsm;
 
-        Transform ItemInHand => PlayerHand.childCount > 0 ? PlayerHand.GetChild(0) : null;
+        Transform ItemInHand => ItemPivot.childCount > 0 ? ItemPivot.GetChild(0) : null;
 
         int prevMax = 0;
 
@@ -41,8 +42,8 @@ namespace Psycho.Features
 
         protected override void AfterAwake()
         {
-            PlayerHand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/ItemPivot").transform;
-            HandFsm = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
+            ItemPivot = Utils.GetGlobalVariable<FsmGameObject>("ItemPivot").Value.transform;
+            HandFsm = ItemPivot.parent.Find("Hand").GetPlayMaker("PickUp");
 
             NotebookGUIText = GUI.transform.Find("Text").GetComponent<TextMesh>();
             NotebookGUIPage = GUI.transform.Find("PageIndicator").GetComponent<TextMesh>();
@@ -55,18 +56,16 @@ namespace Psycho.Features
 
         protected override void ObjectUsed()
         {
-            if (PlayerHand.childCount == 0)
-            {
-                Utils.PrintDebug(eConsoleColors.GREEN, "Notebook opened");
-                base.ObjectUsed();
-                return;
-            }
+            Transform item = ItemInHand;
 
-            if (ItemInHand?.gameObject?.name?.Contains("Notebook Page") == true)
+            if (item != null && item?.name?.Contains("Notebook Page") == true)
             {
-                HandFsm?.CallGlobalTransition("DROP_PART");
-                AddNewPage(ItemInHand.gameObject);
-                return;
+                HandFsm.CallGlobalTransition("DROP_PART");
+                AddNewPage(item.gameObject);
+            }
+            else
+            {
+                base.ObjectUsed();
             }
         }
 
@@ -90,7 +89,8 @@ namespace Psycho.Features
             return true;
         }
 
-        public static bool IsPageExists(int index) => Pages.Any(v => v.index == index);
+        public static bool IsPageExists(int index)
+            => Pages.Any(v => v.index == index);
 
         public void UpdatePageText()
         {
@@ -136,12 +136,13 @@ namespace Psycho.Features
             SortPages();
 
             PlayPageTurn();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Page added into notebook\nidx: {page.index}, default: {page.isDefaultPage}, final: {page.isFinalPage}, true: {page.isTruePage}");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"{page} added into notebook");
             return true;
         }
 
 
-        public int GetTruePagesCount() => Pages.Count(v => !v.isFinalPage && v.isTruePage);
+        public int GetCountOfTruePages()
+            => Pages.Count(v => !v.isFinalPage && v.isTruePage);
 
         public void ClearPages()
         {
@@ -165,7 +166,7 @@ namespace Psycho.Features
             if (GetMaxPageIndex() == 15) return;
             if (Pages.Count < 14) return;
 
-            int truePages = GetTruePagesCount();
+            int truePages = GetCountOfTruePages();
             bool isTrueStory = (truePages > 7);
 
             TryAddPage(new NotebookPage
@@ -182,7 +183,7 @@ namespace Psycho.Features
             Destroy(GameObject.Find("COTTAGE/minigame(Clone)"));
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({truePages > 7} story)");
-            Pages.ForEach(v => Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}"));
+            Pages.ForEach(v => Utils.PrintDebug(v.ToString()));
         }
 
         public static void AddDefaultPage()

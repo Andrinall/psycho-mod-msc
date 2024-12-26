@@ -141,9 +141,6 @@ namespace Psycho.Internal
                 }
             }
 
-            //if (Globals.Notebook != null)
-            //    Globals.Notebook = null;
-
             Resources.UnloadAsset(Globals.Heartbeat_source);
             Globals.Heartbeat_source = null;
 

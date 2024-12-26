@@ -106,7 +106,7 @@ namespace Psycho.Internal
         {
             GameObject cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
             if (prefab.name == "Notebook")
-                Globals.Notebook = cloned.AddComponent<NotebookMain>();
+                Globals.Notebook = cloned.AddComponent<Notebook>();
             if (prefab.name == "Postcard")
             {
                 cloned.AddComponent<ItemsGravityEnabler>();

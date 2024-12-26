@@ -80,7 +80,7 @@ namespace Psycho.Internal
                         new Vector3(-2.007682f, 0.04279194f, 7.669019f),
                         new Vector3(90f, 247.8114f, 0f)
                     );
-                    Globals.Notebook = Notebook.AddComponent<NotebookMain>();
+                    Globals.Notebook = Notebook.AddComponent<Notebook>();
                     Notebook.MakePickable();
                 }
 
@@ -99,7 +99,7 @@ namespace Psycho.Internal
 
         internal static void LoadNotebookPages(byte[] value)
         {
-            NotebookMain.Pages.Clear();
+            Notebook.Pages.Clear();
 
             try
             {
@@ -116,7 +116,7 @@ namespace Psycho.Internal
                     bool isTrue = BitConverter.ToBoolean(value, offset + 4);
                     bool isFinal = BitConverter.ToBoolean(value, offset + 5);
 
-                    bool result = NotebookMain.TryAddPage(new NotebookPage
+                    bool result = Notebook.TryAddPage(new NotebookPage
                     {
                         index = idx,
                         isTruePage = isTrue,
@@ -126,13 +126,13 @@ namespace Psycho.Internal
                     offset += 6;
                 }
 
-                if (!NotebookMain.Pages.Any(v => v.isFinalPage))
-                    NotebookMain.AddDefaultPage();
+                if (!Notebook.Pages.Any(v => v.isFinalPage))
+                    Notebook.AddDefaultPage();
 
                 Globals.Notebook?.SortPages();
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "Notebook Pages Loaded!");
-                NotebookMain.Pages.ForEach(v => Utils.PrintDebug(eConsoleColors.YELLOW, $"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}"));
+                Notebook.Pages.ForEach(v => Utils.PrintDebug(eConsoleColors.YELLOW, $"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}"));
             }
             catch (Exception ex)
             {
@@ -149,12 +149,12 @@ namespace Psycho.Internal
         {
             int itemsPoolSize = ItemsPool.GetSizeInSave(array);
             int offset = ItemsPool.base_offset + itemsPoolSize + 4; // (items pool base offset) + (items pool size) + (spacing)
-            int pagesCount = NotebookMain.Pages.Count - (NotebookMain.Pages.Any(v => v.isDefaultPage) ? 1 : 0);
+            int pagesCount = Notebook.Pages.Count - (Notebook.Pages.Any(v => v.isDefaultPage) ? 1 : 0);
 
             BitConverter.GetBytes(pagesCount).CopyTo(array, offset);
             offset += 4;
 
-            foreach (NotebookPage item in NotebookMain.Pages)
+            foreach (NotebookPage item in Notebook.Pages)
             {
                 if (item.isDefaultPage) continue;
 
@@ -164,13 +164,13 @@ namespace Psycho.Internal
                 offset += 6;
             }
 
-            NotebookMain.Pages.Clear();
+            Notebook.Pages.Clear();
         }
 
         internal static void SaveData()
         {
             // save data
-            byte[] array = new byte[80 + (ItemsPool.Length * 90) + 4 + (6 * NotebookMain.Pages.Count)];
+            byte[] array = new byte[80 + (ItemsPool.Length * 90) + 4 + (6 * Notebook.Pages.Count)];
             // [(values + picture + pills + empty space) + (penta pool len * penta pool alloc)]
 
             if (Globals.pills == null && Logic.inHorror)
