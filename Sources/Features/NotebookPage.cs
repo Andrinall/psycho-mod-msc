@@ -20,6 +20,9 @@ namespace Psycho.Features
             isDefaultPage = parent.isDefaultPage;
             isFinalPage = parent.isFinalPage;
         }
+
+        public override string ToString()
+            => $"NotebookPage[idx:{index}; isTrue:{isTruePage}; isDefault:{isDefaultPage}; isFinal:{isFinalPage}]";
     }
 
 
