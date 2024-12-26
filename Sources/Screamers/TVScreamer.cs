@@ -18,6 +18,7 @@ namespace Psycho.Screamers
 
         PlayMakerFSM TVSwitch;
         PlayMakerFSM NightFSM;
+        PlayMakerFSM MainSwitchUsable;
 
         AudioSource TVAudio;
 
@@ -38,6 +39,7 @@ namespace Psycho.Screamers
             enabled = false;
 
             SwitchObj = GameObject.Find("YARD/Building/LIVINGROOM/TV/Switch");
+            MainSwitchUsable = GameObject.Find("YARD/Building/Dynamics/FuseTable/Fusetable/MainSwitch").GetComponent<PlayMakerFSM>();
 
             TVSwitch = SwitchObj.GetComponent<PlayMakerFSM>();
             StateHook.Inject(SwitchObj, "Use", "Switch", _hook);
@@ -75,6 +77,8 @@ namespace Psycho.Screamers
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
             TVSwitch.CallGlobalTransition("SCREAM_ON");
 
+            MainSwitchUsable.enabled = false;
+
             fullEnable = true;
         }
 
@@ -86,11 +90,12 @@ namespace Psycho.Screamers
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = true;
             TVSwitch.CallGlobalTransition("GLOBALEVENT");
 
-            _setAudioClip(OrigAudioClip);
+            TVAudio.enabled = true;
 
             elapsedFrames = 0;
             ScreamEnabled = false;
             fullEnable = false;
+            MainSwitchUsable.enabled = true;
 
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
@@ -107,8 +112,6 @@ namespace Psycho.Screamers
             Utils.PrintDebug(eConsoleColors.YELLOW, "elapsed == needed; Enable original TVSwitch.");
             enabled = false;
         }
-
-
 
 
         void TriggerScreamer(ScreamTimeType type, int variation)
@@ -128,7 +131,7 @@ namespace Psycho.Screamers
             Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
 
             _setTexture();
-            _setAudioClip(Globals.TVScream_clip);
+            PlayAudioClip(Globals.TVScream_clip);
             ScreamEnabled = true;
         }
 
@@ -138,11 +141,10 @@ namespace Psycho.Screamers
                 .material.Value.SetTexture("_MainTex", ReplaceTexture);
         }
 
-        void _setAudioClip(AudioClip clip)
+        void PlayAudioClip(AudioClip clip)
         {
-            TVAudio.Stop();
-            TVAudio.clip = clip;
-            TVAudio.Play();
+            TVAudio.enabled = false;
+            AudioSource.PlayClipAtPoint(clip, transform.position);
             Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip({clip.name}) is played");
         }
     }

@@ -245,7 +245,7 @@ namespace Psycho
 
             // attach screamers components to game objects
             AddComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
-            AddComponent<PhoneRing>("YARD/Building/LIVINGROOM/Telephone/Logic");
+            AddComponent<PhoneRing>("YARD/Building/LIVINGROOM/Telephone");
             AddComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
             AddComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
             AddComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");

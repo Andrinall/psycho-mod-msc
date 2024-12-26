@@ -26,17 +26,24 @@ namespace Psycho.Internal
             if (postcardText != null)
                 postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
 
-            OnLanguageChanged?.Invoke();
+            OnLanguageChanged.Invoke();
         }
 
         public static void TriggerNightScreamer(ScreamTimeType type, int variation)
         {
             if (!Psycho.IsLoaded) return;
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariant(type, variation)}]");
             try
             {
-                OnScreamerTriggered?.Invoke(type, variation);
+                if (type == ScreamTimeType.FEAR && variation == (int)ScreamFearType.TV)
+                    WorldManager.SetElecMeterState(true);
+                else
+                    WorldManager.SetElecMeterState(false);
+
+                WorldManager.ShowCrows(false);
+                OnScreamerTriggered.Invoke(type, variation);
+
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariant(type, variation)}]");
             }
             catch (System.Exception ex)
             {
@@ -47,9 +54,12 @@ namespace Psycho.Internal
         public static void FinishScreamer(ScreamTimeType type, int variation)
         {
             if (!Psycho.IsLoaded) return;
+            
+            WorldManager.SetElecMeterState(true);
+            WorldManager.ShowCrows(true);
 
+            OnScreamerFinished.Invoke();
             Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariant(type, variation)}]");
-            OnScreamerFinished?.Invoke();
         }
 
         

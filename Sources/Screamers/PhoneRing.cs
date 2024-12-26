@@ -14,53 +14,72 @@ namespace Psycho.Screamers
     internal sealed class PhoneRing : CatchedComponent
     {
         GameObject Ring;
+        GameObject _logic;
         GameObject Callers;
         GameObject PhoneLogic;
         Transform Player;
 
+        PlayMakerFSM PhoneCord;
         PlayMakerFSM RingFSM;
         FsmString Topic;
+        FsmBool PhoneBillsPaid;
 
         AudioSource CallScreamer;
 
-        short elapsedFrames = 0;
         short neededFrames = 400;
+        bool phonePaidStatusTemp = false;
 
 
         protected override void Awaked()
         {
-            enabled = false;
-            Ring = transform.Find("Ring").gameObject;
+            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+
+            Ring = transform.Find("Logic/Ring").gameObject;
+            _logic = transform.Find("Logic").gameObject;
             Callers = GameObject.Find("MasterAudio/Callers");
-            PhoneLogic = transform.Find("PhoneLogic").gameObject;
+            PhoneLogic = transform.Find("Logic/PhoneLogic").gameObject;
+            PhoneBillsPaid = GameObject.Find("Systems/PhoneBills").GetPlayMaker("Data").GetVariable<FsmBool>("PhonePaid");
             Player = GameObject.Find("PLAYER").transform;
 
+            StateHook.Inject(transform.Find("Logic/UseHandle").gameObject, "Use", "Close phone", _closePhoneHook);
+            
+            enabled = false;
             RingFSM = Ring.GetPlayMaker("Ring");
             Topic = RingFSM.GetVariable<FsmString>("Topic");
+
+            PhoneCord = GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Cord/PhoneCordOut/Trigger").GetComponent<PlayMakerFSM>();
+            PhoneCord.AddEvent("SCREAMTRIGGER");
+            PhoneCord.AddGlobalTransition("SCREAMTRIGGER", "Position");
 
             _addAudios();
             _addRingStateForScreamer();
             _addEventAndTransitionToScreamerState();
 
-            StateHook.Inject(transform.Find("UseHandle").gameObject, "Use", "Close phone", _closePhoneHook);
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
+            Utils.PrintDebug("Phone ring awaked");
         }
 
         protected override void Enabled()
-        {
-            Topic.Value = "SCREAMCALL";
+        {            
+            _enablePhoneCord();
             PhoneLogic.SetActive(false);
+
+            phonePaidStatusTemp = PhoneBillsPaid.Value;
+            PhoneBillsPaid.Value = true;
+
+            Topic.Value = "SCREAMCALL";
             Ring.SetActive(true);
+
+            _logic.SetActive(true);
         }
 
         protected override void Disabled()
         {
-            if (Ring == null) return;
+            if (CallScreamer == null) return;
 
             Ring.SetActive(false);
             PhoneLogic.SetActive(true);
             Topic.Value = "";
-            elapsedFrames = 0;
+            PhoneBillsPaid.Value = phonePaidStatusTemp;
             EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.PHONE);
         }
 
@@ -68,14 +87,14 @@ namespace Psycho.Screamers
             => WorldManager.ClonedPhantomTick(200, _phantomHideCallback);
 
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
+        public void TriggerScreamer(ScreamTimeType type, int variation)
         {
-            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.PHONE) return;
+            if (type != ScreamTimeType.FEAR || variation != (int)ScreamFearType.PHONE) return;
 
             enabled = true;
         }
 
-        void _closePhoneHook(PlayMakerFSM _)
+        void _closePhoneHook()
            => WorldManager.ClonedPhantomTick(0, _phantomHideCallback);
 
         void _addAudios()
@@ -140,7 +159,14 @@ namespace Psycho.Screamers
             }.ToArray();
         }
 
-        void _spawnPhantomBehindPlayer(PlayMakerFSM _)
+        void _ignoreBillsPaidStatus(PlayMakerFSM fsm)
+        {
+            if (!enabled) return;
+
+            fsm.SendEvent("FINISHED");
+        }
+
+        void _spawnPhantomBehindPlayer()
         {
             CallScreamer.Play();
             WorldManager.SpawnPhantomBehindPlayer();
@@ -150,6 +176,14 @@ namespace Psycho.Screamers
         {
             CallScreamer.Stop();
             enabled = false;
+        }
+
+        void _enablePhoneCord()
+        {
+            PhoneCord.gameObject.transform.parent.gameObject.SetActive(true);
+            PhoneCord.CallGlobalTransition("SCREAMTRIGGER");
+            
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Phone cord enabled.");
         }
     }
 }

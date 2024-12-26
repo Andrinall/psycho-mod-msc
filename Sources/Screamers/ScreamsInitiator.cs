@@ -50,8 +50,24 @@ namespace Psycho.Screamers
 
         protected override void Awaked()
         {
-            SetupSleepTriggerHooks();
-            EventsManager.OnScreamerFinished.AddListener(ScreamerFinished);
+            _fsm = transform.GetPlayMaker("Activate");
+            _fsm.AddEvent("SCREAMSTOP");
+            _fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
+
+            m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
+            m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
+
+            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
+            m_fSunHours = sun.GetVariable<FsmFloat>("Hours");
+            m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
+
+            StateHook.Inject(gameObject, "Activate", "Check time of day", CheckTimeOfDay, 3);
+
+            StateHook.Inject(gameObject, "Activate", "Does call?", DoesCall);
+
+            StateHook.Inject(gameObject, "Activate", "Phone", DisableScreamerIfPhone, -1);
+
+            StateHook.Inject(gameObject, "Activate", "Wake up 2", WakeUp);
         }
 
         protected override void OnFixedUpdate()
@@ -88,46 +104,7 @@ namespace Psycho.Screamers
                 return;
             }
 
-            if (m_iRand == (int)ScreamTimeType.FEAR)
-            {
-                if (variation == (int)ScreamFearType.TV && !WorldManager.GetElecMeterSwitchState())
-                    return;
-
-                if (variation == (int)ScreamFearType.PHONE)
-                    _enablePhoneCord();
-            }
-
-            WorldManager.TurnOffElecMeter();
-            WorldManager.ShowCrows(false);
             EventsManager.TriggerNightScreamer(rand, variation);
-        }
-
-        void ScreamerFinished() => WorldManager.ShowCrows(true);
-
-        void SetupSleepTriggerHooks()
-        {
-            _fsm = transform.GetPlayMaker("Activate");
-            _fsm.AddEvent("SCREAMSTOP");
-            _fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
-
-            _phoneCord = GameObject.Find("YARD/Building/LIVINGROOM/Telephone/Cord/PhoneCordOut/Trigger").GetComponent<PlayMakerFSM>();
-            _phoneCord.AddEvent("SCREAMTRIGGER");
-            _phoneCord.AddGlobalTransition("SCREAMTRIGGER", "Position");
-
-            m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
-            m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
-
-            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
-            m_fSunHours = sun.GetVariable<FsmFloat>("Hours");
-            m_fSunMinutes = sun.GetVariable<FsmFloat>("Minutes");
-
-            StateHook.Inject(gameObject, "Activate", "Check time of day", CheckTimeOfDay, 3);
-
-            StateHook.Inject(gameObject, "Activate", "Does call?", DoesCall);
-
-            StateHook.Inject(gameObject, "Activate", "Phone", DisableScreamerIfPhone, -1);
-
-            StateHook.Inject(gameObject, "Activate", "Wake up 2", WakeUp);
         }
 
         void CheckTimeOfDay()
@@ -167,13 +144,6 @@ namespace Psycho.Screamers
             if (!m_bTrigger) return;
 
             ApplyScreamer((ScreamTimeType)m_iRand, Random.Range(0, _maxScreamTypes[m_iRand]));
-        }
-
-        void _enablePhoneCord()
-        {
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Phone cord enabled.");
-            _phoneCord.gameObject.transform.parent.gameObject.SetActive(true);
-            _phoneCord.CallGlobalTransition("SCREAMTRIGGER");
         }
     }
 }
