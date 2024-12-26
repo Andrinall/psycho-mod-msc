@@ -90,7 +90,7 @@ namespace Psycho.Internal
                 }
             }
 
-            if (hitted == gameObject && !GUI.activeSelf && cInput.GetKeyDown("Use"))
+            if (hitted == gameObject && !GUI.activeSelf && cInput.GetKeyUp("Use"))
             {
                 if (OriginalCamera == null)
                     OriginalCamera = Camera.main.gameObject;
@@ -153,12 +153,12 @@ namespace Psycho.Internal
         /// <summary>
         /// <b>(Callback for override)</b> Called after apply activate gui state (true)
         /// </summary>
-        protected virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Opened");
+        protected virtual void GUIOpened() => Utils.PrintDebug(eConsoleColors.GREEN, $"GUI [{GUIPrefab?.name}] Opened");
 
         /// <summary>
         /// <b>(Callback for override)</b> Called after apply activate gui state (false)
         /// </summary>
-        protected virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, "GUI Closed");
+        protected virtual void GUIClosed() => Utils.PrintDebug(eConsoleColors.GREEN, $"GUI [{GUIPrefab?.name}] Closed");
 
         /// <summary>
         /// <b>(Callback for override)</b> Called when object (where have this component) used by mouseOver & click `Use` button
