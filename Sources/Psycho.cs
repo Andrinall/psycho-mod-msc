@@ -11,6 +11,9 @@ using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
+#if DEBUG
+using Psycho.Debug;
+#endif
 using Object = UnityEngine.Object;
 
 
@@ -26,6 +29,7 @@ namespace Psycho
 
         internal static SettingsDropDownList lang;
         internal static Keybind fastOpen;
+
         internal static bool IsLoaded = false;
 
         GameObject LoaderMenu;
@@ -55,6 +59,7 @@ namespace Psycho
             SetupFunction(Setup.ModSettings, Mod_Settings);
             SetupFunction(Setup.OnLoad, Mod_Load);
             SetupFunction(Setup.PostLoad, Mod_SecondPassLoad);
+            SetupFunction(Setup.Update, Mod_Update);
             SetupFunction(Setup.FixedUpdate, Mod_FixedUpdate);
         }
 
@@ -63,12 +68,15 @@ namespace Psycho
 
         void Mod_Settings()
         {
-            lang = Settings.AddDropDownList(this,
+            lang = Settings.AddDropDownList(
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
                 0, ChangeSetting);
 
             fastOpen = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
+#if DEBUG
+            DebugPanel.Init();
+#endif
         }
         //
 
@@ -179,6 +187,20 @@ namespace Psycho
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
             //Resources.UnloadUnusedAssets(); // tested (for remove in release version)
             IsLoaded = true;
+#if DEBUG
+            DebugPanel.SetSettingsVisible(true);
+#endif
+        }
+
+        void Mod_Update()
+        {
+            if (Logic.GameFinished) return;
+
+            if (IsLoaded && !IsLoaderMenuOpened && fastOpen.GetKeybindUp() && Logic.inHorror && !Logic.envelopeSpawned)
+            {
+                Globals.mailboxSheet?.SetActive(true);
+            }
+
         }
 
         void Mod_FixedUpdate()
@@ -186,6 +208,10 @@ namespace Psycho
             if (Logic.GameFinished) return;
 
             Logic.Tick();
+
+#if DEBUG
+            DebugPanel.UpdateData();
+#endif
 
             if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
             {
@@ -208,18 +234,12 @@ namespace Psycho
                 _bells.position = bellsOrigPos;
                 m_bBellsActivated = false;
             }
-
-            if (fastOpen.GetKeybindUp() && !IsLoaderMenuOpened && Logic.inHorror && !Logic.envelopeSpawned)
-            {
-                Globals.mailboxSheet?.SetActive(true);
-            }
         }
 
         void Mod_Save()
         {
             // restore original game textures for materials (avoid game crash)
             OnUnload();
-
             SaveManager.SaveData();
         }
 
@@ -232,6 +252,9 @@ namespace Psycho
             TexturesManager.Cache.Clear();
 
             EventsManager.UnSubscribeAll();
+#if DEBUG
+            DebugPanel.SetSettingsVisible(false);
+#endif
         }
 
         void _applyHorrorIfNeeded()

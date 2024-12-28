@@ -4,7 +4,7 @@ using MSCLoader;
 using Psycho.Internal;
 
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class Scream : ConsoleCommand
     {

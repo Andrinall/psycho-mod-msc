@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if DEBUG
+using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Psycho.Features;
 using Psycho.Internal;
 
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class NotebookCMD : ConsoleCommand
     {
@@ -59,3 +60,4 @@ namespace Psycho.Commands
         }
     }
 }
+#endif

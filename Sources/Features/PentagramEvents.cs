@@ -340,7 +340,7 @@ namespace Psycho.Features
             if (instance.IsEventCalled || !instance.IsEventFinished) return;
             if (byCommand)
             {
-                if (!instance.penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
+                if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
                 Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
                 instance.IsEventCalled = true;
@@ -350,7 +350,7 @@ namespace Psycho.Features
             }
 
             if (!instance.penta.LightsEnabled) return;
-            if (!instance.penta.InnerEvents.Any(v => v.Value.Contains(_event))) return;
+            if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
             Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
             instance.IsEventCalled = true;

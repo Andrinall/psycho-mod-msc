@@ -5,7 +5,7 @@ using UnityEngine;
 using Psycho.Internal;
 
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class TeleportToPills : ConsoleCommand
     {

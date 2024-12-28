@@ -71,7 +71,7 @@ namespace Psycho
             ["PLAYER_SWEARS"] = 0.01f
         };
 
-        public static bool GameFinished { get; private set; } = false;
+        public static bool GameFinished = false;
 
         public static float Value
         {
@@ -138,12 +138,20 @@ namespace Psycho
         }
 
 
-        public static void SetValue(float value) => Value = value;
-        public static void SetPoints(float points) => Points = points;
+        public static void SetValue(float value)
+            => Value = value;
+
+        public static void SetPoints(float points)
+            => Points = points;
+
         public static void ResetValue(float horror = 0f, float main = 100f)
             => Value = Mathf.Clamp(Value + (inHorror ? -horror : main), 0f, 100f);
 
-        public static void ResetPoints() => Points = 0;
+        public static void ResetValue()
+            => Value = (inHorror ? 0f : 100f);
+
+        public static void ResetPoints()
+            => Points = 0;
 
         public static void SetDefaultValues()
         {

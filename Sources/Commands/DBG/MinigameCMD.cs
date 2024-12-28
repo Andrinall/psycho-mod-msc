@@ -1,18 +1,19 @@
-﻿using MSCLoader;
+﻿#if DEBUG
+using MSCLoader;
 using UnityEngine;
 
 using Psycho.Features;
 using Psycho.Internal;
 
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class MinigameCMD : ConsoleCommand
     {
         public override string Name => "mini";
         public override string Help => "";
 
-        Features.Minigame minigame;
+        Minigame minigame;
 
         public override void Run(string[] args)
         {
@@ -35,3 +36,4 @@ namespace Psycho.Commands
         }
     }
 }
+#endif

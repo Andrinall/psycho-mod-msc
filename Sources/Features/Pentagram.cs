@@ -29,7 +29,7 @@ namespace Psycho.Features
             { "Very bad", 0.2f }
         };
 
-        public Dictionary<string, string[]> InnerEvents = new Dictionary<string, string[]>
+        public static Dictionary<string, string[]> InnerEvents = new Dictionary<string, string[]>
         {
             ["Very good"] = new string[]
             { "money", "fuel", "beercase", "battery" },

@@ -19,6 +19,22 @@ namespace Psycho.Internal
         static FsmBool GUIuse;
         static FsmString GUIinteraction;
 
+        public static string[] GetEnumFields<T>()
+        {
+            var fields = typeof(T).GetFields();
+            string[] result = new string[fields.Length];
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                string name = fields[i].Name;
+                if (name == "value__") continue;
+
+                result[i - 1] = fields[i].Name;
+            }
+
+            return result;
+        }
+
         internal static string GetMethodPath(MethodInfo method)
         {
             Type declaringType = method.DeclaringType;

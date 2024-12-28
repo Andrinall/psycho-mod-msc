@@ -2,7 +2,7 @@
 using MSCLoader;
 
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class Kill : ConsoleCommand
     {

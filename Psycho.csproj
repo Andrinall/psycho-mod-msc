@@ -108,6 +108,7 @@
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
     <Compile Include="Sources\Handlers\SuskiHelpHandler.cs" />
     <Compile Include="Sources\Internal\DeathSystem.cs" />
+    <Compile Include="Sources\DebugPanel.cs" />
     <Compile Include="Sources\Internal\EventsManager.cs" />
     <Compile Include="Sources\Internal\FsmHookAction.cs" />
     <Compile Include="Sources\Internal\TexturesManager.cs" />

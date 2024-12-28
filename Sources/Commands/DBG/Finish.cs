@@ -1,7 +1,7 @@
 ﻿#if DEBUG
 using MSCLoader;
 
-namespace Psycho.Commands
+namespace Psycho.Debug
 {
     internal class Finish : ConsoleCommand
     {

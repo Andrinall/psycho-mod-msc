@@ -7,6 +7,7 @@ using UnityEngine;
 using Psycho.Features;
 using Psycho.Internal;
 using Psycho.Screamers;
+using Psycho.Debug;
 
 
 namespace Psycho
@@ -14,10 +15,41 @@ namespace Psycho
     public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
     public enum HandParent : byte { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
 
-    public enum ScreamTimeType : int { SOUNDS = 0, FEAR = 1, PARALYSIS = 2 }
-    public enum ScreamSoundType : int { BEDROOM = 0, CRYFEMALE = 1, CRYKID = 2, KNOCK = 3, FOOTSTEPS = 4, GLASS1 = 5, GLASS2 = 6, WATER = 7 }
-    public enum ScreamFearType : int { GRANNY = 0, SUICIDAL = 1, WATERKITCHEN = 2, WATERBATHROOM = 3, TV = 4, PHONE = 5 }
-    public enum ScreamParalysisType : int { GRANNY = 0, HAND = 1, KESSELI = 2 }
+    public enum ScreamTimeType : int
+    {
+        SOUNDS = 0,
+        FEAR = 1,
+        PARALYSIS = 2
+    }
+
+    public enum ScreamSoundType : int
+    {
+        BEDROOM = 0,
+        CRYFEMALE = 1,
+        CRYKID = 2,
+        KNOCK = 3,
+        FOOTSTEPS = 4,
+        GLASS1 = 5,
+        GLASS2 = 6,
+        WATER = 7
+    }
+
+    public enum ScreamFearType : int
+    {
+        GRANNY = 0,
+        SUICIDAL = 1,
+        WATERKITCHEN = 2,
+        WATERBATHROOM = 3,
+        TV = 4,
+        PHONE = 5
+    }
+
+    public enum ScreamParalysisType : int
+    {
+        GRANNY = 0,
+        HAND = 1,
+        KESSELI = 2
+    }
 
     public struct ModelData
     {
