@@ -29,6 +29,7 @@ namespace Psycho
         static SettingsText debug_CurrentDay;
         static SettingsText debug_LastDayMinigame;
 
+        static SettingsDropDownList debug_SpawnItem;
         static SettingsDropDownList debug_PentaVeryGood;
         static SettingsDropDownList debug_PentaGood;
         static SettingsDropDownList debug_PentaNormal;
@@ -92,6 +93,10 @@ namespace Psycho
             Settings.AddButton("Get Card", GetMinigameCard);
 
             pentagramSection = Settings.AddHeader("Pentagram");
+            debug_SpawnItem = Settings.AddDropDownList("pentaItemSpawner", "Pentagram Item", Globals.PentaRecipe, 0);
+            Settings.AddButton("Spawn", SpawnPentagramItem);
+            Settings.AddText("\n");
+
             debug_PentaVeryGood = Settings.AddDropDownList("pentaVeryGood", "Very Good Events", Pentagram.InnerEvents["Very good"], 0);
             Settings.AddButton("Trigger", TriggerVeryGoodPentaEvent);
 
@@ -107,7 +112,7 @@ namespace Psycho
             debug_PentaVeryBad = Settings.AddDropDownList("pentaVeryBad", "Very Bad Events", Pentagram.InnerEvents["Very bad"], 0);
             Settings.AddButton("Trigger", TriggerVeryBadPentaEvent);
 
-            Settings.AddText("\n \n \n \n \n \n ");
+            Settings.AddText("\n \n \n ");
 
             SetSettingsVisible(false);
         }
@@ -215,6 +220,37 @@ namespace Psycho
                 _minigame = GameObject.Find("COTTAGE/minigame(Clone)").GetComponent<Minigame>();
 
             _minigame.PlayerGetsCard();
+        }
+
+        static void SpawnPentagramItem()
+        {
+            var item = debug_SpawnItem.GetSelectedItemName();
+            Transform player = GameObject.Find("PLAYER").transform;
+            Vector3 pos = player.position;
+
+            switch (item)
+            {
+                case "churchcandle":
+                    ItemsPool.AddItem(Globals.Candle_prefab, pos, Vector3.zero);
+                    break;
+                case "fernflower":
+                    ItemsPool.AddItem(Globals.FernFlower_prefab, pos, Vector3.zero);
+                    break;
+                case "mushroom":
+                    ItemsPool.AddItem(Globals.Mushroom_prefab, pos, Vector3.zero);
+                    break;
+                case "blackegg":
+                    ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
+                    break;
+                case "walnut":
+                    ItemsPool.AddItem(Globals.Walnut_prefab, pos, Vector3.zero);
+                    break;
+
+                default:
+                    return;
+            }
+            ModConsole.Print($"{item} spawned on player pos");
+
         }
 
         static void TriggerVeryGoodPentaEvent()
