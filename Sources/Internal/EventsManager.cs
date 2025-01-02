@@ -41,9 +41,9 @@ namespace Psycho.Internal
                     WorldManager.SetElecMeterState(false);
 
                 WorldManager.ShowCrows(false);
-                OnScreamerTriggered.Invoke(type, variation);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariantName(type, variation)}]");
 
-                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariant(type, variation)}]");
+                OnScreamerTriggered.Invoke(type, variation);
             }
             catch (System.Exception ex)
             {
@@ -59,7 +59,7 @@ namespace Psycho.Internal
             WorldManager.ShowCrows(true);
 
             OnScreamerFinished.Invoke();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariant(type, variation)}]");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariantName(type, variation)}]");
         }
 
         
@@ -71,7 +71,7 @@ namespace Psycho.Internal
         }
 
         
-        static string GetScreamerVariant(ScreamTimeType type, int variation)
+        static string GetScreamerVariantName(ScreamTimeType type, int variation)
         {
             switch (type)
             {

@@ -5,32 +5,31 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class MovingUncleHead : CatchedComponent
+    internal sealed class MovingUncleHead : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.PARALYSIS;
+        public override int ScreamerVariant => (int)ScreamParalysisType.KESSELI;
+
+        const int neededFrames = 100;
+        const float MaxSpeed = 0.26f;
+        const float TargetDistance = 0.07f;
+
+        readonly Vector3 TargetPoint = new Vector3(-12.035453796386719f, 0.24380475282669068f, 13.690605163574219f);
+
+
         Transform Head;
         Transform Char;
         PlayMakerFSM _fsm;
 
-        AudioSource ScreamSound;
-
         Vector3 StartPoint;
-        Vector3 TargetPoint = new Vector3(-12.035453796386719f, 0.24380475282669068f, 13.690605163574219f);
-
         Vector3[] CameraOrigs;
 
-        float TargetDistance = 0.07f;
-        float MaxSpeed = 0.26f;
-
         int elapsedFrames = 0;
-        int neededFrames = 100;
-
         bool animPlayed = false;
 
 
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
-
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot/head");
@@ -50,12 +49,9 @@ namespace Psycho.Screamers
             source.minDistance = 1.5f;
             source.spread = 0;
             source.maxDistance = 12f;
-            ScreamSound = source;
-
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Enabled()
+        public override void TriggerScreamer()
         {
             _fsm.enabled = false;
             Head.position = StartPoint;
@@ -64,18 +60,17 @@ namespace Psycho.Screamers
             Head.gameObject.SetActive(false);
         }
 
-        protected override void Disabled()
+        public override void StopScreamer()
         {
-            if (Char == null) return;
-
             animPlayed = false;
             Char.gameObject.SetActive(false);
             elapsedFrames = 0;
-            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.KESSELI);
         }
+
 
         protected override void OnFixedUpdate()
         {
+            if (!ScreamerEnabled) return;
             if (elapsedFrames < neededFrames)
             {
                 elapsedFrames++;
@@ -93,18 +88,11 @@ namespace Psycho.Screamers
             Utils.PlayScreamSleepAnim(ref animPlayed, () =>
             {
                 _fsm.enabled = true;
-                enabled = false;
                 SoundManager.PlayHeartbeat(false);
                 Utils.ResetCameraLook(CameraOrigs);
                 _fsm.CallGlobalTransition("SCREAMSTOP");
+                base.Stop();
             });
-        }
-
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.KESSELI) return;
-
-            enabled = true;
         }
     }
 }

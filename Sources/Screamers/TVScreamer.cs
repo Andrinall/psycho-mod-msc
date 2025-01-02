@@ -11,9 +11,14 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class TVScreamer : CatchedComponent
+    internal sealed class TVScreamer : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
+        public override int ScreamerVariant => (int)ScreamFearType.TV;
+
+
         GameObject SwitchObj;
+        GameObject Electricity;
         Transform NightProgram;
 
         PlayMakerFSM TVSwitch;
@@ -21,25 +26,19 @@ namespace Psycho.Screamers
         PlayMakerFSM MainSwitchUsable;
 
         AudioSource TVAudio;
-
         Texture ReplaceTexture;
-        Texture OrigTexture;
-
-        AudioClip OrigAudioClip;
-
-        bool ScreamEnabled = false;
-        bool fullEnable = false;
 
         int elapsedFrames = 0;
-        int neededFrames = 200;
+        const int neededFrames = 200;
+
+        bool ButtonAlreadyUsed = false;
 
 
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
-
             SwitchObj = GameObject.Find("YARD/Building/LIVINGROOM/TV/Switch");
             MainSwitchUsable = GameObject.Find("YARD/Building/Dynamics/FuseTable/Fusetable/MainSwitch").GetComponent<PlayMakerFSM>();
+            Electricity = GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances");
 
             TVSwitch = SwitchObj.GetComponent<PlayMakerFSM>();
             StateHook.Inject(SwitchObj, "Use", "Switch", _hook);
@@ -63,76 +62,64 @@ namespace Psycho.Screamers
             NightFSM.Fsm.InitData();
 
             ReplaceTexture = Globals.pictures[Globals.pictures.Count - 1];
-            OrigTexture = (NightFSM.GetState("State 4").Actions[0] as SetMaterialTexture).texture.Value;
 
             TVAudio = NightProgram.GetComponent<AudioSource>();
-            OrigAudioClip = TVAudio.clip;
-
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Enabled()
+        public override void TriggerScreamer()
         {
+            if (!Electricity.activeSelf && WorldManager.GetElecCutoffTimer() >= 22000f)
+            {
+                Utils.PrintDebug(eConsoleColors.YELLOW, "TV screamer triggered, but ElectricAppliances disabled (not payed)");
+                base.Stop();
+                return;
+            }
+
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = false;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = false;
             TVSwitch.CallGlobalTransition("SCREAM_ON");
 
             MainSwitchUsable.enabled = false;
-
-            fullEnable = true;
         }
 
-        protected override void Disabled()
+        public override void StopScreamer()
         {
-            if (SwitchObj == null) return;
+            ButtonAlreadyUsed = false;
+            MainSwitchUsable.enabled = true;
 
             (TVSwitch.GetState("Switch").Actions[1] as BoolTest).Enabled = true;
             (TVSwitch.GetState("Close TV 2").Actions[8] as ActivateGameObject).Enabled = true;
             TVSwitch.CallGlobalTransition("GLOBALEVENT");
 
             TVAudio.enabled = true;
-
             elapsedFrames = 0;
-            ScreamEnabled = false;
-            fullEnable = false;
-            MainSwitchUsable.enabled = true;
-
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.TV);
         }
+
 
         protected override void OnFixedUpdate()
         {
-            if (!ScreamEnabled) return;
+            if (!ButtonAlreadyUsed) return;
             if (elapsedFrames <= neededFrames)
             {
                 elapsedFrames++;
                 return;
             }
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, "elapsed == needed; Enable original TVSwitch.");
-            enabled = false;
+            base.Stop();
         }
 
-
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.TV) return;
-
-            enabled = true;
-        }
 
         void _hook(PlayMakerFSM _fsm)
         {
-            if (!fullEnable) return;
+            if (!ScreamerEnabled) return;
             
             _fsm.SendEvent("FINISHED");
-            if (ScreamEnabled) return;
+            if (ButtonAlreadyUsed) return;
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
-
+            ButtonAlreadyUsed = true;
             _setTexture();
             PlayAudioClip(Globals.TVScream_clip);
-            ScreamEnabled = true;
+            Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
         }
 
         void _setTexture()

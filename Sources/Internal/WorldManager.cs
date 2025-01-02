@@ -52,6 +52,15 @@ namespace Psycho.Internal
             return false;
         }
 
+        public static float GetElecCutoffTimer()
+        {
+            GameObject bills = GameObject.Find("Systems/ElectricityBills");
+            PlayMakerFSM data = bills?.GetComponent<PlayMakerFSM>();
+            FsmFloat WaitCutoff = data?.GetVariable<FsmFloat>("WaitCutoff");
+
+            return WaitCutoff?.Value ?? 0f;
+        }
+
         public static void SetElecMeterState(bool state)
         {
             Transform _fuseTable = GameObject.Find("YARD/Building/Dynamics/FuseTable")?.transform;
@@ -100,7 +109,9 @@ namespace Psycho.Internal
             ScreamHand.eulerAngles = new Vector3(0.4349295198917389f, 0.05798640847206116f, 0.02807953953742981f);
             ScreamHand.localScale = new Vector3(2f, 2f, 2f);
 
-            (ScreamHand.gameObject.GetComponent<MovingHand>() ?? ScreamHand.gameObject.AddComponent<MovingHand>()).enabled = false;
+            if (ScreamHand.gameObject.GetComponent<MovingHand>() == null)
+                ScreamHand.gameObject.AddComponent<MovingHand>();
+
             ScreamHand.gameObject.SetActive(true);
         }
 
@@ -124,8 +135,9 @@ namespace Psycho.Internal
             _char.eulerAngles = new Vector3(0.0f, 270f, 0.0f);
 
             uncleClone.gameObject.name = "ScreamUncle";
-            (uncleClone.gameObject.GetComponent<MovingUncleHead>() ?? uncleClone.gameObject.AddComponent<MovingUncleHead>())
-                .enabled = false;
+
+            if (uncleClone.gameObject.GetComponent<MovingUncleHead>() == null)
+                uncleClone.gameObject.AddComponent<MovingUncleHead>();
 
             uncleClone.gameObject.SetActive(true);
         }
@@ -170,7 +182,9 @@ namespace Psycho.Internal
             _animation.playAutomatically = true;
             _animation.Play("venttipig_pig_walk", PlayMode.StopAll);
 
-            (ClonedGrannyHiker.GetComponent<MummolaCrawl>() ?? ClonedGrannyHiker.AddComponent<MummolaCrawl>()).enabled = false;
+            if (ClonedGrannyHiker.GetComponent<MummolaCrawl>() == null)
+                ClonedGrannyHiker.AddComponent<MummolaCrawl>();
+
             ClonedGrannyHiker.gameObject.SetActive(true);
         }
 
@@ -259,9 +273,9 @@ namespace Psycho.Internal
         public static bool GetElecMeterSwitchState()
         {
             return GameObject.Find("Systems/ElectricityBills")
-                .GetComponent<PlayMakerFSM>()
-                .GetVariable<FsmBool>("MainSwitch")
-                .Value;
+                ?.GetComponent<PlayMakerFSM>()
+                ?.GetVariable<FsmBool>("MainSwitch")
+                ?.Value ?? false;
         }
 
         public static void ChangeWalkersAnimation()

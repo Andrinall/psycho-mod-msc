@@ -7,8 +7,12 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class KitchenShower : CatchedComponent
+    internal sealed class KitchenShower : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
+        public override int ScreamerVariant => (int)ScreamFearType.WATERKITCHEN;
+
+
         GameObject ParticleDrink;
         GameObject Switch;
         Transform Pivot;
@@ -20,9 +24,8 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
             ParticleDrink = transform.Find("ParticleDrink").gameObject;
             Switch = transform.Find("Trigger").gameObject;
             SwitchFSM = Switch.GetComponent<PlayMakerFSM>();
@@ -32,53 +35,44 @@ namespace Psycho.Screamers
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
             StateHook.Inject(Switch, "Use", "OFF", _showerHook);
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-
-        protected override void Enabled()
+        public override void TriggerScreamer()
         {
             Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
             SwitchOn.Value = true;
             ParticleDrink.SetActive(true);
         }
 
-        protected override void Disabled()
-        {
-            if (ParticleDrink == null) return;
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERKITCHEN);
-        }
 
         protected override void OnFixedUpdate()
         {
+            if (!ScreamerEnabled) return;
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.WATERKITCHEN) return;
 
-            enabled = true;
-        }
 
 
         void _showerHook(PlayMakerFSM _)
         {
-            SoundManager.StopScreamSound("kitchen_water");
-            if (!enabled) return;
+            if (!ScreamerEnabled) return;
             if (switched) return;
 
+            SoundManager.StopScreamSound("kitchen_water");
             WorldManager.SpawnPhantomBehindPlayer();
             switched = true;
             PlayerStop.Value = true;
         }
 
+
         void _phantomCallback()
         {
-            PlayerStop.Value = false;
             switched = false;
-            enabled = false;
+
+            PlayerStop.Value = false;
+            base.Stop();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.8-beta";
+        public override string Version => "0.9.8-beta3";
         public override string Description => "Adds a schizophrenia for your game character";
 
         internal static SettingsDropDownList lang;
@@ -200,7 +200,6 @@ namespace Psycho
             {
                 Globals.mailboxSheet?.SetActive(true);
             }
-
         }
 
         void Mod_FixedUpdate()
@@ -272,6 +271,7 @@ namespace Psycho
             AddComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
             AddComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
             AddComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
+            AddComponent<SoundScreamer>("YARD/Building");
 
             if (!Logic.inHorror) return;
             // if world == horror -> apply world & features
@@ -292,6 +292,7 @@ namespace Psycho
         void _addHandlers()
         {
             // add player behaviour handlers, used for social points increase or decrease
+
             AddComponent<StoreActionsHandler>("STORE");
             AddComponent<SpillHandler>("GIFU(750/450psi)/ShitTank");
             AddComponent<JunkYardJobHandler>("REPAIRSHOP/JunkYardJob/PayMoney");
@@ -303,27 +304,16 @@ namespace Psycho
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter
             AddComponent<AnyPentaItemsSpawner>("PLAYER");
 
-            // add door callbacks for disable night screamer sounds
-            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", () => {
-                SoundManager.StopScreamSound("door_knock");
-                SoundManager.StopScreamSound("footsteps");
-            });
-
-            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", () => {
-                SoundManager.StopScreamSound("bedroom");
-                SoundManager.StopScreamSound("crying_kid");
-                SoundManager.StopScreamSound("glass1");
-            });
-
             // add handlers for HOUSE_SHIT objects (septics)
             for (int i = 1; i < 6; i++)
-                GameObject.Find($"JOBS/HouseShit{i}/LOD/ShitNPC/Man").transform
+                GameObject.Find($"JOBS/HouseShit{i}/LOD/ShitNPC/ShitMan").transform
                     .Find("skeleton/pelvis/RotationPivot")
                     .Find("spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/finger_left")
                     .Find("PayMoney").gameObject.AddComponent<HouseShitHandler>();
 
             // add handlers for human triggers (hit by player & crime)
             GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>();
+
             foreach (GameObject obj in objects)
             {
                 if (obj.name.Contains("HumanTrigger"))
@@ -332,9 +322,11 @@ namespace Psycho
                     obj.AddComponent<SleepTriggerHandler>();
             }
 
+
             // main sleep trigger for initiating a night screamers
             GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger")
                 .AddComponent<ScreamsInitiator>();
+
 
             // add crash handler for cars (reset psycho after crashing)
             foreach (CarDynamics cd in Resources.FindObjectsOfTypeAll<CarDynamics>())

@@ -411,8 +411,8 @@ namespace Psycho
                     source.spread = 0;
                     source.dopplerLevel = 1;
 
-                    if (!name.Contains("door_knock") && !name.Contains("kitchen_water"))
-                        emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
+                    //if (!name.Contains("door_knock") && !name.Contains("kitchen_water"))
+                    //    emptyPoint.AddComponent<ScreamSoundDistanceChecker>();
 
                     emptyPoint.transform.SetParent(building, worldPositionStays: false);
                     emptyPoint.transform.position = pointsPos[item];

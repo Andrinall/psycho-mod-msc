@@ -5,22 +5,13 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class MummolaCrawl : CatchedComponent
+    internal sealed class MummolaCrawl : ScreamerBase
     {
-        Transform Char;
-        Transform Head;
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.PARALYSIS;
+        public override int ScreamerVariant => (int)ScreamParalysisType.GRANNY;
 
-        Animation Anim;
-        AnimationClip PigWalk;
-
-        PlayMakerFSM Fsm;
-
-        bool AnimPlayed = false;
 
         int HeadInterpolationFrames = 240;
-        int ElapsedFrames = 0;
-        float InterpolationRatio => (float)ElapsedFrames / HeadInterpolationFrames;
-
         float TargetDistance = 0.1f;
         float MaxSpeed = 0.9f;
 
@@ -28,60 +19,59 @@ namespace Psycho.Screamers
         Vector3 TargetPoint = new Vector3(-11.2399998f, 2.5150001f, 12.6759996f);
         Vector3 HeadEndRotation = new Vector3(80f, 270f, 0f);
 
+        Transform Char;
+        Transform Head;
+
+        PlayMakerFSM Fsm;
+
         Vector3[] cameraOrigs;
 
+        int ElapsedFrames = 0;
+        bool AnimPlayed = false;
 
-        protected override void Awaked()
+
+        float InterpolationRatio => (float)ElapsedFrames / HeadInterpolationFrames;
+
+
+        public override void InitScreamer()
         {
-            enabled = false;
             Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Char = transform.Find("Char");
             Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
-
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Enabled()
+        public override void TriggerScreamer()
         {
             Fsm.enabled = false;
             transform.position = StartPoint;
             transform.eulerAngles = new Vector3(347.788879f, 331.232269f, 180f);
-            
+
             cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
         }
 
-        protected override void Disabled()
+        public override void StopScreamer()
         {
-            if (Char == null) return;
-
             ElapsedFrames = 0;
-            AnimPlayed = false;
 
-            Char.gameObject.SetActive(false);            
+            Char.gameObject.SetActive(false);
             ResetHeadRotation();
             SoundManager.PlayHeartbeat(false);
-            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.GRANNY);
         }
+
 
         protected override void OnFixedUpdate()
         {
-            if (AnimPlayed) return;
+            if (!ScreamerEnabled) return;
             if (!transform.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;
             RotateHeadPivot();
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.GRANNY) return;
-
-            enabled = true;
-        }
-
         void ResetHeadRotation()
             => Head.localEulerAngles = new Vector3(270f, 90f, 0f);
+
 
         void RotateHeadPivot()
         {
@@ -90,9 +80,9 @@ namespace Psycho.Screamers
                 Utils.PlayScreamSleepAnim(ref AnimPlayed, () =>
                 {
                     Fsm.enabled = true;
-                    enabled = false;
                     Utils.ResetCameraLook(cameraOrigs);
                     Fsm.CallGlobalTransition("SCREAMSTOP");
+                    base.Stop();
                 });
                 return;
             }

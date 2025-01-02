@@ -8,37 +8,41 @@ using Psycho.Internal;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    internal sealed class GrandmaDistanceChecker : CatchedComponent
+    internal sealed class GrandmaDistanceChecker : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
+        public override int ScreamerVariant => (int)ScreamFearType.GRANNY;
+
+        const float Distance = 3.5f;
+
         Transform _player;
         AudioSource audio;
         bool m_bBlowed = false;
-        float Distance = 3.5f;
 
 
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
-
             _player = GameObject.Find("PLAYER").transform;
             audio = transform.GetComponent<AudioSource>();
-
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Disabled()
+        public override void TriggerScreamer()
         {
-            if (audio == null) return;
+            transform.position = new Vector3(-9.980711f, -0.593821f, 4.589845f);
+            transform.Find("Char").gameObject.SetActive(true);
 
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.GRANNY);
+            m_bBlowed = false;
         }
+
 
         protected override void OnFixedUpdate()
         {
+            if (!ScreamerEnabled) return;
             if (m_bBlowed) return;
             if (Vector3.Distance(transform.position, _player.position) > Distance) return;
             BlowUpGrandmaAndReset();
         }
+
 
         public void BlowUpGrandmaAndReset()
         {
@@ -60,22 +64,12 @@ namespace Psycho.Screamers
 
                 timer.Stop();
                 Destroy(smokes);
-                enabled = false;
+                base.Stop();
             };
             timer.Start();
             
             m_bBlowed = true;
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.GRANNY) return;
-
-            transform.position = new Vector3(-9.980711f, -0.593821f, 4.589845f);
-            transform.Find("Char").gameObject.SetActive(true);
-
-            enabled = true;
-            m_bBlowed = false;
-        }
     }
 }

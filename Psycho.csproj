@@ -111,6 +111,7 @@
     <Compile Include="Sources\DebugPanel.cs" />
     <Compile Include="Sources\Internal\EventsManager.cs" />
     <Compile Include="Sources\Internal\FsmHookAction.cs" />
+    <Compile Include="Sources\Internal\ScreamerBase.cs" />
     <Compile Include="Sources\Internal\TexturesManager.cs" />
     <Compile Include="Sources\Locales.cs" />
     <Compile Include="Sources\Features\AnyPentaItemsSpawner.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="Sources\Screamers\MummolaCrawl.cs" />
     <Compile Include="Sources\Screamers\PhoneRing.cs" />
     <Compile Include="Sources\Screamers\ScreamsInitiator.cs" />
-    <Compile Include="Sources\Screamers\ScreamSoundDistanceChecker.cs" />
+    <Compile Include="Sources\Screamers\SoundScreamer.cs" />
     <Compile Include="Sources\Screamers\TVScreamer.cs" />
     <Compile Include="Sources\Internal\BookWithGUI.cs" />
     <Compile Include="Sources\Internal\CatchedComponent.cs" />

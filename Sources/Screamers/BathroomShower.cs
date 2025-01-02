@@ -7,8 +7,12 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class BathroomShower : CatchedComponent
+    internal sealed class BathroomShower : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
+        public override int ScreamerVariant => (int)ScreamFearType.WATERBATHROOM;
+
+
         GameObject TapDrink;
         EllipsoidParticleEmitter TapParticle;
 
@@ -22,9 +26,8 @@ namespace Psycho.Screamers
         bool switched = false;
 
 
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
             TapDrink = transform.Find("TapDrink").gameObject;
             TapParticle = transform.Find("TapParticle").GetComponent<EllipsoidParticleEmitter>();
             ShowerPower = transform.parent.Find("LOD_bathroom/Power/shower_power");
@@ -38,47 +41,40 @@ namespace Psycho.Screamers
             PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
             StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", _showerHook);
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Enabled() => SwitchValve(true);
+        public override void TriggerScreamer() => OpenValve();
 
-        protected override void Disabled()
+        public override void StopScreamer()
         {
-            if (TapDrink == null) return;
-
-            EventsManager.FinishScreamer(ScreamTimeType.FEAR, (int)ScreamFearType.WATERBATHROOM);
+            switched = false;
+            PlayerStop.Value = false;
         }
 
         protected override void OnFixedUpdate()
         {
+            if (!ScreamerEnabled) return;
             if (!switched) return;
             WorldManager.ClonedPhantomTick(200, _phantomCallback);
         }
 
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.FEAR || (ScreamFearType)variation != ScreamFearType.WATERBATHROOM) return;
 
-            enabled = true;
-        }
-
-        void SwitchValve(bool state)
+        void OpenValve()
         {
-            ShowerSwitch.Value = state;
-            ValveSwitch.Value = state;
-            TapParticle.emit = state;
+            ShowerSwitch.Value = true;
+            ValveSwitch.Value = true;
+            TapParticle.emit = true;
 
             ShowerPower.localEulerAngles = new Vector3(30f, 0f, 0f);
 
-            TapDrink.SetActive(state);
-            Valve.Value = state;
+            TapDrink.SetActive(true);
+            Valve.Value = true;
         }
 
 
         void _showerHook(PlayMakerFSM _)
         {
-            if (!enabled) return;
+            if (!ScreamerEnabled) return;
             if (switched) return;
             
             WorldManager.SpawnPhantomBehindPlayer();
@@ -87,11 +83,6 @@ namespace Psycho.Screamers
             PlayerStop.Value = true;
         }
 
-        void _phantomCallback()
-        {
-            PlayerStop.Value = false;
-            switched = false;
-            enabled = false;
-        }
+        void _phantomCallback() => base.Stop();
     }
 }

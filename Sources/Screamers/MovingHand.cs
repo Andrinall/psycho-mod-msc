@@ -5,46 +5,47 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class MovingHand : CatchedComponent
+    internal sealed class MovingHand : ScreamerBase
     {
+        public override ScreamTimeType ScreamerTime => ScreamTimeType.PARALYSIS;
+        public override int ScreamerVariant => (int)ScreamParalysisType.HAND;
+
+
+        const float TargetDistanceFirst = 0.1f;
+        const float MaxSpeedFirst = 0.1f;
+
+        const float TargetDistanceSecond = 0.05f;
+        const float MaxSpeedSecond = 10f;
+
+        const int awaitFramesCount = 120;
+
+        readonly Vector3 CameraTargetPoint = new Vector3(-11.703310012817383f, 2.7082486152648927f, 13.318896293640137f);
+        readonly Vector3 TargetPointFirst = new Vector3(-11.942817687988282f, 1.1628656387329102f, 14.70871639251709f);
+        readonly Vector3 TargetPointSecond = new Vector3(-11.962800979614258f, 0.44349291920661929f, 14.862831115722657f);
+
+
         Transform Armature;
         Transform Rigged;
         PlayMakerFSM _fsm;
 
         Vector3 StartPoint;
-        Vector3 CameraTargetPoint = new Vector3(-11.703310012817383f, 2.7082486152648927f, 13.318896293640137f);
+        Vector3[] CameraOrigs;
 
-        Vector3 TargetPointFirst = new Vector3(-11.942817687988282f, 1.1628656387329102f, 14.70871639251709f);
-        float TargetDistanceFirst = 0.1f;
-        float MaxSpeedFirst = 0.1f;
-
-        Vector3 TargetPointSecond = new Vector3(-11.962800979614258f, 0.44349291920661929f, 14.862831115722657f);
-        float TargetDistanceSecond = 0.05f;
-        float MaxSpeedSecond = 10f;
-        
+        int elapsedFrames = 0;
         byte movingStage = 0;
         bool animPlayed = false;
 
-        int elapsedFrames = 0;
-        int awaitFramesCount = 120;
 
-        Vector3[] CameraOrigs;
-
-
-        protected override void Awaked()
+        public override void InitScreamer()
         {
-            enabled = false;
-
             _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
             Armature = transform.Find("Armature");
             Rigged = transform.Find("hand_rigged");
             
             StartPoint = Armature.position;
-
-            EventsManager.OnScreamerTriggered.AddListener(TriggerScreamer);
         }
 
-        protected override void Enabled()
+        public override void TriggerScreamer()
         {
             _fsm.enabled = false;
             Armature.position = StartPoint;
@@ -55,7 +56,7 @@ namespace Psycho.Screamers
             SoundManager.PlayHeartbeat(true);
         }
 
-        protected override void Disabled()
+        public override void StopScreamer()
         {
             animPlayed = false;
             movingStage = 0;
@@ -63,11 +64,11 @@ namespace Psycho.Screamers
 
             Armature.gameObject.SetActive(false);
             Rigged.gameObject.SetActive(false);
-            EventsManager.FinishScreamer(ScreamTimeType.PARALYSIS, (int)ScreamParalysisType.HAND);
         }
 
         protected override void OnFixedUpdate()
         {
+            if (!ScreamerEnabled) return;
             if (animPlayed) return;
 
             if (movingStage == 0)
@@ -95,20 +96,12 @@ namespace Psycho.Screamers
                 Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {
                     _fsm.enabled = true;
-                    enabled = false;
                     SoundManager.PlayHeartbeat(false);
                     Utils.ResetCameraLook(CameraOrigs);
                     _fsm.CallGlobalTransition("SCREAMSTOP");
+                    base.Stop();
                 });
             }
-        }
-
-        void TriggerScreamer(ScreamTimeType type, int variation)
-        {
-            if (type != ScreamTimeType.PARALYSIS || (ScreamParalysisType)variation != ScreamParalysisType.HAND) return;
-            Utils.PrintDebug("Trigger screamer in MovingHand");
-
-            enabled = true;
         }
     }
 }
