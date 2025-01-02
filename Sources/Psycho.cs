@@ -24,7 +24,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.8-beta3";
+        public override string Version => "0.9.8-beta4";
         public override string Description => "Adds a schizophrenia for your game character";
 
         internal static SettingsDropDownList lang;
