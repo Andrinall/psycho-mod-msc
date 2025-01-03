@@ -180,7 +180,7 @@ namespace Psycho.Features
                 SpawnPostcard();
 
             Pages.Remove(Pages.First(v => v.isDefaultPage));
-            Destroy(GameObject.Find("COTTAGE/minigame(Clone)"));
+            GameObject.Find("COTTAGE/minigame(Clone)").SetActive(false);
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({truePages > 7} story)");
             Pages.ForEach(v => Utils.PrintDebug(v.ToString()));

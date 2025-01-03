@@ -137,9 +137,6 @@ namespace Psycho
 
         void Mod_SecondPassLoad()
         {
-#if DEBUG
-            _registerDebugCommands();
-#endif
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
 
@@ -335,21 +332,6 @@ namespace Psycho
                 cd.gameObject.AddComponent<CrashHandler>();
             }
         }
-
-#if DEBUG
-        void _registerDebugCommands()
-        {
-            // register debug commands
-            ConsoleCommand.Add(new TeleportToPills());
-            ConsoleCommand.Add(new ChangeWorld());
-            ConsoleCommand.Add(new Kill());
-            ConsoleCommand.Add(new Scream());
-            ConsoleCommand.Add(new Finish());
-            ConsoleCommand.Add(new Penta());
-            ConsoleCommand.Add(new MinigameCMD());
-            ConsoleCommand.Add(new NotebookCMD());
-        }
-#endif
 
         void _setupActions(Transform camera)
         {

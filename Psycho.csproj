@@ -88,13 +88,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sources\Commands\DBG\ChangeWorld.cs" />
-    <Compile Include="Sources\Commands\DBG\Finish.cs" />
-    <Compile Include="Sources\Commands\DBG\Kill.cs" />
-    <Compile Include="Sources\Commands\DBG\MinigameCMD.cs" />
-    <Compile Include="Sources\Commands\DBG\NotebookCMD.cs" />
-    <Compile Include="Sources\Commands\DBG\Penta.cs" />
-    <Compile Include="Sources\Commands\DBG\Scream.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
