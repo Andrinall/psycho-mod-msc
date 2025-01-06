@@ -1,6 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿
+using System;
 
 using MSCLoader;
 using UnityEngine;
@@ -12,9 +11,100 @@ namespace Psycho.Internal
 {
     internal static class SaveManager
     {
-        static string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
+        public static bool TryLoad(Mod mod)
+        {
+            try
+            {
+                SaveLoadData _data = SaveLoad.DeserializeClass<SaveLoadData>(mod, "psychoData", true);
 
-        internal static void LoadData()
+                if (Logic.GameFinished)
+                {
+                    Logic.DestroyAllObjects();
+                    Utils.FreeResources();
+                    return true;
+                }
+
+                Logic.IsDead = _data.IsDead;
+                Logic.InHorror = _data.InHorror;
+                Logic.SetValue(_data.PsychoValue);
+                Logic.SetPoints(_data.PsychoPoints);
+                Logic.BeerBottlesDrunked = _data.BeerBottlesDrunked;
+                Logic.LastDayMinigame = _data.LastDayMinigame;
+
+                var rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
+                if (rooster)
+                {
+                    rooster.Applyed = _data.RoosterPosterApplyed;
+                    rooster.LastDayApplyed = _data.RoosterPosterLastDayApplyed;
+                }
+
+                Logic.EnvelopeSpawned = _data.EnvelopeSpawned;
+
+                if (Logic.InHorror && !Logic.EnvelopeSpawned)
+                    Globals.Pills = new PillsItem(_data.PillsPosition, _data.PillsEuler);
+
+                if (Logic.IsDead)
+                {
+                    Logic.IsDead = false;
+                    Logic.InHorror = false;
+                    Logic.BeerBottlesDrunked = 0;
+                    Logic.ResetValue();
+                    Logic.SetPoints(0);
+                    Utils.PrintDebug(eConsoleColors.YELLOW, "Player is DEAD in Psycho mod; resetting progress.");
+                }
+                else
+                {
+                    ItemsPool.LoadData(_data.ItemsPoolData);
+                    Notebook.Pages = _data.NotebookPagesPool;
+                }
+
+                Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to load save data;");
+                return false;
+            }
+        }
+
+        public static void SaveData(Mod mod)
+        {
+            var rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
+            var pills = Globals.Pills?.self?.transform;
+
+            SaveLoad.SerializeClass(mod, new SaveLoadData
+            {
+                GameFinished = Logic.GameFinished,
+
+                IsDead = Logic.IsDead,
+                InHorror = Logic.InHorror,
+
+                PsychoValue = Logic.Value,
+                PsychoPoints = Logic.Points,
+
+                BeerBottlesDrunked = Logic.BeerBottlesDrunked,
+                LastDayMinigame = Logic.LastDayMinigame,
+
+                RoosterPosterApplyed = rooster?.Applyed ?? false,
+                RoosterPosterLastDayApplyed = rooster?.LastDayApplyed ?? 0,
+
+                EnvelopeSpawned = Logic.EnvelopeSpawned,
+
+                PillsPosition = pills == null ? Vector3.zero : pills.position,
+                PillsEuler = pills == null ? Vector3.zero : pills.eulerAngles,
+
+                ItemsPoolData = ItemsPool.GetSaveData(),
+                NotebookPagesPool = Notebook.Pages
+            }, "psychoData", true);
+        }
+
+        public static void RemoveData(Mod mod)
+            => SaveLoad.DeleteValue(mod, "psychoData");
+
+        /*static string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";*/
+
+        /*internal static void LoadData()
         {
             // load saved data
             try
@@ -23,31 +113,35 @@ namespace Psycho.Internal
                 if (value.Length == 0) throw new IndexOutOfRangeException("Bytes length in save file == 0");
                 if (value.Length < 30) throw new IndexOutOfRangeException("Bytes length in save file < default length");
 
-                Logic.isDead = BitConverter.ToBoolean(value, 0);
-                Logic.inHorror = BitConverter.ToBoolean(value, 1);
-                Logic.envelopeSpawned = BitConverter.ToBoolean(value, 2);
-                Logic.SetValue(BitConverter.ToSingle(value, 3));
-                Logic.SetPoints(BitConverter.ToSingle(value, 7));
-                Logic.BeerBottlesDrunked = BitConverter.ToInt32(value, 11);
-                Logic.lastDayMinigame = BitConverter.ToInt32(value, 15);
-                Logic.numberOfSpawnedPages = BitConverter.ToInt32(value, 19);
+                Logic.IsDead = BitConverter.ToBoolean(value, 0);
+                Logic.InHorror = BitConverter.ToBoolean(value, 1);
+                Logic.GameFinished = BitConverter.ToBoolean(value, 2);
+                Logic.EnvelopeSpawned = BitConverter.ToBoolean(value, 3);
+                Logic.SetValue(BitConverter.ToSingle(value, 4));
+                Logic.SetPoints(BitConverter.ToSingle(value, 8));
+                Logic.BeerBottlesDrunked = BitConverter.ToInt32(value, 12);
+                Logic.LastDayMinigame = BitConverter.ToInt32(value, 16);
+                //Logic.NumberOfSpawnedPages = BitConverter.ToInt32(value, 20);
 
-                var rooster = GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>();
-                rooster.Applyed = BitConverter.ToBoolean(value, 23);
-                rooster.LastDayApplyed = BitConverter.ToInt32(value, 24);
+                var rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
+                if (rooster)
+                {
+                    rooster.Applyed = BitConverter.ToBoolean(value, 24);
+                    rooster.LastDayApplyed = BitConverter.ToInt32(value, 25);
+                }
 
                 // spawn pills in needed
-                if (Logic.inHorror && !Logic.envelopeSpawned)
-                    Globals.pills = PillsItem.ReadData(ref value, 28);
+                if (Logic.InHorror && !Logic.EnvelopeSpawned)
+                    Globals.Pills = PillsItem.ReadData(ref value, 29);
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"Value:{Logic.Value}; dead:{Logic.isDead}; env:{Logic.envelopeSpawned}; horror:{Logic.inHorror}");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"Value:{Logic.Value}; dead:{Logic.IsDead}; env:{Logic.EnvelopeSpawned}; horror:{Logic.InHorror}");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"lastDayMinigame: {Logic.LastDayMinigame}; globalDay: {Utils.GetGlobalVariable<FsmInt>("GlobalDay")}");
                 
-                if (Logic.isDead)
+                if (Logic.IsDead)
                 {
-                    Logic.isDead = false;
-                    Logic.inHorror = false;
+                    Logic.IsDead = false;
+                    Logic.InHorror = false;
                     Logic.BeerBottlesDrunked = 0;
-                    Logic.numberOfSpawnedPages = 0;
                     Logic.ResetValue();
                     Logic.SetPoints(0);
                 }
@@ -95,9 +189,9 @@ namespace Psycho.Internal
                 Sketchbook.AddComponent<Sketchbook>();
                 Sketchbook.MakePickable();
             }
-        }
+        }*/
 
-        internal static void LoadNotebookPages(byte[] value)
+        /*internal static void LoadNotebookPages(byte[] value)
         {
             Notebook.Pages.Clear();
 
@@ -136,16 +230,15 @@ namespace Psycho.Internal
             }
             catch (Exception ex)
             {
-                Logic.numberOfSpawnedPages = 0;
-                Logic.lastDayMinigame = 0;
+                Logic.LastDayMinigame = 0;
                 Globals.Notebook?.ClearPages();
 
                 ModConsole.Error("Error while loading notebook pages");
                 ModConsole.Error($"{ex.GetFullMessage()}\n{ex.StackTrace}");
             }
-        }
+        }*/
 
-        internal static void SaveNotebookPages(ref byte[] array)
+        /*internal static void SaveNotebookPages(ref byte[] array)
         {
             int itemsPoolSize = ItemsPool.GetSizeInSave(array);
             int offset = ItemsPool.base_offset + itemsPoolSize + 4; // (items pool base offset) + (items pool size) + (spacing)
@@ -165,44 +258,55 @@ namespace Psycho.Internal
             }
 
             Notebook.Pages.Clear();
-        }
+        }*/
 
-        internal static void SaveData()
+        /*internal static void SaveData()
         {
             // save data
             byte[] array = new byte[80 + (ItemsPool.Length * 90) + 4 + (6 * Notebook.Pages.Count)];
             // [(values + picture + pills + empty space) + (penta pool len * penta pool alloc)]
+            BitConverter.GetBytes(Logic.GameFinished).CopyTo(array, 2);
 
-            if (Globals.pills == null && Logic.inHorror)
-                Logic.envelopeSpawned = true;
-
-            BitConverter.GetBytes(Logic.isDead).CopyTo(array, 0); // 1
-            BitConverter.GetBytes(Logic.inHorror).CopyTo(array, 1); // 1
-            BitConverter.GetBytes(Logic.envelopeSpawned).CopyTo(array, 2); // 1
-            BitConverter.GetBytes(Logic.Value).CopyTo(array, 3); // 4
-            BitConverter.GetBytes(Logic.Points).CopyTo(array, 7); // 4
-            BitConverter.GetBytes(Logic.BeerBottlesDrunked).CopyTo(array, 11);
-            BitConverter.GetBytes(Logic.lastDayMinigame).CopyTo(array, 15);
-            BitConverter.GetBytes(Logic.numberOfSpawnedPages).CopyTo(array, 19);
-
-            var rooster = GameObject.Find("rooster_poster(Clone)").GetComponent<AngryRoosterPoster>();
-            BitConverter.GetBytes(rooster.Applyed).CopyTo(array, 23);
-            BitConverter.GetBytes(rooster.LastDayApplyed).CopyTo(array, 24);
-
-            Utils.PrintDebug($"dead: [{Logic.isDead}]; horror: [{Logic.inHorror}]; envelope: [{Logic.envelopeSpawned}];\nvalue: [{Logic.Value}]; points: [{Logic.Points}]; bottles: [{Logic.BeerBottlesDrunked}]");
-
-            if (Logic.inHorror && !Logic.envelopeSpawned)
+            if (Logic.GameFinished)
             {
-                Globals.pills?.WriteData(ref array, 28);
-                Globals.pills = null;
+                File.WriteAllBytes(_saveDataPath, array);
+                return;
+            }
+
+            if (Globals.Pills == null && Logic.InHorror)
+                Logic.EnvelopeSpawned = true;
+
+            BitConverter.GetBytes(Logic.IsDead).CopyTo(array, 0);
+            BitConverter.GetBytes(Logic.InHorror).CopyTo(array, 1);
+            
+            BitConverter.GetBytes(Logic.EnvelopeSpawned).CopyTo(array, 3);
+            BitConverter.GetBytes(Logic.Value).CopyTo(array, 4);
+            BitConverter.GetBytes(Logic.Points).CopyTo(array, 8);
+            BitConverter.GetBytes(Logic.BeerBottlesDrunked).CopyTo(array, 12);
+            BitConverter.GetBytes(Logic.LastDayMinigame).CopyTo(array, 16);
+            //BitConverter.GetBytes(Logic.NumberOfSpawnedPages).CopyTo(array, 20);
+
+            var rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
+            if (rooster)
+            {
+                BitConverter.GetBytes(rooster.Applyed).CopyTo(array, 24);
+                BitConverter.GetBytes(rooster.LastDayApplyed).CopyTo(array, 25);
+            }
+
+            Utils.PrintDebug($"dead: [{Logic.IsDead}]; horror: [{Logic.InHorror}]; envelope: [{Logic.EnvelopeSpawned}];\nvalue: [{Logic.Value}]; points: [{Logic.Points}]; bottles: [{Logic.BeerBottlesDrunked}]");
+
+            if (Logic.InHorror && !Logic.EnvelopeSpawned)
+            {
+                Globals.Pills?.WriteData(ref array, 29);
+                Globals.Pills = null;
             }
 
             ItemsPool.Save(ref array);
             SaveNotebookPages(ref array);
             File.WriteAllBytes(_saveDataPath, array);
-        }
+        }*/
 
-        internal static void RemoveFile()
-            => File.Delete(_saveDataPath);
+        /*internal static void RemoveFile()
+            => File.Delete(_saveDataPath);*/
     }
 }

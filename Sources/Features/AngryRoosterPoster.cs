@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿
+using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
@@ -43,7 +44,6 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-
             int day = GlobalDay.Value % 7;
             if (Applyed && LastDayApplyed != GlobalDay.Value)
                 Applyed = false;

@@ -1,8 +1,11 @@
-﻿using Psycho.Internal;
+﻿
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+
 using UnityEngine;
+
+using Psycho.Internal;
 
 
 namespace Psycho.Screamers

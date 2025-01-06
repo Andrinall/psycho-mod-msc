@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -6,16 +7,100 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Handlers;
+
 using Random = UnityEngine.Random;
+
 
 namespace Psycho.Internal
 {
     internal static class SoundManager
     {
         public static AudioSource DeathSound;
-        public static List<AudioSource> ScreamPoints { get; private set; } = new List<AudioSource>();
+        public static readonly List<AudioSource> ScreamPoints = new List<AudioSource>();
+        public static readonly List<AudioClip> FullScreenScreamersSounds = new List<AudioClip>();
+
+        public static AudioSource FullScreenScreamerSoundsSource = null;
+
+        static AudioClip ad_radio_static_orig;
 
         static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
+        static AudioClip RandomSoundForFullScreenScreamer => FullScreenScreamersSounds[Random.Range(0, FullScreenScreamersSounds.Count)];
+
+        public static void MuteGlobalAmbient(bool state)
+        {
+            if (state)
+            {
+                MuteSource(Globals.GlobalAmbient_source, true);
+                MuteSource(Globals.GlobalPsychoAmbient_source, true);
+                return;
+            }
+
+            if (!Logic.InHorror)
+            {
+                MuteSource(Globals.GlobalAmbient_source, !(Psycho.SUN_hours.Value >= 22f || Psycho.SUN_hours.Value < 4f));
+                MuteSource(Globals.GlobalPsychoAmbient_source, true);
+            }
+            else
+            {
+                MuteSource(Globals.GlobalAmbient_source, true);
+                MuteSource(Globals.GlobalPsychoAmbient_source, false);
+            }
+        }
+
+        public static void MuteSource(AudioSource source, bool state)
+        {
+            if (source.mute == state) return;
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"[{source.transform.GetPath()}].MuteSource({state})");
+
+            source.mute = state;
+        }
+        
+        public static AudioSource AddAudioSource(GameObject parent, AudioClip clip, float volume)
+        {
+            AudioSource _source = parent.AddComponent<AudioSource>();
+            _source.clip = clip;
+            _source.playOnAwake = true;
+            _source.loop = true;
+            _source.priority = 50;
+            _source.volume = 0.12f;
+            _source.spatialBlend = 0f;
+            _source.dopplerLevel = 0f;
+            _source.spread = 0f;
+            _source.Play();
+            _source.mute = true;
+            return _source;
+        }
+
+        public static void ReplaceRadioStaticSound(AudioClip newClip)
+        {
+            GameObject _radioChannels = Resources.FindObjectsOfTypeAll<GameObject>()
+                .Where(v => v != null && v.name == "RadioChannels")
+                .FirstOrDefault();
+
+            AudioSource _static = _radioChannels.transform.GetChild(2).GetComponent<AudioSource>();
+            
+            if (ad_radio_static_orig == null)
+                ad_radio_static_orig = _static.clip;
+
+            if (newClip == null && ad_radio_static_orig != null)
+            {
+                _static.clip = ad_radio_static_orig;
+                return;
+            }
+
+            _static.clip = newClip;
+        }
+
+        public static void EnableRandomSoundForFullScreenScreamer()
+        {
+            FullScreenScreamerSoundsSource.Stop();
+            FullScreenScreamerSoundsSource.clip = RandomSoundForFullScreenScreamer;
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"New random clip for full screen screamer [{FullScreenScreamerSoundsSource.clip.name}]");
+            FullScreenScreamerSoundsSource.Play();
+        }
+
+        public static bool IsFullScreenScreamerSoundPlaying()
+            => FullScreenScreamerSoundsSource.isPlaying;
 
         public static bool IsSoundPlayed(params string[] obj)
             => ScreamPoints.Any(v => v != null && v.clip != null && obj.Contains(v.clip.name) && v.isPlaying);

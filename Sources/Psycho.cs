@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -11,9 +12,8 @@ using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
-#if DEBUG
-using Psycho.Debug;
-#endif
+using Psycho.FullScreenScreamers;
+
 using Object = UnityEngine.Object;
 
 
@@ -39,8 +39,8 @@ namespace Psycho
         Transform _bells;
         
         FsmState _bellsState;
-        FsmFloat SUN_minutes;
-        FsmFloat SUN_hours;
+        internal static FsmFloat SUN_minutes;
+        internal static FsmFloat SUN_hours;
         FsmString GUIsubtitle;
         
         FsmBool m_bHouseBurningState;
@@ -83,7 +83,7 @@ namespace Psycho
 
         void Mod_NewGame()
         {
-            SaveManager.RemoveFile();
+            SaveManager.RemoveData(this);
             Logic.SetDefaultValues();
             Utils.FreeResources();
             Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
@@ -99,7 +99,30 @@ namespace Psycho
             Globals.LoadAssets(_bundle);
             _bundle.Unload(false);
 
-            SaveManager.LoadData();
+            //////////////////
+            if (!SaveManager.TryLoad(this))
+            {
+                Logic.SetDefaultValues(); // reset data if savedata not loaded
+
+                if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
+                {
+                    ItemsPool.AddItem(Globals.Picture_prefab,
+                        new Vector3(-10.1421f, 0.2857685f, 6.501729f),
+                        new Vector3(0.01392611f, 2.436693f, 89.99937f)
+                    );
+                }
+
+                if (GameObject.Find("Notebook(Clone)") == null)
+                {
+                    GameObject Notebook = ItemsPool.AddItem(Globals.Notebook_prefab,
+                        new Vector3(-2.007682f, 0.04279194f, 7.669019f),
+                        new Vector3(90f, 247.8114f, 0f)
+                    );
+                    Globals.Notebook = Notebook.AddComponent<Notebook>();
+                    Notebook.MakePickable();
+                }
+            }
+            ////////////
 
             Transform newspaperFrame = Object.Instantiate(Globals.Picture_prefab).transform;
             newspaperFrame.gameObject.name = "Newspaper(Clone)";
@@ -118,7 +141,7 @@ namespace Psycho
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
-
+            
             m_bHouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             _houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
             _player = GameObject.Find("PLAYER").transform;
@@ -137,6 +160,8 @@ namespace Psycho
 
         void Mod_SecondPassLoad()
         {
+            if (Logic.GameFinished) return;
+
             // register crutch command
             ConsoleCommand.Add(new FixBrokenHUD());
 
@@ -156,6 +181,7 @@ namespace Psycho
             _applyHorrorIfNeeded();
             _setupActions(camera);
 
+            WorldManager.AddAmbientTriggers();
             WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
             Minigame.Initialize();
 
@@ -173,16 +199,10 @@ namespace Psycho
             source.spread = 0f;
             _grandma.AddComponent<GrandmaDistanceChecker>();
 
-            // whisp spawn
-            /*
-             * var obj = GameObject.Find("MAP/Buildings/DINGONBIISI/Misc/Thing1");
-             * var mover = obj.Find("Mover");
-             * obj.SetActive(true);
-             * mover.SetActive(true);
-             */
+            SoundManager.ReplaceRadioStaticSound(Globals.UBV_psy_clip);
 
+            // finalize a loading
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
-            //Resources.UnloadUnusedAssets(); // tested (for remove in release version)
             IsLoaded = true;
 #if DEBUG
             DebugPanel.SetSettingsVisible(true);
@@ -193,9 +213,9 @@ namespace Psycho
         {
             if (Logic.GameFinished) return;
 
-            if (IsLoaded && !IsLoaderMenuOpened && fastOpen.GetKeybindUp() && Logic.inHorror && !Logic.envelopeSpawned)
+            if (IsLoaded && !IsLoaderMenuOpened && fastOpen.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
             {
-                Globals.mailboxSheet?.SetActive(true);
+                Globals.MailboxSheet?.SetActive(true);
             }
         }
 
@@ -215,6 +235,13 @@ namespace Psycho
                 Logic.PlayerCommittedOffence("HOUSE_BURNING");
                 m_bHouseOnFire = true;
             }
+
+            WorldManager.ShowCrows(!(SUN_hours.Value >= 20f || SUN_hours.Value < 6f));
+
+            if (Logic.CurrentAmbientTrigger == null)
+                SoundManager.MuteGlobalAmbient(false);
+                
+            
 
             if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
             {
@@ -236,7 +263,7 @@ namespace Psycho
         {
             // restore original game textures for materials (avoid game crash)
             OnUnload();
-            SaveManager.SaveData();
+            SaveManager.SaveData(this);
         }
 
         void OnUnload()
@@ -245,6 +272,7 @@ namespace Psycho
             WorldManager.ChangeIndepTextures(true);
             Utils.ChangeSmokingModel();
             SoundManager.ChangeFliesSounds();
+            SoundManager.ReplaceRadioStaticSound(null);
             TexturesManager.Cache.Clear();
 
             EventsManager.UnSubscribeAll();
@@ -264,13 +292,13 @@ namespace Psycho
 
             // attach screamers components to game objects
             AddComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
-            AddComponent<PhoneRing>("YARD/Building/LIVINGROOM/Telephone");
+            AddComponent<PhoneScreamer>("YARD/Building/LIVINGROOM/Telephone");
             AddComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
             AddComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
             AddComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
             AddComponent<SoundScreamer>("YARD/Building");
 
-            if (!Logic.inHorror) return;
+            if (!Logic.InHorror) return;
             // if world == horror -> apply world & features
 
             Utils.ChangeSmokingModel();
@@ -283,7 +311,7 @@ namespace Psycho
             WorldManager.StopCloudsOrRandomize();
 
             SoundManager.ChangeFliesSounds();
-            Globals.suicidalsList.SetActive(true); // activate suicidals 
+            Globals.SuicidalsList.SetActive(true); // activate suicidals 
         }
 
         void _addHandlers()
@@ -317,20 +345,38 @@ namespace Psycho
                     obj.AddComponent<NPCHitHandler>();
                 else if (obj.name == "SleepTrigger")
                     obj.AddComponent<SleepTriggerHandler>();
-            }
 
+                else if (obj.name == "Starter" && obj.transform.parent?.name != "DatabaseMotor")
+                    obj.AddComponent<EngineStarterHandler>();
+            }
 
             // main sleep trigger for initiating a night screamers
             GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger")
                 .AddComponent<ScreamsInitiator>();
 
+            Transform HouseLightSwitches = GameObject.Find("YARD/Building/Dynamics/LightSwitches").transform;
+            for (int i = 0; i < HouseLightSwitches.childCount; i++)
+                HouseLightSwitches.GetChild(i).gameObject.AddComponent<LightSwitchHandler>();
 
-            // add crash handler for cars (reset psycho after crashing)
-            foreach (CarDynamics cd in Resources.FindObjectsOfTypeAll<CarDynamics>())
-            {
-                if (cd.transform.parent != null) continue;
-                cd.gameObject.AddComponent<CrashHandler>();
-            }
+            GameObject.Find("BOAT/GFX/Motor/Pivot/Ignition").AddComponent<BoatIgnitionHandler>();
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").AddComponent<DumpCigaretteHandler>();
+            GameObject.Find("YARD/Building/Garage/BatteryCharger/TriggerCharger").AddComponent<AssemblyBatteryToChargeHandler>();
+            GameObject.Find("YARD/Building/KITCHEN/Fridge/Pivot/Handle").AddComponent<FridgeOpenDoorHandler>();
+            GameObject.Find("COTTAGE/Sauna/Stove/StoveTrigger").AddComponent<CottageStoveSteamHandler>();
+
+            GameObject.Find("STORE/StoreCashRegister").AddComponent<CashRegisterHandler>();
+
+            GameObject.Find("STORE").transform.Find("LOD/GFX_Pub/PubCashRegister").gameObject
+                .AddComponent<CashRegisterHandler>();
+
+            GameObject.Find("WATERFACILITY").transform.Find("LOD/Desk/FacilityCashRegister").gameObject
+                .AddComponent<CashRegisterHandler>();
+
+            GameObject.Find("REPAIRSHOP").transform.Find("LOD/Store/ShopCashRegister").gameObject
+                .AddComponent<CashRegisterHandler>();
+
+            (GameObject.Find("ITEMS/fish trap(itemx)/PickFish") ?? GameObject.Find("fish trap(itemx)/PickFish"))
+                .AddComponent<FishTrapHandler>();
         }
 
         void _setupActions(Transform camera)
@@ -423,8 +469,8 @@ namespace Psycho
 
         void MilkUsed()
         {
-            Logic.milkUsed = true;
-            Logic.milkUseTime = DateTime.Now;
+            Logic.MilkUsed = true;
+            Logic.MilkUseTime = DateTime.Now;
         }
 
         void FittanCrashedByPlayer() => Logic.PlayerCommittedOffence("FITTAN_CRASH");

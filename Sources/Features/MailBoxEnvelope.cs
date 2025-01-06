@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -58,41 +59,53 @@ namespace Psycho.Features
                 .gameObject.GameObject.Value = EnvelopeSheet;
 
             fsm.FsmVariables.FloatVariables = new List<FsmFloat>().ToArray();
-            if (!Logic.envelopeSpawned)
+            if (!Logic.EnvelopeSpawned)
                 MailboxEnvelope.SetActive(false);
 
             StateHook.Inject(MailboxEnvelope, "Use", "Open ad", CreateRandomPills, -1);
             StateHook.Inject(EnvelopeSheet, "Setup", "State 2", DisableStrangeLetter, -1);
             EnvelopeSheet.SetActive(false);
 
-            Globals.mailboxSheet = EnvelopeSheet;
-            Globals.envelopeObject = MailboxEnvelope;
+            Globals.MailboxSheet = EnvelopeSheet;
+            Globals.EnvelopeObject = MailboxEnvelope;
 
-            if (Globals.pills != null)
-                SetBackgroundScreenForLetter(Globals.pills.index);
+            if (Globals.Pills != null)
+                SetBackgroundScreenForLetter(Globals.Pills.index);
 
             m_bInstalled = true;
         }
 
         void DisableStrangeLetter()
         {
+            if (Logic.GameFinished)
+            {
+                Destroy(this);
+                return;
+            }
+
             MailboxEnvelope.SetActive(false);
-            Logic.envelopeSpawned = false;
+            Logic.EnvelopeSpawned = false;
         }
 
         void CreateRandomPills()
         {
+            if (Logic.GameFinished)
+            {
+                Destroy(this);
+                return;
+            }
+
             try
             {
-                if (Globals.pills != null)
+                if (Globals.Pills != null)
                 {
-                    Destroy(Globals.pills.self);
-                    Globals.pills = null;
+                    Destroy(Globals.Pills.self);
+                    Globals.Pills = null;
                     Utils.PrintDebug(eConsoleColors.YELLOW, "Removed previous pills");
                 }
 
-                int idx = UnityEngine.Random.Range(0, Globals.pills_positions.Count - 1);
-                Globals.pills = new PillsItem(idx, Globals.pills_positions[idx]);
+                int idx = UnityEngine.Random.Range(0, Globals.PillsPositions.Count - 1);
+                Globals.Pills = new PillsItem(Globals.PillsPositions[idx]);
 
                 SetBackgroundScreenForLetter(idx);
                 Utils.PrintDebug(eConsoleColors.GREEN, $"Generated pills: {idx}");
@@ -106,7 +119,7 @@ namespace Psycho.Features
         void SetBackgroundScreenForLetter(int index)
         {
             Transform image = EnvelopeSheet.transform.Find("Background/Image");
-            Texture newTexture = Globals.mailScreens.Find(v => v.name == index.ToString());
+            Texture newTexture = Globals.MailScreens.Find(v => v.name == index.ToString());
             image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", newTexture);
             Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {newTexture.name} idx");
         }

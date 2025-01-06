@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -6,6 +7,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+
 using Random = UnityEngine.Random;
 
 
@@ -77,13 +79,13 @@ namespace Psycho.Screamers
                 return;
             }
 
-            if (Logic.inHorror)
+            if (Logic.InHorror)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "Player in horror; Skip night screamer");
                 return;
             }
 
-            if (Logic.milkUsed && (DateTime.Now - Logic.milkUseTime).Seconds < 60)
+            if (Logic.MilkUsed && (DateTime.Now - Logic.MilkUseTime).Seconds < 60)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "Milk usage timer < 60 seconds\nSkip night screamer");
                 return;
@@ -145,7 +147,7 @@ namespace Psycho.Screamers
 
         void WakeUp()
         {
-            Logic.milkUsed = false;
+            Logic.MilkUsed = false;
             if (!m_bTrigger) return;
 
             ApplyScreamer((ScreamTimeType)m_iRand, screamerVariation);

@@ -19,11 +19,11 @@ namespace Psycho
         {
             {
                 "Man found\ndead of\nheart attack\nin region of\nAlivieska",
-                "Молодой человек\nнайден умершим\nот сердечного\nприступа."
+                "Парень\nнайден\nумершим от\nприступа."
             },
             {
                 "Man found\nafter committing\nsuicide in\nregion of\nAlivieska",
-                "Молодой человек\nнайден умершим\nот сердечного\nприступа."
+                "Парень\nнайден\nмёртвым на\nЖ/Д путях."
             }
         };
 

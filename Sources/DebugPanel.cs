@@ -1,5 +1,6 @@
 ﻿#if DEBUG
 using System;
+using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
@@ -7,7 +8,7 @@ using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using Psycho.Features;
-using System.Collections.Generic;
+
 using Random = UnityEngine.Random;
 
 
@@ -45,13 +46,6 @@ namespace Psycho
 
         static Minigame _minigame;
 
-        /*static readonly List<Vector3[]> junkCarsPos = new List<Vector3[]>
-        {
-            new Vector3[] { new Vector3(1553.83f, 6.938912f, 728.8507f), new Vector3 (293.7697f, 249.2135f, 87.0145f) },
-            new Vector3[] { new Vector3 (1554.213f, 7.895408f, 728.2757f), new Vector3 (354.9219f, 261.3854f, 41.91655f) },
-            new Vector3[] { new Vector3 (1553.669f, 7.790683f, 730.2797f), new Vector3 (338.634f, 243.1584f, 35.6148f) },
-            new Vector3[] { new Vector3 (1555.464f, 7.173864f, 727.7571f), new Vector3 (324.3774f, 264.1703f, 167.7415f) }
-        };*/
         static readonly List<SettingsHeader> headers = new List<SettingsHeader>();
 
         public static void Init()
@@ -63,7 +57,7 @@ namespace Psycho
             debug_Points = Settings.AddSlider("PointsValue", "Points", -8, 8, Logic.Points, PointsValueChanged);
             debug_IsDead = Settings.AddText("Is Dead: False");
             debug_GameFinished = Settings.AddCheckBox("PsychoFinished", "Game Finished", Logic.GameFinished, SetGameFinished);
-            Settings.AddButton("Reset All", ResetAll);
+            Settings.AddButton("Reset All", Logic.SetDefaultValues);
 
             Settings.AddButton("Switch World", SwitchWorld);
             Settings.AddButton("Increase Fatigue", IncreaseFatigue);
@@ -73,11 +67,9 @@ namespace Psycho
             Settings.AddButton("Teleport To Pills", TeleportToPills);
             Settings.AddButton("Initiate Heart Attack", KillHeartAttack);
             Settings.AddButton("Suicide On Railroad", SuicideOnRailroad);
+            Settings.AddButton("Reset FullScreenScreamer Cooldown", Logic.ResetFullScreenScreamerCooldown);
             
             Settings.AddText("");
-
-            //Settings.AddButton("Fill Septics", FillSeptics);
-            //Settings.AddButton("Grab Junk Cars", GrabJunkCars);
 
             headers.Add(Settings.AddHeader("Notebook", true));
 
@@ -154,14 +146,14 @@ namespace Psycho
 
             debug_Psycho.SetValue(Logic.Value);
             debug_Points.SetValue(Logic.Points);
-            debug_IsDead.SetValue($"Is Dead: {Logic.isDead}");
+            debug_IsDead.SetValue($"Is Dead: {Logic.IsDead}");
             debug_GameFinished.SetValue(Logic.GameFinished);
 
             debug_TimeOfDay.SetValue($"Time Of Day: {TimeOfDay.Value}");
 
-            if (Logic.milkUsed)
+            if (Logic.MilkUsed)
             {
-                var milkTimer = 60 - (Logic.milkUseTime - DateTime.Now).Seconds;
+                var milkTimer = 60 - (Logic.MilkUseTime - DateTime.Now).Seconds;
                 var clampedMilkTimer = Mathf.Clamp(milkTimer, 0, 60);
                 debug_MilkUsageTimer.SetValue($"Milk Usage Timer: {clampedMilkTimer} seconds ago");
                 debug_MilkUsageTimer.SetVisibility(true);
@@ -170,7 +162,7 @@ namespace Psycho
                 debug_MilkUsageTimer.SetVisibility(false);
 
             debug_CurrentDay.SetValue($"Current Day: {CurrentDay.Value}");
-            debug_LastDayMinigame.SetValue($"Last Day Minigame: {Logic.lastDayMinigame}");
+            debug_LastDayMinigame.SetValue($"Last Day Minigame: {Logic.LastDayMinigame}");
         }
 
         public static void SetSettingsVisible(bool state)
@@ -184,31 +176,18 @@ namespace Psycho
 
         static void SetGameFinished()
         {
+            if (Logic.GameFinished) return;
+
             bool newValue = debug_GameFinished.GetValue();
             if (newValue)
             {
                 Logic.FinishShizGame();
                 return;
             }
-
-            Logic.GameFinished = false;
-            ResetAll();
-
-            if (!FixedHUD.IsElementExist("Psycho"))
-                FixedHUD.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
-
-            FixedHUD.Structurize();
-        }
-
-        static void ResetAll()
-        {
-            Logic.ResetValue();
-            Logic.ResetPoints();
-            Logic.lastDayMinigame = 0;
         }
 
         static void MilkUsed()
-            => debug_MilkUsed.SetValue(Logic.milkUsed);
+            => debug_MilkUsed.SetValue(Logic.MilkUsed);
 
         static void FillNotebook()
         {
@@ -247,7 +226,7 @@ namespace Psycho
             if (_minigame == null)
                 _minigame = GameObject.Find("COTTAGE/minigame(Clone)").GetComponent<Minigame>();
 
-            Logic.lastDayMinigame--;
+            Logic.LastDayMinigame--;
             _minigame.UpdateHousekeeperCard();
         }
 
@@ -306,7 +285,7 @@ namespace Psycho
             => PentagramEvents.TriggerEvent(debug_PentaVeryBad.GetSelectedItemName(), true);
 
         static void SwitchWorld()
-            => Logic.ChangeWorld(Logic.inHorror ? eWorldType.MAIN : eWorldType.HORROR);
+            => Logic.ChangeWorld(Logic.InHorror ? eWorldType.MAIN : eWorldType.HORROR);
 
         static void IncreaseFatigue()
             => Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue").Value = 85f;
@@ -322,13 +301,13 @@ namespace Psycho
 
         static void TeleportToPills()
         {
-            if (Globals.pills?.self == null)
+            if (Globals.Pills?.self == null)
             {
                 ModConsole.Error("Pills not exists!");
                 return;
             }
 
-            GameObject.Find("PLAYER").transform.position = Globals.pills.self.transform.position;
+            GameObject.Find("PLAYER").transform.position = Globals.Pills.self.transform.position;
         }
 
         static void KillHeartAttack()
@@ -336,53 +315,6 @@ namespace Psycho
 
         static void SuicideOnRailroad()
             => Logic.KillUsingTrain();
-
-       /* static void FillSeptics()
-        {
-            Utils.GetGlobalVariable<FsmInt>("PlayerKeyGifu").Value = 1;
-
-            Transform _jobs = GameObject.Find("JOBS").transform;
-            for (int i = 0; i < _jobs.childCount; i++)
-            {
-                Transform _child = _jobs.GetChild(i);
-                if (_child == null) continue;
-                if (!_child.name.Contains("HouseShit")) continue;
-
-                Transform _npc = _child.Find("LOD/ShitNPC");
-                if (_npc == null) continue;
-
-                PlayMakerFSM _fsm = _npc.GetComponent<PlayMakerFSM>();
-                if (_fsm == null) continue;
-
-                _fsm.GetVariable<FsmFloat>("Level").Value = 10f;
-                _fsm.GetVariable<FsmBool>("Called").Value = true;
-            }
-        }*/
-
-        /*static void GrabJunkCars()
-        {
-            List<Transform> junkCars = Resources.FindObjectsOfTypeAll<Transform>().Where(v => v != null && v.name.Contains("JunkCar")).ToList();
-            foreach (Transform car in junkCars)
-            {
-                int index = Int32.Parse(
-                    new string(
-                        new char[] { car.name[7] }
-                    )
-                );
-
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"moving JunkCar{index}");
-
-                car.parent = null;
-                car.position = junkCarsPos[index - 1][0];
-                car.eulerAngles = junkCarsPos[index - 1][1];
-            }
-
-            PlayMakerFSM _job = GameObject.Find("REPAIRSHOP/JunkYardJob").GetComponent<PlayMakerFSM>();
-            for (int i = 1; i < 5; i++)
-                _job.GetVariable<FsmBool>($"JunkCar{i}Delivered").Value = true;
-
-            GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari").SetActive(true);
-        }*/
     }
 }
 #endif

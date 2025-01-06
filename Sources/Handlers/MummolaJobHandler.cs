@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 using Psycho.Internal;
 
@@ -6,7 +7,7 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class MummolaJobHandler : MonoBehaviour
+    internal sealed class MummolaJobHandler : CatchedComponent
     {
         void Awake() => StateHook.Inject(gameObject, "Use", "State 6", JobCompleted);
 

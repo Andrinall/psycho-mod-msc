@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
@@ -18,6 +19,18 @@ namespace Psycho.Internal
 
         static FsmBool GUIuse;
         static FsmString GUIinteraction;
+
+        public static bool WaitFrames(ref int elapsedFrames, int neededFrames)
+        {
+            if (elapsedFrames < neededFrames)
+            {
+                elapsedFrames++;
+                return false;
+            }
+
+            elapsedFrames = 0;
+            return true;
+        }
 
         public static string[] GetEnumFields<T>()
         {
@@ -106,7 +119,7 @@ namespace Psycho.Internal
 
                 smoking?.transform
                     ?.Find("Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft/RedHot")
-                    ?.gameObject?.SetActive(!Logic.inHorror);
+                    ?.gameObject?.SetActive(!Logic.InHorror);
 
                 WorldManager.ChangeWorldModels(smoking.gameObject);
             }
@@ -122,7 +135,7 @@ namespace Psycho.Internal
             if (picture == null) return;
 
             int idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
-            Texture texture = Globals.pictures.ElementAtOrDefault(idx);
+            Texture texture = Globals.Pictures.ElementAtOrDefault(idx);
             if (texture == null) return;
 
             Material material = picture.GetComponent<MeshRenderer>().materials[1];
@@ -160,28 +173,35 @@ namespace Psycho.Internal
             Resources.UnloadAsset(Globals.Heartbeat_source);
             Globals.Heartbeat_source = null;
 
-            Resources.UnloadAsset(Globals.mailboxSheet);
-            Globals.mailboxSheet = null;
+            Resources.UnloadAsset(Globals.MailboxSheet);
+            Globals.MailboxSheet = null;
 
-            Resources.UnloadAsset(Globals.envelopeObject);
-            Globals.envelopeObject = null;
+            Resources.UnloadAsset(Globals.EnvelopeObject);
+            Globals.EnvelopeObject = null;
 
             Resources.UnloadAsset(SoundManager.DeathSound);
             SoundManager.DeathSound = null;
 
-            Globals.models_cached.Clear();
-            Globals.flies_cached.Clear();
-            Globals.cached.Clear();
+            Globals.ModelsCached.Clear();
+            Globals.FliesCached.Clear();
+            Globals.Cached.Clear();
             
             SoundManager.ScreamPoints.Clear();
             TexturesManager.Cache.Clear();
 
-            foreach (var item in Globals.models_replaces)
+            UnityEngine.Object.Destroy(SoundManager.FullScreenScreamerSoundsSource);
+            SoundManager.FullScreenScreamerSoundsSource = null;
+            SoundManager.FullScreenScreamersSounds.Clear();
+
+            Globals.FullScreenScreamer = null;
+            Globals.FullScreenScreamerTextures.Clear();
+
+            foreach (var item in Globals.ModelsReplaces)
             {
                 Resources.UnloadAsset(item.Value.mesh);
                 Resources.UnloadAsset(item.Value.texture);
             }
-            Globals.models_replaces.Clear();
+            Globals.ModelsReplaces.Clear();
         }
         
         internal static void PrintDebug(string msg) =>

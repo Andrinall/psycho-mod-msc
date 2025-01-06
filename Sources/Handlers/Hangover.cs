@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
+
+using Psycho.Internal;
 
 
 namespace Psycho.Handlers
 {
-    internal sealed class Hangover : MonoBehaviour
+    internal sealed class Hangover : CatchedComponent
     {
         const float m_fHangoverStrenght = 0.004251007f;
         const float m_fHangoverStrenghtMinus = -0.004251007f; // defaults from game
@@ -12,7 +15,7 @@ namespace Psycho.Handlers
 
         void FixedUpdate()
         {
-            if (!Logic.inHorror)
+            if (!Logic.InHorror)
             {
                 if (!m_bHangoverActive) return;
                 

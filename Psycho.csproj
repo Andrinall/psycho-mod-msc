@@ -88,13 +88,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\Ambient\AmbientTrigger.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
+    <Compile Include="Sources\FullScreenScreamers\AssemblyBatteryToChargeHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\BoatIgnitionHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\CashRegisterHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\CottageStoveSteamHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\DumpCigaretteHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\EngineStarterHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\FishTrapHandler.cs" />
+    <Compile Include="Sources\FullScreenScreamers\FridgeOpenDoorHandler.cs" />
+    <Compile Include="Sources\Internal\FullScreenScreamerBase.cs" />
     <Compile Include="Sources\Features\Minigame.cs" />
     <Compile Include="Sources\Features\Notebook.cs" />
     <Compile Include="Sources\Features\NotebookPage.cs" />
     <Compile Include="Sources\Features\Sketchbook.cs" />
+    <Compile Include="Sources\FullScreenScreamers\LightSwitchHandler.cs" />
     <Compile Include="Sources\Handlers\FirewoodJobHandler.cs" />
     <Compile Include="Sources\Handlers\ItemsGravityEnabler.cs" />
     <Compile Include="Sources\Features\PentagramEvents.cs" />
@@ -104,6 +115,7 @@
     <Compile Include="Sources\DebugPanel.cs" />
     <Compile Include="Sources\Internal\EventsManager.cs" />
     <Compile Include="Sources\Internal\FsmHookAction.cs" />
+    <Compile Include="Sources\Internal\SaveLoadData.cs" />
     <Compile Include="Sources\Internal\ScreamerBase.cs" />
     <Compile Include="Sources\Internal\TexturesManager.cs" />
     <Compile Include="Sources\Locales.cs" />
@@ -117,7 +129,7 @@
     <Compile Include="Sources\Screamers\MovingHand.cs" />
     <Compile Include="Sources\Screamers\MovingUncleHead.cs" />
     <Compile Include="Sources\Screamers\MummolaCrawl.cs" />
-    <Compile Include="Sources\Screamers\PhoneRing.cs" />
+    <Compile Include="Sources\Screamers\PhoneScreamer.cs" />
     <Compile Include="Sources\Screamers\ScreamsInitiator.cs" />
     <Compile Include="Sources\Screamers\SoundScreamer.cs" />
     <Compile Include="Sources\Screamers\TVScreamer.cs" />
@@ -129,7 +141,6 @@
     <Compile Include="Sources\Internal\SoundManager.cs" />
     <Compile Include="Sources\Handlers\FliesChanger.cs" />
     <Compile Include="Sources\Handlers\Hangover.cs" />
-    <Compile Include="Sources\Handlers\CrashHandler.cs" />
     <Compile Include="Sources\Handlers\HouseShitHandler.cs" />
     <Compile Include="Sources\Handlers\JunkYardJobHandler.cs" />
     <Compile Include="Sources\Handlers\MummolaJobHandler.cs" />

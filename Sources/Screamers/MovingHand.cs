@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 using Psycho.Internal;
 
@@ -93,6 +94,8 @@ namespace Psycho.Screamers
 
             if (movingStage == 2)
             {
+                AudioSource.PlayClipAtPoint(Globals.HandDroppedToFace_clip, transform.position, 1f);
+
                 Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {
                     _fsm.enabled = true;

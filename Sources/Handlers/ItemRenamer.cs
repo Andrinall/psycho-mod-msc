@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿
+using Psycho.Internal;
 
 
 namespace Psycho.Handlers
 {
-    internal sealed class ItemRenamer : MonoBehaviour
+    internal sealed class ItemRenamer : CatchedComponent
     {
         internal string TargetName;
         internal string FinalName;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -6,7 +7,9 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
+using Psycho.Ambient;
 using Psycho.Screamers;
+
 using Object = UnityEngine.Object;
 
 
@@ -20,8 +23,52 @@ namespace Psycho.Internal
 
         static int elapsedFrames = 0;
          
+        public static void AddAmbientTriggers()
+        {
+            GameObject _houseTriggerObj = new GameObject("HouseAmbientTrigger");
+            _houseTriggerObj.transform.position = new Vector3(-6.67f, 0.7f, 9.47f);
+            SoundManager.AddAudioSource(_houseTriggerObj, Globals.HouseAmbient_clip, 0.22f);
+
+            BoxCollider _box = _houseTriggerObj.AddComponent<BoxCollider>();
+            _box.isTrigger = true;
+            _box.center = new Vector3(-0.4707041f, 0.172927f, 0.4841557f);
+            _box.size = new Vector3(11.49759f, 2.885854f, 10.05963f);
+
+            _houseTriggerObj.AddComponent<AmbientTrigger>().CheckTimeOfDay = true;
+
+
+
+            GameObject _islandAmbientObj = new GameObject("IslandAmbientTrigger");
+            _islandAmbientObj.transform.position = new Vector3(-878.7f, -3.695f, 496.6f);
+            SoundManager.AddAudioSource(_islandAmbientObj, Globals.IslandAmbient_clip, 0.26f);
+
+            SphereCollider _sphere = _islandAmbientObj.AddComponent<SphereCollider>();
+            _sphere.isTrigger = true;
+            _sphere.center = new Vector3(-0.4707041f, 0.172927f, 0.4841557f);
+            _sphere.radius = 70f;
+
+            _islandAmbientObj.AddComponent<AmbientTrigger>();
+
+
+
+            GameObject _dingonbiisiAmbientObj = new GameObject("DingonbiisiAmbientTrigger");
+            _dingonbiisiAmbientObj.transform.position = new Vector3(1368.03f, 10.63f, 799.7194f);
+            _dingonbiisiAmbientObj.transform.eulerAngles = new Vector3(0f, 39.213f, 0f);
+            SoundManager.AddAudioSource(_dingonbiisiAmbientObj, Globals.DingonbiisiAmbient_clip, 0.09f);
+
+            BoxCollider _box2 = _dingonbiisiAmbientObj.AddComponent<BoxCollider>();
+            _box2.isTrigger = true;
+            _box2.center = new Vector3(-0.04533959f, 0.3857429f, -0.001901387f);
+            _box2.size = new Vector3(18.84068f, 7.897154f, 5.921038f);
+
+            _dingonbiisiAmbientObj.AddComponent<AmbientTrigger>();
+        }
+
         public static void ShowCrows(bool state)
-            => GameObject.Find("CrowsList(Clone)")?.SetActive(state);
+        {
+            if (Globals.CrowsList.activeSelf == state) return;
+            Globals.CrowsList.SetActive(state);
+        }
 
         public static void SpawnPhantomBehindPlayer(float distance = 0.75f)
         {
@@ -228,7 +275,7 @@ namespace Psycho.Internal
             };
 
             // spawn objects
-            Globals.hands_list.ForEach(v =>
+            Globals.HandsList.ForEach(v =>
             {
                 GameObject clone = GameObject.Instantiate(objs[(byte)v.orig]);
                 Transform t = clone.transform;
@@ -291,9 +338,9 @@ namespace Psycho.Internal
                     _anim.AddClip(PigWalkAnimation, "venttipig_pig_walk");
 
                 var angles = _anim.transform.parent.localEulerAngles;
-                _anim.transform.parent.localEulerAngles = new Vector3(angles.x, angles.y, Logic.inHorror ? 0 : 90);
+                _anim.transform.parent.localEulerAngles = new Vector3(angles.x, angles.y, Logic.InHorror ? 0 : 90);
                 (_child.GetPlayMaker("Move").GetState("Walking").Actions[0] as PlayAnimation).animName.Value =
-                    Logic.inHorror ? "venttipig_pig_walk" : "fat_walk";
+                    Logic.InHorror ? "venttipig_pig_walk" : "fat_walk";
             }
             _walkers.gameObject.SetActive(true);
         }
@@ -346,7 +393,7 @@ namespace Psycho.Internal
             CameraFog cameraFog = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.GetComponent<CameraFog>();
             FsmVariables rainFogVars = GameObject.Find("PLAYER/Rain").GetPlayMaker("Rain").FsmVariables;
 
-            if (Logic.inHorror)
+            if (Logic.InHorror)
             {
                 _changeFog_Internal(
                     cameraFog, rainFogVars,
@@ -365,16 +412,16 @@ namespace Psycho.Internal
 
         public static void ChangeWorldModels(GameObject parent)
         {
-            foreach (var item in Globals.models_replaces)
+            foreach (var item in Globals.ModelsReplaces)
             {
                 GameObject obj = parent?.transform?.Find(item.Value.path)?.gameObject;
                 if (obj == null) continue;
 
-                if (Logic.inHorror)
+                if (Logic.InHorror)
                 {
-                    if (!Globals.models_cached.ContainsKey(item.Key))
+                    if (!Globals.ModelsCached.ContainsKey(item.Key))
                     {
-                        Globals.models_cached.Add(item.Key, new ModelData
+                        Globals.ModelsCached.Add(item.Key, new ModelData
                         {
                             mesh = obj.GetComponent<MeshFilter>().mesh,
                             texture = obj.GetComponent<MeshRenderer>().materials[0].GetTexture("_MainTex")
@@ -386,9 +433,9 @@ namespace Psycho.Internal
                     continue;
                 }
 
-                if (!Globals.models_cached.ContainsKey(item.Key)) continue;
+                if (!Globals.ModelsCached.ContainsKey(item.Key)) continue;
 
-                ModelData data = Globals.models_cached[item.Key];
+                ModelData data = Globals.ModelsCached[item.Key];
                 SetMesh(obj, data.mesh);
                 SetMaterial(obj, 0, "", data.texture);
             }
@@ -402,23 +449,23 @@ namespace Psycho.Internal
         public static void ChangeIndepTextures(bool onSave)
         {
             if (onSave)
-                TexturesManager.RestoreDefaults(Globals.indep_textures);
+                TexturesManager.RestoreDefaults(Globals.IndependentlyTextures);
             else
-                TexturesManager.ReplaceTextures(Globals.indep_textures);
+                TexturesManager.ReplaceTextures(Globals.IndependentlyTextures);
         }
 
 
         public static void ChangeWorldTextures(bool state)
         {
             if (state)
-                TexturesManager.ReplaceTextures(Globals.replaces);
+                TexturesManager.ReplaceTextures(Globals.Replaces);
             else
-                TexturesManager.RestoreDefaults(Globals.replaces);
+                TexturesManager.RestoreDefaults(Globals.Replaces);
         }
 
         public static void ChangeBedroomModels()
         {
-            bool state = Logic.inHorror;
+            bool state = Logic.InHorror;
             GameObject.Find("YARD/Building/BEDROOM2/bed_base")?.SetActive(!state);
 
             GameObject coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
@@ -451,7 +498,7 @@ namespace Psycho.Internal
         {
             try
             {
-                bool state = !Logic.inHorror;
+                bool state = !Logic.InHorror;
                 GameObject clouds = GameObject.Find("MAP/CloudSystem/Clouds");
                 PlayMakerFSM cloudsFsm = clouds.GetPlayMaker("Weather");
                 FsmState cloudsMove = cloudsFsm.GetState("Move clouds");

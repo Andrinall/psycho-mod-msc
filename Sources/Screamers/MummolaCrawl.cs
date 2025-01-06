@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 
 using Psycho.Internal;
 
@@ -50,6 +51,8 @@ namespace Psycho.Screamers
             ResetHeadRotation();
             Char.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
+
+            AudioSource.PlayClipAtPoint(Globals.GrannyCrawlScreamer_clip, transform.position, 1f);
         }
 
         public override void StopScreamer()

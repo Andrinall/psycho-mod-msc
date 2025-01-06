@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Harmony;
@@ -7,6 +9,9 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using Psycho.Ambient;
+
+using Object = UnityEngine.Object;
 
 
 namespace Psycho
@@ -16,10 +21,7 @@ namespace Psycho
     internal static class Logic
     {
         static readonly string PAPER_TEXT_FI_MAX = "Mies kuoli\nsydänkohtaukseen";
-        //static readonly string PAPER_TEXT_EN_MAX = "Man found\ndead of\nheart attack\nin region of\nAlivieska";
-
         static readonly string PAPER_TEXT_FI_POINTS = "\nMies teki itsemurhan";
-        //static readonly string PAPER_TEXT_EN_POINTS = "Man found\nafter committing\nsuicide in\nregion of\nAlivieska";
 
         static readonly float DEFAULT_DECREASE = 0.0185f; // -99.9 for 1 hour 30 minutes
         static readonly float DEFAULT_INCREASE = 0.0555f; // +99.9 for 30 minutes
@@ -29,15 +31,19 @@ namespace Psycho
 
         private static float _value = 100f;
         private static float _points = 0f;
-        private static int beer_bottles_drunked = 0;
+        private static int beerBottlesDrunked = 0;
 
-        public static int lastDayMinigame = 0;
-        public static int numberOfSpawnedPages = 0;
-        public static bool milkUsed = false;
-        public static bool isDead = false;
-        public static bool inHorror = false;
-        public static bool envelopeSpawned = false;
-        public static DateTime milkUseTime = DateTime.MinValue;
+        public static int LastDayMinigame = 0;
+        //public static int NumberOfSpawnedPages = 0;
+        public static bool MilkUsed = false;
+        public static bool IsDead = false;
+        public static bool InHorror = false;
+        public static AmbientTrigger CurrentAmbientTrigger = null;
+        public static bool EnvelopeSpawned = false;
+        public static DateTime MilkUseTime = DateTime.MinValue;
+        
+        internal static DateTime LastTimeTriggerScreamer { get; private set; } = default;
+        internal static int MinutesToNextScreamer { get; private set; } = 0;
 
         internal static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
 
@@ -59,7 +65,7 @@ namespace Psycho
             ["GRAB_SUITCASE"] = 7.1f,
             ["HOUSE_BURNING"] = 3f,
             ["FITTAN_CRASH"]  = 3f,
-            ["SPILL_SHIT"]    = 3f,
+            ["SPILL_SHIT"]    = 3f / 5,
             ["SUSKI_HIT"]     = 3f,
             ["GRANNY_ANGRY"]  = 2f,
             ["NPC_HIT"]       = 1f,
@@ -83,9 +89,9 @@ namespace Psycho
                 _value = value;
                 psycho.Value = value;
 
-                if (isDead) return;
+                if (IsDead) return;
 
-                if (value <= MIN_VALUE && !inHorror)
+                if (value <= MIN_VALUE && !InHorror)
                     ChangeWorld(eWorldType.HORROR);
                 else if (value > MAX_VALUE)
                     KillHeartAttack();
@@ -93,7 +99,7 @@ namespace Psycho
                 {
                     float clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
                     FixedHUD.SetElementScale("Psycho", new Vector3(clamped, 1f));
-                    FixedHUD.SetElementColor("Psycho", (clamped >= 0.85f && inHorror) ? Color.red : Color.white);
+                    FixedHUD.SetElementColor("Psycho", (clamped >= 0.85f && InHorror) ? Color.red : Color.white);
                 }
             }
         }
@@ -108,7 +114,7 @@ namespace Psycho
                 float prev = _points;
                 _points = value;
 
-                if (isDead) return;
+                if (IsDead) return;
 
                 Utils.SetPictureImage();
                 
@@ -123,17 +129,17 @@ namespace Psycho
 
         internal static int BeerBottlesDrunked
         {
-            get => beer_bottles_drunked;
+            get => beerBottlesDrunked;
             set
             {
                 if (value == 5)
                 {
                     PlayerCommittedOffence("DRUNK_BEER");
-                    beer_bottles_drunked = 0;
+                    beerBottlesDrunked = 0;
                     return;
                 }
 
-                beer_bottles_drunked = value;
+                beerBottlesDrunked = value;
             }
         }
 
@@ -145,47 +151,83 @@ namespace Psycho
             => Points = points;
 
         public static void ResetValue(float horror = 0f, float main = 100f)
-            => Value = Mathf.Clamp(Value + (inHorror ? -horror : main), 0f, 100f);
+            => Value = Mathf.Clamp(Value + (InHorror ? -horror : main), 0f, 100f);
 
         public static void ResetValue()
-            => Value = (inHorror ? 0f : 100f);
+            => Value = (InHorror ? 0f : 100f);
 
         public static void ResetPoints()
             => Points = 0;
 
         public static void SetDefaultValues()
         {
-            isDead = false;
-            inHorror = false;
-            envelopeSpawned = false;
-            milkUsed = false;
+            IsDead = false;
+            GameFinished = false;
+            InHorror = false;
+            EnvelopeSpawned = false;
+            MilkUsed = false;
+            LastDayMinigame = 0;
+            beerBottlesDrunked = 0;
             Value = 100f;
             Points = 0f;
+        }
+
+        public static bool IsFullScreenScreamerAvailableForTrigger()
+        {
+            if ((DateTime.Now - LastTimeTriggerScreamer).Minutes < MinutesToNextScreamer)
+            {
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"FullScreenScreamer timer is not counting down");
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void EnableRandomFullScreenScreamer()
+        {
+            SoundManager.EnableRandomSoundForFullScreenScreamer();
+
+            LastTimeTriggerScreamer = DateTime.Now;
+            MinutesToNextScreamer = UnityEngine.Random.Range(10, 20);
+
+            int randomTexture = UnityEngine.Random.Range(0, Globals.FullScreenScreamerTextures.Count);
+            Globals.FullScreenScreamer.transform
+                .GetChild(1).gameObject
+                .GetComponent<MeshRenderer>().material
+                .SetTexture("_MainTex", Globals.FullScreenScreamerTextures[randomTexture]);
+
+            Globals.FullScreenScreamer.SetActive(true);
+        }
+
+        public static void ResetFullScreenScreamerCooldown()
+        {
+            LastTimeTriggerScreamer = default;
+            MinutesToNextScreamer = 0;
         }
 
         public static void ChangeWorld(eWorldType type)
         {
             if (GameFinished) return;
             
-            inHorror = type == eWorldType.HORROR;
-            if (inHorror)
+            InHorror = type == eWorldType.HORROR;
+            if (InHorror)
             {
                 Value = 0f;
 
-                if (Globals.envelopeObject == null || Globals.envelopeObject?.activeSelf == false)
+                if (Globals.EnvelopeObject == null || Globals.EnvelopeObject?.activeSelf == false)
                 {
-                    Globals.envelopeObject.SetActive(true);
-                    envelopeSpawned = true;
+                    Globals.EnvelopeObject.SetActive(true);
+                    EnvelopeSpawned = true;
                 }
             }
             else
             {
                 Value = 100f;
 
-                if (Globals.envelopeObject?.activeSelf == true)
+                if (Globals.EnvelopeObject?.activeSelf == true)
                 {
-                    Globals.envelopeObject.SetActive(false);
-                    envelopeSpawned = false;
+                    Globals.EnvelopeObject.SetActive(false);
+                    EnvelopeSpawned = false;
                 }
             }
 
@@ -198,7 +240,7 @@ namespace Psycho
         {
             if (GameFinished) return;
 
-            if (inHorror)
+            if (InHorror)
             {
                 Value += DEFAULT_INCREASE * Time.fixedDeltaTime;
                 return;
@@ -256,7 +298,7 @@ namespace Psycho
 
         internal static void KillHeartAttack()
         {
-            if (!inHorror) return;
+            if (!InHorror) return;
             try
             {
                 SoundManager.PlayDeathSound();
@@ -270,13 +312,56 @@ namespace Psycho
 
         internal static void FinishShizGame()
         {
-            GameFinished = true;
-            if (inHorror) ChangeWorld(eWorldType.MAIN);
+            if (InHorror)
+                ChangeWorld(eWorldType.MAIN);
 
+            GameFinished = true;
             FixedHUD.RemoveElement("Psycho");
             FixedHUD.Structurize();
 
+            AudioSource.PlayClipAtPoint(Globals.FinishGame_clip, GameObject.Find("PLAYER").transform.position);
+            DestroyAllObjects();
+
             Utils.PrintDebug(eConsoleColors.GREEN, "Shiz game finished!");
+        }
+
+        internal static void DestroyAllObjects()
+        {
+            EventsManager.OnScreamerTriggered.RemoveAllListeners();
+            EventsManager.OnScreamerFinished.RemoveAllListeners();
+
+            foreach (var catched in Resources.FindObjectsOfTypeAll<CatchedComponent>())
+            {
+                if (catched == null) continue;
+
+                string typeName = catched.GetType().Name;
+                string[] toDestroyObjects = new string[]
+                {
+                    "Minigame", "AmbientTrigger", "MovingHand",
+                    "MovingUncleHead","MummolaCrawl", "Sketchbook",
+                    "Notebook", "FernFlowerSpawner", "AngryRoosterPoster",
+                    "Pentagram", "PentagramEvents"
+                };
+
+                if (toDestroyObjects.Contains(typeName))
+                {
+                    Object.Destroy(catched.gameObject);
+                    continue;
+                }
+
+                Object.Destroy(catched);
+            }
+
+            Object.Destroy(GameObject.Find("DingonbiisiAmbientTrigger"));
+            Object.Destroy(GameObject.Find("GlobalAmbient(PsychoMod)"));
+            Object.Destroy(GameObject.Find("GlobalPsychoAmbient(PsychoMod)"));
+            Object.Destroy(GameObject.Find("HouseAmbientTrigger"));
+            Object.Destroy(GameObject.Find("IslandAmbientTrigger"));
+            Object.Destroy(GameObject.Find("Picture(Clone)"));
+
+            ItemsPool.RemoveItems(v => true);
+
+            StateHook.DisposeAllHooks();
         }
 
 
@@ -294,16 +379,16 @@ namespace Psycho
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 8f, default, () =>
                 {
-                    WorldManager.ChangeWorldTextures(inHorror);
+                    WorldManager.ChangeWorldTextures(InHorror);
                     WorldManager.ChangeBedroomModels();
                     Utils.ChangeSmokingModel();
                     SoundManager.ChangeFliesSounds();
                     WorldManager.StopCloudsOrRandomize();
                     WorldManager.ChangeCameraFog();
                     WorldManager.ChangeWalkersAnimation();
-                    WorldManager.SetHandsActive(inHorror);
+                    WorldManager.SetHandsActive(InHorror);
 
-                    GameObject.Find("CustomSuicidals(Clone)")?.SetActive(inHorror);
+                    GameObject.Find("CustomSuicidals(Clone)")?.SetActive(InHorror);
                     _changeFittanDriverHeadPivotRotation();
 
                     ShizAnimPlayer.PlayAnimation("sleep_off", default, default, () => {
@@ -321,21 +406,22 @@ namespace Psycho
         static void _changeFittanDriverHeadPivotRotation()
         {
             GameObject _fittanDriverHeadPivot =
-                GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN/Driver/skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
+                GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN/Driver/skeleton/pelvis/spine_middle/spine_upper/HeadPivot")
+                ?? GameObject.Find("FITTAN/Driver/skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
 
             if (!_fittanDriverHeadPivot) return;
-            _fittanDriverHeadPivot.GetPlayMaker("Look").enabled = !inHorror;
+            _fittanDriverHeadPivot.GetPlayMaker("Look").enabled = !InHorror;
 
             Transform _head = _fittanDriverHeadPivot.transform.Find("head");
             if (!_head) return;
 
             _head.localRotation = Quaternion.Euler(new Vector3(
                 _head.localEulerAngles.x,
-                _head.localEulerAngles.y,
-                inHorror ? 64f : 270f
+                InHorror ? 320f : 270f,
+                InHorror ? 62f : 254f
             ));
 
-            _head.Find("eye_glasses_regular").gameObject.SetActive(!inHorror);
+            _head.Find("eye_glasses_regular").gameObject.SetActive(!InHorror);
         }
     }
 }

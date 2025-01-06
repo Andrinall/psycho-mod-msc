@@ -1,12 +1,13 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
+using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using Psycho.Handlers;
-using HutongGames.PlayMaker;
 
 
 namespace Psycho.Features
@@ -197,7 +198,7 @@ namespace Psycho.Features
             Utils.InitPostcard(postcard);
         }
 
-        public int GetMaxPageIndex()
+        public static int GetMaxPageIndex()
         {
             int max = 0;
             foreach (NotebookPage page in Pages)

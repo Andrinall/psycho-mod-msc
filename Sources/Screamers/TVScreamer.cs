@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -61,7 +62,7 @@ namespace Psycho.Screamers
             NightFSM = NightProgram.GetComponent<PlayMakerFSM>();
             NightFSM.Fsm.InitData();
 
-            ReplaceTexture = Globals.pictures[Globals.pictures.Count - 1];
+            ReplaceTexture = Globals.Pictures[Globals.Pictures.Count - 1];
 
             TVAudio = NightProgram.GetComponent<AudioSource>();
         }

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1322041509
+CRC: 4260592745
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: ca99a10afad1342e87967f37d4ef9852
+    Hash: e4bd85dbdd593bdc0f555db8c52f3034
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
@@ -68,9 +68,11 @@ Assets:
 - Assets/Screens/17.png
 - Assets/Replaces/Sounds/Curse_Upon_You.mp3
 - Assets/Replaces/Horror/char_face06.png
+- Assets/Audio/FullScreenScreamers/skrimery-657.mp3
 - Assets/Replaces/Horror/char_shirt01.png
 - Assets/Replaces/Horror/soil12.png
 - Assets/Replaces/Horror/fabric5.png
+- Assets/Audio/Ambient/Home_night_all.mp3
 - Assets/Prefabs/Walnut.prefab
 - Assets/Replaces/Horror/parketti.png
 - Assets/Replaces/Horror/wood6.png
@@ -87,18 +89,23 @@ Assets:
 - Assets/Replaces/Horror/wood2.png
 - Assets/Replaces/Horror/wood4.png
 - Assets/Audio/heart_stop.wav
+- Assets/Audio/Wining.mp3
+- Assets/Prefabs/FullScreenScreamer.prefab
 - Assets/Replaces/Horror/dashboard.png
 - Assets/Screens/32.png
 - Assets/Replaces/Horror/soil13.png
+- Assets/Audio/Ambient/Penta_all.mp3
 - Assets/Prefabs/ChurchCandle.prefab
 - Assets/Audio/housekeeper_laughs.wav
 - Assets/Screens/33.png
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
+- Assets/Textures/FullScreenScreamers/maxresdefault34.jpg
 - Assets/Materials/Postcard/postcard0.png
 - Assets/Audio/acid_burn.mp3
 - Assets/Screens/6.png
 - Assets/Prefabs/Notebook Page.prefab
+- Assets/Textures/FullScreenScreamers/scale_1200.png
 - Assets/Replaces/Horror/store_floor.png
 - Assets/Audio/screamers/crying_female.mp3
 - Assets/Replaces/Horror/wood_panel6.png
@@ -109,6 +116,7 @@ Assets:
 - Assets/Replaces/Horror/fabric21.png
 - Assets/Screens/19.png
 - Assets/Audio/screamcall.wav
+- Assets/Audio/HandDroppedToFace.mp3
 - Assets/Textures/Taro/Virtue3.png
 - Assets/Materials/suicidal/char_face01.png
 - Assets/Materials/suicidal/char_face01.mat
@@ -118,6 +126,7 @@ Assets:
 - Assets/Textures/Taro/Virtue6.png
 - Assets/Replaces/AllWorlds/ATLAS_OFFICE.png
 - Assets/Screens/35.png
+- Assets/Textures/FullScreenScreamers/20241230162010_1.jpg
 - Assets/Prefabs/Picture.prefab
 - Assets/Textures/Album/Album5.png
 - Assets/Screens/34.png
@@ -136,7 +145,9 @@ Assets:
 - Assets/Screens/15.png
 - Assets/Screens/21.png
 - Assets/Replaces/Horror/ATLAS_DOORS.png
+- Assets/Audio/FullScreenScreamers/skrimer-4355.mp3
 - Assets/Pictures/4.png
+- Assets/Textures/FullScreenScreamers/17327056389601.png
 - Assets/Textures/Album/Album2.png
 - Assets/Audio/crows/crow_ambient.wav
 - Assets/Replaces/Horror/store_banners.png
@@ -144,9 +155,11 @@ Assets:
 - Assets/Screens/4.png
 - Assets/Replaces/Horror/fabric6.png
 - Assets/Replaces/Horror/helmet_vision.png
+- Assets/Audio/FullScreenScreamers/kriki-skrimery.mp3
 - Assets/Replaces/Horror/wood_panel16.png
 - Assets/Screens/13.png
 - Assets/Audio/heartbeat.wav
+- Assets/Audio/GrannyCrawlScreamer.mp3
 - Assets/Replaces/Horror/wood5.png
 - Assets/Screens/28.png
 - Assets/Prefabs/SketchbookGUI.prefab
@@ -157,6 +170,7 @@ Assets:
 - Assets/Textures/Album/Album3.png
 - Assets/Textures/Album/Album10.png
 - Assets/Screens/14.png
+- Assets/Audio/FullScreenScreamers/gdfgdgf.mp3
 - Assets/Prefabs/Penta.prefab
 - Assets/Textures/Album/Album4.png
 - Assets/Screens/36.png
@@ -164,6 +178,8 @@ Assets:
 - Assets/Screens/26.png
 - Assets/Replaces/Sounds/Breaths23.mp3
 - Assets/Replaces/Horror/sticker_satsuma.png
+- Assets/Textures/FullScreenScreamers/image-w1280.jpg
+- Assets/Textures/FullScreenScreamers/17302172943810.jpg
 - Assets/Meshes/Egg.fbx
 - Assets/Replaces/Horror/roadside.png
 - Assets/Audio/phantomscream.mp3
@@ -198,6 +214,7 @@ Assets:
 - Assets/Textures/page14.png
 - Assets/Replaces/Horror/cardboard.png
 - Assets/Replaces/Horror/wall_rock.png
+- Assets/Audio/Ambient/Real_night_emb.mp3
 - Assets/Replaces/Horror/car_radios_emission.png
 - Assets/Replaces/Horror/satsuma_dash_gauges.png
 - Assets/Screens/44.png
@@ -212,6 +229,7 @@ Assets:
 - Assets/Textures/Taro/Virtue5.png
 - Assets/Screens/46.png
 - Assets/Materials/Notebook/page0.png
+- Assets/Audio/FullScreenScreamers/fsdsdfhh.mp3
 - Assets/Textures/page15(false).png
 - Assets/Pictures/0.png
 - Assets/Replaces/Horror/bathroomfloor.png
@@ -223,6 +241,7 @@ Assets:
 - Assets/Replaces/Horror/Atlas_countryside.png
 - Assets/Replaces/Horror/wood8.png
 - Assets/Replaces/Horror/wood_panel8.png
+- Assets/Audio/UBV_psy.mp3
 - Assets/Prefabs/BlackEgg.prefab
 - Assets/Screens/23.png
 - Assets/Replaces/Horror/building_wall.png
@@ -241,15 +260,19 @@ Assets:
 - Assets/Screens/40.png
 - Assets/Replaces/Horror/fabric22.png
 - Assets/Replaces/Horror/envelope.png
+- Assets/Audio/JokkeSpawnedSound.mp3
 - Assets/Prefabs/NotebookGUI.prefab
 - Assets/Replaces/Horror/ATLAS_BUILDINGS.png
 - Assets/Replaces/Horror/kitchentaso.png
 - Assets/Replaces/Horror/wood_panel4.png
+- Assets/Audio/FullScreenScreamers/fvfyfyfyv.mp3
+- Assets/Audio/Ambient/Island_all.mp3
 - Assets/Replaces/Horror/moose.png
 - Assets/Replaces/Horror/treewall3.png
 - Assets/Audio/uncle_screamer.mp3
 - Assets/Replaces/Horror/bus_paint.png
 - Assets/Replaces/Horror/wood_panel1.png
+- Assets/Audio/FullScreenScreamers/vyfyvfyv.mp3
 - Assets/Replaces/Horror/fabric3.png
 - Assets/Audio/screamers/bedroom.mp3
 - Assets/Replaces/Smoking/hand.png
@@ -288,12 +311,14 @@ Assets:
 - Assets/Replaces/Horror/wood3.png
 - Assets/Audio/screamers/kitchen_water.mp3
 - Assets/Replaces/Horror/wood7.png
+- Assets/Audio/Ambient/Psycho_emb.mp3
 - Assets/Replaces/Smoking/cigarette_shaft.obj
 - Assets/Materials/RoosterPoster/rooster0.png
 - Assets/Replaces/Horror/wood_barn.png
 - Assets/Screens/27.png
 - Assets/Replaces/Horror/fabric_panther.png
 - Assets/Textures/Album/Album1.png
+- Assets/Textures/FullScreenScreamers/17343507567530.jpg
 - Assets/Prefabs/Suicidal.prefab
 - Assets/Replaces/Horror/panel_wall.png
 - Assets/Screens/1.png

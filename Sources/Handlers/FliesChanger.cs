@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -11,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class FliesChanger : MonoBehaviour
+    internal sealed class FliesChanger : CatchedComponent
     {
         void OnEnable() => Change();
 
@@ -32,7 +33,7 @@ namespace Psycho.Handlers
             }
         }
 
-        void _changeAmbienceSoundsState() => GameObject.Find("MAP/SoundAmbience")?.SetActive(!Logic.inHorror);
+        void _changeAmbienceSoundsState() => GameObject.Find("MAP/SoundAmbience")?.SetActive(!Logic.InHorror);
 
         void _createGlobalVariableIfNotExists()
         {
@@ -48,7 +49,7 @@ namespace Psycho.Handlers
             if (dirtiness == null) return;
 
             FloatCompare clean = _fsm.GetState("Clean").Actions[6] as FloatCompare;
-            clean.float1 = (Logic.inHorror ? Logic.psycho : dirtiness);
+            clean.float1 = (Logic.InHorror ? Logic.psycho : dirtiness);
 
             FsmState[] states = _sortStates(_fsm);
 
@@ -64,7 +65,7 @@ namespace Psycho.Handlers
                 FloatCompare compare1 = state.Actions[2] as FloatCompare;
                 FloatCompare compare2 = state.Actions[3] as FloatCompare;
 
-                if (Logic.inHorror)
+                if (Logic.InHorror)
                 {
                     compare1.float1 = Logic.psycho;
                     compare1.float2.Value = 18 * current;
@@ -87,7 +88,7 @@ namespace Psycho.Handlers
 
             FsmState fly6 = _fsm.GetState("Fly6");
             FloatCompare compare6 = (fly6.Actions[2] as FloatCompare);
-            compare6.float1 = Logic.inHorror ? Logic.psycho : dirtiness;
+            compare6.float1 = Logic.InHorror ? Logic.psycho : dirtiness;
             compare6.float2 = 90f;
 
         }
@@ -118,22 +119,22 @@ namespace Psycho.Handlers
                 AudioClip moveeclip = movee.audioClip.Value as AudioClip;
                 if (stopclip.name == "fly" && moveeclip.name == "fly2")
                 {
-                    Globals.flies_cached.Add(stopclip);
-                    Globals.flies_cached.Add(moveeclip);
+                    Globals.FliesCached.Add(stopclip);
+                    Globals.FliesCached.Add(moveeclip);
                 }
 
-                if (Logic.inHorror)
+                if (Logic.InHorror)
                 {
-                    int idx = Random.Range(0, Globals.horror_flies.Count);
-                    int idx2 = Random.Range(0, Globals.horror_flies.Count);
-                    movee.audioClip.Value = Globals.horror_flies[idx];
-                    stop.audioClip.Value = Globals.horror_flies[idx2];
+                    int idx = Random.Range(0, Globals.HorrorFlies.Count);
+                    int idx2 = Random.Range(0, Globals.HorrorFlies.Count);
+                    movee.audioClip.Value = Globals.HorrorFlies[idx];
+                    stop.audioClip.Value = Globals.HorrorFlies[idx2];
                     count += 2;
                     continue;
                 }
 
-                stop.audioClip.Value = Globals.flies_cached[count];
-                movee.audioClip.Value = Globals.flies_cached[count + 1];
+                stop.audioClip.Value = Globals.FliesCached[count];
+                movee.audioClip.Value = Globals.FliesCached[count + 1];
                 count += 2;
             }
         }

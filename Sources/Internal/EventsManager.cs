@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿
+using MSCLoader;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -40,7 +41,6 @@ namespace Psycho.Internal
                 else
                     WorldManager.SetElecMeterState(false);
 
-                WorldManager.ShowCrows(false);
                 Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariantName(type, variation)}]");
 
                 OnScreamerTriggered.Invoke(type, variation);
@@ -56,7 +56,6 @@ namespace Psycho.Internal
             if (!Psycho.IsLoaded) return;
             
             WorldManager.SetElecMeterState(true);
-            WorldManager.ShowCrows(true);
 
             OnScreamerFinished.Invoke();
             Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariantName(type, variation)}]");

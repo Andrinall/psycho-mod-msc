@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ using UnityEngine;
 
 using Psycho.Features;
 using Psycho.Handlers;
+
 using Object = UnityEngine.Object;
 
 
@@ -33,12 +35,55 @@ namespace Psycho.Internal
             => Pool.Remove(obj);
 
         internal static bool RemoveItem(Func<GameObject, bool> callback)
-            => Pool.Remove(Pool.First(callback));
+        {
+            var item = Pool.FirstOrDefault(callback);
+            
+            Object.Destroy(item);
+            return Pool.Remove(item);
+        }
 
         internal static void RemoveItems(Func<GameObject, bool> callback)
-            => Pool.Where(callback).ToList().ForEach(v => Pool.Remove(v));
+        {
+            var _items = Pool.Where(callback).ToList();
+            foreach (var item in _items)
+            {
+                Object.Destroy(item);
+                Pool.Remove(item);
+            }
+        }
 
-        internal static void Save(ref byte[] array)
+        internal static List<ItemsPoolSaveLoadData> GetSaveData()
+        {
+            var _list = new List<ItemsPoolSaveLoadData>();
+
+            foreach (var _item in Pool)
+            {
+                if (_item == null) continue;
+                if (_item.transform.parent != null) continue;
+
+                _list.Add(new ItemsPoolSaveLoadData
+                {
+                    Name = _item.name.Replace("(Clone)", ""),
+                    Position = _item.transform.position,
+                    Euler = _item.transform.eulerAngles
+                });
+            }
+
+            return _list;
+        }
+
+        internal static void LoadData(List<ItemsPoolSaveLoadData> data)
+        {
+            foreach (var _item in data)
+            {
+                GameObject _prefab = GetPrefabByItemName(_item.Name);
+                if (_prefab == null) continue;
+
+                _addItemToLocalPool(_prefab, _item.Position, _item.Euler);
+            }
+        }
+
+        /*internal static void Save(ref byte[] array)
         {
             int offset = base_offset;
             List<GameObject> toSave = ItemsForSave;
@@ -60,9 +105,9 @@ namespace Psycho.Internal
                 pos.CopyBytes(ref array, ref offset);
                 rot.CopyBytes(ref array, ref offset);
             }
-        }
+        }*/
 
-        public static void Load(byte[] array)
+        /*public static void Load(byte[] array)
         {
             int offset = base_offset;
             int count = BitConverter.ToInt32(array, offset);
@@ -78,7 +123,7 @@ namespace Psycho.Internal
             for (int i = 0; i < count; i++)
             {
                 string sName = "".GetFromBytes(array, ref offset); // 1
-                if (Logic.isDead && Globals.PentaRecipe.Contains(sName.ToLower())) continue;
+                if (Logic.IsDead && Globals.PentaRecipe.Contains(sName.ToLower())) continue;
 
                 Vector3 temp = new Vector3();
                 Vector3 pos = temp.GetFromBytes(array, ref offset);
@@ -94,13 +139,13 @@ namespace Psycho.Internal
                 Utils.PrintDebug(eConsoleColors.YELLOW, $"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
                 _addItemToLocalPool(prefab, pos, rot);
             }
-        }
+        }*/
 
-        public static int GetCountInSave(byte[] array)
-            => BitConverter.ToInt32(array, base_offset);
+        /*public static int GetCountInSave(byte[] array)
+            => BitConverter.ToInt32(array, base_offset);*/
 
-        public static int GetSizeInSave(byte[] array)
-            => GetCountInSave(array) * 90;
+        /*public static int GetSizeInSave(byte[] array)
+            => GetCountInSave(array) * 90;*/
 
         private static GameObject _addItemToLocalPool(GameObject prefab, Vector3 pos, Vector3 euler)
         {

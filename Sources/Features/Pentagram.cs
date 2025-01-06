@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -7,6 +8,7 @@ using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using Psycho.Handlers;
+
 using Random = UnityEngine.Random;
 
 
@@ -83,6 +85,12 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
+            if (Logic.GameFinished)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             if (!LightsEnabled && SUN_hours.Value >= 20 || SUN_hours.Value < 5)
                 SetCandlesFireActive(true);
             else if (LightsEnabled && SUN_hours.Value > 4 && SUN_hours.Value < 20)

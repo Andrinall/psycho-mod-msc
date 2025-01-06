@@ -1,5 +1,7 @@
-﻿using MSCLoader;
+﻿
 using System;
+
+using MSCLoader;
 
 using UnityEngine;
 
@@ -33,7 +35,7 @@ namespace Psycho.Internal
 
         void KillCustom_internal(string palette, string en, string fi)
         {
-            if (Logic.isDead) return;
+            if (Logic.IsDead) return;
 
             Transform paper = death.Find($"GameOverScreen/Paper/{palette}");
             if (paper == null) return;
@@ -50,7 +52,7 @@ namespace Psycho.Internal
                 Utils.PrintDebug($"Error in KillCustom_internal!\n{e.GetFullMessage()}");
             }
 
-            Logic.isDead = true;
+            Logic.IsDead = true;
         }
     }
 }

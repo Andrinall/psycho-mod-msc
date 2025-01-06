@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿
+using System.Linq;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -32,6 +33,12 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
+            if (Logic.GameFinished)
+            {
+                Destroy(this);
+                return;
+            }
+
             int day = GlobalDay.Value % 7;
 
             if (day == 3 && SUN_hours.Value > 18)

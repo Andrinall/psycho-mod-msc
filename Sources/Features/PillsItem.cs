@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Linq;
 
 using MSCLoader;
@@ -6,7 +7,9 @@ using UnityEngine;
 
 using Psycho.Handlers;
 using Psycho.Internal;
+
 using Object = UnityEngine.Object;
+
 
 namespace Psycho.Features
 {
@@ -18,14 +21,14 @@ namespace Psycho.Features
         public int index;
         
 
-        public PillsItem(int index)
-            => TryCreatePills(index, Vector3.zero, Vector3.zero);
+        public PillsItem()
+            => TryCreatePills(Vector3.zero, Vector3.zero);
 
-        public PillsItem(int index, Vector3 position)
-            => TryCreatePills(index, position, Vector3.zero);
+        public PillsItem(Vector3 position)
+            => TryCreatePills(position, Vector3.zero);
 
-        public PillsItem(int index, Vector3 position, Vector3 euler)
-            => TryCreatePills(index, position, euler);
+        public PillsItem(Vector3 position, Vector3 euler)
+            => TryCreatePills(position, euler);
         
         ~PillsItem()
         {
@@ -33,13 +36,12 @@ namespace Psycho.Features
             Object.Destroy(self);
         }
         
-        void TryCreatePills(int index, Vector3 position, Vector3 euler)
+        void TryCreatePills(Vector3 position, Vector3 euler)
         {
             try
             {
                 CreatePillsItem(position, euler);
-                Utils.PrintDebug(eConsoleColors.GREEN, $"PillsItem created with idx: {index} & position: {position}");
-                this.index = index;
+                Utils.PrintDebug(eConsoleColors.GREEN, $"PillsItem created with position: {position}");
             }
             catch (Exception e)
             {
@@ -89,7 +91,7 @@ namespace Psycho.Features
         {
             Logic.ChangeWorld(eWorldType.MAIN);
 
-            Globals.pills = null;
+            Globals.Pills = null;
             Utils.PrintDebug(eConsoleColors.YELLOW, $"Pills with index {index} removed");
         }
 
@@ -110,8 +112,8 @@ namespace Psycho.Features
             Vector3 position = Vector3.zero.GetFromBytes(array, ref offset);
             Vector3 euler = Vector3.zero.GetFromBytes(array, ref offset);
             
-            PillsItem item = new PillsItem(index, position, euler);
-            item.self.SetActive(Logic.inHorror);
+            PillsItem item = new PillsItem(position, euler);
+            item.self.SetActive(Logic.InHorror);
             return item;
         }
     }

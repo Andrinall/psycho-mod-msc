@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Collections;
+﻿
+using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
@@ -82,18 +82,19 @@ namespace Psycho.Features
 
             PlayerCardMat.SetTexture("_MainTex", Globals.TaroCards[rndCard]);
             PlayerCard.SetActive(true);
-            
+
+            Utils.PrintDebug($"PlayerCurrentCardNumber {PlayerCurrentCardNumber}");
             if (PlayerCurrentCardNumber > 7) // get card clarity
             {
                 int player = (PlayerCurrentCardNumber % 7);
                 player = (player == 0) ? 7 : player;
 
-                StartCoroutine(SpawnNewPage(player <= HousekeeperCurrentCardNumber));
+                SpawnNewPage(player <= HousekeeperCurrentCardNumber);
                 return;
             }
 
             PlayHousekeeperLaughing();
-            Logic.lastDayMinigame = GlobalDay.Value;
+            Logic.LastDayMinigame = GlobalDay.Value;
         }
 
         internal void UpdateHousekeeperCard()
@@ -105,19 +106,16 @@ namespace Psycho.Features
 
             GameObject page = GameObject.Find("Notebook Page(Clone)");
             if (page?.transform?.parent == null)
-            {
-                Logic.numberOfSpawnedPages--;
                 Destroy(page);
-            }
 
-            if (Notebook.Pages.Count == 15 && Logic.numberOfSpawnedPages == 13 && page == null)
+            if (Notebook.Pages.Count == 15 && page == null)
                 Destroy(this);
         }
 
         bool CheckDayChangedAndUpdateHousekeeperCard()
         {
             if (GlobalDay == null) return false;
-            if (Logic.lastDayMinigame == GlobalDay.Value) return false;
+            if (Logic.LastDayMinigame == GlobalDay.Value) return false;
             if (lastUpdated != GlobalDay.Value)
             {
                 UpdateHousekeeperCard();
@@ -126,26 +124,12 @@ namespace Psycho.Features
             return true;
         }
 
-        IEnumerator SpawnNewPage(bool isFake)
+        void SpawnNewPage(bool isFake)
         {
-            if (Logic.numberOfSpawnedPages == MAX_PAGES)
-            {
-                yield return new WaitForSeconds(0.5f);
-                PlayHousekeeperLaughing();
-                yield break;
-            }
-
-            yield return new WaitForSeconds(1f);
-
-            int index = Globals.Notebook?.GetMaxPageIndex() ?? - 1;
-            if (index < 0)
-                yield break;
-
+            int index = Notebook.GetMaxPageIndex();
+            Utils.PrintDebug($"SpawnNewPage index {index}");
             if (index >= 13)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Notebook contains a max count of pages. Spawn new page aborted.");
-                yield break;
-            }
+                return;
 
             GameObject pageObj = (GameObject)Instantiate(
                 Globals.NotebookPage_prefab,
@@ -163,7 +147,6 @@ namespace Psycho.Features
             component.UpdatePageText();
             pageObj.MakePickable();
 
-            Logic.numberOfSpawnedPages++;
             Utils.PrintDebug($"{(isFake ? "Fake" : "True")} Page spawned with index {index + 1}");
         }
 
