@@ -143,7 +143,7 @@ namespace Psycho.Features
 
         void _spawnRandomEvent()
         {
-            Utils.PrintDebug(eConsoleColors.GREEN, "All ritual items in trigger.");
+            Utils.PrintDebug("All ritual items in trigger.");
             string _mainEvent = events.RandomElementByWeight(_weightSelector).Key;
             string[] _innerEvents = InnerEvents[_mainEvent];
             string _innerEvent = _innerEvents[Random.Range(0, _innerEvents.Length)];

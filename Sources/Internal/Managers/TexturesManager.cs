@@ -49,6 +49,26 @@ namespace Psycho.Internal
             _forRemove.ForEach(v => Cache.Remove(v));
         }
 
+        /// <summary>
+        /// Setup independently textures
+        /// </summary>
+        /// <param name="onSave">if true - reset to default textures</param>
+        public static void ChangeIndepTextures(bool onSave)
+        {
+            if (onSave)
+                RestoreDefaults(ResourcesStorage.IndependentlyTextures);
+            else
+                ReplaceTextures(ResourcesStorage.IndependentlyTextures);
+        }
+
+        public static void ChangeWorldTextures(bool state)
+        {
+            if (state)
+                ReplaceTextures(ResourcesStorage.Replaces);
+            else
+                RestoreDefaults(ResourcesStorage.Replaces);
+        }
+
         static bool ReplaceTextureForMaterials(Texture texture, bool removeCache = false)
         {
             if (texture == null) return false;

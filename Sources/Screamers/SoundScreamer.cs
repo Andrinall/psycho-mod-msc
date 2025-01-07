@@ -31,8 +31,8 @@ namespace Psycho.Screamers
                 .ToList();
 
             // add door callbacks for disable night screamer sounds
-            WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", DisableSoundsLinkedToDoorFront);
-            WorldManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", DisableSoundLinkedToDoorBedroom);
+            DoorsManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", DisableSoundsLinkedToDoorFront);
+            DoorsManager.AddDoorOpenCallback("YARD/Building/BEDROOM2/DoorBedroom2", DisableSoundLinkedToDoorBedroom);
 
             EventsManager.OnScreamerTriggered.AddListener(TriggerEvent);
         }
@@ -46,7 +46,7 @@ namespace Psycho.Screamers
                 if (!_source.isPlaying) continue;
                 if (Vector3.Distance(_source.transform.position, Globals.Player.position) > TARGET_DISTANCE) continue;
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip{{{_source.clip.name}}} stopped by distance checker!");
+                Utils.PrintDebug($"AudioClip{{{_source.clip.name}}} stopped by distance checker!");
                 StopEvent();
                 return;
             }
@@ -55,7 +55,7 @@ namespace Psycho.Screamers
             if (span.Seconds < DISABLE_TIME) return;
 
             StopEvent();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"All scream sounds stopped");
+            Utils.PrintDebug("All scream sounds stopped");
         }
 
         void TriggerEvent(ScreamTimeType time, int variation)

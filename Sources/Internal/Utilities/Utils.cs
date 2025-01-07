@@ -2,7 +2,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 
 using MSCLoader;
 using UnityEngine;
@@ -103,16 +102,9 @@ namespace Psycho.Internal
             Material _material = _picture.GetComponent<MeshRenderer>().materials[1];
             if (_material.GetTexture("_MainTex")?.name == _texture.name) return;
 
-            PrintDebug(eConsoleColors.YELLOW, $"SetPictureImage [{_idx}]");
+            PrintDebug($"SetPictureImage [{_idx}]");
             _material.SetTexture("_MainTex", _texture);
         }
-        
-        internal static void PrintDebug(string msg) =>
-            ModConsole.Print(DBG_STRING + msg);
-
-        internal static void PrintDebug(eConsoleColors color, string msg) =>
-            ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, _getColor(color), msg));
-
         internal static T GetGlobalVariable<T>(string name) where T : NamedVariable =>
             FsmVariables.GlobalVariables.FindVariable(name) as T;
 
@@ -143,6 +135,30 @@ namespace Psycho.Internal
 
             _fpsCamera.localPosition = origs[0];
             _fpsCamera.localEulerAngles = origs[1];
+        }
+
+        internal static void PrintDebug(string msg)
+        {
+#if DEBUG
+            ModConsole.Print(DBG_STRING + msg);
+#else
+            Debug.Log(DBG_STRING + msg);
+#endif
+        }
+
+        internal static void PrintDebug(eConsoleColors color, string msg)
+        {
+#if DEBUG
+            ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, _getColor(color), msg));
+#else
+            string message = DBG_STRING + msg;
+            if (color == eConsoleColors.RED)
+                ModConsole.LogError(message);
+            else if (color == eConsoleColors.YELLOW)
+                ModConsole.LogWarning(message);
+            else
+                Debug.Log(message);
+#endif
         }
 
         static string _getColor(eConsoleColors color)

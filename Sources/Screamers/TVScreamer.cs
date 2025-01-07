@@ -68,7 +68,7 @@ namespace Psycho.Screamers
 
         public override void TriggerScreamer()
         {
-            if (!electricity.activeSelf && WorldManager.GetElecCutoffTimer() >= 22000f)
+            if (!electricity.activeSelf && Electricity.GetCutoffTimer() >= 22000f)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "TV screamer triggered, but ElectricAppliances disabled (not payed)");
                 base.Stop();
@@ -119,7 +119,7 @@ namespace Psycho.Screamers
             buttonAlreadyUsed = true;
             _setTexture();
             PlayAudioClip(ResourcesStorage.TVScream_clip);
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
+            Utils.PrintDebug("Player pressed switch button. Show screamer.");
         }
 
         void _setTexture()
@@ -132,7 +132,7 @@ namespace Psycho.Screamers
         {
             tvAudio.enabled = false;
             AudioSource.PlayClipAtPoint(clip, transform.position);
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip({clip.name}) is played");
+            Utils.PrintDebug($"AudioClip({clip.name}) is played");
         }
     }
 }

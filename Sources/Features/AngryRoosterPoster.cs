@@ -32,7 +32,6 @@ namespace Psycho.Features
             renderer = GetComponent<MeshRenderer>();
 
             hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"[RoosterPoster.Awaked()] day: {Globals.GlobalDay.Value % 7}; hours: {Globals.SUN_Hours.Value}; applyed: {Applyed}; lastDayApplyed: {LastDayApplyed}");
         }
 
         protected override void OnFixedUpdate()

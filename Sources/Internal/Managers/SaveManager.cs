@@ -3,6 +3,7 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Features;
+using System.Xml.Linq;
 
 
 namespace Psycho.Internal
@@ -57,7 +58,7 @@ namespace Psycho.Internal
                     Notebook.Pages = _data.NotebookPagesPool;
                 }
 
-                Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
+                ModConsole.Print($"[{mod.Name}{{{mod.Version}}}]: <color=green>Save Data Loaded!</color>");
                 return true;
             }
             catch
@@ -96,6 +97,8 @@ namespace Psycho.Internal
                 ItemsPoolData = ItemsPool.GetSaveData(),
                 NotebookPagesPool = Notebook.Pages
             }, "psychoData", true);
+
+            ModConsole.Log($"[{mod.Name}{{{mod.Version}}}]: <color=green>Save Data saved!</color>");
         }
 
         public static void RemoveData(Mod mod)

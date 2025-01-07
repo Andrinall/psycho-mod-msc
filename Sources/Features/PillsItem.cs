@@ -90,7 +90,7 @@ namespace Psycho.Features
             Logic.ChangeWorld(eWorldType.MAIN);
 
             Globals.Pills = null;
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Pills with index {index} removed");
+            Utils.PrintDebug($"Pills with index {index} removed");
         }
     }
 }

@@ -25,35 +25,6 @@ namespace Psycho.Internal
 
         static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
         static AudioClip RandomSoundForFullScreenScreamer => FullScreenScreamersSounds[Random.Range(0, FullScreenScreamersSounds.Count)];
-
-        public static void MuteGlobalAmbient(bool state)
-        {
-            if (state)
-            {
-                MuteSource(Globals.GlobalAmbient_source, true);
-                MuteSource(Globals.GlobalPsychoAmbient_source, true);
-                return;
-            }
-
-            if (!Logic.InHorror)
-            {
-                MuteSource(Globals.GlobalAmbient_source, !(Globals.SUN_Hours.Value >= 22f || Globals.SUN_Hours.Value < 4f));
-                MuteSource(Globals.GlobalPsychoAmbient_source, true);
-            }
-            else
-            {
-                MuteSource(Globals.GlobalAmbient_source, true);
-                MuteSource(Globals.GlobalPsychoAmbient_source, false);
-            }
-        }
-
-        public static void MuteSource(AudioSource source, bool state)
-        {
-            if (source.mute == state) return;
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"[{source.transform.GetPath()}].MuteSource({state})");
-
-            source.mute = state;
-        }
         
         public static AudioSource AddAudioSource(GameObject parent, AudioClip clip, float volume)
         {
@@ -95,8 +66,8 @@ namespace Psycho.Internal
         {
             FullScreenScreamerSoundsSource.Stop();
             FullScreenScreamerSoundsSource.clip = RandomSoundForFullScreenScreamer;
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"New random clip for full screen screamer [{FullScreenScreamerSoundsSource.clip.name}]");
             FullScreenScreamerSoundsSource.Play();
+            Utils.PrintDebug($"New random clip for full screen screamer [{FullScreenScreamerSoundsSource.clip.name}]");
         }
 
         public static bool IsFullScreenScreamerSoundPlaying()

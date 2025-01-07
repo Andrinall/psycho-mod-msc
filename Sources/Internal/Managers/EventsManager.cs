@@ -36,10 +36,12 @@ namespace Psycho.Internal
 
             try
             {
+                DoorsManager.CloseAllDoorsInHouse();
+
                 if (type == ScreamTimeType.FEAR && variation == (int)ScreamFearType.TV)
-                    WorldManager.SetElecMeterState(true);
+                    Electricity.SetSwitchState(true);
                 else
-                    WorldManager.SetElecMeterState(false);
+                    Electricity.SetSwitchState(false);
 
                 Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {_getScreamerVariantName(type, variation)}]");
 
@@ -55,7 +57,7 @@ namespace Psycho.Internal
         {
             if (!Psycho.IsLoaded) return;
             
-            WorldManager.SetElecMeterState(true);
+            Electricity.SetSwitchState(true);
 
             OnScreamerFinished.Invoke();
             Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {_getScreamerVariantName(type, variation)}]");

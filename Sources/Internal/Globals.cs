@@ -76,7 +76,14 @@ namespace Psycho.Internal
         public static int CurrentLang = 0;
 
         public static Transform Player;
+
+        public static FsmFloat PlayerHunger;
+        public static FsmFloat PlayerThirst;
+        public static FsmFloat PlayerFatigue;
+        public static FsmFloat PlayerStress;
+
         public static FsmInt GlobalDay;
+
         public static FsmFloat SUN_Hours;
         public static FsmFloat SUN_Minutes;
 
@@ -261,6 +268,12 @@ namespace Psycho.Internal
         public static void InitializeGlobalVars()
         {
             Player = GameObject.Find("PLAYER").transform;
+
+            PlayerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
+            PlayerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
+            PlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
+            PlayerStress = Utils.GetGlobalVariable<FsmFloat>("PlayerStress");
+
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
             PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
@@ -313,7 +326,7 @@ namespace Psycho.Internal
             _heartbeat.enabled = false;
 
             SuicidalsList = GameObject.Instantiate(ResourcesStorage.SuicidalsList_prefab); // clone suicidals for horror world
-            WorldManager.CopySuicidal(SuicidalsList); // copy first suicidal from list for use in night screamer
+            ObjectCloner.CopySuicidal(SuicidalsList); // copy first suicidal from list for use in night screamer
             SuicidalsList.SetActive(false); // hide suicidals list
 
             // Load death sound
@@ -345,7 +358,7 @@ namespace Psycho.Internal
         public static void Reset()
         {
             Player = null;
-            GlobalDay = null;
+
             SUN_Hours = null;
             SUN_Minutes = null;
 
@@ -367,7 +380,6 @@ namespace Psycho.Internal
             CachedTextures.Clear();
 
             SoundManager.DeathSound = null;
-            SoundManager.ScreamPoints.Clear();
 
             TexturesManager.Cache.Clear();
 

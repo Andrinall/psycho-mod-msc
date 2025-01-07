@@ -6,7 +6,7 @@ using MSCLoader;
 using Psycho.Internal;
 
 
-namespace Psycho.FullScreenScreamers
+namespace Psycho.Handlers
 {
     internal class EngineStarterHandler : FullScreenScreamerBase
     {
@@ -14,8 +14,7 @@ namespace Psycho.FullScreenScreamers
         {
             bool _isSatsumaStarter = transform.GetPlayMaker("Starter").FsmVariables.FloatVariables.Any(v => v.Name == "Wear");
 
-            StateHook.Inject(gameObject, "Starter", _isSatsumaStarter ? "Running" : "Motor running", TryShowScreamer);
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Awaked EngineStarterHandler [{transform.GetPath()}]");
+            StateHook.Inject(gameObject, "Starter", _isSatsumaStarter ? "Running" : "Motor running", ShowScreamer);
         }
     }
 }

@@ -6,13 +6,12 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Internal;
 using Psycho.Features;
 
 using Random = UnityEngine.Random;
 
 
-namespace Psycho
+namespace Psycho.Internal
 {
     internal static class DebugPanel
     {

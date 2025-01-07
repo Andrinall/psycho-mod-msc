@@ -17,7 +17,6 @@ namespace Psycho.Internal
         {
             instance = this;
             death = transform.Find("Death");
-            Utils.PrintDebug($"DeathSystem init ; {death}");
         }
 
         protected override void Destroyed()

@@ -29,7 +29,7 @@ namespace Psycho.Features
         Transform fusetable;
 
         PlayMakerFSM blindless, hangoverCamera, knockout;
-        FsmFloat playerFatigue, playerHunger, playerThirst, blindIntensity;
+        FsmFloat blindIntensity;
 
         Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
         List<FsmFloat> fuelLevels = new List<FsmFloat>();
@@ -46,9 +46,6 @@ namespace Psycho.Features
             penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
 
-            playerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
-            playerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
-            playerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
             fpsCamera = Utils.GetGlobalVariable<FsmGameObject>("POV").Value;
             
             blindless = fpsCamera.GetPlayMaker("Blindness");
@@ -341,7 +338,7 @@ namespace Psycho.Features
             if (byCommand)
             {
                 if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
-                Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
+                Utils.PrintDebug("[event] Activate called");
 
                 instance.isEventCalled = true;
                 instance.isEventFinished = false;
@@ -351,7 +348,7 @@ namespace Psycho.Features
 
             if (!instance.penta.LightsEnabled) return;
             if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
-            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
+            Utils.PrintDebug("[event] Activate called");
 
             instance.isEventCalled = true;
             instance.isEventFinished = false;
@@ -365,7 +362,7 @@ namespace Psycho.Features
 
         void _finishEvent()
         {
-            Utils.PrintDebug(eConsoleColors.GREEN, "[event] _finishEvent called");
+            Utils.PrintDebug("[event] _finishEvent called");
             isEventCalled = false;
             isEventFinished = true;
             penta.SetCandlesFireActive(false, true);
@@ -373,7 +370,7 @@ namespace Psycho.Features
 
         void _abortEvent()
         {
-            Utils.PrintDebug(eConsoleColors.RED, "[event] _abortEvent called");
+            Utils.PrintDebug("[event] _abortEvent called");
             _playSound("aborted");
             _finishEvent();
         }
@@ -393,13 +390,13 @@ namespace Psycho.Features
 
         void _destroyItems()
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _destroyItems called");
+            Utils.PrintDebug("[event] _destroyItems called");
             penta.DestroyItems();
         }
 
         void _processEvents(string _event)
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _processEvents called: {_event}");
+            Utils.PrintDebug($"[event] _processEvents called: {_event}");
             switch (_event)
             {
                 // ▼ spawn letter "RANDOM GIFT MONEY"
@@ -426,7 +423,7 @@ namespace Psycho.Features
 
                         _list.ForEach(_item =>
                         {
-                            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] {_item.gameObject.name} spoiled");
+                            Utils.PrintDebug($"[event] {_item.gameObject.name} spoiled");
                             _item.GetVariable<FsmFloat>("Condition").Value = .5f;
                             _item.SendEvent("UPDATE");
                             _item.SendEvent("BAD");
@@ -446,14 +443,14 @@ namespace Psycho.Features
 
                 // ▼ set fatigue to 110f
                 case "fatigue":
-                    _startEvent(() => playerFatigue.Value = 110f, "yawning");
+                    _startEvent(() => Globals.PlayerFatigue.Value = 110f, "yawning");
                     return;
 
                 // ▼ set hunger & thirst to 101f
                 case "hunger":
                     _startEvent(() => {
-                        playerHunger.Value = 101f;
-                        playerThirst.Value = 101f;
+                        Globals.PlayerHunger.Value = 101f;
+                        Globals.PlayerThirst.Value = 101f;
                     }, "nausea");
                     return;
 
@@ -535,7 +532,7 @@ namespace Psycho.Features
                 Quaternion.Euler(Vector3.zero)
             );
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"[event] _spawnItem cloned item {_cloned}");
+            Utils.PrintDebug($"[event] _spawnItem cloned item {_cloned}");
         }
 
         FsmFloat _getFuelLevel(string path)
@@ -543,7 +540,7 @@ namespace Psycho.Features
 
         IEnumerator _playFireAnimation()
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _playFireAnimation called");
+            Utils.PrintDebug("[event] _playFireAnimation called");
             
             fire.SetActive(true);            
             yield return new WaitForSeconds(2f);
@@ -564,7 +561,7 @@ namespace Psycho.Features
 
         IEnumerator _eventGrannyCoroutine(Action action)
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventGrannyCoroutine called");
+            Utils.PrintDebug("[event] _eventGrannyCoroutine called");
             fire.SetActive(true);
             
             yield return new WaitForSeconds(2f);
@@ -595,7 +592,7 @@ namespace Psycho.Features
 
         IEnumerator _eventCoroutine(Action action, string sound = "")
         {
-            Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventCoroutine called");
+            Utils.PrintDebug("[event] _eventCoroutine called");
             yield return StartCoroutine(_playFireAnimation());
 
             try

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
-using System.Net;
 
 
 namespace Psycho.Internal

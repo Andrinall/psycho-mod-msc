@@ -142,7 +142,6 @@ namespace Psycho.Internal
             DingonbiisiAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/penta_all.mp3");
             GlobalAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/real_night_emb.mp3");
             GlobalPsychoAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/psycho_emb.mp3");
-
             FinishGame_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/wining.mp3");
 
 
@@ -250,6 +249,7 @@ namespace Psycho.Internal
 
             ModelsReplaces.Clear();
             FullScreenScreamerTextures.Clear();
+            SoundManager.ScreamPoints.Clear();
         }
 
 

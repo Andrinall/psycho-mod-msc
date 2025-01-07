@@ -72,7 +72,7 @@ namespace Psycho.Features
         protected override void PageSelected(bool next)
         {
             UpdatePageText();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"CurrentPage: {CurrentPage}; MAX_PAGE :{MAX_PAGE}");
+            Utils.PrintDebug($"CurrentPage: {CurrentPage}; MAX_PAGE :{MAX_PAGE}");
         }
 
         protected override void GUIOpened()
@@ -136,7 +136,7 @@ namespace Psycho.Features
             SortPages();
 
             PlayPageTurn();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"{_page} added into notebook");
+            Utils.PrintDebug($"{_page} added into notebook");
             return true;
         }
 
@@ -182,7 +182,7 @@ namespace Psycho.Features
             Pages.Remove(Pages.First(v => v.isDefaultPage));
             GameObject.Find("COTTAGE/minigame(Clone)").SetActive(false);
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({_truePages > 7} story)");
+            Utils.PrintDebug($"Final page added with ({_truePages > 7} story)");
             Pages.ForEach(v => Utils.PrintDebug(v.ToString()));
         }
 

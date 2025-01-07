@@ -64,10 +64,6 @@ namespace Psycho.Screamers
         public void ApplyScreamer(ScreamTimeType rand, int variation = 0)
         {
             triggered = false;
-
-            WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
-            WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
-
             EventsManager.TriggerNightScreamer(rand, variation);
         }
 
@@ -75,25 +71,25 @@ namespace Psycho.Screamers
         {
             if (Logic.GameFinished)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "Psycho game is finished; Skip night screamer");
+                Utils.PrintDebug("Psycho game is finished; Skip night screamer");
                 return;
             }
 
             if (Logic.InHorror)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "Player in horror; Skip night screamer");
+                Utils.PrintDebug("Player in horror; Skip night screamer");
                 return;
             }
 
             if (Logic.MilkUsed && (DateTime.Now - Logic.MilkUseTime).Seconds < 60)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "Milk usage timer < 60 seconds\nSkip night screamer");
+                Utils.PrintDebug("Milk usage timer < 60 seconds\nSkip night screamer");
                 return;
             }
 
             if (timeOfDay.Value < 16)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "Time of day less than ((24 + 4) - 10) or 18 hours\nSkip night screamer");
+                Utils.PrintDebug("Time of day less than ((24 + 4) - 10) or 18 hours\nSkip night screamer");
                 return;
             }
 
@@ -101,36 +97,32 @@ namespace Psycho.Screamers
             lastRand = Random.Range(0, 3);
             screamerVariation = Random.Range(0, maxScreamTypes[lastRand]);
 
-            // for testing
-            //m_iRand = (int)ScreamTimeType.FEAR;
-            //screamerVariation = (int)ScreamFearType.TV;
-
             if (lastRand == 3)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "RandomEvent == 3; Skip night screamer");
+                Utils.PrintDebug("RandomEvent == 3; Skip night screamer");
                 return;
             }
 
             if (!targetDays[lastRand].Contains(day))
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, "Event not exists in table for current day\nSkip night screamer");
+                Utils.PrintDebug("Event not exists in table for current day\nSkip night screamer");
                 return;
             }
 
-            if (!electricity.activeSelf && lastRand == (int)ScreamTimeType.FEAR && screamerVariation == (int)ScreamFearType.TV && WorldManager.GetElecCutoffTimer() >= 22000f)
+            if (!electricity.activeSelf && lastRand == (int)ScreamTimeType.FEAR && screamerVariation == (int)ScreamFearType.TV && Electricity.GetCutoffTimer() >= 22000f)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "The electricity bill hasn't been paid. Screamer for TV won't work.");
                 return;
             }
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {globalDay.Value}[next {day}]; rand[{(ScreamTimeType)lastRand}]; contains[{targetDays[lastRand].Contains(day)}]");
+            Utils.PrintDebug($"Day: {globalDay.Value}[next {day}]; rand[{(ScreamTimeType)lastRand}]; contains[{targetDays[lastRand].Contains(day)}]");
             FsmInt _sleepTime = fsm.GetVariable<FsmInt>("SleepTime"); // 10
             int _timeOfDay = timeOfDay.Value;
 
             _sleepTime.Value = (24 + targetTimes[lastRand]) - _timeOfDay;
             triggered = true;
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{_sleepTime.Value}]; new[{_sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)lastRand}]");
+            Utils.PrintDebug($"SleepTime orig[{_sleepTime.Value}]; new[{_sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)lastRand}]");
         }
 
         void DoesCall(PlayMakerFSM fsm)
@@ -139,7 +131,7 @@ namespace Psycho.Screamers
                 return;
 
             fsm.SendEvent("NOCALL");
-            Utils.PrintDebug(eConsoleColors.YELLOW, "Jokke phone call skipped by night screamer");
+            Utils.PrintDebug("Jokke phone call skipped by night screamer");
         }
 
         void DisableScreamerIfPhone()

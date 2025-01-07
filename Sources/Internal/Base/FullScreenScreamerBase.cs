@@ -7,10 +7,10 @@ namespace Psycho.Internal
 {
     internal abstract class FullScreenScreamerBase : CatchedComponent
     {
-        bool screamerEnabled = false;
         GameObject hud;
-        FsmFloat fatigue;
-        FsmFloat stress;
+
+        bool screamerEnabled = false;
+
 
         protected override void OnFixedUpdate()
         {
@@ -24,8 +24,9 @@ namespace Psycho.Internal
             screamerEnabled = false;
         }
 
-        public void TryShowScreamer()
+        public void ShowScreamer()
         {
+            if (Psycho.ShowFullScreenScreamers.GetValue() == false) return;
             if (screamerEnabled) return;
             if (!Logic.IsFullScreenScreamerAvailableForTrigger()) return;
 
@@ -35,18 +36,12 @@ namespace Psycho.Internal
             
             if (hud == null)
                 hud = GameObject.Find("GUI/HUD");
-
-            if (fatigue == null)
-                fatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
-
-            if (stress == null)
-                stress = Utils.GetGlobalVariable<FsmFloat>("PlayerStress");
             
             Logic.EnableRandomFullScreenScreamer();
             hud.SetActive(false);
 
-            fatigue.Value = Mathf.Clamp(fatigue.Value - 10f, -20f, 300f);
-            stress.Value = Mathf.Clamp(stress.Value + 10f, -100f, 300f);
+            Globals.PlayerFatigue.Value = Mathf.Clamp(Globals.PlayerFatigue.Value - 10f, -20f, 300f);
+            Globals.PlayerStress.Value = Mathf.Clamp(Globals.PlayerStress.Value + 10f, -100f, 300f);
 
             screamerEnabled = true;
         }

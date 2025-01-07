@@ -108,7 +108,7 @@ namespace Psycho.Features
                 Globals.Pills = new PillsItem(Globals.PillsPositions[_idx]);
 
                 SetBackgroundScreenForLetter(_idx);
-                Utils.PrintDebug(eConsoleColors.GREEN, $"Generated pills: {_idx}");
+                Utils.PrintDebug($"Generated pills: {_idx}");
             }
             catch (Exception e)
             {

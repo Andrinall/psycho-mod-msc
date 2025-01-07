@@ -44,7 +44,7 @@ namespace Psycho.Handlers
             Item.transform.position = new Vector3(Position.x, Position.y, Position.z + 0.001f);
 
             penta.TryTriggerEvent();
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Item {other.gameObject.name} enter trigger {name};");
+            Utils.PrintDebug($"Item {other.gameObject.name} enter trigger {name};");
         }
 
         void OnTriggerExit(Collider other)
@@ -54,7 +54,7 @@ namespace Psycho.Handlers
 
             IsItemIn = false;
             Item = null;
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Item {other.gameObject.name} exit trigger {name};");
+            Utils.PrintDebug($"Item {other.gameObject.name} exit trigger {name};");
         }
     }
 }

@@ -8,7 +8,7 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Ambient;
+using Psycho.Features;
 
 using Object = UnityEngine.Object;
 
@@ -123,7 +123,7 @@ namespace Psycho.Internal
                 else if (value < -7.0f)
                     KillUsingTrain();
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"New value for points {value}; prev: {prev}");
+                Utils.PrintDebug($"New value for points {value}; prev: {prev}");
             }
         }
 
@@ -176,7 +176,7 @@ namespace Psycho.Internal
         {
             if ((DateTime.Now - LastTimeTriggerScreamer).Minutes < MinutesToNextScreamer)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"FullScreenScreamer timer is not counting down");
+                Utils.PrintDebug("FullScreenScreamer timer is not counting down");
                 return false;
             }
 
@@ -264,7 +264,7 @@ namespace Psycho.Internal
                 ResetValue(horror: 25, main: 15f);
 
             Points = _newValue;
-            Utils.PrintDebug(eConsoleColors.RED, $"Player committed offence : {offence} \"{comment}\"");
+            Utils.PrintDebug($"Player committed offence : {offence}" + (string.IsNullOrEmpty(comment) ? "" : $"\"{comment}\""));
         }
 
         internal static void KillUsingTrain()
@@ -376,11 +376,11 @@ namespace Psycho.Internal
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 8f, default, () =>
                 {
-                    WorldManager.ChangeWorldTextures(InHorror);
+                    TexturesManager.ChangeWorldTextures(InHorror);
                     WorldManager.ChangeBedroomModels();
                     Utils.ChangeSmokingModel();
                     SoundManager.ChangeFliesSounds();
-                    WorldManager.StopCloudsOrRandomize();
+                    WeatherManager.StopCloudsOrRandomize();
                     WorldManager.ChangeCameraFog();
                     WorldManager.ChangeWalkersAnimation();
                     WorldManager.SetHandsActive(InHorror);

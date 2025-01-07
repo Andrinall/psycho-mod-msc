@@ -12,7 +12,6 @@ using Psycho.Commands;
 using Psycho.Handlers;
 using Psycho.Internal;
 using Psycho.Screamers;
-using Psycho.FullScreenScreamers;
 
 using Object = UnityEngine.Object;
 
@@ -24,11 +23,12 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.8-beta4";
+        public override string Version => "0.9.9-RC2";
         public override string Description => "Adds a schizophrenia for your game character";
 
-        internal static SettingsDropDownList lang;
-        internal static Keybind fastOpen;
+        internal static SettingsDropDownList LangDropDownList;
+        internal static SettingsCheckBox ShowFullScreenScreamers;
+        internal static Keybind FastOpenKeybind;
 
         internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         internal static bool IsLoaded = false;
@@ -66,16 +66,21 @@ namespace Psycho
 
         void Mod_Settings()
         {
-            lang = Settings.AddDropDownList(
+            LangDropDownList = Settings.AddDropDownList(
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
                 0, _changeSetting);
 
-            fastOpen = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
+            ShowFullScreenScreamers = Settings.AddCheckBox("psychoFullScreenScreamers", "Show Full Screen Screamers", true);
+
+            FastOpenKeybind = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
 #if DEBUG
             DebugPanel.Init();
 #endif
         }
+
+        void _changeSetting()
+            => EventsManager.ChangeLanguage(LangDropDownList.GetSelectedItemIndex());
         //
 
 
@@ -85,7 +90,7 @@ namespace Psycho
             Logic.SetDefaultValues();
             ResourcesStorage.UnloadAll();
             Globals.Reset();
-            Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"New game started, save file removed!");
         }
 
         void Mod_Load()
@@ -99,6 +104,7 @@ namespace Psycho
 
             // init global vars
             Globals.InitializeGlobalVars();
+            Globals.InitializeObjects();
 
             // load save data
             if (!SaveManager.TryLoad(this))
@@ -149,7 +155,11 @@ namespace Psycho
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
-            
+
+            GameObject.Find("YARD/Building/BEDROOM1").transform.Find("DoorBedroom1/Pivot/Handle")
+                .GetPlayMaker("Use")
+                .GetGlobalTransition("GLOBALEVENT").ToState = "Check position";
+
             houseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
 
@@ -171,7 +181,6 @@ namespace Psycho
             AddComponent<FixedHUD>("GUI/HUD");
             FixedHUD.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
             FixedHUD.Structurize();
-            Logic.SetPoints(Logic.Points);
 
             // add component for make hangover in horror world
             Transform _camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
@@ -184,8 +193,8 @@ namespace Psycho
             _applyHorrorIfNeeded();
             _setupActions(_camera);
 
-            WorldManager.AddAmbientTriggers();
-            WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
+            TexturesManager.ChangeIndepTextures(false); // set textures what used independently of world
+            AmbientTrigger.InitializeAllTriggers();
             Minigame.Initialize();
 
             // add inactive audio source for play in screamer
@@ -205,7 +214,7 @@ namespace Psycho
             SoundManager.ReplaceRadioStaticSound(ResourcesStorage.UBV_psy_clip);
 
             // finalize a loading
-            ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
+            ModConsole.Log($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
             IsLoaded = true;
 #if DEBUG
             DebugPanel.SetSettingsVisible(true);
@@ -216,7 +225,7 @@ namespace Psycho
         {
             if (Logic.GameFinished) return;
 
-            if (IsLoaded && !IsLoaderMenuOpened && fastOpen.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
+            if (IsLoaded && !IsLoaderMenuOpened && FastOpenKeybind.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
             {
                 Globals.MailboxSheet?.SetActive(true);
             }
@@ -242,7 +251,7 @@ namespace Psycho
             WorldManager.ShowCrows(!(Globals.SUN_Hours.Value >= 20f || Globals.SUN_Hours.Value < 6f));
 
             if (Logic.CurrentAmbientTrigger == null)
-                SoundManager.MuteGlobalAmbient(false);
+                AmbientTrigger.MuteGlobalAmbient(false);
                 
             
 
@@ -264,21 +273,23 @@ namespace Psycho
 
         void Mod_Save()
         {
-            // restore original game textures for materials (avoid game crash)
-            _unload();
             SaveManager.SaveData(this);
+
+            _unload();
         }
 
         void _unload()
         {
-            WorldManager.ChangeWorldTextures(false);
-            WorldManager.ChangeIndepTextures(true);
+            TexturesManager.ChangeWorldTextures(false);
+            TexturesManager.ChangeIndepTextures(true);
             Utils.ChangeSmokingModel();
             SoundManager.ChangeFliesSounds();
             SoundManager.ReplaceRadioStaticSound(null);
-            TexturesManager.Cache.Clear();
 
             EventsManager.UnSubscribeAll();
+            ResourcesStorage.UnloadAll();
+            Logic.DestroyAllObjects();
+            Globals.Reset();
 #if DEBUG
             DebugPanel.SetSettingsVisible(false);
 #endif
@@ -286,12 +297,12 @@ namespace Psycho
 
         void _applyHorrorIfNeeded()
         {
-            WorldManager.ActivateDINGONBIISIMiscThing3Permanently(); // activate phantom permanently
+            ObjectCloner.ActivateDINGONBIISIMiscThing3Permanently(); // activate phantom permanently
             WorldManager.SpawnDINGONBIISIHands(); // clone player hands & spawn in dingonbiisi house (default disabled)
-            WorldManager.CopyVenttiAnimation(); // copy venttipig_pig_walk animation clip for use on wandering walkers
-            WorldManager.CopyGrannyHiker(); // copy granny(mummola) for use in paralysis screamer
-            WorldManager.CopyUncleChar(); // copy uncle(kesseli) for use in paralysis screamer
-            WorldManager.CopyScreamHand(); // copy player hand for use in paralysis screamer
+            ObjectCloner.CopyVenttiAnimation(); // copy venttipig_pig_walk animation clip for use on wandering walkers
+            ObjectCloner.CopyGrannyHiker(); // copy granny(mummola) for use in paralysis screamer
+            ObjectCloner.CopyUncleChar(); // copy uncle(kesseli) for use in paralysis screamer
+            ObjectCloner.CopyScreamHand(); // copy player hand for use in paralysis screamer
 
             // attach screamers components to game objects
             AddComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
@@ -307,11 +318,11 @@ namespace Psycho
             Utils.ChangeSmokingModel();
 
             WorldManager.SetHandsActive(true);
-            WorldManager.ChangeWorldTextures(true);
+            TexturesManager.ChangeWorldTextures(true);
             WorldManager.ChangeCameraFog();
             WorldManager.ChangeBedroomModels();
             WorldManager.ChangeWalkersAnimation();
-            WorldManager.StopCloudsOrRandomize();
+            WeatherManager.StopCloudsOrRandomize();
 
             SoundManager.ChangeFliesSounds();
             Globals.SuicidalsList.SetActive(true); // activate suicidals 
@@ -465,10 +476,7 @@ namespace Psycho
             StateHook.Inject(_btnConfirm.Find("Button").gameObject, "Button", "State 3", _unload);
         }
 
-        void UpdateFridgePaperText() => guiSubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
-
-        void _changeSetting()
-            => EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
+        void UpdateFridgePaperText() => guiSubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];       
 
         void MilkUsed()
         {
