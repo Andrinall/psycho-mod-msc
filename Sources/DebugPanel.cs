@@ -83,17 +83,17 @@ namespace Psycho
             debug_MilkUsed = Settings.AddCheckBox("milkUsed", "Milk Used", false, MilkUsed);
             debug_MilkUsageTimer = Settings.AddText("Milk Usage Timer: 0", false);
 
-            var soundFields = Utils.GetEnumFields<ScreamSoundType>();
-            var fearFields = Utils.GetEnumFields<ScreamFearType>();
-            var paralysisFields = Utils.GetEnumFields<ScreamParalysisType>();
+            string[] _soundFields = Utils.GetEnumFields<ScreamSoundType>();
+            string[] _fearFields = Utils.GetEnumFields<ScreamFearType>();
+            string[] _paralysisFields = Utils.GetEnumFields<ScreamParalysisType>();
 
-            debug_ScreamerSound = Settings.AddDropDownList("SoundScreamers", "Sound", soundFields, 0);
+            debug_ScreamerSound = Settings.AddDropDownList("SoundScreamers", "Sound", _soundFields, 0);
             Settings.AddButton("Trigger", TriggerSoundScreamer);
 
-            debug_ScreamerFear = Settings.AddDropDownList("FearScreamers", "Fear", fearFields, 0);
+            debug_ScreamerFear = Settings.AddDropDownList("FearScreamers", "Fear", _fearFields, 0);
             Settings.AddButton("Trigger", TriggerFearScreamer);
 
-            debug_ScreamerParalysis = Settings.AddDropDownList("PrlsScreamers", "Paralysis", paralysisFields, 0);
+            debug_ScreamerParalysis = Settings.AddDropDownList("PrlsScreamers", "Paralysis", _paralysisFields, 0);
             Settings.AddButton("Trigger", TriggerParalysisScreamer);
 
 
@@ -153,9 +153,9 @@ namespace Psycho
 
             if (Logic.MilkUsed)
             {
-                var milkTimer = 60 - (Logic.MilkUseTime - DateTime.Now).Seconds;
-                var clampedMilkTimer = Mathf.Clamp(milkTimer, 0, 60);
-                debug_MilkUsageTimer.SetValue($"Milk Usage Timer: {clampedMilkTimer} seconds ago");
+                int _milkTimer = 60 - (Logic.MilkUseTime - DateTime.Now).Seconds;
+                int _clampedMilkTimer = Mathf.Clamp(_milkTimer, 0, 60);
+                debug_MilkUsageTimer.SetValue($"Milk Usage Timer: {_clampedMilkTimer} seconds ago");
                 debug_MilkUsageTimer.SetVisibility(true);
             }
             else
@@ -178,8 +178,8 @@ namespace Psycho
         {
             if (Logic.GameFinished) return;
 
-            bool newValue = debug_GameFinished.GetValue();
-            if (newValue)
+            bool _newValue = debug_GameFinished.GetValue();
+            if (_newValue)
             {
                 Logic.FinishShizGame();
                 return;
@@ -191,8 +191,8 @@ namespace Psycho
 
         static void FillNotebook()
         {
-            int index = debug_NotebookFillType.GetSelectedItemIndex();
-            bool random = index == 2;
+            int _index = debug_NotebookFillType.GetSelectedItemIndex();
+            bool _useRandom = _index == 2;
 
             Globals.Notebook?.ClearPages();
             for (int i = 1; i < 14; i++)
@@ -200,7 +200,7 @@ namespace Psycho
                 Notebook.TryAddPage(new NotebookPage
                 {
                     index = i,
-                    isTruePage = random ? (Random.Range(0, 2) == 1) : index == 0
+                    isTruePage = _useRandom ? (Random.Range(0, 2) == 1) : _index == 0
                 });
             }
             Globals.Notebook?.SortPages();
@@ -240,32 +240,31 @@ namespace Psycho
 
         static void SpawnPentagramItem()
         {
-            var item = debug_SpawnItem.GetSelectedItemName();
-            Transform player = GameObject.Find("PLAYER").transform;
-            Vector3 pos = player.position;
+            string _itemName = debug_SpawnItem.GetSelectedItemName();
+            Vector3 _pos = Psycho.Player.position;
 
-            switch (item)
+            switch (_itemName)
             {
                 case "churchcandle":
-                    ItemsPool.AddItem(Globals.Candle_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.Candle_prefab, _pos, Vector3.zero);
                     break;
                 case "fernflower":
-                    ItemsPool.AddItem(Globals.FernFlower_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.FernFlower_prefab, _pos, Vector3.zero);
                     break;
                 case "mushroom":
-                    ItemsPool.AddItem(Globals.Mushroom_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.Mushroom_prefab, _pos, Vector3.zero);
                     break;
                 case "blackegg":
-                    ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.BlackEgg_prefab, _pos, Vector3.zero);
                     break;
                 case "walnut":
-                    ItemsPool.AddItem(Globals.Walnut_prefab, pos, Vector3.zero);
+                    ItemsPool.AddItem(Globals.Walnut_prefab, _pos, Vector3.zero);
                     break;
 
                 default:
                     return;
             }
-            ModConsole.Print($"{item} spawned on player pos");
+            ModConsole.Print($"{_itemName} spawned on player pos");
 
         }
 

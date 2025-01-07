@@ -19,10 +19,10 @@ namespace Psycho.Handlers
             if (transform.parent.parent.gameObject.name == "JokkeHiker1")
                 return;
 
-            string parentName = transform.parent.gameObject.name;
-            if (parentName == "Teimo") return;
+            string _parentName = transform.parent.gameObject.name;
+            if (_parentName == "Teimo") return;
 
-            if (parentName == "SuskiHiker")
+            if (_parentName == "SuskiHiker")
             {
                 StateHook.Inject(transform.Find("HumanCollider").gameObject, "PlayerHit", "State 3", SuskiHitted);
                 return;
@@ -39,8 +39,8 @@ namespace Psycho.Handlers
         {
             try
             {
-                bool hasCrime = HasCrimeAction;
-                StateHook.Inject(gameObject, "CarHit", hasCrime ? "Crime" : "Crime 2", NPCHitted);
+                bool _hasCrime = HasCrimeAction;
+                StateHook.Inject(gameObject, "CarHit", _hasCrime ? "Crime" : "Crime 2", NPCHitted);
             }
             catch
             {

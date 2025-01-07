@@ -73,10 +73,12 @@ namespace Psycho.Internal
         public static void SpawnPhantomBehindPlayer(float distance = 0.75f)
         {
             elapsedFrames = 0;
-            Transform player = GameObject.Find("PLAYER").transform;
-            ClonedPhantom.transform.position = player.position - player.forward * distance;
-            ClonedPhantom.transform.LookAt(player.position);
+
+            Transform _player = Psycho.Player;
+            ClonedPhantom.transform.position = _player.position - _player.forward * distance;
+            ClonedPhantom.transform.LookAt(_player.position);
             ClonedPhantom.SetActive(true);
+
             SoundManager.PlayHeartbeat(true);
         }
 
@@ -84,28 +86,24 @@ namespace Psycho.Internal
         {
             if (!ClonedPhantom.activeSelf) return false;
 
-            if (elapsedFrames < neededFrames)
-            {
-                elapsedFrames++;
-                return true;
-            }
+            if (!Utils.WaitFrames(ref elapsedFrames, neededFrames))
+                return false;
 
             ClonedPhantom.SetActive(false);
-            elapsedFrames = 0;
-
             Globals.PhantomScream_source?.Play();
             callback?.Invoke();
+
             SoundManager.PlayHeartbeat(false);
-            return false;
+            return true;
         }
 
         public static float GetElecCutoffTimer()
         {
-            GameObject bills = GameObject.Find("Systems/ElectricityBills");
-            PlayMakerFSM data = bills?.GetComponent<PlayMakerFSM>();
-            FsmFloat WaitCutoff = data?.GetVariable<FsmFloat>("WaitCutoff");
+            GameObject _bills = GameObject.Find("Systems/ElectricityBills");
+            PlayMakerFSM _data = _bills?.GetComponent<PlayMakerFSM>();
+            FsmFloat _waitCutoff = _data?.GetVariable<FsmFloat>("WaitCutoff");
 
-            return WaitCutoff?.Value ?? 0f;
+            return _waitCutoff?.Value ?? 0f;
         }
 
         public static void SetElecMeterState(bool state)
@@ -138,37 +136,37 @@ namespace Psycho.Internal
 
         public static void CopyScreamHand()
         {
-            GameObject HandMilk = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/HandMilk");
-            Transform Bedroom = GameObject.Find("YARD/Building/BEDROOM1").transform;
-            Transform ScreamHand = Object.Instantiate(HandMilk).transform;
-            Object.Destroy(ScreamHand.Find("Milk").gameObject);
+            GameObject _handMilk = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera/Drink/Hand/HandMilk");
+            Transform _bedroom = GameObject.Find("YARD/Building/BEDROOM1").transform;
+            Transform _screamHand = Object.Instantiate(_handMilk).transform;
+            Object.Destroy(_screamHand.Find("Milk").gameObject);
 
-            ScreamHand.SetParent(Bedroom, worldPositionStays: false);
-            ScreamHand.gameObject.name = "ScreamHand";
-            
-            ScreamHand.Find("Armature").gameObject.SetActive(false);
-            ScreamHand.Find("hand_rigged").gameObject.SetActive(false);
+            _screamHand.SetParent(_bedroom, worldPositionStays: false);
+            _screamHand.gameObject.name = "ScreamHand";
 
-            ScreamHand.IterateAllChilds(v => v.gameObject.layer = 0);
+            _screamHand.Find("Armature").gameObject.SetActive(false);
+            _screamHand.Find("hand_rigged").gameObject.SetActive(false);
 
-            ScreamHand.Find("Armature").localEulerAngles = new Vector3(-90, 0, 0);
-            ScreamHand.position = new Vector3(-12.00460433959961f, 1.1982498168945313f, 15.551212310791016f);
-            ScreamHand.eulerAngles = new Vector3(0.4349295198917389f, 0.05798640847206116f, 0.02807953953742981f);
-            ScreamHand.localScale = new Vector3(2f, 2f, 2f);
+            _screamHand.IterateAllChilds(v => v.gameObject.layer = 0);
 
-            if (ScreamHand.gameObject.GetComponent<MovingHand>() == null)
-                ScreamHand.gameObject.AddComponent<MovingHand>();
+            _screamHand.Find("Armature").localEulerAngles = new Vector3(-90, 0, 0);
+            _screamHand.position = new Vector3(-12.00460433959961f, 1.1982498168945313f, 15.551212310791016f);
+            _screamHand.eulerAngles = new Vector3(0.4349295198917389f, 0.05798640847206116f, 0.02807953953742981f);
+            _screamHand.localScale = new Vector3(2f, 2f, 2f);
 
-            ScreamHand.gameObject.SetActive(true);
+            if (_screamHand.gameObject.GetComponent<MovingHand>() == null)
+                _screamHand.gameObject.AddComponent<MovingHand>();
+
+            _screamHand.gameObject.SetActive(true);
         }
 
         public static void CopyUncleChar()
         {
-            GameObject uncleOrig = GameObject.Find("YARD/UNCLE/UncleWalking/Uncle");
-            Transform uncleClone = GameObject.Instantiate(uncleOrig).transform;
+            GameObject _uncleOrig = GameObject.Find("YARD/UNCLE/UncleWalking/Uncle");
+            Transform _uncleClone = GameObject.Instantiate(_uncleOrig).transform;
 
-            Transform _char = uncleClone.Find("Char");
-            Object.Destroy(uncleClone.Find("Ray").gameObject);
+            Transform _char = _uncleClone.Find("Char");
+            Object.Destroy(_uncleClone.Find("Ray").gameObject);
             Object.Destroy(_char.Find("OriginalPos").gameObject);
             Object.Destroy(_char.Find("LookTarget").gameObject);
             Object.Destroy(_char.Find("HumanCollider").gameObject);
@@ -177,27 +175,27 @@ namespace Psycho.Internal
             Object.Destroy(_char.Find("skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney").gameObject);
             _char.gameObject.SetActive(false);
 
-            uncleClone.SetParent(GameObject.Find("YARD/Building/BEDROOM1").transform, worldPositionStays: false);
+            _uncleClone.SetParent(GameObject.Find("YARD/Building/BEDROOM1").transform, worldPositionStays: false);
             _char.position = new Vector3(-11.72816f, 0.3139997f, 11.2811f);
             _char.eulerAngles = new Vector3(0.0f, 270f, 0.0f);
 
-            uncleClone.gameObject.name = "ScreamUncle";
+            _uncleClone.gameObject.name = "ScreamUncle";
 
-            if (uncleClone.gameObject.GetComponent<MovingUncleHead>() == null)
-                uncleClone.gameObject.AddComponent<MovingUncleHead>();
+            if (_uncleClone.gameObject.GetComponent<MovingUncleHead>() == null)
+                _uncleClone.gameObject.AddComponent<MovingUncleHead>();
 
-            uncleClone.gameObject.SetActive(true);
+            _uncleClone.gameObject.SetActive(true);
         }
 
         public static void CopySuicidal(GameObject cloned)
         {
-            Transform suicidal = GameObject.Instantiate(cloned.transform.GetChild(0).gameObject).transform;
-            Transform livingroom = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform;
-            
-            suicidal.SetParent(livingroom, worldPositionStays: false);
-            suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
-            suicidal.localPosition = Vector3.zero;
-            suicidal.gameObject.SetActive(false);
+            Transform _suicidal = GameObject.Instantiate(cloned.transform.GetChild(0).gameObject).transform;
+            Transform _livingroom = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom").transform;
+
+            _suicidal.SetParent(_livingroom, worldPositionStays: false);
+            _suicidal.position = new Vector3(-1451.8280029296875f, -3.5810000896453859f, -1057.7840576171875f);
+            _suicidal.localPosition = Vector3.zero;
+            _suicidal.gameObject.SetActive(false);
         }
 
         public static void CopyGrannyHiker()
@@ -248,7 +246,7 @@ namespace Psycho.Internal
         public static void SpawnDINGONBIISIHands()
         {
             // setup hierarchy
-            var parents = new List<GameObject>
+            var _parents = new List<GameObject>
             {
                 new GameObject("Hands"),
                 new GameObject("Stairs"),
@@ -257,12 +255,12 @@ namespace Psycho.Internal
             };
 
             Transform _dingo = GameObject.Find("MAP/Buildings/DINGONBIISI").transform;
-            Transform _main = parents[(byte)HandParent.MAIN].transform;
+            Transform _main = _parents[(byte)HandParent.MAIN].transform;
             _main.SetParent(_dingo, worldPositionStays: false);
             _main.gameObject.SetActive(false);
 
             for (int i = 1; i < 4; i++)
-                parents[i].transform.SetParent(parents[(byte)HandParent.MAIN].transform, worldPositionStays: false);
+                _parents[i].transform.SetParent(_parents[(byte)HandParent.MAIN].transform, worldPositionStays: false);
 
             // get orig objects
             Transform _camera = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").transform;
@@ -277,31 +275,31 @@ namespace Psycho.Internal
             // spawn objects
             Globals.HandsList.ForEach(v =>
             {
-                GameObject clone = GameObject.Instantiate(objs[(byte)v.orig]);
-                Transform t = clone.transform;
+                GameObject _clone = GameObject.Instantiate(objs[(byte)v.orig]);
+                Transform _t = _clone.transform;
 
-                t.SetParent(parents[(byte)v.parent].transform, worldPositionStays: false);
-                t.localPosition = v.position;
-                t.localEulerAngles = v.euler;
-                t.localScale = new Vector3(v.scale, v.scale, v.scale);
+                _t.SetParent(_parents[(byte)v.parent].transform, worldPositionStays: false);
+                _t.localPosition = v.position;
+                _t.localEulerAngles = v.euler;
+                _t.localScale = new Vector3(v.scale, v.scale, v.scale);
 
                 switch (v.orig)
                 {
                     case HandOrig.MILK:
-                        Object.Destroy(t.Find("Milk").gameObject);
+                        Object.Destroy(_t.Find("Milk").gameObject);
                         break;
                     case HandOrig.PUSH:
-                        Object.Destroy(t.Find("Pivot/Collider").gameObject);
-                        Object.Destroy(t.Find("Pivot/RigidBody").gameObject);
+                        Object.Destroy(_t.Find("Pivot/Collider").gameObject);
+                        Object.Destroy(_t.Find("Pivot/RigidBody").gameObject);
                         break;
                     case HandOrig.WATCH:
-                        t.Find("Animate/BreathAnim/WristwatchHand").gameObject.SetActive(true);
+                        _t.Find("Animate/BreathAnim/WristwatchHand").gameObject.SetActive(true);
                         break;
                 }
 
-                clone.layer = 0;
-                clone.transform.IterateAllChilds(child => child.gameObject.layer = 0);
-                clone.SetActive(true);
+                _clone.layer = 0;
+                _clone.transform.IterateAllChilds(child => child.gameObject.layer = 0);
+                _clone.SetActive(true);
             });
         }
 
@@ -337,8 +335,8 @@ namespace Psycho.Internal
                 if (!_anim.GetClip("venttipig_pig_walk"))
                     _anim.AddClip(PigWalkAnimation, "venttipig_pig_walk");
 
-                var angles = _anim.transform.parent.localEulerAngles;
-                _anim.transform.parent.localEulerAngles = new Vector3(angles.x, angles.y, Logic.InHorror ? 0 : 90);
+                Vector3 _angles = _anim.transform.parent.localEulerAngles;
+                _anim.transform.parent.localEulerAngles = new Vector3(_angles.x, _angles.y, Logic.InHorror ? 0 : 90);
                 (_child.GetPlayMaker("Move").GetState("Walking").Actions[0] as PlayAnimation).animName.Value =
                     Logic.InHorror ? "venttipig_pig_walk" : "fat_walk";
             }
@@ -378,25 +376,25 @@ namespace Psycho.Internal
 
         public static void CloseDoor(string path)
         {
-            PlayMakerFSM door = GameObject.Find(path)?.GetPlayMaker("Use");
-            if (door == null) return;
+            PlayMakerFSM _door = GameObject.Find(path)?.GetPlayMaker("Use");
+            if (_door == null) return;
 
-            FsmBool open = door.GetVariable<FsmBool>("DoorOpen");
-            if (open == null) return;
-            
-            open.Value = true;
-            door.SendEvent("GLOBALEVENT");
+            FsmBool _open = _door.GetVariable<FsmBool>("DoorOpen");
+            if (_open == null) return;
+
+            _open.Value = true;
+            _door.SendEvent("GLOBALEVENT");
         }
 
         public static void ChangeCameraFog()
         {
-            CameraFog cameraFog = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.GetComponent<CameraFog>();
-            FsmVariables rainFogVars = GameObject.Find("PLAYER/Rain").GetPlayMaker("Rain").FsmVariables;
+            CameraFog _cameraFog = Utils.GetGlobalVariable<FsmGameObject>("POV").Value.GetComponent<CameraFog>();
+            FsmVariables _rainFogVars = GameObject.Find("PLAYER/Rain").GetPlayMaker("Rain").FsmVariables;
 
             if (Logic.InHorror)
             {
                 _changeFog_Internal(
-                    cameraFog, rainFogVars,
+                    _cameraFog, _rainFogVars,
                     0.5f, 50f, 0.08f, Color.gray,
                     0.09f, 0.08f
                 );
@@ -404,7 +402,7 @@ namespace Psycho.Internal
             }
 
             _changeFog_Internal(
-                cameraFog, rainFogVars,
+                _cameraFog, _rainFogVars,
                 0f, 100f, 0.001f, Color.clear,
                 0.02f, 0.001f
             );
@@ -412,32 +410,32 @@ namespace Psycho.Internal
 
         public static void ChangeWorldModels(GameObject parent)
         {
-            foreach (var item in Globals.ModelsReplaces)
+            foreach (var _item in Globals.ModelsReplaces)
             {
-                GameObject obj = parent?.transform?.Find(item.Value.path)?.gameObject;
-                if (obj == null) continue;
+                GameObject _obj = parent?.transform?.Find(_item.Value.path)?.gameObject;
+                if (_obj == null) continue;
 
                 if (Logic.InHorror)
                 {
-                    if (!Globals.ModelsCached.ContainsKey(item.Key))
+                    if (!Globals.ModelsCached.ContainsKey(_item.Key))
                     {
-                        Globals.ModelsCached.Add(item.Key, new ModelData
+                        Globals.ModelsCached.Add(_item.Key, new ModelData
                         {
-                            mesh = obj.GetComponent<MeshFilter>().mesh,
-                            texture = obj.GetComponent<MeshRenderer>().materials[0].GetTexture("_MainTex")
+                            mesh = _obj.GetComponent<MeshFilter>().mesh,
+                            texture = _obj.GetComponent<MeshRenderer>().materials[0].GetTexture("_MainTex")
                         });
                     }
 
-                    SetMesh(obj, item.Value.mesh);
-                    SetMaterial(obj, 0, "", item.Value.texture);
+                    SetMesh(_obj, _item.Value.mesh);
+                    SetMaterial(_obj, 0, "", _item.Value.texture);
                     continue;
                 }
 
-                if (!Globals.ModelsCached.ContainsKey(item.Key)) continue;
+                if (!Globals.ModelsCached.ContainsKey(_item.Key)) continue;
 
-                ModelData data = Globals.ModelsCached[item.Key];
-                SetMesh(obj, data.mesh);
-                SetMaterial(obj, 0, "", data.texture);
+                ModelData data = Globals.ModelsCached[_item.Key];
+                SetMesh(_obj, data.mesh);
+                SetMaterial(_obj, 0, "", data.texture);
             }
         }
 
@@ -465,27 +463,27 @@ namespace Psycho.Internal
 
         public static void ChangeBedroomModels()
         {
-            bool state = Logic.InHorror;
-            GameObject.Find("YARD/Building/BEDROOM2/bed_base")?.SetActive(!state);
+            bool _state = Logic.InHorror;
+            GameObject.Find("YARD/Building/BEDROOM2/bed_base")?.SetActive(!_state);
 
-            GameObject coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
-            if (coffinsGroup == null && state)
+            GameObject _coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
+            if (_coffinsGroup == null && _state)
             {
-                coffinsGroup = new GameObject("BedroomCoffins");
-                GameObject coffin1 = (Object.Instantiate(Globals.Coffin_prefab,
+                _coffinsGroup = new GameObject("BedroomCoffins");
+                GameObject _coffin1 = (Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738183f, 13.52571f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
-                coffin1.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
+                _coffin1.transform.SetParent(_coffinsGroup.transform, worldPositionStays: false);
 
-                GameObject coffin2 = (Object.Instantiate(Globals.Coffin_prefab,
+                GameObject _coffin2 = (Object.Instantiate(Globals.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738185f, 12.52524f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
-                coffin2.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
+                _coffin2.transform.SetParent(_coffinsGroup.transform, worldPositionStays: false);
             }
 
-            coffinsGroup?.SetActive(state);
+            _coffinsGroup?.SetActive(_state);
         }
 
         public static void ChangeModel(GameObject obj, Mesh mesh, Texture texture)
@@ -498,24 +496,24 @@ namespace Psycho.Internal
         {
             try
             {
-                bool state = !Logic.InHorror;
-                GameObject clouds = GameObject.Find("MAP/CloudSystem/Clouds");
-                PlayMakerFSM cloudsFsm = clouds.GetPlayMaker("Weather");
-                FsmState cloudsMove = cloudsFsm.GetState("Move clouds");
+                bool _state = !Logic.InHorror;
+                GameObject _clouds = GameObject.Find("MAP/CloudSystem/Clouds");
+                PlayMakerFSM _cloudsFsm = _clouds.GetPlayMaker("Weather");
+                FsmState _cloudsMove = _cloudsFsm.GetState("Move clouds");
                 
-                FloatAdd action1 = (cloudsMove.Actions[1] as FloatAdd);
-                SetPosition action2 = (cloudsMove.Actions[2] as SetPosition);
+                FloatAdd _action1 = (_cloudsMove.Actions[1] as FloatAdd);
+                SetPosition _action2 = (_cloudsMove.Actions[2] as SetPosition);
 
-                action1.everyFrame = state;
-                action1.perSecond = state;
+                _action1.everyFrame = _state;
+                _action1.perSecond = _state;
 
-                action2.everyFrame = state;
-                action2.lateUpdate = state;
+                _action2.everyFrame = _state;
+                _action2.lateUpdate = _state;
 
-                if (!state)
-                    clouds.transform.position = Vector3.zero;
+                if (!_state)
+                    _clouds.transform.position = Vector3.zero;
                 else
-                    cloudsFsm.SendEvent("RANDOMIZE");
+                    _cloudsFsm.SendEvent("RANDOMIZE");
             }
             catch (Exception e)
             {
@@ -528,12 +526,12 @@ namespace Psycho.Internal
         {
             try
             {
-                MeshRenderer renderer = obj.GetComponent<MeshRenderer>();
-                if (!renderer) return;
+                MeshRenderer _renderer = obj.GetComponent<MeshRenderer>();
+                if (!_renderer) return;
 
-                Material material = renderer.materials[index];
-                if (name.Length > 0) material.name = name;
-                material.mainTexture = texture;
+                Material _material = _renderer.materials[index];
+                if (name.Length > 0) _material.name = name;
+                _material.mainTexture = texture;
             }
             catch (Exception e)
             {
@@ -545,11 +543,11 @@ namespace Psycho.Internal
         {
             try
             {
-                MeshFilter filter = obj.GetComponent<MeshFilter>();
-                if (filter == null) return;
+                MeshFilter _filter = obj.GetComponent<MeshFilter>();
+                if (_filter == null) return;
 
-                filter.mesh = mesh;
-                filter.sharedMesh = mesh;
+                _filter.mesh = mesh;
+                _filter.sharedMesh = mesh;
             }
             catch (Exception e)
             {

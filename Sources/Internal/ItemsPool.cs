@@ -17,9 +17,9 @@ namespace Psycho.Internal
     internal static class ItemsPool
     {
         static List<GameObject> Pool = new List<GameObject>();
-        public static int base_offset { get; } = 64;
-
         static List<GameObject> ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToList();
+
+        public static readonly int base_offset = 64;
         internal static int Length => ItemsForSave.Count;
 
         internal static GameObject AddItem(GameObject prefab)
@@ -36,19 +36,19 @@ namespace Psycho.Internal
 
         internal static bool RemoveItem(Func<GameObject, bool> callback)
         {
-            var item = Pool.FirstOrDefault(callback);
+            GameObject _item = Pool.FirstOrDefault(callback);
             
-            Object.Destroy(item);
-            return Pool.Remove(item);
+            Object.Destroy(_item);
+            return Pool.Remove(_item);
         }
 
         internal static void RemoveItems(Func<GameObject, bool> callback)
         {
             var _items = Pool.Where(callback).ToList();
-            foreach (var item in _items)
+            foreach (GameObject _item in _items)
             {
-                Object.Destroy(item);
-                Pool.Remove(item);
+                Object.Destroy(_item);
+                Pool.Remove(_item);
             }
         }
 
@@ -83,85 +83,21 @@ namespace Psycho.Internal
             }
         }
 
-        /*internal static void Save(ref byte[] array)
-        {
-            int offset = base_offset;
-            List<GameObject> toSave = ItemsForSave;
-            BitConverter.GetBytes(toSave.Count).CopyTo(array, offset);
-
-            offset += 4;
-            Utils.PrintDebug($"[SavePool]:[{offset}]: Length == {toSave.Count}");
-
-            foreach (GameObject item in toSave)
-            {
-                string name = item.name.Replace("(Clone)", "");
-                Vector3 pos = item.transform.position;
-                Vector3 rot = item.transform.eulerAngles;
-
-                Utils.PrintDebug($"[SavePool]:[{offset}]: name \"{name}\"; length: {name.Length}");
-                Utils.PrintDebug($"[SavePool]:[{offset}]: pos: {pos}; rot: {rot}");
-
-                name.CopyBytes(ref array, ref offset);
-                pos.CopyBytes(ref array, ref offset);
-                rot.CopyBytes(ref array, ref offset);
-            }
-        }*/
-
-        /*public static void Load(byte[] array)
-        {
-            int offset = base_offset;
-            int count = BitConverter.ToInt32(array, offset);
-            offset += 4;
-
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"[LoadPool]: pool size: {count}");
-            if (count == 0)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "[LoadPool]: is empty; loading stopped");
-                return;
-            }
-
-            for (int i = 0; i < count; i++)
-            {
-                string sName = "".GetFromBytes(array, ref offset); // 1
-                if (Logic.IsDead && Globals.PentaRecipe.Contains(sName.ToLower())) continue;
-
-                Vector3 temp = new Vector3();
-                Vector3 pos = temp.GetFromBytes(array, ref offset);
-                Vector3 rot = temp.GetFromBytes(array, ref offset);
-
-                GameObject prefab = GetPrefabByItemName(sName);
-                if (prefab == null)
-                {
-                    Utils.PrintDebug(eConsoleColors.RED, $"Loaded item {sName} has null prefab");
-                    continue;
-                }
-
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
-                _addItemToLocalPool(prefab, pos, rot);
-            }
-        }*/
-
-        /*public static int GetCountInSave(byte[] array)
-            => BitConverter.ToInt32(array, base_offset);*/
-
-        /*public static int GetSizeInSave(byte[] array)
-            => GetCountInSave(array) * 90;*/
-
         private static GameObject _addItemToLocalPool(GameObject prefab, Vector3 pos, Vector3 euler)
         {
-            GameObject cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
+            GameObject _cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
             if (prefab.name == "Notebook")
-                Globals.Notebook = cloned.AddComponent<Notebook>();
+                Globals.Notebook = _cloned.AddComponent<Notebook>();
             if (prefab.name == "Postcard")
             {
-                cloned.AddComponent<ItemsGravityEnabler>();
-                Utils.InitPostcard(cloned);
+                _cloned.AddComponent<ItemsGravityEnabler>();
+                Utils.InitPostcard(_cloned);
             }
 
-            cloned.MakePickable();
+            _cloned.MakePickable();
 
-            Pool.Add(cloned);
-            return cloned;
+            Pool.Add(_cloned);
+            return _cloned;
         }
 
         private static GameObject GetPrefabByItemName(string item)

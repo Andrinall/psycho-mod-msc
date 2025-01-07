@@ -16,16 +16,16 @@ namespace Psycho.Screamers
     [RequireComponent(typeof(PlayMakerFSM))]
     internal sealed class ScreamsInitiator : CatchedComponent
     {
-        readonly int[] m_liTimes = new int[3] { 1, 4, 1 };
+        readonly int[] targetTimes = new int[3] { 1, 4, 1 };
 
-        readonly List<List<int>> m_liDays = new List<List<int>>()
+        readonly List<List<int>> targetDays = new List<List<int>>()
         {
             new List<int>{ 0, 1, 3, 4, 5 },
             new List<int>{ 1, 4, 6 },
             new List<int>{ 0, 5 }
         };
 
-        readonly int[] _maxScreamTypes = new int[]
+        readonly int[] maxScreamTypes = new int[]
         {
             Enum.GetValues(typeof(ScreamSoundType)).Length,
             Enum.GetValues(typeof(ScreamFearType)).Length,
@@ -33,27 +33,27 @@ namespace Psycho.Screamers
         };
 
 
-        PlayMakerFSM _fsm;
-        GameObject Electricity;
+        PlayMakerFSM fsm;
+        GameObject electricity;
 
-        FsmInt m_iTimeOfDay;
-        FsmInt m_iGlobalDay;
+        FsmInt timeOfDay;
+        FsmInt globalDay;
 
-        int m_iRand = -1;
+        int lastRand = -1;
         int screamerVariation = -1;
-        bool m_bTrigger = false;
+        bool triggered = false;
 
 
         protected override void Awaked()
         {
-            _fsm = transform.GetPlayMaker("Activate");
-            _fsm.AddEvent("SCREAMSTOP");
-            _fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
+            fsm = transform.GetPlayMaker("Activate");
+            fsm.AddEvent("SCREAMSTOP");
+            fsm.AddGlobalTransition("SCREAMSTOP", "Wake up 2");
 
-            Electricity = GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances");
+            electricity = GameObject.Find("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances");
 
-            m_iTimeOfDay = _fsm.GetVariable<FsmInt>("TimeOfDay");
-            m_iGlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
+            timeOfDay = fsm.GetVariable<FsmInt>("TimeOfDay");
+            globalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
             StateHook.Inject(gameObject, "Activate", "Check time of day", CheckTimeOfDay, 3);
             StateHook.Inject(gameObject, "Activate", "Does call?", DoesCall);
@@ -63,7 +63,7 @@ namespace Psycho.Screamers
 
         public void ApplyScreamer(ScreamTimeType rand, int variation = 0)
         {
-            m_bTrigger = false;
+            triggered = false;
 
             WorldManager.CloseDoor("YARD/Building/LIVINGROOM/DoorFront/Pivot/Handle");
             WorldManager.CloseDoor("YARD/Building/BEDROOM2/DoorBedroom2/Pivot/Handle");
@@ -91,51 +91,51 @@ namespace Psycho.Screamers
                 return;
             }
 
-            if (m_iTimeOfDay.Value < 16)
+            if (timeOfDay.Value < 16)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "Time of day less than ((24 + 4) - 10) or 18 hours\nSkip night screamer");
                 return;
             }
 
-            int day = (m_iGlobalDay.Value + 1) % 7;
-            m_iRand = Random.Range(0, 3);
-            screamerVariation = Random.Range(0, _maxScreamTypes[m_iRand]);
+            int day = (globalDay.Value + 1) % 7;
+            lastRand = Random.Range(0, 3);
+            screamerVariation = Random.Range(0, maxScreamTypes[lastRand]);
 
             // for testing
             //m_iRand = (int)ScreamTimeType.FEAR;
             //screamerVariation = (int)ScreamFearType.TV;
 
-            if (m_iRand == 3)
+            if (lastRand == 3)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "RandomEvent == 3; Skip night screamer");
                 return;
             }
 
-            if (!m_liDays[m_iRand].Contains(day))
+            if (!targetDays[lastRand].Contains(day))
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "Event not exists in table for current day\nSkip night screamer");
                 return;
             }
 
-            if (!Electricity.activeSelf && m_iRand == (int)ScreamTimeType.FEAR && screamerVariation == (int)ScreamFearType.TV && WorldManager.GetElecCutoffTimer() >= 22000f)
+            if (!electricity.activeSelf && lastRand == (int)ScreamTimeType.FEAR && screamerVariation == (int)ScreamFearType.TV && WorldManager.GetElecCutoffTimer() >= 22000f)
             {
                 Utils.PrintDebug(eConsoleColors.YELLOW, "The electricity bill hasn't been paid. Screamer for TV won't work.");
                 return;
             }
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {m_iGlobalDay.Value}[next {day}]; rand[{(ScreamTimeType)m_iRand}]; contains[{m_liDays[m_iRand].Contains(day)}]");
-            FsmInt sleepTime = _fsm.GetVariable<FsmInt>("SleepTime"); // 10
-            int timeOfDay = m_iTimeOfDay.Value;
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"Day: {globalDay.Value}[next {day}]; rand[{(ScreamTimeType)lastRand}]; contains[{targetDays[lastRand].Contains(day)}]");
+            FsmInt _sleepTime = fsm.GetVariable<FsmInt>("SleepTime"); // 10
+            int _timeOfDay = timeOfDay.Value;
 
-            sleepTime.Value = (24 + m_liTimes[m_iRand]) - timeOfDay;
-            m_bTrigger = true;
+            _sleepTime.Value = (24 + targetTimes[lastRand]) - _timeOfDay;
+            triggered = true;
 
-            Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{sleepTime.Value}]; new[{sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)m_iRand}]");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"SleepTime orig[{_sleepTime.Value}]; new[{_sleepTime.Value}]; time[{timeOfDay}]; rand[{(ScreamTimeType)lastRand}]");
         }
 
         void DoesCall(PlayMakerFSM fsm)
         {
-            if (!m_bTrigger)
+            if (!triggered)
                 return;
 
             fsm.SendEvent("NOCALL");
@@ -143,14 +143,14 @@ namespace Psycho.Screamers
         }
 
         void DisableScreamerIfPhone()
-            => m_bTrigger = false;
+            => triggered = false;
 
         void WakeUp()
         {
             Logic.MilkUsed = false;
-            if (!m_bTrigger) return;
+            if (!triggered) return;
 
-            ApplyScreamer((ScreamTimeType)m_iRand, screamerVariation);
+            ApplyScreamer((ScreamTimeType)lastRand, screamerVariation);
         }
     }
 }

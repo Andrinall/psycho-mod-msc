@@ -23,9 +23,9 @@ namespace Psycho.Internal
 
             if (Application.loadedLevelName != "GAME") return;
             
-            TextMesh postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
-            if (postcardText != null)
-                postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
+            TextMesh _postcardText = GameObject.Find("Postcard(Clone)")?.transform?.Find("Text")?.GetComponent<TextMesh>();
+            if (_postcardText != null)
+                _postcardText.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
 
             OnLanguageChanged.Invoke();
         }
@@ -41,7 +41,7 @@ namespace Psycho.Internal
                 else
                     WorldManager.SetElecMeterState(false);
 
-                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {GetScreamerVariantName(type, variation)}]");
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer triggered [{type} : {_getScreamerVariantName(type, variation)}]");
 
                 OnScreamerTriggered.Invoke(type, variation);
             }
@@ -58,7 +58,7 @@ namespace Psycho.Internal
             WorldManager.SetElecMeterState(true);
 
             OnScreamerFinished.Invoke();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {GetScreamerVariantName(type, variation)}]");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Screamer finished! [{type} : {_getScreamerVariantName(type, variation)}]");
         }
 
         
@@ -70,7 +70,7 @@ namespace Psycho.Internal
         }
 
         
-        static string GetScreamerVariantName(ScreamTimeType type, int variation)
+        static string _getScreamerVariantName(ScreamTimeType type, int variation)
         {
             switch (type)
             {

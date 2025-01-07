@@ -16,16 +16,13 @@ namespace Psycho.Ambient
         AudioSource globalAmbientSource;
         AudioSource globalPhychoAmbientSource;
 
-        Transform player;
         GameObject jonnez;
         GameObject boat;
 
         Collider selfColl;
 
-        FsmFloat SUN_Hours;
-
         public bool CheckTimeOfDay = false;
-
+        Vector3 ClosestPoint => selfColl.ClosestPointOnBounds(Psycho.Player.position);
 
         protected override void Awaked()
         {
@@ -33,20 +30,15 @@ namespace Psycho.Ambient
             globalAmbientSource = null;
             globalPhychoAmbientSource = null;
 
-            player = GameObject.Find("PLAYER").transform;
             jonnez = GameObject.Find("JONNEZ ES(Clone)");
             boat = GameObject.Find("BOAT/GFX/Colliders/Collider");
-
-            SUN_Hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
 
             selfColl = GetComponent<Collider>();
         }
 
         protected override void OnFixedUpdate()
         {
-            Vector3 closestPoint = selfColl.ClosestPointOnBounds(player.transform.position);
-
-            if (Vector3.Distance(closestPoint, player.position) == 0)
+            if (Vector3.Distance(ClosestPoint, Psycho.Player.position) == 0)
             {
                 Logic.CurrentAmbientTrigger = this;
                 if (!CheckTimeOfDay)
@@ -55,7 +47,7 @@ namespace Psycho.Ambient
                     return;
                 }
 
-                if (SUN_Hours.Value >= 22f || SUN_Hours.Value < 4f)
+                if (Psycho.SUN_hours.Value >= 22f || Psycho.SUN_hours.Value < 4f)
                 {
                     MuteAmbient(false);
                     return;
@@ -81,9 +73,9 @@ namespace Psycho.Ambient
 
         bool _isNeededObject(Collider other)
         {
-            GameObject obj = other?.gameObject;
-            if (obj == null) return false;
-            return obj == player.gameObject || obj == jonnez || obj == boat;
+            GameObject _obj = other?.gameObject;
+            if (_obj == null) return false;
+            return _obj == Psycho.Player.gameObject || _obj == jonnez || _obj == boat;
         }
     }
 }

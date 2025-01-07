@@ -21,13 +21,13 @@ namespace Psycho.Features
 
         protected override GameObject GUIPrefab => Globals.NotebookGUI_prefab;
 
-        TextMesh NotebookGUIText;
-        TextMesh NotebookGUIPage;
+        TextMesh notebookGUIText;
+        TextMesh notebookGUIPage;
 
-        Transform ItemPivot;
-        PlayMakerFSM HandFsm;
+        Transform itemPivot;
+        PlayMakerFSM handFsm;
 
-        Transform ItemInHand => ItemPivot.childCount > 0 ? ItemPivot.GetChild(0) : null;
+        Transform ItemInHand => itemPivot.childCount > 0 ? itemPivot.GetChild(0) : null;
 
         int prevMax = 0;
 
@@ -43,11 +43,11 @@ namespace Psycho.Features
 
         protected override void AfterAwake()
         {
-            ItemPivot = Utils.GetGlobalVariable<FsmGameObject>("ItemPivot").Value.transform;
-            HandFsm = ItemPivot.parent.Find("Hand").GetPlayMaker("PickUp");
+            itemPivot = Utils.GetGlobalVariable<FsmGameObject>("ItemPivot").Value.transform;
+            handFsm = itemPivot.parent.Find("Hand").GetPlayMaker("PickUp");
 
-            NotebookGUIText = GUI.transform.Find("Text").GetComponent<TextMesh>();
-            NotebookGUIPage = GUI.transform.Find("PageIndicator").GetComponent<TextMesh>();
+            notebookGUIText = GUI.transform.Find("Text").GetComponent<TextMesh>();
+            notebookGUIPage = GUI.transform.Find("PageIndicator").GetComponent<TextMesh>();
 
             MAX_PAGE = Pages.Count - 1;
             CurrentPage = MAX_PAGE;
@@ -57,12 +57,12 @@ namespace Psycho.Features
 
         protected override void ObjectUsed()
         {
-            Transform item = ItemInHand;
+            Transform _item = ItemInHand;
 
-            if (item != null && item?.name?.Contains("Notebook Page") == true)
+            if (_item != null && _item?.name?.Contains("Notebook Page") == true)
             {
-                HandFsm.CallGlobalTransition("DROP_PART");
-                AddNewPage(item.gameObject);
+                handFsm.CallGlobalTransition("DROP_PART");
+                AddNewPage(_item.gameObject);
             }
             else
             {
@@ -97,29 +97,29 @@ namespace Psycho.Features
         {
             if (CurrentPage < 0 || CurrentPage >= Pages.Count) return;
 
-            NotebookPage page = Pages.ElementAt(CurrentPage);
-            if (page == null) return;
+            NotebookPage _page = Pages.ElementAt(CurrentPage);
+            if (_page == null) return;
 
-            bool isTrueEnding = page.isTruePage;
-            if (page.index == 15) // final page
+            bool _isTrueEnding = _page.isTruePage;
+            if (_page.index == 15) // final page
             {
-                NotebookGUIText.text = Locales.FINAL_PAGE[isTrueEnding ? 0 : 1, Globals.CurrentLang];
+                notebookGUIText.text = Locales.FINAL_PAGE[_isTrueEnding ? 0 : 1, Globals.CurrentLang];
                 Background.SetTexture("_MainTex",
-                    isTrueEnding ? Globals.NotebookPages_texture : Globals.NotebookFinalPage_texture
+                    _isTrueEnding ? Globals.NotebookPages_texture : Globals.NotebookFinalPage_texture
                 );
             }
-            else if (page.index == 14) // default
+            else if (_page.index == 14) // default
             {
-                NotebookGUIText.text = Locales.DEFAULT_PAGE[Globals.CurrentLang];
+                notebookGUIText.text = Locales.DEFAULT_PAGE[Globals.CurrentLang];
                 Background.SetTexture("_MainTex", Globals.NotebookStartPage_texture);
             }
-            else if (page.index < 14)
+            else if (_page.index < 14)
             {
-                NotebookGUIText.text = Locales.PAGES[page.index - 1, isTrueEnding ? 0 : 1, Globals.CurrentLang];
+                notebookGUIText.text = Locales.PAGES[_page.index - 1, _isTrueEnding ? 0 : 1, Globals.CurrentLang];
                 Background.SetTexture("_MainTex", Globals.NotebookPages_texture);
             }
 
-            NotebookGUIPage.text = $"Page {page.index}";
+            notebookGUIPage.text = $"Page {_page.index}";
             MAX_PAGE = Pages.Count - 1;
         }
 
@@ -128,16 +128,16 @@ namespace Psycho.Features
             if (pageObj == null) return false;
             if (Pages.Count > 13) return false;
 
-            NotebookPageComponent newPage = pageObj.GetComponent<NotebookPageComponent>();
-            NotebookPage page = new NotebookPage(newPage.page);
+            NotebookPageComponent _newPage = pageObj.GetComponent<NotebookPageComponent>();
+            NotebookPage _page = new NotebookPage(_newPage.Page);
             Destroy(pageObj);
 
-            Pages.Add(page);
+            Pages.Add(_page);
             CreateFinalPage();
             SortPages();
 
             PlayPageTurn();
-            Utils.PrintDebug(eConsoleColors.GREEN, $"{page} added into notebook");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"{_page} added into notebook");
             return true;
         }
 
@@ -167,23 +167,23 @@ namespace Psycho.Features
             if (GetMaxPageIndex() == 15) return;
             if (Pages.Count < 14) return;
 
-            int truePages = GetCountOfTruePages();
-            bool isTrueStory = (truePages > 7);
+            int _truePages = GetCountOfTruePages();
+            bool _isTrueStory = (_truePages > 7);
 
             TryAddPage(new NotebookPage
             {
                 index = 15,
-                isTruePage = isTrueStory,
+                isTruePage = _isTrueStory,
                 isFinalPage = true
             });
 
-            if (isTrueStory)
+            if (_isTrueStory)
                 SpawnPostcard();
 
             Pages.Remove(Pages.First(v => v.isDefaultPage));
             GameObject.Find("COTTAGE/minigame(Clone)").SetActive(false);
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({truePages > 7} story)");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Final page added with ({_truePages > 7} story)");
             Pages.ForEach(v => Utils.PrintDebug(v.ToString()));
         }
 
@@ -192,23 +192,23 @@ namespace Psycho.Features
 
         void SpawnPostcard()
         {
-            GameObject postcard = ItemsPool.AddItem(Globals.Postcard_prefab);
-            postcard.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
-            postcard.AddComponent<ItemsGravityEnabler>();
-            Utils.InitPostcard(postcard);
+            GameObject _postcard = ItemsPool.AddItem(Globals.Postcard_prefab);
+            _postcard.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
+            _postcard.AddComponent<ItemsGravityEnabler>();
+            Utils.InitPostcard(_postcard);
         }
 
         public static int GetMaxPageIndex()
         {
-            int max = 0;
-            foreach (NotebookPage page in Pages)
+            int _max = 0;
+            foreach (NotebookPage _page in Pages)
             {
-                if (page.isDefaultPage || page.isFinalPage) continue;
+                if (_page.isDefaultPage || _page.isFinalPage) continue;
 
-                if (page.index > max)
-                    max = page.index;
+                if (_page.index > _max)
+                    _max = _page.index;
             }
-            return max;
+            return _max;
         }
     }
 }

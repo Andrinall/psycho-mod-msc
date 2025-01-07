@@ -11,18 +11,18 @@ namespace Psycho.Handlers
     [RequireComponent(typeof(PlayMakerFSM))]
     internal sealed class SpillHandler : CatchedComponent
     {
-        FsmBool m_bIsCrime;
+        FsmBool isCrime;
 
 
         protected override void Awaked()
         {
-            m_bIsCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
+            isCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
             StateHook.Inject(gameObject, "SpillPump", "Spill grow", SpillShit);
         }
 
         void SpillShit()
         {
-            if (m_bIsCrime?.Value == false) return;
+            if (isCrime?.Value == false) return;
             Logic.PlayerCommittedOffence("SPILL_SHIT");
         }
     }

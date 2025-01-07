@@ -14,32 +14,32 @@ namespace Psycho.Screamers
         public override int ScreamerVariant => (int)ScreamFearType.WATERBATHROOM;
 
 
-        GameObject TapDrink;
-        EllipsoidParticleEmitter TapParticle;
+        GameObject tapDrink;
+        EllipsoidParticleEmitter tapParticle;
 
-        Transform ShowerPower;
+        Transform showerPower;
 
-        FsmBool ShowerSwitch;
-        FsmBool ValveSwitch;
-        FsmBool Valve;
-        FsmBool PlayerStop;
+        FsmBool showerSwitch;
+        FsmBool valveSwitch;
+        FsmBool valve;
+        FsmBool playerStop;
 
         bool switched = false;
 
 
         public override void InitScreamer()
         {
-            TapDrink = transform.Find("TapDrink").gameObject;
-            TapParticle = transform.Find("TapParticle").GetComponent<EllipsoidParticleEmitter>();
-            ShowerPower = transform.parent.Find("LOD_bathroom/Power/shower_power");
+            tapDrink = transform.Find("TapDrink").gameObject;
+            tapParticle = transform.Find("TapParticle").GetComponent<EllipsoidParticleEmitter>();
+            showerPower = transform.parent.Find("LOD_bathroom/Power/shower_power");
 
-            PlayMakerFSM SwitchFSM = transform.Find("Switch").GetComponent<PlayMakerFSM>();
-            PlayMakerFSM ValveFSM = transform.Find("Valve").GetComponent<PlayMakerFSM>();
-            Valve = ValveFSM.GetVariable<FsmBool>("Valve");
+            PlayMakerFSM _switchFSM = transform.Find("Switch").GetComponent<PlayMakerFSM>();
+            PlayMakerFSM _valveFSM = transform.Find("Valve").GetComponent<PlayMakerFSM>();
+            valve = _valveFSM.GetVariable<FsmBool>("Valve");
 
-            ShowerSwitch = SwitchFSM.GetVariable<FsmBool>("ShowerSwitch");
-            ValveSwitch = SwitchFSM.GetVariable<FsmBool>("Valve");
-            PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
+            showerSwitch = _switchFSM.GetVariable<FsmBool>("ShowerSwitch");
+            valveSwitch = _switchFSM.GetVariable<FsmBool>("Valve");
+            playerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
             StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", _showerHook);
         }
@@ -49,7 +49,7 @@ namespace Psycho.Screamers
         public override void StopScreamer()
         {
             switched = false;
-            PlayerStop.Value = false;
+            playerStop.Value = false;
         }
 
         protected override void OnFixedUpdate()
@@ -62,14 +62,14 @@ namespace Psycho.Screamers
 
         void OpenValve()
         {
-            ShowerSwitch.Value = true;
-            ValveSwitch.Value = true;
-            TapParticle.emit = true;
+            showerSwitch.Value = true;
+            valveSwitch.Value = true;
+            tapParticle.emit = true;
 
-            ShowerPower.localEulerAngles = new Vector3(30f, 0f, 0f);
+            showerPower.localEulerAngles = new Vector3(30f, 0f, 0f);
 
-            TapDrink.SetActive(true);
-            Valve.Value = true;
+            tapDrink.SetActive(true);
+            valve.Value = true;
         }
 
 
@@ -81,7 +81,7 @@ namespace Psycho.Screamers
             WorldManager.SpawnPhantomBehindPlayer();
             
             switched = true;
-            PlayerStop.Value = true;
+            playerStop.Value = true;
         }
 
         void _phantomCallback() => base.Stop();

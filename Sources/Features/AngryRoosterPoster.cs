@@ -1,7 +1,6 @@
 ﻿
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 
@@ -11,52 +10,47 @@ namespace Psycho.Features
     [RequireComponent(typeof(AudioSource), typeof(MeshRenderer), typeof(BoxCollider))]
     internal sealed class AngryRoosterPoster : CatchedComponent
     {
-        bool Status = false; // false = IDLE, true = NEED CHIPS
         public bool Applyed = false;
         public int LastDayApplyed = 0;
 
-        AudioSource AngrySounds;
-        AudioSource CompleteSound;
+        bool status = false; // false = IDLE, true = NEED CHIPS
 
-        FsmInt GlobalDay;
-        FsmFloat SUN_hours;
+        AudioSource angrySounds;
+        AudioSource completeSound;
 
         MeshRenderer renderer;
-
-        PlayMakerFSM Hand;
+        PlayMakerFSM hand;
 
 
         protected override void Awaked()
         {
             AudioSource[] sources = GetComponents<AudioSource>();
-            AngrySounds = sources[0];
-            AngrySounds.enabled = false;
+            angrySounds = sources[0];
+            angrySounds.enabled = false;
 
-            CompleteSound = sources[1];
+            completeSound = sources[1];
 
             renderer = GetComponent<MeshRenderer>();
 
-            GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
-            SUN_hours = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock").GetVariable<FsmFloat>("Hours");
-            Hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
-            Utils.PrintDebug($"rooster awaked day: {GlobalDay.Value % 7}, hours: {SUN_hours.Value}, applyed");
+            hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
+            Utils.PrintDebug($"rooster awaked day: {Psycho.GlobalDay.Value % 7}, hours: {Psycho.SUN_hours.Value}, applyed");
         }
 
         protected override void OnFixedUpdate()
         {
-            int day = GlobalDay.Value % 7;
-            if (Applyed && LastDayApplyed != GlobalDay.Value)
+            int day = Psycho.GlobalDay.Value % 7;
+            if (Applyed && LastDayApplyed != Psycho.GlobalDay.Value)
                 Applyed = false;
 
 
-            if (!Status && !Applyed && day == 6 && SUN_hours.Value > 4 && SUN_hours.Value < 16)
+            if (!status && !Applyed && day == 6 && Psycho.SUN_hours.Value > 4 && Psycho.SUN_hours.Value < 16)
                 Activate(true);
-            else if (Status && day == 6 && (SUN_hours.Value < 4 || SUN_hours.Value > 16))
+            else if (status && day == 6 && (Psycho.SUN_hours.Value < 4 || Psycho.SUN_hours.Value > 16))
             {
                 Activate(false);
                 Applyed = false;
             }
-            else if (Status && day != 6)
+            else if (status && day != 6)
             {
                 Activate(false);
                 Applyed = false;
@@ -65,18 +59,18 @@ namespace Psycho.Features
 
         void OnTriggerEnter(Collider other)
         {
-            if (!Status) return;
+            if (!status) return;
             if (other?.gameObject?.name?.Contains("potato chips") != true) return;
             
             Transform parent = other.gameObject.transform.parent;
             if (parent == null) return;
 
             Vector3 pos = other.gameObject.transform.position;
-            Hand.CallGlobalTransition("DROP_PART");
+            hand.CallGlobalTransition("DROP_PART");
             other.gameObject.GetComponent<PlayMakerFSM>().CallGlobalTransition("GARBAGE");
 
             Applyed = true;
-            LastDayApplyed = GlobalDay.Value;
+            LastDayApplyed = Psycho.GlobalDay.Value;
             Activate(false);
             ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
         }
@@ -85,8 +79,8 @@ namespace Psycho.Features
         {
             Utils.PrintDebug($"AngryRoosterPoster.Activate({state}) called");
             
-            Status = state;
-            AngrySounds.enabled = state;
+            status = state;
+            angrySounds.enabled = state;
 
             renderer.materials[0].SetTexture(
                 "_MainTex",
@@ -97,7 +91,7 @@ namespace Psycho.Features
 
             if (!state)
             {
-                CompleteSound.Play();
+                completeSound.Play();
             }
         }
     }

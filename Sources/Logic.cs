@@ -31,15 +31,16 @@ namespace Psycho
 
         private static float _value = 100f;
         private static float _points = 0f;
+        
         private static int beerBottlesDrunked = 0;
 
         public static int LastDayMinigame = 0;
-        //public static int NumberOfSpawnedPages = 0;
         public static bool MilkUsed = false;
         public static bool IsDead = false;
         public static bool InHorror = false;
-        public static AmbientTrigger CurrentAmbientTrigger = null;
         public static bool EnvelopeSpawned = false;
+
+        public static AmbientTrigger CurrentAmbientTrigger = null;
         public static DateTime MilkUseTime = DateTime.MinValue;
         
         internal static DateTime LastTimeTriggerScreamer { get; private set; } = default;
@@ -190,11 +191,11 @@ namespace Psycho
             LastTimeTriggerScreamer = DateTime.Now;
             MinutesToNextScreamer = UnityEngine.Random.Range(10, 20);
 
-            int randomTexture = UnityEngine.Random.Range(0, Globals.FullScreenScreamerTextures.Count);
+            int _randomTexture = UnityEngine.Random.Range(0, Globals.FullScreenScreamerTextures.Count);
             Globals.FullScreenScreamer.transform
                 .GetChild(1).gameObject
                 .GetComponent<MeshRenderer>().material
-                .SetTexture("_MainTex", Globals.FullScreenScreamerTextures[randomTexture]);
+                .SetTexture("_MainTex", Globals.FullScreenScreamerTextures[_randomTexture]);
 
             Globals.FullScreenScreamer.SetActive(true);
         }
@@ -257,13 +258,13 @@ namespace Psycho
 
         internal static void PlayerCommittedOffence(string offence, string comment = default)
         {
-            float previous = Points;
-            float newValue = Points - config.GetValueSafe(offence);
+            float _previous = Points;
+            float _newValue = Points - config.GetValueSafe(offence);
 
-            if (newValue < previous && offence != "PLAYER_SWEARS" && !offence.Contains("DRUNK"))
+            if (_newValue < _previous && offence != "PLAYER_SWEARS" && !offence.Contains("DRUNK"))
                 ResetValue(horror: 25, main: 15f);
 
-            Points = newValue;
+            Points = _newValue;
             Utils.PrintDebug(eConsoleColors.RED, $"Player committed offence : {offence} \"{comment}\"");
         }
 
@@ -271,21 +272,20 @@ namespace Psycho
         {
             try
             {
-                PlayMakerFSM train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
-                GameObject player = GameObject.Find("PLAYER");
-                player.GetComponent<CharacterMotor>().canControl = false;
+                PlayMakerFSM _train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
+                Psycho.Player.GetComponent<CharacterMotor>().canControl = false;
 
-                StateHook.Inject(train.gameObject, "Player", "Die 2",
+                StateHook.Inject(_train.gameObject, "Player", "Die 2",
                     () => DeathSystem.KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
 
-                train.SendEvent("FINISHED"); // reset current state
-                while (train.ActiveStateName != "State 2")
-                    train.SendEvent("FINISHED");
+                _train.SendEvent("FINISHED"); // reset current state
+                while (_train.ActiveStateName != "State 2")
+                    _train.SendEvent("FINISHED");
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 15f, default, () =>
                 {
-                    player.transform.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
-                    player.transform.eulerAngles = new Vector3(0f, 233.4375f, 0f);
+                    Psycho.Player.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
+                    Psycho.Player.eulerAngles = new Vector3(0f, 233.4375f, 0f);
 
                     ShizAnimPlayer.PlayAnimation("sleep_off", 5f, default);
                 });
@@ -330,12 +330,12 @@ namespace Psycho
             EventsManager.OnScreamerTriggered.RemoveAllListeners();
             EventsManager.OnScreamerFinished.RemoveAllListeners();
 
-            foreach (var catched in Resources.FindObjectsOfTypeAll<CatchedComponent>())
+            foreach (CatchedComponent _catched in Resources.FindObjectsOfTypeAll<CatchedComponent>())
             {
-                if (catched == null) continue;
+                if (_catched == null) continue;
 
-                string typeName = catched.GetType().Name;
-                string[] toDestroyObjects = new string[]
+                string _typeName = _catched.GetType().Name;
+                string[] _objectsToDestroy = new string[]
                 {
                     "Minigame", "AmbientTrigger", "MovingHand",
                     "MovingUncleHead","MummolaCrawl", "Sketchbook",
@@ -343,13 +343,13 @@ namespace Psycho
                     "Pentagram", "PentagramEvents"
                 };
 
-                if (toDestroyObjects.Contains(typeName))
+                if (_objectsToDestroy.Contains(_typeName))
                 {
-                    Object.Destroy(catched.gameObject);
+                    Object.Destroy(_catched.gameObject);
                     continue;
                 }
 
-                Object.Destroy(catched);
+                Object.Destroy(_catched);
             }
 
             Object.Destroy(GameObject.Find("DingonbiisiAmbientTrigger"));
@@ -368,14 +368,12 @@ namespace Psycho
         static void KnockOutPlayer()
         {
             try
-            {
-                GameObject player = GameObject.Find("PLAYER");
-                
-                CharacterMotor motor = player.GetComponent<CharacterMotor>();
-                motor.canControl = false;
+            {                
+                CharacterMotor _motor = Psycho.Player.GetComponent<CharacterMotor>();
+                _motor.canControl = false;
 
-                FsmFloat volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");
-                volume.Value = 0;
+                FsmFloat _volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");
+                _volume.Value = 0;
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 8f, default, () =>
                 {
@@ -392,8 +390,8 @@ namespace Psycho
                     _changeFittanDriverHeadPivotRotation();
 
                     ShizAnimPlayer.PlayAnimation("sleep_off", default, default, () => {
-                        motor.canControl = true;
-                        volume.Value = 1;
+                        _motor.canControl = true;
+                        _volume.Value = 1;
                     });
                 });
             }

@@ -10,64 +10,64 @@ namespace Psycho.Internal
     public static class TexturesManager
     {
         internal static Dictionary<Material, Texture> Cache = new Dictionary<Material, Texture>();
-        static Material[] GlobalMaterials;
+        static Material[] globalMaterials;
 
-        const string TexProperty = "_MainTex";
+        const string PROPERTY = "_MainTex";
 
         public static void ReplaceTextures(List<Texture> container)
         {            
-            GlobalMaterials = Resources.FindObjectsOfTypeAll<Material>();
+            globalMaterials = Resources.FindObjectsOfTypeAll<Material>();
 
-            int replaced = 0;
-            foreach (Texture texture in container)
+            int _replaced = 0;
+            foreach (Texture _texture in container)
             {
-                if (!ReplaceTextureForMaterials(texture)) continue;
-                replaced++;
+                if (!ReplaceTextureForMaterials(_texture)) continue;
+                _replaced++;
             }
 
-            Utils.PrintDebug($"ReplaceTextures ends [replaced {replaced}][cache len: {Cache.Count}]");
+            Utils.PrintDebug($"ReplaceTextures ends [replaced {_replaced}][cache len: {Cache.Count}]");
         }
 
         public static void RestoreDefaults(List<Texture> container)
         {
             if (Cache.Count == 0) return;
 
-            GlobalMaterials = Resources.FindObjectsOfTypeAll<Material>();
+            globalMaterials = Resources.FindObjectsOfTypeAll<Material>();
 
-            Dictionary<Material, Texture> clonedCache = new Dictionary<Material, Texture>(Cache);
-            List<Material> forRemove = new List<Material>();
+            Dictionary<Material, Texture> _clonedCache = new Dictionary<Material, Texture>(Cache);
+            List<Material> _forRemove = new List<Material>();
 
-            foreach (KeyValuePair<Material, Texture> item in clonedCache)
+            foreach (KeyValuePair<Material, Texture> _item in _clonedCache)
             {
-                if (item.Key == null || item.Value == null) continue;
-                if (!container.Any(v => v.name == item.Value?.name)) continue;
-                item.Key.SetTexture(TexProperty, item.Value);
-                forRemove.Add(item.Key);
+                if (_item.Key == null || _item.Value == null) continue;
+                if (!container.Any(v => v.name == _item.Value?.name)) continue;
+                _item.Key.SetTexture(PROPERTY, _item.Value);
+                _forRemove.Add(_item.Key);
             }
 
-            Utils.PrintDebug($"RestoreDefaults ends [restored: {forRemove.Count}][cache len: {Cache.Count}]");
-            forRemove.ForEach(v => Cache.Remove(v));
+            Utils.PrintDebug($"RestoreDefaults ends [restored: {_forRemove.Count}][cache len: {Cache.Count}]");
+            _forRemove.ForEach(v => Cache.Remove(v));
         }
 
         static bool ReplaceTextureForMaterials(Texture texture, bool removeCache = false)
         {
             if (texture == null) return false;
 
-            string name = texture.name;
+            string _name = texture.name;
 
-            Material[] materialsWhereContainsTexture = GlobalMaterials.Where(v => v.GetTexture("_MainTex")?.name == name).ToArray();
-            if (materialsWhereContainsTexture.Length == 0) return false;
+            Material[] _materialsWhereContainsTexture = globalMaterials.Where(v => v.GetTexture("_MainTex")?.name == _name).ToArray();
+            if (_materialsWhereContainsTexture.Length == 0) return false;
 
-            bool result = true;
-            foreach (Material material in materialsWhereContainsTexture)
+            bool _result = true;
+            foreach (Material _material in _materialsWhereContainsTexture)
             {
-                if (material == null) continue;
+                if (_material == null) continue;
 
-                if (!CacheMaterialTextureAndSetNew(material, texture, removeCache))
-                    result = false;
+                if (!CacheMaterialTextureAndSetNew(_material, texture, removeCache))
+                    _result = false;
             }
 
-            return result;
+            return _result;
         }
 
         static bool CacheMaterialTextureAndSetNew(Material material, Texture texture, bool removeCache = false)
@@ -75,7 +75,7 @@ namespace Psycho.Internal
             if (removeCache)
             {
                 if (!Cache.ContainsKey(material)) return false;
-                material.SetTexture(TexProperty, texture);
+                material.SetTexture(PROPERTY, texture);
 
                 if (!Cache.Remove(material))
                     return false;
@@ -84,8 +84,8 @@ namespace Psycho.Internal
             }
 
             if (Cache.ContainsKey(material)) return false;
-            Cache.Add(material, material.GetTexture(TexProperty));
-            material.SetTexture(TexProperty, texture);
+            Cache.Add(material, material.GetTexture(PROPERTY));
+            material.SetTexture(PROPERTY, texture);
             return true;
         }
     }

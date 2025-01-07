@@ -176,8 +176,8 @@ namespace Psycho.Screamers
         {
             ringFSM.AddEvent("SCREAMCALL");
 
-            FsmState state = ringFSM.GetState("State 2");
-            state.Transitions = new List<FsmTransition>(state.Transitions)
+            FsmState _state = ringFSM.GetState("State 2");
+            _state.Transitions = new List<FsmTransition>(_state.Transitions)
             {
                 new FsmTransition
                 {
@@ -197,10 +197,10 @@ namespace Psycho.Screamers
 
         void _enablePhoneCord()
         {
-            GameObject cord = phoneCord.gameObject.transform.parent.gameObject;
-            if (cord.activeSelf) return;
+            GameObject _cord = phoneCord.gameObject.transform.parent.gameObject;
+            if (_cord.activeSelf) return;
 
-            cord.SetActive(true);
+            _cord.SetActive(true);
             phoneCord.CallGlobalTransition("SCREAMTRIGGER");
         }
     }

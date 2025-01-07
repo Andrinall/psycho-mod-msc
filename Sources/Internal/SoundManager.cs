@@ -21,7 +21,7 @@ namespace Psycho.Internal
 
         public static AudioSource FullScreenScreamerSoundsSource = null;
 
-        static AudioClip ad_radio_static_orig;
+        static AudioClip adRadioStaticOrig_clip;
 
         static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
         static AudioClip RandomSoundForFullScreenScreamer => FullScreenScreamersSounds[Random.Range(0, FullScreenScreamersSounds.Count)];
@@ -79,12 +79,12 @@ namespace Psycho.Internal
 
             AudioSource _static = _radioChannels.transform.GetChild(2).GetComponent<AudioSource>();
             
-            if (ad_radio_static_orig == null)
-                ad_radio_static_orig = _static.clip;
+            if (adRadioStaticOrig_clip == null)
+                adRadioStaticOrig_clip = _static.clip;
 
-            if (newClip == null && ad_radio_static_orig != null)
+            if (newClip == null && adRadioStaticOrig_clip != null)
             {
-                _static.clip = ad_radio_static_orig;
+                _static.clip = adRadioStaticOrig_clip;
                 return;
             }
 
@@ -134,30 +134,30 @@ namespace Psycho.Internal
 
             StopAllScreamSounds();
             
-            AudioSource source = rand == -1 ? RandomPoint : ScreamPoints[rand];
-            if (source.isPlaying) return;
-            
-            source.loop = true;
-            source.Play();
+            AudioSource _source = rand == -1 ? RandomPoint : ScreamPoints[rand];
+            if (_source.isPlaying) return;
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"Played sound {source.clip.name}; idx[{rand}]");
+            _source.loop = true;
+            _source.Play();
+
+            Utils.PrintDebug(eConsoleColors.GREEN, $"Played sound {_source.clip.name}; idx[{rand}]");
         }
 
         public static void StopScreamSound(string name)
         {
-            AudioSource point = ScreamPoints.FirstOrDefault(v => v.gameObject.name.Contains(name));
-            point.loop = false;
-            point.Stop();
+            AudioSource _point = ScreamPoints.FirstOrDefault(v => v.gameObject.name.Contains(name));
+            _point.loop = false;
+            _point.Stop();
         }
 
         public static void StopAllScreamSounds()
         {
-            foreach (AudioSource point in ScreamPoints)
+            foreach (AudioSource _point in ScreamPoints)
             {
-                if (point == null) continue;
+                if (_point == null) continue;
 
-                point.loop = false;
-                point.Stop();
+                _point.loop = false;
+                _point.Stop();
             }
         }
 

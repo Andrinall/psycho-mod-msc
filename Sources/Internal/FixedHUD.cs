@@ -10,19 +10,19 @@ namespace Psycho.Internal
 
     public sealed class FixedHUD : CatchedComponent
     {
-        readonly List<GameObject> _struct = new List<GameObject>();
-        readonly List<string> _blacklisted = new List<string> {
+        readonly List<GameObject> LocalStruct = new List<GameObject>();
+        readonly List<string> Blacklisted = new List<string> {
             "FPS", "Clutch", "Clutch 1", "DRMpink", "SpeedyHUD"
         };
-        readonly List<string> _default = new List<string> {
+        readonly List<string> DefaultElements = new List<string> {
             "Mortal", "Day", "Thrist",
             "Hunger", "Stress", "Urine",
             "Fatigue", "Dirty", "Health", "Money", "Jailtime"
         };
 
-        Vector3 _start = Vector3.zero;
+        Vector3 startPosition = Vector3.zero;
 
-        public static FixedHUD instance { get; private set; } = null;
+        static FixedHUD instance = null;
 
         protected override void Awaked()
         {
@@ -31,20 +31,20 @@ namespace Psycho.Internal
 
         protected override void Enabled()
         {
-            _start = transform.Find("Mortal").localPosition;
+            startPosition = transform.Find("Mortal").localPosition;
 
-            foreach(string element in _default)
+            foreach(string element in DefaultElements)
             {
                 GameObject t = transform.Find(element)?.gameObject;
                 if (t == null) continue;
-                _struct.Add(t);
+                LocalStruct.Add(t);
             }
         }
 
         protected override void Destroyed()
         {
             instance = null;
-            _struct.Clear();
+            LocalStruct.Clear();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Psycho.Internal
         /// </summary>
         /// <param name="name">GameObject element name</param>
         /// <returns>GameObject which finds or null</returns>
-        GameObject GetElementLocal(string name) => _struct.Find(v => v.name == name);
+        GameObject GetElementLocal(string name) => LocalStruct.Find(v => v.name == name);
 
         /// <summary>
         /// Add element to "GUI/HUD" && local storage, cloned from selected parent
@@ -79,19 +79,19 @@ namespace Psycho.Internal
             if (name.Length == 0) return;
             if (IsElementExist(name)) return;
 
-            GameObject hudElement = Instantiate(instance.transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
-            hudElement.name = name;
+            GameObject _hudElement = Instantiate(instance.transform.Find(cloneFrom == eHUDCloneType.RECT ? "Hunger" : "Money").gameObject);
+            _hudElement.name = name;
 
-            Transform label = hudElement.transform.Find("HUDLabel");
-            label.GetComponent<TextMesh>().text = name;
-            label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
-            Destroy(hudElement.GetComponentInChildren<PlayMakerFSM>());
-            hudElement.transform.SetParent(instance.transform, worldPositionStays: false);
+            Transform _label = _hudElement.transform.Find("HUDLabel");
+            _label.GetComponent<TextMesh>().text = name;
+            _label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
+            Destroy(_hudElement.GetComponentInChildren<PlayMakerFSM>());
+            _hudElement.transform.SetParent(instance.transform, worldPositionStays: false);
 
             if (index > 0)
-                instance._struct.Insert(index, hudElement);
+                instance.LocalStruct.Insert(index, _hudElement);
             else
-                instance._struct.Add(hudElement);
+                instance.LocalStruct.Add(_hudElement);
 
             Structurize();
         }
@@ -123,10 +123,10 @@ namespace Psycho.Internal
         {
             if (instance == null) return false;
 
-            return instance._struct.Exists(v =>
+            return instance.LocalStruct.Exists(v =>
             {
                 if (v != null) return v.name == name;
-                instance._struct.Remove(v);
+                instance.LocalStruct.Remove(v);
                 return false;
             });
         }
@@ -140,14 +140,14 @@ namespace Psycho.Internal
         public static void MoveElement(string name, int index)
         {
             if (instance == null) return;
-            if (index < 0 || index > instance._struct.Capacity) return;
+            if (index < 0 || index > instance.LocalStruct.Capacity) return;
             if (!IsElementExist(name)) return;
 
-            GameObject element = instance.GetElementLocal(name);
-            if (element == null) return;
+            GameObject _element = instance.GetElementLocal(name);
+            if (_element == null) return;
 
-            instance._struct.Remove(element);
-            instance._struct.Insert(index, element);
+            instance.LocalStruct.Remove(_element);
+            instance.LocalStruct.Insert(index, _element);
             Structurize();
         }
 
@@ -160,9 +160,9 @@ namespace Psycho.Internal
             if (instance == null) return;
             if (!IsElementExist(name)) return;
 
-            GameObject element = instance.GetElementLocal(name);
-            instance._struct.Remove(element);
-            Destroy(element);
+            GameObject _element = instance.GetElementLocal(name);
+            instance.LocalStruct.Remove(_element);
+            Destroy(_element);
             Structurize();
         }
 
@@ -187,12 +187,12 @@ namespace Psycho.Internal
         {
             if (instance == null) return;
             if (!IsElementExist(name)) return;
-            Transform label = instance.GetElement($"{name}/HUDLabel").transform;
-            TextMesh mesh = label.GetComponent<TextMesh>();
+            Transform _label = instance.GetElement($"{name}/HUDLabel").transform;
+            TextMesh _mesh = _label.GetComponent<TextMesh>();
             
-            if (mesh == null) return;
-            mesh.text = text;
-            label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
+            if (_mesh == null) return;
+            _mesh.text = text;
+            _label.Find("HUDLabelShadow").GetComponent<TextMesh>().text = name;
         }
 
         /// <summary>
@@ -204,10 +204,10 @@ namespace Psycho.Internal
         {
             if (instance == null) return;
             if (!IsElementExist(name)) return;
-            GameObject element = instance.GetElement($"{name}/Pivot/HUDBar");
+            GameObject _element = instance.GetElement($"{name}/Pivot/HUDBar");
             
-            if (element == null) return;
-            element.GetComponent<MeshRenderer>().material.color = color;
+            if (_element == null) return;
+            _element.GetComponent<MeshRenderer>().material.color = color;
         }
 
         /// <summary>
@@ -220,10 +220,10 @@ namespace Psycho.Internal
         {
             if (instance == null) return;
             if (!IsElementExist(name)) return;
-            GameObject pivot = instance.GetElement($"{name}/Pivot");
-            if (pivot == null) return;
+            GameObject _pivot = instance.GetElement($"{name}/Pivot");
+            if (_pivot == null) return;
 
-            pivot.transform.localScale = scale.Clamp(0f, 1f); ;
+            _pivot.transform.localScale = scale.Clamp(0f, 1f); ;
         }
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace Psycho.Internal
         /// <param name="name">Name of element in HUD</param>
         /// <returns></returns>
         public static int GetIndexByName(string name)
-            => instance?._struct?.FindIndex(v => v.name == name) ?? -1;
+            => instance?.LocalStruct?.FindIndex(v => v.name == name) ?? -1;
 
         /// <summary>
         /// Structurize positions of GUI/HUD childs
@@ -240,36 +240,36 @@ namespace Psycho.Internal
         public static void Structurize()
         {
             if (instance == null) return;
-            int inactive_items = 0;
+            int _inactiveItems = 0;
 
-            var temp = new List<GameObject>(instance._struct);
-            foreach (GameObject child in temp)
+            var _clonedStruct = new List<GameObject>(instance.LocalStruct);
+            foreach (GameObject child in _clonedStruct)
             {
                 if (child?.gameObject == null)
                 {
-                    instance._struct.Remove(child);
+                    instance.LocalStruct.Remove(child);
                     continue;
                 }
 
                 if (!child.activeSelf)
                 {
-                    inactive_items++;
+                    _inactiveItems++;
                     continue;
                 }
 
-                child.transform.localPosition = new Vector3(instance._start.x,
-                    instance._start.y - (instance._struct.IndexOf(child) - inactive_items) * 0.4f
+                child.transform.localPosition = new Vector3(instance.startPosition.x,
+                    instance.startPosition.y - (instance.LocalStruct.IndexOf(child) - _inactiveItems) * 0.4f
                 );
             }
 
-            if (instance._struct.Count == instance.transform.childCount) return;
+            if (instance.LocalStruct.Count == instance.transform.childCount) return;
             for (int i = 0; i < instance.transform.childCount; i++)
             {
                 Transform child = instance.transform.GetChild(i);
                 if (child?.gameObject == null) continue;
-                if (instance._blacklisted.Contains(child.name)) continue;
-                if (instance._struct.FindIndex(v => v == child.gameObject) == -1)
-                    instance._struct.Add(child.gameObject);
+                if (instance.Blacklisted.Contains(child.name)) continue;
+                if (instance.LocalStruct.FindIndex(v => v == child.gameObject) == -1)
+                    instance.LocalStruct.Add(child.gameObject);
             }
         }
     }

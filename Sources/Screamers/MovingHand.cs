@@ -12,25 +12,25 @@ namespace Psycho.Screamers
         public override int ScreamerVariant => (int)ScreamParalysisType.HAND;
 
 
-        const float TargetDistanceFirst = 0.1f;
-        const float MaxSpeedFirst = 0.1f;
+        const float TARGET_DISTANCE_FIRST = 0.1f;
+        const float MAX_SPEED_FIRST = 0.1f;
 
-        const float TargetDistanceSecond = 0.05f;
-        const float MaxSpeedSecond = 10f;
+        const float TARGET_DISTANCE_SECOND = 0.05f;
+        const float MAX_SPEED_SECOND = 10f;
 
-        const int awaitFramesCount = 120;
+        const int AWAIT_FRAMES_COUNT = 120;
 
         readonly Vector3 CameraTargetPoint = new Vector3(-11.703310012817383f, 2.7082486152648927f, 13.318896293640137f);
         readonly Vector3 TargetPointFirst = new Vector3(-11.942817687988282f, 1.1628656387329102f, 14.70871639251709f);
         readonly Vector3 TargetPointSecond = new Vector3(-11.962800979614258f, 0.44349291920661929f, 14.862831115722657f);
 
 
-        Transform Armature;
-        Transform Rigged;
-        PlayMakerFSM _fsm;
+        Transform armature;
+        Transform rigged;
+        PlayMakerFSM fsm;
 
-        Vector3 StartPoint;
-        Vector3[] CameraOrigs;
+        Vector3 startPoint;
+        Vector3[] cameraOrigs;
 
         int elapsedFrames = 0;
         byte movingStage = 0;
@@ -39,21 +39,21 @@ namespace Psycho.Screamers
 
         public override void InitScreamer()
         {
-            _fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
-            Armature = transform.Find("Armature");
-            Rigged = transform.Find("hand_rigged");
+            fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
+            armature = transform.Find("Armature");
+            rigged = transform.Find("hand_rigged");
             
-            StartPoint = Armature.position;
+            startPoint = armature.position;
         }
 
         public override void TriggerScreamer()
         {
-            _fsm.enabled = false;
-            Armature.position = StartPoint;
-            CameraOrigs = Utils.SetCameraLookAt(CameraTargetPoint);
+            fsm.enabled = false;
+            armature.position = startPoint;
+            cameraOrigs = Utils.SetCameraLookAt(CameraTargetPoint);
 
-            Armature.gameObject.SetActive(true);
-            Rigged.gameObject.SetActive(true);
+            armature.gameObject.SetActive(true);
+            rigged.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
         }
 
@@ -63,8 +63,8 @@ namespace Psycho.Screamers
             movingStage = 0;
             elapsedFrames = 0;
 
-            Armature.gameObject.SetActive(false);
-            Rigged.gameObject.SetActive(false);
+            armature.gameObject.SetActive(false);
+            rigged.gameObject.SetActive(false);
         }
 
         protected override void OnFixedUpdate()
@@ -74,20 +74,20 @@ namespace Psycho.Screamers
 
             if (movingStage == 0)
             {
-                if (!Armature.MoveTowards(TargetPointFirst, TargetDistanceFirst, MaxSpeedFirst)) return;
+                if (!armature.MoveTowards(TargetPointFirst, TARGET_DISTANCE_FIRST, MAX_SPEED_FIRST)) return;
                 movingStage++;
                 return;
             }
 
             if (movingStage == 1)
             {
-                if (elapsedFrames < awaitFramesCount)
+                if (elapsedFrames < AWAIT_FRAMES_COUNT)
                 {
                     elapsedFrames++;
                     return;
                 }
 
-                if (!Armature.MoveTowards(TargetPointSecond, TargetDistanceSecond, MaxSpeedSecond)) return;
+                if (!armature.MoveTowards(TargetPointSecond, TARGET_DISTANCE_SECOND, MAX_SPEED_SECOND)) return;
                 movingStage++;
                 return;
             }
@@ -98,10 +98,10 @@ namespace Psycho.Screamers
 
                 Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {
-                    _fsm.enabled = true;
+                    fsm.enabled = true;
                     SoundManager.PlayHeartbeat(false);
-                    Utils.ResetCameraLook(CameraOrigs);
-                    _fsm.CallGlobalTransition("SCREAMSTOP");
+                    Utils.ResetCameraLook(cameraOrigs);
+                    fsm.CallGlobalTransition("SCREAMSTOP");
                     base.Stop();
                 });
             }

@@ -306,9 +306,9 @@ namespace Psycho
 
         public static readonly string[] PentaRecipe = new string[5] { "churchcandle", "fernflower", "mushroom", "blackegg", "walnut" };
 
-        public static void LoadAssets(AssetBundle _bundle)
+        public static void LoadAssets(AssetBundle bundle)
         {
-            var pointsPos = new Dictionary<string, Vector3>() // night scream sounds positions
+            Dictionary<string, Vector3> _pointsPos = new Dictionary<string, Vector3>() // night scream sounds positions
             {
                 ["bedroom"] = new Vector3(-2.338177f, 0.03142646f, 12.91463f),
                 ["crying_female"] = new Vector3(-6.801387f, 0.1021783f, 6.610903f),
@@ -321,152 +321,144 @@ namespace Psycho
             };
 
             // load resources from bundle
-            Pills_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/pills.prefab");
-            Candle_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/churchcandle.prefab");
-            FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
-            Walnut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/walnut.prefab");
-            Nut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/nut.prefab");
-            BlackEgg_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/blackegg.prefab");
-            Mushroom_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/mushroom.prefab");
+            Pills_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/pills.prefab");
+            Candle_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/churchcandle.prefab");
+            FernFlower_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/fernflower.prefab");
+            Walnut_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/walnut.prefab");
+            Nut_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/nut.prefab");
+            BlackEgg_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/blackegg.prefab");
+            Mushroom_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/mushroom.prefab");
 
-            Background_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/background.prefab");
-            Picture_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/picture.prefab");
-            Coffin_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/coffin.prefab");
-            SmokeParticleSystem_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/smoke.prefab");
-            CottageMinigame_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/minigame.prefab");
+            Background_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/background.prefab");
+            Picture_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/picture.prefab");
+            Coffin_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/coffin.prefab");
+            SmokeParticleSystem_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/smoke.prefab");
+            CottageMinigame_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/minigame.prefab");
 
-            Notebook_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebook.prefab");
-            NotebookPage_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebook page.prefab");
-            NotebookGUI_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/notebookgui.prefab");
+            Notebook_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/notebook.prefab");
+            NotebookPage_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/notebook page.prefab");
+            NotebookGUI_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/notebookgui.prefab");
 
-            FullScreenScreamer_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fullscreenscreamer.prefab");
+            FullScreenScreamer_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/fullscreenscreamer.prefab");
             FullScreenScreamer = GameObject.Instantiate(FullScreenScreamer_prefab);
             FullScreenScreamer.transform.SetParent(GameObject.Find("GUI").transform, false);
 
-            NotebookPages_texture = LoadAsset<Texture>(_bundle, "assets/textures/page(1-13)(notebook).png");
-            NotebookStartPage_texture = LoadAsset<Texture>(_bundle, "assets/textures/page14.png");
-            NotebookFinalPage_texture = LoadAsset<Texture>(_bundle, "assets/textures/page15(false).png");
+            NotebookPages_texture = LoadAsset<Texture>(bundle, "assets/textures/page(1-13)(notebook).png");
+            NotebookStartPage_texture = LoadAsset<Texture>(bundle, "assets/textures/page14.png");
+            NotebookFinalPage_texture = LoadAsset<Texture>(bundle, "assets/textures/page15(false).png");
 
-            Sketchbook_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/sketchbook.prefab");
-            SketchbookGUI_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/sketchbookgui.prefab");
+            Sketchbook_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/sketchbook.prefab");
+            SketchbookGUI_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/sketchbookgui.prefab");
 
-            Postcard_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/postcard.prefab");
+            Postcard_prefab = LoadAsset<GameObject>(bundle, "assets/prefabs/postcard.prefab");
 
-            AcidBurn_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/acid_burn.mp3");
-            ScreamCall_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/screamcall.wav");
-            PhantomScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/phantomscream.mp3");
-            TVScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/tvscreamer.mp3");
-            UncleScream_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/uncle_screamer.mp3");
-            HousekeeperLaughs_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/housekeeper_laughs.wav");
+            AcidBurn_clip = LoadAsset<AudioClip>(bundle, "assets/audio/acid_burn.mp3");
+            ScreamCall_clip = LoadAsset<AudioClip>(bundle, "assets/audio/screamcall.wav");
+            PhantomScream_clip = LoadAsset<AudioClip>(bundle, "assets/audio/phantomscream.mp3");
+            TVScream_clip = LoadAsset<AudioClip>(bundle, "assets/audio/tvscreamer.mp3");
+            UncleScream_clip = LoadAsset<AudioClip>(bundle, "assets/audio/uncle_screamer.mp3");
+            HousekeeperLaughs_clip = LoadAsset<AudioClip>(bundle, "assets/audio/housekeeper_laughs.wav");
 
-            JokkeSpawned_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/jokkespawnedsound.mp3");
-            GrannyCrawlScreamer_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/grannycrawlscreamer.mp3");
-            HandDroppedToFace_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/handdroppedtoface.mp3");
+            JokkeSpawned_clip = LoadAsset<AudioClip>(bundle, "assets/audio/jokkespawnedsound.mp3");
+            GrannyCrawlScreamer_clip = LoadAsset<AudioClip>(bundle, "assets/audio/grannycrawlscreamer.mp3");
+            HandDroppedToFace_clip = LoadAsset<AudioClip>(bundle, "assets/audio/handdroppedtoface.mp3");
 
-            UBV_psy_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ubv_psy.mp3");
-            HouseAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/home_night_all.mp3");
-            IslandAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/island_all.mp3");
-            DingonbiisiAmbient_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/penta_all.mp3");
+            UBV_psy_clip = LoadAsset<AudioClip>(bundle, "assets/audio/ubv_psy.mp3");
+            HouseAmbient_clip = LoadAsset<AudioClip>(bundle, "assets/audio/ambient/home_night_all.mp3");
+            IslandAmbient_clip = LoadAsset<AudioClip>(bundle, "assets/audio/ambient/island_all.mp3");
+            DingonbiisiAmbient_clip = LoadAsset<AudioClip>(bundle, "assets/audio/ambient/penta_all.mp3");
 
             GlobalAmbient_source = SoundManager.AddAudioSource(
                 new GameObject("GlobalAmbient(PsychoMod)"),
-                LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/real_night_emb.mp3"),
+                LoadAsset<AudioClip>(bundle, "assets/audio/ambient/real_night_emb.mp3"),
                 0.045f
             );
 
             GlobalPsychoAmbient_source = SoundManager.AddAudioSource(
                 new GameObject("GlobalPsychoAmbient(PsychoMod)"),
-                LoadAsset<AudioClip>(_bundle, "assets/audio/ambient/psycho_emb.mp3"),
+                LoadAsset<AudioClip>(bundle, "assets/audio/ambient/psycho_emb.mp3"),
                 0.07f
             );
 
-            FinishGame_clip = LoadAsset<AudioClip>(_bundle, "assets/audio/wining.mp3");
+            FinishGame_clip = LoadAsset<AudioClip>(bundle, "assets/audio/wining.mp3");
 
-            NewsPaper_texture = LoadAsset<Texture>(_bundle, "assets/textures/newspaper.png");
+            NewsPaper_texture = LoadAsset<Texture>(bundle, "assets/textures/newspaper.png");
 
-            GameObject penta = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab"));
-            penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
-            penta.AddComponent<PentagramEvents>();
+            GameObject _penta = GameObject.Instantiate(LoadAsset<GameObject>(bundle, "assets/prefabs/penta.prefab"));
+            _penta.AddComponent<Pentagram>(); // clone pentagram in dingonbiisi house
+            _penta.AddComponent<PentagramEvents>();
 
-            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/rooster_poster.prefab")).AddComponent<AngryRoosterPoster>();
-            GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
-            CrowsList = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
+            GameObject.Instantiate(LoadAsset<GameObject>(bundle, "assets/prefabs/rooster_poster.prefab")).AddComponent<AngryRoosterPoster>();
+            GameObject.Instantiate(LoadAsset<GameObject>(bundle, "assets/prefabs/ferns.prefab")).AddComponent<FernFlowerSpawner>(); // clone ferns list
+            CrowsList = GameObject.Instantiate(LoadAsset<GameObject>(bundle, "assets/prefabs/crowslist.prefab")); // clone crows list
 
-            AudioSource heartbeat = GameObject.Find("PLAYER").AddComponent<AudioSource>(); // attach heartbeat sound to player
-            heartbeat.clip = LoadAsset<AudioClip>(_bundle, "assets/audio/heartbeat.wav");
-            heartbeat.loop = true;
-            heartbeat.playOnAwake = false;
-            heartbeat.priority = 128;
-            heartbeat.volume = 1;
-            heartbeat.pitch = 1;
-            heartbeat.panStereo = 0;
-            heartbeat.spatialBlend = 1;
-            heartbeat.reverbZoneMix = 1;
-            heartbeat.dopplerLevel = 1;
-            heartbeat.spread = 0;
-            heartbeat.minDistance = 1.5f;
-            heartbeat.maxDistance = 12f;
+            AudioSource _heartbeat = GameObject.Find("PLAYER").AddComponent<AudioSource>(); // attach heartbeat sound to player
+            _heartbeat.clip = LoadAsset<AudioClip>(bundle, "assets/audio/heartbeat.wav");
+            _heartbeat.loop = true;
+            _heartbeat.playOnAwake = false;
+            _heartbeat.priority = 128;
+            _heartbeat.volume = 1;
+            _heartbeat.pitch = 1;
+            _heartbeat.panStereo = 0;
+            _heartbeat.spatialBlend = 1;
+            _heartbeat.reverbZoneMix = 1;
+            _heartbeat.dopplerLevel = 1;
+            _heartbeat.spread = 0;
+            _heartbeat.minDistance = 1.5f;
+            _heartbeat.maxDistance = 12f;
             
-            Heartbeat_source = heartbeat;
-            heartbeat.enabled = false;
+            Heartbeat_source = _heartbeat;
+            _heartbeat.enabled = false;
 
-            SuicidalsList = GameObject.Instantiate(LoadAsset<GameObject>(_bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
+            SuicidalsList = GameObject.Instantiate(LoadAsset<GameObject>(bundle, "assets/prefabs/customsuicidals.prefab")); // clone suicidals for horror world
             WorldManager.CopySuicidal(SuicidalsList); // copy first suicidal from list for use in night screamer
             SuicidalsList.SetActive(false); // hide suicidals list
 
             // load all replaces
-            Transform building = GameObject.Find("YARD/Building").transform;
-            foreach (string path in _bundle.GetAllAssetNames())
+            Transform _building = GameObject.Find("YARD/Building").transform;
+            foreach (string path in bundle.GetAllAssetNames())
             {
                 if (path.Contains("assets/replaces")) // load texture & sound replaces
                 {
                     if (path.Contains("/horror"))
-                    { // load replaces for horror world
-                        Replaces.Add(
-                            //name.Replace("assets/replaces/horror/", "").Replace(".png", "").ToLower().GetHashCode(),
-                            LoadAsset<Texture>(_bundle, path)
-                        );
-                    }
+                        Replaces.Add(LoadAsset<Texture>(bundle, path));
                     else if (path.Contains("/sounds")) // replaces for flies sounds in horror world
-                        HorrorFlies.Add(LoadAsset<AudioClip>(_bundle, path));
+                        HorrorFlies.Add(LoadAsset<AudioClip>(bundle, path));
                     else if (path.Contains("/allworlds")) // load texture used independently of world
-                        IndependentlyTextures.Add(
-                            //name.Replace("assets/replaces/allworlds/", "").Replace(".png", "").ToLower().GetHashCode(),
-                            LoadAsset<Texture>(_bundle, path)
-                        );
+                        IndependentlyTextures.Add(LoadAsset<Texture>(bundle, path));
                 }
                 else if (path.Contains("assets/pictures")) // load textures for picture in frame
-                    Pictures.Add(LoadAsset<Texture>(_bundle, path));
+                    Pictures.Add(LoadAsset<Texture>(bundle, path));
                 else if (path.Contains("assets/audio/screamers"))
                 { // load sounds for night screamer
-                    string item = path.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
-                    GameObject emptyPoint = new GameObject($"ScreamPoint({item})");
-                    AudioSource source = emptyPoint.AddComponent<AudioSource>();
-                    source.clip = LoadAsset<AudioClip>(_bundle, path);
-                    source.loop = true;
-                    source.volume = path.Contains("crying") ? 0.4f : 0.9f;
-                    source.priority = 0;
-                    source.rolloffMode = AudioRolloffMode.Logarithmic;
-                    source.minDistance = 1.5f;
-                    source.maxDistance = 12;
-                    source.spatialBlend = 1;
-                    source.spread = 0;
-                    source.dopplerLevel = 1;
+                    string _item = path.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
+                    GameObject _emptyPoint = new GameObject($"ScreamPoint({_item})");
+                    AudioSource _source = _emptyPoint.AddComponent<AudioSource>();
+                    _source.clip = LoadAsset<AudioClip>(bundle, path);
+                    _source.loop = true;
+                    _source.volume = path.Contains("crying") ? 0.4f : 0.9f;
+                    _source.priority = 0;
+                    _source.rolloffMode = AudioRolloffMode.Logarithmic;
+                    _source.minDistance = 1.5f;
+                    _source.maxDistance = 12;
+                    _source.spatialBlend = 1;
+                    _source.spread = 0;
+                    _source.dopplerLevel = 1;
 
-                    emptyPoint.transform.SetParent(building, worldPositionStays: false);
-                    emptyPoint.transform.position = pointsPos[item];
-                    SoundManager.ScreamPoints.Add(source);
+                    _emptyPoint.transform.SetParent(_building, worldPositionStays: false);
+                    _emptyPoint.transform.position = _pointsPos[_item];
+                    SoundManager.ScreamPoints.Add(_source);
                 }
                 else if (path.Contains("assets/audio/fullscreenscreamers"))
-                    SoundManager.FullScreenScreamersSounds.Add(LoadAsset<AudioClip>(_bundle, path));
+                    SoundManager.FullScreenScreamersSounds.Add(LoadAsset<AudioClip>(bundle, path));
                 else if (path.Contains("screens/"))
-                    MailScreens.Add(LoadAsset<Texture>(_bundle, path));
+                    MailScreens.Add(LoadAsset<Texture>(bundle, path));
                 else if (path.Contains("textures/taro"))
-                    TaroCards.Add(LoadAsset<Texture>(_bundle, path));
+                    TaroCards.Add(LoadAsset<Texture>(bundle, path));
                 else if (path.Contains("textures/album"))
-                    SketchbookPages.Add(LoadAsset<Texture>(_bundle, path));
+                    SketchbookPages.Add(LoadAsset<Texture>(bundle, path));
                 else if (path.Contains("textures/fullscreenscreamers"))
-                    FullScreenScreamerTextures.Add(LoadAsset<Texture>(_bundle, path));
+                    FullScreenScreamerTextures.Add(LoadAsset<Texture>(bundle, path));
             }
 
             MailScreens.Sort(delegate (Texture item, Texture target) {
@@ -474,53 +466,53 @@ namespace Psycho
             });
 
             // load smoking replaces
-            Texture cig_texture = LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
+            Texture _cig_texture = LoadAsset<Texture>(bundle, "assets/replaces/smoking/hand.png");
             ModelsReplaces.Add("cigarette_filter".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Filter",
-                mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_filter.obj"),
-                texture = cig_texture
+                mesh = LoadAsset<Mesh>(bundle, "assets/replaces/smoking/cigarette_filter.obj"),
+                texture = _cig_texture
             });
 
             ModelsReplaces.Add("cigarette_shaft".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft",
-                mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
-                texture = cig_texture
+                mesh = LoadAsset<Mesh>(bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
+                texture = _cig_texture
             });
 
             // Load death sound
-            AudioSource src = GameObject.Find("Systems").AddComponent<AudioSource>();
-            src.clip = LoadAsset<AudioClip>(_bundle, "assets/audio/heart_stop.wav");
-            src.loop = false;
-            src.volume = 1.75f;
-            src.priority = 0;
-            SoundManager.DeathSound = src;
+            AudioSource _src = GameObject.Find("Systems").AddComponent<AudioSource>();
+            _src.clip = LoadAsset<AudioClip>(bundle, "assets/audio/heart_stop.wav");
+            _src.loop = false;
+            _src.volume = 1.75f;
+            _src.priority = 0;
+            SoundManager.DeathSound = _src;
 
-            AudioSource fssss = GameObject.Find("PLAYER").AddComponent<AudioSource>();
-            fssss.clip = SoundManager.FullScreenScreamersSounds[0];
-            fssss.loop = false;
-            fssss.playOnAwake = false;
-            fssss.priority = 1;
-            fssss.volume = 1;
-            fssss.pitch = 1;
-            fssss.panStereo = 0;
-            fssss.spatialBlend = 1;
-            fssss.reverbZoneMix = 1;
-            fssss.dopplerLevel = 1;
-            fssss.spread = 0;
-            fssss.minDistance = 1.5f;
-            fssss.maxDistance = 12f;
-            SoundManager.FullScreenScreamerSoundsSource = fssss;
+            AudioSource _fssss = GameObject.Find("PLAYER").AddComponent<AudioSource>();
+            _fssss.clip = SoundManager.FullScreenScreamersSounds[0];
+            _fssss.loop = false;
+            _fssss.playOnAwake = false;
+            _fssss.priority = 1;
+            _fssss.volume = 1;
+            _fssss.pitch = 1;
+            _fssss.panStereo = 0;
+            _fssss.spatialBlend = 1;
+            _fssss.reverbZoneMix = 1;
+            _fssss.dopplerLevel = 1;
+            _fssss.spread = 0;
+            _fssss.minDistance = 1.5f;
+            _fssss.maxDistance = 12f;
+            SoundManager.FullScreenScreamerSoundsSource = _fssss;
         }
 
         static T LoadAsset<T>(AssetBundle bundle, string path) where T : UnityEngine.Object
         {
             try
             {
-                T asset = bundle.LoadAsset<T>(path);
-                if (asset == null) throw new NullReferenceException();
-                return asset;
+                T _asset = bundle.LoadAsset<T>(path);
+                if (_asset == null) throw new NullReferenceException();
+                return _asset;
             }
             catch (Exception e)
             {

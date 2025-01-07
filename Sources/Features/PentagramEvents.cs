@@ -18,22 +18,22 @@ namespace Psycho.Features
 {
     internal sealed class PentagramEvents : CatchedComponent
     {
-        bool IsEventCalled = false;
-        bool IsEventFinished = true;
+        bool isEventCalled = false;
+        bool isEventFinished = true;
 
         Pentagram penta;
-        Vector3 itemSpawnPos, GrandmaSoundOrigPos;
+        Vector3 itemSpawnPos, grandmaSoundOrigPos;
 
-        AudioSource GrandmaSound;
-        GameObject Fire, MoneyObj, FPSCamera, Grandma, TireStatus;
-        Transform Fusetable, Player;
+        AudioSource grandmaSound;
+        GameObject fire, moneyObj, fpsCamera, grandma, tireStatus;
+        Transform fusetable;
 
-        PlayMakerFSM Blindless, HangoverCamera, Knockout;
-        FsmFloat PlayerFatigue, PlayerHunger, PlayerThirst, BlindIntensity;
+        PlayMakerFSM blindless, hangoverCamera, knockout;
+        FsmFloat playerFatigue, playerHunger, playerThirst, blindIntensity;
 
         Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
-        List<FsmFloat> fuellevels = new List<FsmFloat>();
-        List<FsmGameObject> TireStatusList = new List<FsmGameObject>();
+        List<FsmFloat> fuelLevels = new List<FsmFloat>();
+        List<FsmGameObject> tireStatusList = new List<FsmGameObject>();
 
         Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
 
@@ -46,90 +46,88 @@ namespace Psycho.Features
             penta = GetComponent<Pentagram>();
             itemSpawnPos = transform.position + new Vector3(0, 0, .15f);
 
-            GameObject PLAYER = GameObject.Find("PLAYER");
-            Player = PLAYER.transform;
-            PlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
-            PlayerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
-            PlayerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
-            FPSCamera = Utils.GetGlobalVariable<FsmGameObject>("POV").Value;
+            playerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
+            playerHunger = Utils.GetGlobalVariable<FsmFloat>("PlayerHunger");
+            playerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
+            fpsCamera = Utils.GetGlobalVariable<FsmGameObject>("POV").Value;
             
-            Blindless = FPSCamera.GetPlayMaker("Blindness");
-            BlindIntensity = Blindless.GetVariable<FsmFloat>("Intensity");
+            blindless = fpsCamera.GetPlayMaker("Blindness");
+            blindIntensity = blindless.GetVariable<FsmFloat>("Intensity");
 
-            HangoverCamera = FPSCamera.GetPlayMaker("Hangover");
-            HangoverCamera.Fsm.InitData();
-            HangoverCamera.AddEvent("PENTAEVENT");
-            HangoverCamera.AddGlobalTransition("PENTAEVENT", "Randomize");
+            hangoverCamera = fpsCamera.GetPlayMaker("Hangover");
+            hangoverCamera.Fsm.InitData();
+            hangoverCamera.AddEvent("PENTAEVENT");
+            hangoverCamera.AddGlobalTransition("PENTAEVENT", "Randomize");
 
-            Knockout = GameObject.Find("Systems/KnockOut").GetComponent<PlayMakerFSM>();
+            knockout = GameObject.Find("Systems/KnockOut").GetComponent<PlayMakerFSM>();
 
-            Fusetable = GameObject.Find("YARD/Building/Dynamics/FuseTable/Fusetable").transform;
+            fusetable = GameObject.Find("YARD/Building/Dynamics/FuseTable/Fusetable").transform;
 
-            Grandma = GameObject.Instantiate(GameObject.Find("ChurchGrandma/GrannyHiker/Char"));
-            Grandma.name = "PentaGrannyChar";
+            grandma = GameObject.Instantiate(GameObject.Find("ChurchGrandma/GrannyHiker/Char"));
+            grandma.name = "PentaGrannyChar";
 
-            Transform temp = Grandma.transform;
-            temp.SetParent(transform, worldPositionStays: false);
-            temp.localPosition = new Vector3(0, 0.7f, 0);
-            temp.localEulerAngles = new Vector3(0, -166.109f, 0);
-            temp.localScale = new Vector3(3.603494f, 1.028313f, 3.999587f);
+            Transform _temp = grandma.transform;
+            _temp.SetParent(transform, worldPositionStays: false);
+            _temp.localPosition = new Vector3(0, 0.7f, 0);
+            _temp.localEulerAngles = new Vector3(0, -166.109f, 0);
+            _temp.localScale = new Vector3(3.603494f, 1.028313f, 3.999587f);
 
-            Destroy(temp.Find("RagDollCar").gameObject);
-            Destroy(temp.Find("HeadTarget").gameObject);
-            Destroy(temp.Find("HumanTriggerCrime").gameObject);
-            Grandma.SetActive(false);
+            Destroy(_temp.Find("RagDollCar").gameObject);
+            Destroy(_temp.Find("HeadTarget").gameObject);
+            Destroy(_temp.Find("HumanTriggerCrime").gameObject);
+            grandma.SetActive(false);
 
-            GrandmaSound = GameObject.Find("MasterAudio/Mummo/mummo_angry2").GetComponent<AudioSource>();
-            GrandmaSoundOrigPos = GrandmaSound.transform.position;
+            grandmaSound = GameObject.Find("MasterAudio/Mummo/mummo_angry2").GetComponent<AudioSource>();
+            grandmaSoundOrigPos = grandmaSound.transform.position;
 
-            fuellevels.Add(_getFuelLevel("Database/DatabaseMechanics/FuelTank")); // satsuma
-            fuellevels.Add(_getFuelLevel("FERNDALE(1630kg)/FuelTank")); // ferndale
-            fuellevels.Add(_getFuelLevel("HAYOSIKO(1500kg, 250)/FuelTank")); // hayosiko
-            fuellevels.Add(_getFuelLevel("GIFU(750/450psi)/FuelTank")); // gifu
-            fuellevels.Add(_getFuelLevel("RCO_RUSCKO12(270)/FuelTank")); // ruscko
-            fuellevels.Add(_getFuelLevel("JONNEZ ES(Clone)/FuelTank")); // jonnez
-            fuellevels.Add(_getFuelLevel("KEKMET(350-400psi)/FuelTank")); // kekmet
+            fuelLevels.Add(_getFuelLevel("Database/DatabaseMechanics/FuelTank")); // satsuma
+            fuelLevels.Add(_getFuelLevel("FERNDALE(1630kg)/FuelTank")); // ferndale
+            fuelLevels.Add(_getFuelLevel("HAYOSIKO(1500kg, 250)/FuelTank")); // hayosiko
+            fuelLevels.Add(_getFuelLevel("GIFU(750/450psi)/FuelTank")); // gifu
+            fuelLevels.Add(_getFuelLevel("RCO_RUSCKO12(270)/FuelTank")); // ruscko
+            fuelLevels.Add(_getFuelLevel("JONNEZ ES(Clone)/FuelTank")); // jonnez
+            fuelLevels.Add(_getFuelLevel("KEKMET(350-400psi)/FuelTank")); // kekmet
 
-            TireStatus = GameObject.Find("Database/PartsStatus/TireStatus");
-            TireStatusList.Add(getInstalledTireRef("WheelFL"));
-            TireStatusList.Add(getInstalledTireRef("WheelFR"));
-            TireStatusList.Add(getInstalledTireRef("WheelRL"));
-            TireStatusList.Add(getInstalledTireRef("WheelRR"));
+            tireStatus = GameObject.Find("Database/PartsStatus/TireStatus");
+            tireStatusList.Add(getInstalledTireRef("WheelFL"));
+            tireStatusList.Add(getInstalledTireRef("WheelFR"));
+            tireStatusList.Add(getInstalledTireRef("WheelRL"));
+            tireStatusList.Add(getInstalledTireRef("WheelRR"));
 
-            Fire = GameObject.Instantiate(
+            fire = GameObject.Instantiate(
                 Resources.FindObjectsOfTypeAll<GameObject>()
                     .First(v => v.name == "garbage barrel(itemx)")?.transform
                     ?.Find("Fire")?.gameObject
             );
 
-            Fire.transform.SetParent(transform, worldPositionStays: false);
-            Fire.transform.position = itemSpawnPos; //transform.position;
-            Object.Destroy(Fire.GetComponent<PlayMakerFSM>());
-            Object.Destroy(Fire.transform.Find("GarbageTrigger").gameObject);
-            Object.Destroy(Fire.transform.Find("FireTrigger").gameObject);
-            Fire.SetActive(false);
+            fire.transform.SetParent(transform, worldPositionStays: false);
+            fire.transform.position = itemSpawnPos; //transform.position;
+            Object.Destroy(fire.GetComponent<PlayMakerFSM>());
+            Object.Destroy(fire.transform.Find("GarbageTrigger").gameObject);
+            Object.Destroy(fire.transform.Find("FireTrigger").gameObject);
+            fire.SetActive(false);
            
-            List<Transform> list = Resources.FindObjectsOfTypeAll<Transform>().ToList();
+            List<Transform> _list = Resources.FindObjectsOfTypeAll<Transform>().ToList();
 
-            objects.Add("beercase", _findPrefab(list, "beer case"));
-            objects.Add("battery", list.First(v =>
+            objects.Add("beercase", _findPrefab(_list, "beer case"));
+            objects.Add("battery", _list.First(v =>
                 v.IsPrefab()
                 && v.gameObject.name == "battery"
                 && v.GetComponents<PlayMakerFSM>().Length > 0).gameObject
             );
-            objects.Add("fusesbox", _findPrefab(list, "fusepackage0"));
-            objects.Add("sparksbox", _findPrefab(list, "sparkplugbox0"));
-            objects.Add("coolant", _findPrefab(list, "coolant0"));
-            objects.Add("motoroil", _findPrefab(list, "motoroil0"));
-            objects.Add("brakefluid", _findPrefab(list, "brakefluid0"));
-            objects.Add("coffee", _findPrefab(list, "groundcoffee0"));
-            objects.Add("booze", _findPrefab(list, "booze"));
-            objects.Add("sausages", _findPrefab(list, "sausages"));
-            objects.Add("lightbulb", _findPrefab(list, "lightbulb0"));
-            objects.Add("macaronbox", _findPrefab(list, "macaron box"));
-            objects.Add("chips", _findPrefab(list, "potato chips"));
-            objects.Add("sugar", _findPrefab(list, "sugar"));
-            objects.Add("cigarettes", _findPrefab(list, "cigarettes0"));
+            objects.Add("fusesbox", _findPrefab(_list, "fusepackage0"));
+            objects.Add("sparksbox", _findPrefab(_list, "sparkplugbox0"));
+            objects.Add("coolant", _findPrefab(_list, "coolant0"));
+            objects.Add("motoroil", _findPrefab(_list, "motoroil0"));
+            objects.Add("brakefluid", _findPrefab(_list, "brakefluid0"));
+            objects.Add("coffee", _findPrefab(_list, "groundcoffee0"));
+            objects.Add("booze", _findPrefab(_list, "booze"));
+            objects.Add("sausages", _findPrefab(_list, "sausages"));
+            objects.Add("lightbulb", _findPrefab(_list, "lightbulb0"));
+            objects.Add("macaronbox", _findPrefab(_list, "macaron box"));
+            objects.Add("chips", _findPrefab(_list, "potato chips"));
+            objects.Add("sugar", _findPrefab(_list, "sugar"));
+            objects.Add("cigarettes", _findPrefab(_list, "cigarettes0"));
 
             if (objects.Any(v => v.Value == null))
                 Utils.PrintDebug(eConsoleColors.RED, $"[PentagramEvents] null exists in objects dict");
@@ -150,176 +148,176 @@ namespace Psycho.Features
 
         void createMoneyEnvelope()
         {
-            GameObject obj = GameObject.Find("YARD/PlayerMailBox/EnvelopeInspection/envelopemesh");
-            obj.name = "Money(Clone)";
-            obj.transform.parent = null;
-            obj.transform.position = itemSpawnPos;
-            obj.MakePickable();
+            GameObject _obj = GameObject.Find("YARD/PlayerMailBox/EnvelopeInspection/envelopemesh");
+            _obj.name = "Money(Clone)";
+            _obj.transform.parent = null;
+            _obj.transform.position = itemSpawnPos;
+            _obj.MakePickable();
 
-            BoxCollider collider = obj.AddComponent<BoxCollider>();
-            collider.size = new Vector3(.21f, .15f, .005f);
+            BoxCollider _collider = _obj.AddComponent<BoxCollider>();
+            _collider.size = new Vector3(.21f, .15f, .005f);
 
-            Rigidbody rb = obj.AddComponent<Rigidbody>();
-            rb.mass = .5f;
-            rb.drag = 1;
-            rb.angularDrag = 1;
-            rb.useGravity = true;
-            rb.isKinematic = false;
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            rb.detectCollisions = true;
+            Rigidbody _rb = _obj.AddComponent<Rigidbody>();
+            _rb.mass = .5f;
+            _rb.drag = 1;
+            _rb.angularDrag = 1;
+            _rb.useGravity = true;
+            _rb.isKinematic = false;
+            _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            _rb.detectCollisions = true;
 
 
-            Utils.SetupFSM(obj, "Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
+            Utils.SetupFSM(_obj, "Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
             {
-                FsmFloat playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
-                FsmFloat money = new FsmFloat() { Name = "Money", Value = 100f };
-                _fsm.AddVariable(money);
+                FsmFloat _playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
+                FsmFloat _money = new FsmFloat() { Name = "Money", Value = 100f };
+                _fsm.AddVariable(_money);
 
-                FsmEvent finished = events[0];
-                FsmEvent useEvent = events[1];
+                FsmEvent _finished = events[0];
+                FsmEvent _useEvent = events[1];
 
-                FsmString GUIinteraction = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
-                FsmBool GUIuse = Utils.GetGlobalVariable<FsmBool>("GUIuse");
+                FsmString _guiInteraction = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
+                FsmBool _guiUse = Utils.GetGlobalVariable<FsmBool>("GUIuse");
 
-                FsmOwnerDefault owner = new FsmOwnerDefault() { OwnerOption = OwnerDefaultOption.UseOwner };
-                FsmInt[] layerMask = new FsmInt[1] { new FsmInt() { Value = 19 } };
+                FsmOwnerDefault _owner = new FsmOwnerDefault() { OwnerOption = OwnerDefaultOption.UseOwner };
+                FsmInt[] _layerMask = new FsmInt[1] { new FsmInt() { Value = 19 } };
 
-                FsmState waitPlayer = new FsmState(_fsm.Fsm)
+                FsmState _waitPlayer = new FsmState(_fsm.Fsm)
                 {
                     Name = "Wait player",
                     Transitions = new FsmTransition[1] {
-                    new FsmTransition()
-                    {
-                        FsmEvent = finished,
-                        ToState = "Wait button"
-                    }
-                },
+                        new FsmTransition()
+                        {
+                            FsmEvent = _finished,
+                            ToState = "Wait button"
+                        }
+                    },
                     Actions = new FsmStateAction[3]
-                {
-                    new SetStringValue()
-                    { stringVariable = GUIinteraction, stringValue = "", everyFrame = false },
-
-                    new SetBoolValue()
-                    { boolVariable = GUIuse, boolValue = false, everyFrame = false },
-
-                    new MousePickEvent()
                     {
-                        GameObject = owner, rayDistance = 1,
-                        mouseOver = finished, layerMask = layerMask,
-                        invertMask = false, everyFrame = true
-                    }
-                }
-                };
-                waitPlayer.SaveActions();
+                        new SetStringValue()
+                        { stringVariable = _guiInteraction, stringValue = "", everyFrame = false },
 
-                FsmState waitButton = new FsmState(_fsm.Fsm)
+                        new SetBoolValue()
+                        { boolVariable = _guiUse, boolValue = false, everyFrame = false },
+
+                        new MousePickEvent()
+                        {
+                            GameObject = _owner, rayDistance = 1,
+                            mouseOver = _finished, layerMask = _layerMask,
+                            invertMask = false, everyFrame = true
+                        }
+                    }
+                };
+                _waitPlayer.SaveActions();
+
+                FsmState _waitButton = new FsmState(_fsm.Fsm)
                 {
                     Name = "Wait button",
                     Transitions = new FsmTransition[2] {
-                    new FsmTransition() { FsmEvent = finished, ToState = "Wait player" },
-                    new FsmTransition() { FsmEvent = useEvent, ToState = "Use item" }
-                },
-                    Actions = new FsmStateAction[4]
-                {
-                    new SetStringValue()
-                    { stringVariable = GUIinteraction, stringValue = "RANDOM GIFT MONEY", everyFrame = true },
-
-                    new SetBoolValue()
-                    { boolVariable = GUIuse, boolValue = true, everyFrame = true },
-
-                    new MousePickEvent()
-                    {
-                        GameObject = owner, rayDistance = 1,
-                        mouseOff = finished, layerMask = layerMask,
-                        invertMask = false, everyFrame = true
+                        new FsmTransition() { FsmEvent = _finished, ToState = "Wait player" },
+                        new FsmTransition() { FsmEvent = _useEvent, ToState = "Use item" }
                     },
+                    Actions = new FsmStateAction[4]
+                    {
+                        new SetStringValue()
+                        { stringVariable = _guiInteraction, stringValue = "RANDOM GIFT MONEY", everyFrame = true },
 
-                    new GetButtonDown() { buttonName = "Use", sendEvent = useEvent, storeResult = false }
-                }
+                        new SetBoolValue()
+                        { boolVariable = _guiUse, boolValue = true, everyFrame = true },
+
+                        new MousePickEvent()
+                        {
+                            GameObject = _owner, rayDistance = 1,
+                            mouseOff = _finished, layerMask = _layerMask,
+                            invertMask = false, everyFrame = true
+                        },
+
+                        new GetButtonDown() { buttonName = "Use", sendEvent = _useEvent, storeResult = false }
+                    }
                 };
-                waitButton.SaveActions();
+                _waitButton.SaveActions();
 
-                FsmState useItem = new FsmState(_fsm.Fsm)
+                FsmState _useItem = new FsmState(_fsm.Fsm)
                 {
                     Name = "Use item",
                     Actions = new FsmStateAction[5]
-                {
-                    new RandomFloat()
-                    { min = 200, max = 1000, storeResult = money },
+                    {
+                        new RandomFloat()
+                        { min = 200, max = 1000, storeResult = _money },
 
-                    new SetStringValue()
-                    { stringVariable = GUIinteraction, stringValue = "", everyFrame = false },
+                        new SetStringValue()
+                        { stringVariable = _guiInteraction, stringValue = "", everyFrame = false },
 
-                    new SetBoolValue()
-                    { boolVariable = GUIuse, boolValue = false, everyFrame = false },
+                        new SetBoolValue()
+                        { boolVariable = _guiUse, boolValue = false, everyFrame = false },
 
-                    new FloatAdd()
-                    { floatVariable = playerMoney, add = money, everyFrame = false, perSecond = false },
+                        new FloatAdd()
+                        { floatVariable = _playerMoney, add = _money, everyFrame = false, perSecond = false },
 
-                    new DestroySelf() { detachChildren = false }
-                }
+                        new DestroySelf() { detachChildren = false }
+                    }
                 };
-                useItem.SaveActions();
+                _useItem.SaveActions();
 
 
-                return new FsmState[3] { waitPlayer, waitButton, useItem };
+                return new FsmState[3] { _waitPlayer, _waitButton, _useItem };
             });
         }
 
         void createSpiritBottle()
         {
-            GameObject spirit = (GameObject)Instantiate(objects["booze"], itemSpawnPos, Quaternion.Euler(Vector3.zero));
-            spirit.SetActive(false);
+            GameObject _spirit = (GameObject)Instantiate(objects["booze"], itemSpawnPos, Quaternion.Euler(Vector3.zero));
+            _spirit.SetActive(false);
 
-            Rigidbody rb = spirit.GetComponent<Rigidbody>();
-            rb.useGravity = true;
-            rb.isKinematic = false;
+            Rigidbody _rb = _spirit.GetComponent<Rigidbody>();
+            _rb.useGravity = true;
+            _rb.isKinematic = false;
 
-            Material spiritmat = Resources.FindObjectsOfTypeAll<Material>()
+            Material _spiritmat = Resources.FindObjectsOfTypeAll<Material>()
                 .Where(v => v.name?.Contains("bottle_spirit_label") == true)
                 .First();
 
-            MeshRenderer renderer = spirit.GetComponent<MeshRenderer>();
-            List<Material> materials = new List<Material>(renderer.materials);
-            materials.RemoveAt(1);
-            materials.Add(Instantiate(spiritmat));
-            renderer.materials = materials.ToArray();
+            MeshRenderer _renderer = _spirit.GetComponent<MeshRenderer>();
+            List<Material> _materials = new List<Material>(_renderer.materials);
+            _materials.RemoveAt(1);
+            _materials.Add(Instantiate(_spiritmat));
+            _renderer.materials = _materials.ToArray();
 
-            PlayMakerFSM fsm = spirit.GetComponent<PlayMakerFSM>();
-            fsm.enabled = false;
+            PlayMakerFSM _fsm = _spirit.GetComponent<PlayMakerFSM>();
+            _fsm.enabled = false;
 
-            fsm.Fsm.GlobalTransitions = new List<FsmTransition>().ToArray();
+            _fsm.Fsm.GlobalTransitions = new List<FsmTransition>().ToArray();
 
-            List<FsmState> states = new List<FsmState>(fsm.Fsm.States);
-            FsmState playAnim = states.First(v => v.Name == "Play anim");
+            List<FsmState> _states = new List<FsmState>(_fsm.Fsm.States);
+            FsmState _playAnim = _states.First(v => v.Name == "Play anim");
 
-            playAnim.Transitions = new List<FsmTransition>()
+            _playAnim.Transitions = new List<FsmTransition>()
             {
                 new FsmTransition()
                 {
-                    FsmEvent = fsm.FsmEvents.First(v => v.Name == "FINISHED"),
+                    FsmEvent = _fsm.FsmEvents.First(v => v.Name == "FINISHED"),
                     ToState = "Destroy self"
                 }
             }.ToArray();
 
-            List<FsmStateAction> animActions = new List<FsmStateAction>(playAnim.Actions);
-            (animActions[2] as SendEvent).sendEvent = FPSCamera.transform.Find("Drink")
+            List<FsmStateAction> _animActions = new List<FsmStateAction>(_playAnim.Actions);
+            (_animActions[2] as SendEvent).sendEvent = fpsCamera.transform.Find("Drink")
                 .GetComponent<PlayMakerFSM>().FsmEvents
                 .First(v => v.Name == "DRINKSPIRIT");
 
-            states.Remove(states.First(v => v.Name == "State 1"));
-            states.Remove(states.First(v => v.Name == "State 2"));
-            states.Remove(states.First(v => v.Name == "Load"));
-            states.Remove(states.First(v => v.Name == "Save"));
-            states.Remove(states.First(v => v.Name == "Destroy"));
-            
-            fsm.Fsm.States = states.ToArray();
-            fsm.Fsm.StartState = "Wait player 2";
-            fsm.Fsm.Start();
-            fsm.enabled = true;
+            _states.Remove(_states.First(v => v.Name == "State 1"));
+            _states.Remove(_states.First(v => v.Name == "State 2"));
+            _states.Remove(_states.First(v => v.Name == "Load"));
+            _states.Remove(_states.First(v => v.Name == "Save"));
+            _states.Remove(_states.First(v => v.Name == "Destroy"));
 
-            spirit.name = "spirit(Clone)";
-            spirit.SetActive(true);
+            _fsm.Fsm.States = _states.ToArray();
+            _fsm.Fsm.StartState = "Wait player 2";
+            _fsm.Fsm.Start();
+            _fsm.enabled = true;
+
+            _spirit.name = "spirit(Clone)";
+            _spirit.SetActive(true);
         }
 
         void addSoundClip(string name, string path)
@@ -327,26 +325,26 @@ namespace Psycho.Features
 
         FsmGameObject getInstalledTireRef(string slot)
         {
-            PlayMakerFSM WheelSlot = TireStatus.GetPlayMaker(slot);
-            Wheel Script = (Wheel)WheelSlot.GetVariable<FsmObject>("WheelScript").Value;
-            GameObject WheelSlotObj = Script.gameObject;
-            PlayMakerFSM SlotConditionHandler = WheelSlotObj.GetPlayMaker("Condition");
-            FsmGameObject ThisTire = SlotConditionHandler.GetVariable<FsmGameObject>("ThisTire");
-            return ThisTire;
+            PlayMakerFSM _wheelSlot = tireStatus.GetPlayMaker(slot);
+            Wheel _script = (Wheel)_wheelSlot.GetVariable<FsmObject>("WheelScript").Value;
+            GameObject _wheelSlotObj = _script.gameObject;
+            PlayMakerFSM _slotConditionHandler = _wheelSlotObj.GetPlayMaker("Condition");
+            FsmGameObject _thisTire = _slotConditionHandler.GetVariable<FsmGameObject>("ThisTire");
+            return _thisTire;
         }
 
         public static void TriggerEvent(string _event, bool byCommand = false)
         {
             if (instance == null) return;
             if (string.IsNullOrEmpty(_event)) return;
-            if (instance.IsEventCalled || !instance.IsEventFinished) return;
+            if (instance.isEventCalled || !instance.isEventFinished) return;
             if (byCommand)
             {
                 if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
                 Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
-                instance.IsEventCalled = true;
-                instance.IsEventFinished = false;
+                instance.isEventCalled = true;
+                instance.isEventFinished = false;
                 instance._processEvents(_event);
                 return;
             }
@@ -355,8 +353,8 @@ namespace Psycho.Features
             if (!Pentagram.InnerEvents.Any(v => v.Value.Contains(_event))) return;
             Utils.PrintDebug(eConsoleColors.YELLOW, "[event] Activate called");
 
-            instance.IsEventCalled = true;
-            instance.IsEventFinished = false;
+            instance.isEventCalled = true;
+            instance.isEventFinished = false;
             instance.penta.MakeItemsUnPickable();
 
             instance._processEvents(_event);
@@ -368,8 +366,8 @@ namespace Psycho.Features
         void _finishEvent()
         {
             Utils.PrintDebug(eConsoleColors.GREEN, "[event] _finishEvent called");
-            IsEventCalled = false;
-            IsEventFinished = true;
+            isEventCalled = false;
+            isEventFinished = true;
             penta.SetCandlesFireActive(false, true);
         }
 
@@ -390,7 +388,7 @@ namespace Psycho.Features
                 return;
             }
 
-            AudioSource.PlayClipAtPoint(clip, Player.position, 1f);
+            AudioSource.PlayClipAtPoint(clip, Psycho.Player.position, 1f);
         }
 
         void _destroyItems()
@@ -411,14 +409,14 @@ namespace Psycho.Features
 
                 // ▼ fill all fuel tanks
                 case "fuel":
-                    _startEvent(() => fuellevels.ForEach(v => v.Value = 300f), "accelerate");
+                    _startEvent(() => fuelLevels.ForEach(v => v.Value = 300f), "accelerate");
                     return;
 
                 // ▼ spoil all products
                 case "spoil":
                     _startGrannyEvent(() =>
                     {
-                        List<PlayMakerFSM> list = Resources.FindObjectsOfTypeAll<PlayMakerFSM>()
+                        List<PlayMakerFSM> _list = Resources.FindObjectsOfTypeAll<PlayMakerFSM>()
                             .Where(v =>
                                 v.FsmName == "Use"
                                 && v.gameObject.name.Contains("(itemx)")
@@ -426,12 +424,12 @@ namespace Psycho.Features
                             )
                             .ToList();
 
-                        list.ForEach(item =>
+                        _list.ForEach(_item =>
                         {
-                            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] {item.gameObject.name} spoiled");
-                            item.GetVariable<FsmFloat>("Condition").Value = .5f;
-                            item.SendEvent("UPDATE");
-                            item.SendEvent("BAD");
+                            Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] {_item.gameObject.name} spoiled");
+                            _item.GetVariable<FsmFloat>("Condition").Value = .5f;
+                            _item.SendEvent("UPDATE");
+                            _item.SendEvent("BAD");
                         });
                     });
                     return; // ▼ "spoil all products"
@@ -440,22 +438,22 @@ namespace Psycho.Features
                 case "hangover":
                     _startEvent(() =>
                     {
-                        HangoverCamera.GetVariable<FsmFloat>("HangoverStrenght").Value = 0.008251007f;
-                        HangoverCamera.GetVariable<FsmFloat>("TimeLeft").Value = 55f;
-                        HangoverCamera.CallGlobalTransition("PENTAEVENT");
+                        hangoverCamera.GetVariable<FsmFloat>("HangoverStrenght").Value = 0.008251007f;
+                        hangoverCamera.GetVariable<FsmFloat>("TimeLeft").Value = 55f;
+                        hangoverCamera.CallGlobalTransition("PENTAEVENT");
                     }, "saatana");
                     return;
 
                 // ▼ set fatigue to 110f
                 case "fatigue":
-                    _startEvent(() => PlayerFatigue.Value = 110f, "yawning");
+                    _startEvent(() => playerFatigue.Value = 110f, "yawning");
                     return;
 
                 // ▼ set hunger & thirst to 101f
                 case "hunger":
                     _startEvent(() => {
-                        PlayerHunger.Value = 101f;
-                        PlayerThirst.Value = 101f;
+                        playerHunger.Value = 101f;
+                        playerThirst.Value = 101f;
                     }, "nausea");
                     return;
 
@@ -465,23 +463,23 @@ namespace Psycho.Features
                     {
                         for (int i = 0; i < 7; i++)
                         {
-                            Transform fusePivot = Fusetable.GetChild(i);
-                            if (fusePivot.childCount == 0) continue;
-                            fusePivot.GetChild(0).GetPlayMaker("Use").SendEvent("BLOWFUSE");
+                            Transform _fusePivot = fusetable.GetChild(i);
+                            if (_fusePivot.childCount == 0) continue;
+                            _fusePivot.GetChild(0).GetPlayMaker("Use").SendEvent("BLOWFUSE");
                         }
                     }, "thunder");
                     return;
 
                 // ▼ knockout player like a Jani's hit
                 case "knockout":
-                    _startEvent(() => Knockout.CallGlobalTransition("GLOBALEVENT"), "saatana");
+                    _startEvent(() => knockout.CallGlobalTransition("GLOBALEVENT"), "saatana");
                     return;
 
                 // ▼ burst all tires on wheels where installed on satsuma
                 case "bursttires":
                     _startEvent(() =>
                     {
-                        TireStatusList.ForEach(v =>
+                        tireStatusList.ForEach(v =>
                         {
                             if (v.Value == null) return;
                             
@@ -494,15 +492,15 @@ namespace Psycho.Features
 
                 // ▼ empty all fuel tanks
                 case "outoffuel":
-                    _startEvent(() => fuellevels.ForEach(v => v.Value = 0f), "removal");
+                    _startEvent(() => fuelLevels.ForEach(v => v.Value = 0f), "removal");
                     return;
 
                 // ▼ BLIND BY BEE
                 case "blindless":
                     _startEvent(() =>
                     {
-                        Blindless.SendEvent("BLINDBEE");
-                        BlindIntensity.Value = 60f;
+                        blindless.SendEvent("BLINDBEE");
+                        blindIntensity.Value = 60f;
                     });
                     return;
 
@@ -512,8 +510,8 @@ namespace Psycho.Features
                     return;
 
                 // ▼ spawn item from list (PentagramEvents.objects)
-                case string item when objects.Keys.Contains(item):
-                    _startEvent(() => _cloneItemFromPrefab(item), "cash");
+                case string _item when objects.Keys.Contains(_item):
+                    _startEvent(() => _cloneItemFromPrefab(_item), "cash");
                     return;
             }
         }
@@ -524,20 +522,20 @@ namespace Psycho.Features
 
         void _cloneItemFromPrefab(string item)
         {
-            if (!objects.TryGetValue(item, out GameObject prefab))
+            if (!objects.TryGetValue(item, out GameObject _prefab))
             {
                 Utils.PrintDebug(eConsoleColors.RED, $"[event] _spawnItem object {item} doesn't exist in pool");
                 _abortEvent();
                 return;
             }
 
-            GameObject cloned = (GameObject)Object.Instantiate(
-                prefab,
+            GameObject _cloned = (GameObject)Object.Instantiate(
+                _prefab,
                 itemSpawnPos,
                 Quaternion.Euler(Vector3.zero)
             );
 
-            Utils.PrintDebug(eConsoleColors.GREEN, $"[event] _spawnItem cloned item {cloned}");
+            Utils.PrintDebug(eConsoleColors.GREEN, $"[event] _spawnItem cloned item {_cloned}");
         }
 
         FsmFloat _getFuelLevel(string path)
@@ -547,7 +545,7 @@ namespace Psycho.Features
         {
             Utils.PrintDebug(eConsoleColors.YELLOW, $"[event] _playFireAnimation called");
             
-            Fire.SetActive(true);            
+            fire.SetActive(true);            
             yield return new WaitForSeconds(2f);
 
             try
@@ -561,52 +559,52 @@ namespace Psycho.Features
             }
 
             yield return new WaitForSeconds(2f);
-            Fire.SetActive(false);
+            fire.SetActive(false);
         }
 
-        IEnumerator _eventGrannyCoroutine(Action _action)
+        IEnumerator _eventGrannyCoroutine(Action action)
         {
             Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventGrannyCoroutine called");
-            Fire.SetActive(true);
+            fire.SetActive(true);
             
             yield return new WaitForSeconds(2f);
             _destroyItems();
 
-            Grandma.SetActive(true);
-            GrandmaSound.transform.position = transform.position;
-            GrandmaSound.Play();
+            grandma.SetActive(true);
+            grandmaSound.transform.position = transform.position;
+            grandmaSound.Play();
 
             try
             {
-                _action?.Invoke();
+                action?.Invoke();
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(_action.Method)}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(action.Method)}");
                 ModConsole.Error(ex.GetFullMessage());
             }
 
-            while (GrandmaSound.isPlaying)
+            while (grandmaSound.isPlaying)
                 yield return new WaitForSeconds(.1f);
             
-            GrandmaSound.transform.position = GrandmaSoundOrigPos;
-            Grandma.SetActive(false);
-            Fire.SetActive(false);
+            grandmaSound.transform.position = grandmaSoundOrigPos;
+            grandma.SetActive(false);
+            fire.SetActive(false);
             _finishEvent();
         }
 
-        IEnumerator _eventCoroutine(Action _action, string sound = "")
+        IEnumerator _eventCoroutine(Action action, string sound = "")
         {
             Utils.PrintDebug(eConsoleColors.YELLOW, "[event] _eventCoroutine called");
             yield return StartCoroutine(_playFireAnimation());
 
             try
             {
-                _action?.Invoke();
+                action?.Invoke();
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(_action.Method)}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Exception in {Utils.GetMethodPath(action.Method)}");
                 ModConsole.Error(ex.GetFullMessage());
             }
 

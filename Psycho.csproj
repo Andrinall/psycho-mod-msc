@@ -91,6 +91,9 @@
     <Compile Include="Sources\Ambient\AmbientTrigger.cs" />
     <Compile Include="Sources\Commands\DBG\TeleportToPills.cs" />
     <Compile Include="Sources\Commands\FixBrokenHUD.cs" />
+    <Compile Include="Sources\Extensions\PlayMakerExtensions.cs" />
+    <Compile Include="Sources\Extensions\TransformExtensions.cs" />
+    <Compile Include="Sources\Extensions\VectorExtensions.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
     <Compile Include="Sources\FullScreenScreamers\AssemblyBatteryToChargeHandler.cs" />
     <Compile Include="Sources\FullScreenScreamers\BoatIgnitionHandler.cs" />
@@ -135,7 +138,7 @@
     <Compile Include="Sources\Screamers\TVScreamer.cs" />
     <Compile Include="Sources\Internal\BookWithGUI.cs" />
     <Compile Include="Sources\Internal\CatchedComponent.cs" />
-    <Compile Include="Sources\Extensions.cs" />
+    <Compile Include="Sources\Extensions\Extensions.cs" />
     <Compile Include="Sources\Internal\ItemsPool.cs" />
     <Compile Include="Sources\Internal\SaveManager.cs" />
     <Compile Include="Sources\Internal\SoundManager.cs" />

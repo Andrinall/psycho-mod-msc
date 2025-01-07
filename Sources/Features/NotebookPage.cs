@@ -29,7 +29,7 @@ namespace Psycho.Features
 
     internal class NotebookPageComponent : CatchedComponent
     {
-        public NotebookPage page;
+        public NotebookPage Page;
 
         TextMesh pageText;
 
@@ -39,19 +39,19 @@ namespace Psycho.Features
 
         protected override void Enabled()
         {
-            Transform text = transform.Find("Text");
-            pageText = text?.GetComponent<TextMesh>();
+            Transform _text = transform.Find("Text");
+            pageText = _text?.GetComponent<TextMesh>();
 
-            MeshRenderer renderer = text.GetComponent<MeshRenderer>();
-            Material pageTextMat = renderer.material;
-            pageTextMat.shader = Shader.Find("GUI/3D Text Shader");
-            pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
+            MeshRenderer _renderer = _text.GetComponent<MeshRenderer>();
+            Material _pageTextMat = _renderer.material;
+            _pageTextMat.shader = Shader.Find("GUI/3D Text Shader");
+            _pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
 
         protected override void Disabled() => Destroy(gameObject);
 
         public void UpdatePageText()
-            => pageText.text = Locales.PAGES[page.index - 1, page.isTruePage ? 0 : 1, Globals.CurrentLang];
+            => pageText.text = Locales.PAGES[Page.index - 1, Page.isTruePage ? 0 : 1, Globals.CurrentLang];
     }
 }
  

@@ -51,31 +51,29 @@ namespace Psycho.Features
 
         void CreatePillsItem(Vector3 position, Vector3 euler)
         {
-            Transform chips = Resources.FindObjectsOfTypeAll<Transform>()
+            Transform _chips = Resources.FindObjectsOfTypeAll<Transform>()
                 .First(v => v.gameObject.name == "potato chips" && v.IsPrefab());
 
-            self = (GameObject)Object.Instantiate(chips.gameObject, position, Quaternion.Euler(euler));
+            self = (GameObject)Object.Instantiate(_chips.gameObject, position, Quaternion.Euler(euler));
             self.name = "pills(itemx)";
-            //self.transform.position = position;
-            //self.transform.eulerAngles = euler;
             self.transform.SetParent(GameObject.Find("ITEMS").transform);
 
-            ItemRenamer renamer = self.AddComponent<ItemRenamer>();
-            renamer.TargetName = "potato chips(itemx)";
-            renamer.FinalName = "pills(itemx)";
+            ItemRenamer _renamer = self.AddComponent<ItemRenamer>();
+            _renamer.TargetName = "potato chips(itemx)";
+            _renamer.FinalName = "pills(itemx)";
 
-            GameObject pillsPrefab = Globals.Pills_prefab;
+            GameObject _pillsPrefab = Globals.Pills_prefab;
             WorldManager.ChangeModel(self,
-                pillsPrefab.GetComponent<MeshFilter>().mesh,
-                pillsPrefab.GetComponent<MeshRenderer>().material.mainTexture
+                _pillsPrefab.GetComponent<MeshFilter>().mesh,
+                _pillsPrefab.GetComponent<MeshRenderer>().material.mainTexture
             );
 
-            BoxCollider collider = self.GetComponent<BoxCollider>();
-            BoxCollider pcoll = Globals.Pills_prefab.GetComponent<BoxCollider>();
-            collider.contactOffset = pcoll.contactOffset;
-            collider.center = pcoll.center;
-            collider.name = pcoll.name;
-            collider.size = pcoll.size;
+            BoxCollider _collider = self.GetComponent<BoxCollider>();
+            BoxCollider _pcoll = Globals.Pills_prefab.GetComponent<BoxCollider>();
+            _collider.contactOffset = _pcoll.contactOffset;
+            _collider.center = _pcoll.center;
+            _collider.name = _pcoll.name;
+            _collider.size = _pcoll.size;
 
             fsm = self.GetPlayMaker("Use");
             fsm.GetState("Eat").ClearActions(6, 3);
@@ -93,28 +91,6 @@ namespace Psycho.Features
 
             Globals.Pills = null;
             Utils.PrintDebug(eConsoleColors.YELLOW, $"Pills with index {index} removed");
-        }
-
-        internal void WriteData(ref byte[] array, int offset)
-        {
-            BitConverter.GetBytes(index).CopyTo(array, offset);
-            offset += 4;
-
-            self.transform.position.CopyBytes(ref array, ref offset);
-            self.transform.eulerAngles.CopyBytes(ref array, ref offset);
-        }
-
-        internal static PillsItem ReadData(ref byte[] array, int offset)
-        {
-            int index = BitConverter.ToInt32(array, offset);
-            offset += 4;
-
-            Vector3 position = Vector3.zero.GetFromBytes(array, ref offset);
-            Vector3 euler = Vector3.zero.GetFromBytes(array, ref offset);
-            
-            PillsItem item = new PillsItem(position, euler);
-            item.self.SetActive(Logic.InHorror);
-            return item;
         }
     }
 }

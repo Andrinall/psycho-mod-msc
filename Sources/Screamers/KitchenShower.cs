@@ -14,35 +14,35 @@ namespace Psycho.Screamers
         public override int ScreamerVariant => (int)ScreamFearType.WATERKITCHEN;
 
 
-        GameObject ParticleDrink;
-        GameObject Switch;
-        Transform Pivot;
+        GameObject particleDrink;
+        GameObject switchObj;
+        Transform pivot;
 
-        PlayMakerFSM SwitchFSM;
-        FsmBool SwitchOn;
-        FsmBool PlayerStop;
+        PlayMakerFSM switchFSM;
+        FsmBool switchOn;
+        FsmBool playerStop;
 
         bool switched = false;
 
 
         public override void InitScreamer()
         {
-            ParticleDrink = transform.Find("ParticleDrink").gameObject;
-            Switch = transform.Find("Trigger").gameObject;
-            SwitchFSM = Switch.GetComponent<PlayMakerFSM>();
-            SwitchOn = SwitchFSM.GetVariable<FsmBool>("SwitchOn");
+            particleDrink = transform.Find("ParticleDrink").gameObject;
+            switchObj = transform.Find("Trigger").gameObject;
+            switchFSM = switchObj.GetComponent<PlayMakerFSM>();
+            switchOn = switchFSM.GetVariable<FsmBool>("SwitchOn");
 
-            Pivot = transform.Find("Handle/Pivot");
-            PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
+            pivot = transform.Find("Handle/Pivot");
+            playerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
-            StateHook.Inject(Switch, "Use", "OFF", _showerHook);
+            StateHook.Inject(switchObj, "Use", "OFF", _showerHook);
         }
 
         public override void TriggerScreamer()
         {
-            Pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
-            SwitchOn.Value = true;
-            ParticleDrink.SetActive(true);
+            pivot.localEulerAngles = new Vector3(-17f, 0f, 0f);
+            switchOn.Value = true;
+            particleDrink.SetActive(true);
         }
 
 
@@ -64,7 +64,7 @@ namespace Psycho.Screamers
             SoundManager.StopScreamSound("kitchen_water");
             WorldManager.SpawnPhantomBehindPlayer();
             switched = true;
-            PlayerStop.Value = true;
+            playerStop.Value = true;
         }
 
 
@@ -72,7 +72,7 @@ namespace Psycho.Screamers
         {
             switched = false;
 
-            PlayerStop.Value = false;
+            playerStop.Value = false;
             base.Stop();
         }
     }

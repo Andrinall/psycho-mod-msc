@@ -27,15 +27,15 @@ namespace Psycho.Internal
         {
             try
             {
-                PlayMakerFSM[] components = gameObject.GetComponents<PlayMakerFSM>();
-                if (components.Length == 0) return;
+                PlayMakerFSM[] _components = gameObject.GetComponents<PlayMakerFSM>();
+                if (_components.Length == 0) return;
 
-                foreach (PlayMakerFSM fsm in components)
+                foreach (PlayMakerFSM _fsm in _components)
                 {
-                    if (fsm == null) continue;
-                    fsm.InitializeFSM();
+                    if (_fsm == null) continue;
+                    _fsm.InitializeFSM();
 
-                    FsmState _state = fsm.GetState(stateName);
+                    FsmState _state = _fsm.GetState(stateName);
                     if (_state == null) continue;
 
                     if (!hooksList.ContainsKey(_state))
@@ -43,8 +43,8 @@ namespace Psycho.Internal
 
                     hooksList[_state].Add(new HookInfo
                     {
-                        Index = Insert(0, fsm, _state, hook),
-                        FsmName = fsm.Fsm.Name,
+                        Index = Insert(0, _fsm, _state, hook),
+                        FsmName = _fsm.Fsm.Name,
                         StateName = stateName
                     });
                 }
@@ -59,24 +59,24 @@ namespace Psycho.Internal
         {
             try
             {
-                PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
+                PlayMakerFSM _playMaker = gameObject.GetPlayMaker(fsmName);
                 
-                if (playMaker == null)
+                if (_playMaker == null)
                     throw new NullReferenceException();
 
-                playMaker.InitializeFSM();
+                _playMaker.InitializeFSM();
 
-                FsmState playMakerState = playMaker.GetState(stateName);
+                FsmState _playMakerState = _playMaker.GetState(stateName);
                 
-                if (playMakerState == null)
+                if (_playMakerState == null)
                     throw new NullReferenceException();
 
-                if (!hooksList.ContainsKey(playMakerState))
-                    hooksList[playMakerState] = new List<HookInfo>();
+                if (!hooksList.ContainsKey(_playMakerState))
+                    hooksList[_playMakerState] = new List<HookInfo>();
 
-                hooksList[playMakerState].Add(new HookInfo
+                hooksList[_playMakerState].Add(new HookInfo
                 {
-                    Index = Insert(index, playMaker, playMakerState, hook),
+                    Index = Insert(index, _playMaker, _playMakerState, hook),
                     FsmName = fsmName,
                     StateName = stateName
                 });
@@ -91,23 +91,23 @@ namespace Psycho.Internal
         {
             try
             {
-                PlayMakerFSM playMaker = gameObject.GetPlayMaker(fsmName);
+                PlayMakerFSM _playMaker = gameObject.GetPlayMaker(fsmName);
                 
-                if (playMaker == null)
+                if (_playMaker == null)
                     throw new NullReferenceException();
 
-                playMaker.InitializeFSM();
-                FsmState playMakerState = playMaker.GetState(stateName);
+                _playMaker.InitializeFSM();
+                FsmState _playMakerState = _playMaker.GetState(stateName);
                 
-                if (playMakerState == null)
+                if (_playMakerState == null)
                     throw new NullReferenceException();
 
-                if (!hooksList.ContainsKey(playMakerState))
-                    hooksList[playMakerState] = new List<HookInfo>();
+                if (!hooksList.ContainsKey(_playMakerState))
+                    hooksList[_playMakerState] = new List<HookInfo>();
 
-                hooksList[playMakerState].Add(new HookInfo
+                hooksList[_playMakerState].Add(new HookInfo
                 {
-                    Index = Insert(index, playMaker, playMakerState, hook),
+                    Index = Insert(index, _playMaker, _playMakerState, hook),
                     FsmName = fsmName,
                     StateName = stateName
                 });
@@ -124,22 +124,22 @@ namespace Psycho.Internal
 
             try
             {
-                KeyValuePair<FsmState, List<HookInfo>> item = 
+                KeyValuePair<FsmState, List<HookInfo>> _item = 
                     hooksList.FirstOrDefault(v => v.Value.Any(t => t.Index == index && t.FsmName == fsmName && t.StateName == stateName));
 
-                if (item.Key == null) return;
-                if (item.Value == null) return;
+                if (_item.Key == null) return;
+                if (_item.Value == null) return;
 
-                FsmState _state = item.Key;
-                HookInfo _hook = item.Value.Find(v => v.Index == index && v.FsmName == fsmName && v.StateName == stateName);
+                FsmState _state = _item.Key;
+                HookInfo _hook = _item.Value.Find(v => v.Index == index && v.FsmName == fsmName && v.StateName == stateName);
 
                 List<FsmStateAction> _actions = new List<FsmStateAction>(_state.Actions);
-                var _item = _actions.Find(v => Find(v, index));
+                var _findedAction = _actions.Find(v => Find(v, index));
                 _actions.Remove(_actions.Find(v => Find(v, index)));
                 _state.Actions = _actions.ToArray();
                 _state.SaveActions();
 
-                item.Value.Remove(_hook);
+                _item.Value.Remove(_hook);
             }
             catch (Exception ex)
             {
@@ -150,22 +150,22 @@ namespace Psycho.Internal
         internal static void DisposeAllHooks()
         {
             if (hooksList.Count == 0) return;
-            foreach (KeyValuePair<FsmState, List<HookInfo>> item in hooksList)
+            foreach (KeyValuePair<FsmState, List<HookInfo>> _item in hooksList)
             {
-                if (item.Key == null) continue;
-                if (item.Value == null) continue;
-                if (!item.Key.Fsm.Initialized) continue;
+                if (_item.Key == null) continue;
+                if (_item.Value == null) continue;
+                if (!_item.Key.Fsm.Initialized) continue;
 
-                FsmState _state = item.Key;
-                if (item.Value.Count == 0) continue;
+                FsmState _state = _item.Key;
+                if (_item.Value.Count == 0) continue;
 
                 List<FsmStateAction> _actions = new List<FsmStateAction>(_state.Actions);
-                foreach (HookInfo hook in item.Value)
+                foreach (HookInfo _hook in _item.Value)
                 {
-                    if (hook == null) continue;
+                    if (_hook == null) continue;
 
-                    int index = hook.Index;
-                    _actions.Remove(_actions.Find(v => Find(v, index)));
+                    int _index = _hook.Index;
+                    _actions.Remove(_actions.Find(v => Find(v, _index)));
                 }
 
                 _state.Actions = _actions.ToArray();
@@ -184,7 +184,7 @@ namespace Psycho.Internal
         }
 
 
-    static void AddNewHooksContainer(FsmState state)
+        static void AddNewHooksContainer(FsmState state)
         {
             if (!hooksList.ContainsKey(state))
                 hooksList[state] = new List<HookInfo>();

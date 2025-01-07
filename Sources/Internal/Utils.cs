@@ -17,8 +17,8 @@ namespace Psycho.Internal
     {
         static readonly string DBG_STRING = "[Shiz-DBG]: ";
 
-        static FsmBool GUIuse;
-        static FsmString GUIinteraction;
+        static FsmBool guiUse;
+        static FsmString guiInteraction;
 
         public static bool WaitFrames(ref int elapsedFrames, int neededFrames)
         {
@@ -34,94 +34,94 @@ namespace Psycho.Internal
 
         public static string[] GetEnumFields<T>()
         {
-            var fields = typeof(T).GetFields();
-            string[] result = new string[fields.Length];
+            FieldInfo[] _fields = typeof(T).GetFields();
+            string[] _result = new string[_fields.Length];
 
-            for (int i = 0; i < result.Length; i++)
+            for (int i = 0; i < _result.Length; i++)
             {
-                string name = fields[i].Name;
-                if (name == "value__") continue;
+                string _name = _fields[i].Name;
+                if (_name == "value__") continue;
 
-                result[i - 1] = fields[i].Name;
+                _result[i - 1] = _fields[i].Name;
             }
 
-            return result;
+            return _result;
         }
 
         internal static string GetMethodPath(MethodInfo method)
         {
-            Type declaringType = method.DeclaringType;
-            return $"{declaringType.Namespace}::{declaringType.Name}.{method.Name}";
+            Type _declaringType = method.DeclaringType;
+            return $"{_declaringType.Namespace}::{_declaringType.Name}.{method.Name}";
         }
 
         internal static void SetupFSM(GameObject obj, string name, string[] eventNames, string startState, Func<PlayMakerFSM, List<FsmEvent>, FsmState[]> callback)
         {
-            List<FsmEvent> events = new List<FsmEvent>();
-            PlayMakerFSM fsm = obj.AddComponent<PlayMakerFSM>();
+            List<FsmEvent> _events = new List<FsmEvent>();
+            PlayMakerFSM _fsm = obj.AddComponent<PlayMakerFSM>();
 
-            fsm.InitializeFSM();
-            fsm.enabled = false;
-            fsm.Fsm.Name = name;
+            _fsm.InitializeFSM();
+            _fsm.enabled = false;
+            _fsm.Fsm.Name = name;
 
             foreach (string _ev in eventNames)
-                events.Add(fsm.AddEvent(_ev));
+                _events.Add(_fsm.AddEvent(_ev));
 
-            FsmState[] finalStates = callback?.Invoke(fsm, events);
+            FsmState[] finalStates = callback?.Invoke(_fsm, _events);
             if (finalStates == null || finalStates.Length == 0)
             {
-                UnityEngine.Object.Destroy(fsm);
+                UnityEngine.Object.Destroy(_fsm);
                 return;
             }
 
-            fsm.Fsm.States = (FsmState[])finalStates.Clone();
-            fsm.Fsm.StartState = startState;
-            fsm.Fsm.Start();
-            fsm.enabled = true;
+            _fsm.Fsm.States = (FsmState[])finalStates.Clone();
+            _fsm.Fsm.StartState = startState;
+            _fsm.Fsm.Start();
+            _fsm.enabled = true;
         }
 
         internal static void SetGUIUse(bool state, string name = "")
         {
             if (!CheckGUIFsm()) return;
 
-            GUIuse.Value = state;
-            GUIinteraction.Value = name;
+            guiUse.Value = state;
+            guiInteraction.Value = name;
         }
 
         static bool CheckGUIFsm()
         {
-            if (GUIuse == null)
-                GUIuse = GetGlobalVariable<FsmBool>("GUIuse");
-            if (GUIinteraction == null)
-                GUIinteraction = GetGlobalVariable<FsmString>("GUIinteraction");
+            if (guiUse == null)
+                guiUse = GetGlobalVariable<FsmBool>("GUIuse");
+            if (guiInteraction == null)
+                guiInteraction = GetGlobalVariable<FsmString>("GUIinteraction");
 
-            return GUIuse != null && GUIinteraction != null;
+            return guiUse != null && guiInteraction != null;
         }
 
         internal static void InitPostcard(GameObject cloned)
         {
-            Shader text3D = Shader.Instantiate(Shader.Find("GUI/3D Text Shader"));
-            Transform text = cloned.transform.Find("Text");
+            Shader _text3D = Shader.Instantiate(Shader.Find("GUI/3D Text Shader"));
+            Transform _text = cloned.transform.Find("Text");
 
-            Material material = text.GetComponent<MeshRenderer>().material;
-            material.shader = text3D;
-            material.color = new Color(0.0353f, 0.1922f, 0.3882f);
+            Material _material = _text.GetComponent<MeshRenderer>().material;
+            _material.shader = _text3D;
+            _material.color = new Color(0.0353f, 0.1922f, 0.3882f);
 
-            TextMesh textMesh = text.GetComponent<TextMesh>();
-            textMesh.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
+            TextMesh _textMesh = _text.GetComponent<TextMesh>();
+            _textMesh.text = Locales.POSTCARD_TEXT[Globals.CurrentLang];
         }
 
         internal static void ChangeSmokingModel()
         {
             try
             {
-                GameObject smoking = GetGlobalVariable<FsmGameObject>("POV").Value
+                GameObject _smoking = GetGlobalVariable<FsmGameObject>("POV").Value
                     ?.transform?.Find("Smoking/Hand/HandSmoking")?.gameObject;
 
-                smoking?.transform
+                _smoking?.transform
                     ?.Find("Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft/RedHot")
                     ?.gameObject?.SetActive(!Logic.InHorror);
 
-                WorldManager.ChangeWorldModels(smoking.gameObject);
+                WorldManager.ChangeWorldModels(_smoking.gameObject);
             }
             catch (Exception e)
             {
@@ -131,41 +131,41 @@ namespace Psycho.Internal
 
         internal static void SetPictureImage()
         {
-            GameObject picture = GameObject.Find("Picture(Clone)");
-            if (picture == null) return;
+            GameObject _picture = GameObject.Find("Picture(Clone)");
+            if (_picture == null) return;
 
-            int idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
-            Texture texture = Globals.Pictures.ElementAtOrDefault(idx);
-            if (texture == null) return;
+            int _idx = Mathf.FloorToInt(Logic.Points >= 0f ? 0f : -Logic.Points);
+            Texture _texture = Globals.Pictures.ElementAtOrDefault(_idx);
+            if (_texture == null) return;
 
-            Material material = picture.GetComponent<MeshRenderer>().materials[1];
-            if (material.GetTexture("_MainTex")?.name == texture.name) return;
+            Material _material = _picture.GetComponent<MeshRenderer>().materials[1];
+            if (_material.GetTexture("_MainTex")?.name == _texture.name) return;
 
-            PrintDebug(eConsoleColors.YELLOW, $"SetPictureImage [{idx}]");
-            material.SetTexture("_MainTex", texture);
+            PrintDebug(eConsoleColors.YELLOW, $"SetPictureImage [{_idx}]");
+            _material.SetTexture("_MainTex", _texture);
         }
 
         internal static void FreeResources()
         {
-            foreach (var field in typeof(Globals).GetFields())
+            foreach (var _field in typeof(Globals).GetFields())
             {
-                string fieldName = field.Name;
-                string fieldType = field.FieldType.Name;
-                if (!fieldName.Contains("_clip") && !fieldName.Contains("_prefab") && !fieldName.Contains("_texture")) continue;
+                string _fieldName = _field.Name;
+                string _fieldType = _field.FieldType.Name;
+                if (!_fieldName.Contains("_clip") && !_fieldName.Contains("_prefab") && !_fieldName.Contains("_texture")) continue;
 
-                switch (fieldType)
+                switch (_fieldType)
                 {
                     case "GameObject":
-                        Resources.UnloadAsset((GameObject)field.GetValue(null));
-                        field.SetValue(null, null);
+                        Resources.UnloadAsset((GameObject)_field.GetValue(null));
+                        _field.SetValue(null, null);
                         break;
                     case "AudioClip":
-                        Resources.UnloadAsset((AudioClip)field.GetValue(null));
-                        field.SetValue(null, null);
+                        Resources.UnloadAsset((AudioClip)_field.GetValue(null));
+                        _field.SetValue(null, null);
                         break;
                     case "Texture":
-                        Resources.UnloadAsset((Texture)field.GetValue(null));
-                        field.SetValue(null, null);
+                        Resources.UnloadAsset((Texture)_field.GetValue(null));
+                        _field.SetValue(null, null);
                         break;
                 }
             }
@@ -196,10 +196,10 @@ namespace Psycho.Internal
             Globals.FullScreenScreamer = null;
             Globals.FullScreenScreamerTextures.Clear();
 
-            foreach (var item in Globals.ModelsReplaces)
+            foreach (var _item in Globals.ModelsReplaces)
             {
-                Resources.UnloadAsset(item.Value.mesh);
-                Resources.UnloadAsset(item.Value.texture);
+                Resources.UnloadAsset(_item.Value.mesh);
+                Resources.UnloadAsset(_item.Value.texture);
             }
             Globals.ModelsReplaces.Clear();
         }
@@ -223,23 +223,23 @@ namespace Psycho.Internal
 
         internal static Vector3[] SetCameraLookAt(Vector3 targetPoint)
         {
-            Transform fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
+            Transform _fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
 
-            Vector3[] origs = new Vector3[2] {
-                fpsCamera.localPosition,
-                fpsCamera.localEulerAngles
+            Vector3[] _origs = new Vector3[2] {
+                _fpsCamera.localPosition,
+                _fpsCamera.localEulerAngles
             };
 
-            fpsCamera.LookAt(targetPoint);
-            return origs;
+            _fpsCamera.LookAt(targetPoint);
+            return _origs;
         }
 
         internal static void ResetCameraLook(Vector3[] origs)
         {
-            Transform fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
+            Transform _fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
 
-            fpsCamera.localPosition = origs[0];
-            fpsCamera.localEulerAngles = origs[1];
+            _fpsCamera.localPosition = origs[0];
+            _fpsCamera.localEulerAngles = origs[1];
         }
 
         static string _getColor(eConsoleColors color)

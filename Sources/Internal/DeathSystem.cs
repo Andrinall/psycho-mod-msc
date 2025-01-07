@@ -37,15 +37,15 @@ namespace Psycho.Internal
         {
             if (Logic.IsDead) return;
 
-            Transform paper = death.Find($"GameOverScreen/Paper/{palette}");
-            if (paper == null) return;
+            Transform _paper = death.Find($"GameOverScreen/Paper/{palette}");
+            if (_paper == null) return;
 
             try
             {
 
                 death.gameObject.SetActive(true);
-                paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
-                paper.Find("TextEN").GetComponent<TextMesh>().text = en;
+                _paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
+                _paper.Find("TextEN").GetComponent<TextMesh>().text = en;
             }
             catch (Exception e)
             {

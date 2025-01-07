@@ -15,64 +15,64 @@ namespace Psycho.Features
 {
     internal sealed class MailBoxEnvelope : CatchedComponent
     {
-        GameObject MailboxEnvelope;
-        GameObject EnvelopeSheet;
+        GameObject mailboxEnvelope;
+        GameObject envelopeSheet;
 
-        bool m_bInstalled = false;
+        bool installed = false;
 
 
         protected override void Enabled()
         {
-            if (m_bInstalled) return;
+            if (installed) return;
 
 
-            MailboxEnvelope = Instantiate(transform.Find("EnvelopeInspection").gameObject);
-            MailboxEnvelope.gameObject.name = "EnvelopeDoctor";
-            MailboxEnvelope.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, worldPositionStays: false);
-            MailboxEnvelope.transform.localPosition = new Vector3(-0.0685f, -0.007f, 0.1076f);
-            MailboxEnvelope.GetComponent<CapsuleCollider>().radius = 0.04f;
+            mailboxEnvelope = Instantiate(transform.Find("EnvelopeInspection").gameObject);
+            mailboxEnvelope.gameObject.name = "EnvelopeDoctor";
+            mailboxEnvelope.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, worldPositionStays: false);
+            mailboxEnvelope.transform.localPosition = new Vector3(-0.0685f, -0.007f, 0.1076f);
+            mailboxEnvelope.GetComponent<CapsuleCollider>().radius = 0.04f;
 
-            GameObject sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
-            EnvelopeSheet = Instantiate(sheets.transform.Find("InspectionAD").gameObject);
-            EnvelopeSheet.name = "DoctorMail";
-            EnvelopeSheet.transform.SetParent(sheets.transform, worldPositionStays: false);
-            EnvelopeSheet.SetActive(true);
+            GameObject _sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
+            envelopeSheet = Instantiate(_sheets.transform.Find("InspectionAD").gameObject);
+            envelopeSheet.name = "DoctorMail";
+            envelopeSheet.transform.SetParent(_sheets.transform, worldPositionStays: false);
+            envelopeSheet.SetActive(true);
 
-            Transform old_back = EnvelopeSheet.transform.GetChild(1);
-            Destroy(old_back.gameObject);
+            Transform _oldBackground = envelopeSheet.transform.GetChild(1);
+            Destroy(_oldBackground.gameObject);
 
             GameObject _background = Instantiate(Globals.Background_prefab);
-            _background.transform.SetParent(EnvelopeSheet.transform, worldPositionStays: false);
+            _background.transform.SetParent(envelopeSheet.transform, worldPositionStays: false);
             _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
             _background.name = "Background";
             _background.layer = 14;
             _background.transform.GetChild(0).gameObject.layer = 14;
 
-            MailboxEnvelope.SetActive(true);
-            MailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
+            mailboxEnvelope.SetActive(true);
+            mailboxEnvelope.GetComponent<PlayMakerFSM>().enabled = true;
 
-            PlayMakerFSM fsm = MailboxEnvelope.GetPlayMaker("Use");
-            (fsm.GetState("State 2").Actions[1] as SetStringValue)
+            PlayMakerFSM _fsm = mailboxEnvelope.GetPlayMaker("Use");
+            (_fsm.GetState("State 2").Actions[1] as SetStringValue)
                 .stringValue.Value = "Strange Letter";
 
-            (fsm.GetState("Open ad").Actions.Last() as ActivateGameObject)
-                .gameObject.GameObject.Value = EnvelopeSheet;
+            (_fsm.GetState("Open ad").Actions.Last() as ActivateGameObject)
+                .gameObject.GameObject.Value = envelopeSheet;
 
-            fsm.FsmVariables.FloatVariables = new List<FsmFloat>().ToArray();
+            _fsm.FsmVariables.FloatVariables = new List<FsmFloat>().ToArray();
             if (!Logic.EnvelopeSpawned)
-                MailboxEnvelope.SetActive(false);
+                mailboxEnvelope.SetActive(false);
 
-            StateHook.Inject(MailboxEnvelope, "Use", "Open ad", CreateRandomPills, -1);
-            StateHook.Inject(EnvelopeSheet, "Setup", "State 2", DisableStrangeLetter, -1);
-            EnvelopeSheet.SetActive(false);
+            StateHook.Inject(mailboxEnvelope, "Use", "Open ad", CreateRandomPills, -1);
+            StateHook.Inject(envelopeSheet, "Setup", "State 2", DisableStrangeLetter, -1);
+            envelopeSheet.SetActive(false);
 
-            Globals.MailboxSheet = EnvelopeSheet;
-            Globals.EnvelopeObject = MailboxEnvelope;
+            Globals.MailboxSheet = envelopeSheet;
+            Globals.EnvelopeObject = mailboxEnvelope;
 
             if (Globals.Pills != null)
                 SetBackgroundScreenForLetter(Globals.Pills.index);
 
-            m_bInstalled = true;
+            installed = true;
         }
 
         void DisableStrangeLetter()
@@ -83,7 +83,7 @@ namespace Psycho.Features
                 return;
             }
 
-            MailboxEnvelope.SetActive(false);
+            mailboxEnvelope.SetActive(false);
             Logic.EnvelopeSpawned = false;
         }
 
@@ -104,11 +104,11 @@ namespace Psycho.Features
                     Utils.PrintDebug(eConsoleColors.YELLOW, "Removed previous pills");
                 }
 
-                int idx = UnityEngine.Random.Range(0, Globals.PillsPositions.Count - 1);
-                Globals.Pills = new PillsItem(Globals.PillsPositions[idx]);
+                int _idx = UnityEngine.Random.Range(0, Globals.PillsPositions.Count - 1);
+                Globals.Pills = new PillsItem(Globals.PillsPositions[_idx]);
 
-                SetBackgroundScreenForLetter(idx);
-                Utils.PrintDebug(eConsoleColors.GREEN, $"Generated pills: {idx}");
+                SetBackgroundScreenForLetter(_idx);
+                Utils.PrintDebug(eConsoleColors.GREEN, $"Generated pills: {_idx}");
             }
             catch (Exception e)
             {
@@ -118,10 +118,10 @@ namespace Psycho.Features
 
         void SetBackgroundScreenForLetter(int index)
         {
-            Transform image = EnvelopeSheet.transform.Find("Background/Image");
-            Texture newTexture = Globals.MailScreens.Find(v => v.name == index.ToString());
-            image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", newTexture);
-            Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {newTexture.name} idx");
+            Transform _image = envelopeSheet.transform.Find("Background/Image");
+            Texture _newTexture = Globals.MailScreens.Find(v => v.name == index.ToString());
+            _image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", _newTexture);
+            Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {_newTexture.name} idx");
         }
     }
 }

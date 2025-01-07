@@ -8,27 +8,27 @@ namespace Psycho.Handlers
 {
     internal sealed class Hangover : CatchedComponent
     {
-        const float m_fHangoverStrenght = 0.004251007f;
-        const float m_fHangoverStrenghtMinus = -0.004251007f; // defaults from game
-        bool m_bHangoverActive = false;
+        const float STRENGHT_PLUS = 0.004251007f;
+        const float STRENGHT_MINUS = -0.004251007f; // defaults from game
+        bool hangoverActive = false;
 
 
         void FixedUpdate()
         {
             if (!Logic.InHorror)
             {
-                if (!m_bHangoverActive) return;
+                if (!hangoverActive) return;
                 
                 transform.localPosition = Vector3.zero;
-                m_bHangoverActive = false;
+                hangoverActive = false;
                 return;
             }
 
-            m_bHangoverActive = true;
+            hangoverActive = true;
             transform.localPosition = new Vector3(
-                Random.Range(m_fHangoverStrenghtMinus, m_fHangoverStrenght),
-                Random.Range(m_fHangoverStrenghtMinus, m_fHangoverStrenght),
-                Random.Range(m_fHangoverStrenghtMinus, m_fHangoverStrenght)
+                Random.Range(STRENGHT_MINUS, STRENGHT_PLUS),
+                Random.Range(STRENGHT_MINUS, STRENGHT_PLUS),
+                Random.Range(STRENGHT_MINUS, STRENGHT_PLUS)
             );
         }
     }

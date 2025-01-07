@@ -20,19 +20,18 @@ namespace Psycho.Internal
 
         RaycastHit hitInfo;
 
-        GameObject GUICamera;
-        GameObject OriginalCamera;
+        GameObject guiCamera;
+        GameObject originalCamera;
 
-        PlayMakerFSM OpenMenu;
-        FsmBool PlayerStop;
-        FsmBool PlayerInMenu;
-        FsmBool PlayerComputer;
+        PlayMakerFSM openMenu;
+        FsmBool playerStop;
+        FsmBool playerInMenu;
+        FsmBool playerComputer;
 
-        AudioClip PageTurn;
-        Transform Player;
+        AudioClip pageTurn;
 
-        Ray Ray => Camera.main.ScreenPointToRay(Input.mousePosition);
-        int Layer => LayerMask.GetMask("Parts", "GUI");
+        Ray RayFromScreenPoint => Camera.main.ScreenPointToRay(Input.mousePosition);
+        int GUILayerMask => LayerMask.GetMask("Parts", "GUI");
 
         protected override void Awaked()
         {
@@ -48,18 +47,16 @@ namespace Psycho.Internal
             ButtonPrev = guiTransform.Find("ButtonPrevious").gameObject;
             Background = guiTransform.Find("Background").GetComponent<MeshRenderer>().material;
 
-            GUICamera = guiTransform.Find("Cam").gameObject;
+            guiCamera = guiTransform.Find("Cam").gameObject;
 
-            OpenMenu = GameObject.Find("Systems/Options").GetPlayMaker("Open Menu");
-            PlayerInMenu = Utils.GetGlobalVariable<FsmBool>("PlayerInMenu");
-            PlayerComputer = Utils.GetGlobalVariable<FsmBool>("PlayerComputer");
-            PlayerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
+            openMenu = GameObject.Find("Systems/Options").GetPlayMaker("Open Menu");
+            playerInMenu = Utils.GetGlobalVariable<FsmBool>("PlayerInMenu");
+            playerComputer = Utils.GetGlobalVariable<FsmBool>("PlayerComputer");
+            playerStop = Utils.GetGlobalVariable<FsmBool>("PlayerStop");
 
-            PageTurn = GameObject.Find("MasterAudio/GUI/page_turn").GetComponent<AudioSource>().clip;
-            Player = GameObject.Find("PLAYER").transform;
+            pageTurn = GameObject.Find("MasterAudio/GUI/page_turn").GetComponent<AudioSource>().clip;
 
             GUI.SetActive(false);
-
             AfterAwake();
         }
 
@@ -74,7 +71,7 @@ namespace Psycho.Internal
                 return;
             }
 
-            if (!Physics.Raycast(Ray, out hitInfo, 1.5f, Layer)) return;
+            if (!Physics.Raycast(RayFromScreenPoint, out hitInfo, 1.5f, GUILayerMask)) return;
             if (hitInfo.collider == null) return;
 
             GameObject hitted = hitInfo.collider?.gameObject;
@@ -93,8 +90,8 @@ namespace Psycho.Internal
 
             if (hitted == gameObject && !GUI.activeSelf && cInput.GetKeyUp("Use"))
             {
-                if (OriginalCamera == null)
-                    OriginalCamera = Camera.main.gameObject;
+                if (originalCamera == null)
+                    originalCamera = Camera.main.gameObject;
 
                 ObjectUsed();
                 return;
@@ -107,10 +104,10 @@ namespace Psycho.Internal
         /// <param name="state">State of gui active</param>
         public void ActivateGUI(bool state)
         {
-            PlayerInMenu.Value = state;
-            PlayerStop.Value = state;
-            PlayerComputer.Value = state;
-            OpenMenu.enabled = !state;
+            playerInMenu.Value = state;
+            playerStop.Value = state;
+            playerComputer.Value = state;
+            openMenu.enabled = !state;
             GUI.SetActive(state);
 
             if (state)
@@ -118,7 +115,7 @@ namespace Psycho.Internal
             else
                 GUIClosed();
 
-            SetMainCamera(state ? GUICamera : OriginalCamera);
+            SetMainCamera(state ? guiCamera : originalCamera);
         }
 
         /// <summary>
@@ -174,7 +171,7 @@ namespace Psycho.Internal
         /// Play page turn sound
         /// </summary>
         public void PlayPageTurn()
-            => AudioSource.PlayClipAtPoint(PageTurn, Player.position);
+            => AudioSource.PlayClipAtPoint(pageTurn, Psycho.Player.position);
 
 
         void SetMainCamera(GameObject newCamera)

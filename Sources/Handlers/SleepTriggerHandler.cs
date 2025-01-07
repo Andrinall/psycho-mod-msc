@@ -10,16 +10,16 @@ namespace Psycho.Handlers
     [RequireComponent(typeof(PlayMakerFSM))]
     internal sealed class SleepTriggerHandler : CatchedComponent
     {
-        FsmFloat m_fPlayerFatigue;
+        FsmFloat playerFatigue;
 
         protected override void Awaked()
         {
-            m_fPlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
+            playerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
 
-            transform.ClearActions("Activate", "Calc rates", 6);
+            transform.ClearFsmActions("Activate", "Calc rates", 6);
             StateHook.Inject(gameObject, "Activate", "Calc rates", UpdateFatigue, -1);
         }
 
-        void UpdateFatigue() => m_fPlayerFatigue.Value = Mathf.Clamp(m_fPlayerFatigue.Value - Logic.Value, 0f, 100f);
+        void UpdateFatigue() => playerFatigue.Value = Mathf.Clamp(playerFatigue.Value - Logic.Value, 0f, 100f);
     }
 }

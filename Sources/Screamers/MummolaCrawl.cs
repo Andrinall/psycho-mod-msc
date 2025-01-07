@@ -12,44 +12,44 @@ namespace Psycho.Screamers
         public override int ScreamerVariant => (int)ScreamParalysisType.GRANNY;
 
 
-        int HeadInterpolationFrames = 240;
-        float TargetDistance = 0.1f;
-        float MaxSpeed = 0.9f;
+        const int NEEDED_FRAMES = 240;
+        const float TARGET_DISTANCE = 0.1f;
+        const float MAX_SPEED = 0.9f;
 
-        Vector3 StartPoint = new Vector3(-8.40377522f, 2.46443129f, 9.5422678f);
-        Vector3 TargetPoint = new Vector3(-11.2399998f, 2.5150001f, 12.6759996f);
-        Vector3 HeadEndRotation = new Vector3(80f, 270f, 0f);
+        readonly Vector3 StartPoint = new Vector3(-8.40377522f, 2.46443129f, 9.5422678f);
+        readonly Vector3 TargetPoint = new Vector3(-11.2399998f, 2.5150001f, 12.6759996f);
+        readonly Vector3 HeadEndRotation = new Vector3(80f, 270f, 0f);
 
-        Transform Char;
-        Transform Head;
+        Transform charTransform;
+        Transform headTransform;
 
-        PlayMakerFSM Fsm;
+        PlayMakerFSM fsm;
 
         Vector3[] cameraOrigs;
 
-        int ElapsedFrames = 0;
-        bool AnimPlayed = false;
+        int elapsedFrames = 0;
+        bool animPlayed = false;
 
 
-        float InterpolationRatio => (float)ElapsedFrames / HeadInterpolationFrames;
+        float InterpolationRatio => (float)elapsedFrames / NEEDED_FRAMES;
 
 
         public override void InitScreamer()
         {
-            Fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
-            Char = transform.Find("Char");
-            Head = Char.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
+            fsm = GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger").GetComponent<PlayMakerFSM>();
+            charTransform = transform.Find("Char");
+            headTransform = charTransform.Find("skeleton/pelvis/spine_middle/spine_upper/HeadPivot");
         }
 
         public override void TriggerScreamer()
         {
-            Fsm.enabled = false;
+            fsm.enabled = false;
             transform.position = StartPoint;
             transform.eulerAngles = new Vector3(347.788879f, 331.232269f, 180f);
 
             cameraOrigs = Utils.SetCameraLookAt(TargetPoint);
             ResetHeadRotation();
-            Char.gameObject.SetActive(true);
+            charTransform.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
 
             AudioSource.PlayClipAtPoint(Globals.GrannyCrawlScreamer_clip, transform.position, 1f);
@@ -57,9 +57,9 @@ namespace Psycho.Screamers
 
         public override void StopScreamer()
         {
-            ElapsedFrames = 0;
+            elapsedFrames = 0;
 
-            Char.gameObject.SetActive(false);
+            charTransform.gameObject.SetActive(false);
             ResetHeadRotation();
             SoundManager.PlayHeartbeat(false);
         }
@@ -68,30 +68,30 @@ namespace Psycho.Screamers
         protected override void OnFixedUpdate()
         {
             if (!ScreamerEnabled) return;
-            if (!transform.MoveTowards(TargetPoint, TargetDistance, MaxSpeed)) return;
+            if (!transform.MoveTowards(TargetPoint, TARGET_DISTANCE, MAX_SPEED)) return;
             RotateHeadPivot();
         }
 
         void ResetHeadRotation()
-            => Head.localEulerAngles = new Vector3(270f, 90f, 0f);
+            => headTransform.localEulerAngles = new Vector3(270f, 90f, 0f);
 
 
         void RotateHeadPivot()
         {
-            if (ElapsedFrames == HeadInterpolationFrames)
+            if (elapsedFrames == NEEDED_FRAMES)
             {
-                Utils.PlayScreamSleepAnim(ref AnimPlayed, () =>
+                Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {
-                    Fsm.enabled = true;
+                    fsm.enabled = true;
                     Utils.ResetCameraLook(cameraOrigs);
-                    Fsm.CallGlobalTransition("SCREAMSTOP");
+                    fsm.CallGlobalTransition("SCREAMSTOP");
                     base.Stop();
                 });
                 return;
             }
 
-            Head.localEulerAngles = Vector3.Lerp(Head.localEulerAngles, HeadEndRotation, InterpolationRatio);
-            ElapsedFrames++;
+            headTransform.localEulerAngles = Vector3.Lerp(headTransform.localEulerAngles, HeadEndRotation, InterpolationRatio);
+            elapsedFrames++;
         }
     }
 }

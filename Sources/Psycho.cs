@@ -30,25 +30,30 @@ namespace Psycho
         internal static SettingsDropDownList lang;
         internal static Keybind fastOpen;
 
+        internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         internal static bool IsLoaded = false;
 
-        GameObject LoaderMenu;
+        internal static Transform Player;
 
-        Transform _player;
-        Transform _houseFire;
-        Transform _bells;
-        
-        FsmState _bellsState;
+        internal static FsmInt GlobalDay;
         internal static FsmFloat SUN_minutes;
         internal static FsmFloat SUN_hours;
-        FsmString GUIsubtitle;
-        
-        FsmBool m_bHouseBurningState;
-        bool m_bHouseOnFire = false;
 
-        bool m_bBellsActivated = false;
+
+        GameObject loaderMenu;
+
+        Transform houseFire;
+        Transform bells;
+        
+        FsmState bellsState;
+        FsmString guiSubtitle;
+        
+        FsmBool houseBurningState;
+        bool houseOnFire = false;
+
+        bool bellsActivated = false;
         Vector3 bellsOrigPos;
-        internal bool IsLoaderMenuOpened => LoaderMenu?.activeSelf == true;
+
 
         public override void ModSetup()
         {
@@ -64,14 +69,14 @@ namespace Psycho
         }
 
         // setup mod settings
-        void Mod_SettingsLoad() => ChangeSetting();
+        void Mod_SettingsLoad() => _changeSetting();
 
         void Mod_Settings()
         {
             lang = Settings.AddDropDownList(
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
-                0, ChangeSetting);
+                0, _changeSetting);
 
             fastOpen = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
 #if DEBUG
@@ -92,14 +97,13 @@ namespace Psycho
         void Mod_Load()
         {
             IsLoaded = false;
-            LoaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
+            loaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
             Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
 
             AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
             Globals.LoadAssets(_bundle);
             _bundle.Unload(false);
 
-            //////////////////
             if (!SaveManager.TryLoad(this))
             {
                 Logic.SetDefaultValues(); // reset data if savedata not loaded
@@ -114,27 +118,34 @@ namespace Psycho
 
                 if (GameObject.Find("Notebook(Clone)") == null)
                 {
-                    GameObject Notebook = ItemsPool.AddItem(Globals.Notebook_prefab,
+                    GameObject _notebook = ItemsPool.AddItem(Globals.Notebook_prefab,
                         new Vector3(-2.007682f, 0.04279194f, 7.669019f),
                         new Vector3(90f, 247.8114f, 0f)
                     );
-                    Globals.Notebook = Notebook.AddComponent<Notebook>();
-                    Notebook.MakePickable();
+                    Globals.Notebook = _notebook.AddComponent<Notebook>();
+                    _notebook.MakePickable();
                 }
             }
+
+            GameObject _sketchbook = (GameObject)UnityEngine.Object.Instantiate(Globals.Sketchbook_prefab,
+                new Vector3(-4.179454f, -0.08283298f, 7.728132f),
+                Quaternion.Euler(new Vector3(90f, 44.45397f, 0f))
+            );
+            _sketchbook.AddComponent<Sketchbook>();
+            _sketchbook.MakePickable();
             ////////////
 
-            Transform newspaperFrame = Object.Instantiate(Globals.Picture_prefab).transform;
-            newspaperFrame.gameObject.name = "Newspaper(Clone)";
-            Object.Destroy(newspaperFrame.GetComponent<Rigidbody>());
-            Object.Destroy(newspaperFrame.GetComponent<MeshCollider>());
+            Transform _newspaperFrame = Object.Instantiate(Globals.Picture_prefab).transform;
+            _newspaperFrame.gameObject.name = "Newspaper(Clone)";
+            Object.Destroy(_newspaperFrame.GetComponent<Rigidbody>());
+            Object.Destroy(_newspaperFrame.GetComponent<MeshCollider>());
 
-            newspaperFrame.SetParent(GameObject.Find("STORE").transform);
-            newspaperFrame.position = new Vector3(-1552.66f, 5.261985f, 1182.463f);
-            newspaperFrame.eulerAngles = new Vector3(-0.651f, 58.264f, 90f);
-            newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
+            _newspaperFrame.SetParent(GameObject.Find("STORE").transform);
+            _newspaperFrame.position = new Vector3(-1552.66f, 5.261985f, 1182.463f);
+            _newspaperFrame.eulerAngles = new Vector3(-0.651f, 58.264f, 90f);
+            _newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
 
-            MeshRenderer renderer = newspaperFrame.GetComponent<MeshRenderer>();
+            MeshRenderer renderer = _newspaperFrame.GetComponent<MeshRenderer>();
             renderer.materials[1].SetTexture("_MainTex", Globals.NewsPaper_texture);
             
             // add job handlers (what is not possible for use in second pass)
@@ -142,19 +153,21 @@ namespace Psycho
             AddComponent<JokkeDropOffHandler>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             AddComponent<MummolaJobHandler>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
             
-            m_bHouseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
-            _houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
-            _player = GameObject.Find("PLAYER").transform;
+            houseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
+            houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
+            Player = GameObject.Find("PLAYER").transform;
+
+            GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
             PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
             SUN_hours = sun.GetVariable<FsmFloat>("Hours");
             SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
 
-            _bells = GameObject.Find("PERAJARVI/CHURCH/Bells").transform;
-            _bellsState = _bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
-            bellsOrigPos = _bells.position;
+            bells = GameObject.Find("PERAJARVI/CHURCH/Bells").transform;
+            bellsState = bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
+            bellsOrigPos = bells.position;
 
-            GUIsubtitle = Utils.GetGlobalVariable<FsmString>("GUIsubtitle");
+            guiSubtitle = Utils.GetGlobalVariable<FsmString>("GUIsubtitle");
             StateHook.Inject(GameObject.Find("fridge_paper"), "Use", "Wait button", UpdateFridgePaperText, -1);
         }
 
@@ -171,15 +184,15 @@ namespace Psycho
             Logic.SetPoints(Logic.Points);
 
             // add component for make hangover in horror world
-            Transform camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
-            camera.gameObject.AddComponent<Hangover>();
+            Transform _camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
+            _camera.gameObject.AddComponent<Hangover>();
             
             AddComponent<DeathSystem>("Systems");
             AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
 
             _addHandlers();
             _applyHorrorIfNeeded();
-            _setupActions(camera);
+            _setupActions(_camera);
 
             WorldManager.AddAmbientTriggers();
             WorldManager.ChangeIndepTextures(false); // set textures what used independently of world
@@ -187,16 +200,16 @@ namespace Psycho
 
             // add inactive audio source for play in screamer
             GameObject _grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
-            AudioSource source = _grandma.AddComponent<AudioSource>(); // add burn sound to grandma, used for night screamer
-            source.clip = Globals.AcidBurn_clip;
-            source.loop = false;
-            source.volume = 2f;
-            source.priority = 5;
-            source.rolloffMode = AudioRolloffMode.Logarithmic;
-            source.minDistance = 0.5f;
-            source.maxDistance = 5f;
-            source.spatialBlend = 1f;
-            source.spread = 0f;
+            AudioSource _source = _grandma.AddComponent<AudioSource>(); // add burn sound to grandma, used for night screamer
+            _source.clip = Globals.AcidBurn_clip;
+            _source.loop = false;
+            _source.volume = 2f;
+            _source.priority = 5;
+            _source.rolloffMode = AudioRolloffMode.Logarithmic;
+            _source.minDistance = 0.5f;
+            _source.maxDistance = 5f;
+            _source.spatialBlend = 1f;
+            _source.spread = 0f;
             _grandma.AddComponent<GrandmaDistanceChecker>();
 
             SoundManager.ReplaceRadioStaticSound(Globals.UBV_psy_clip);
@@ -229,11 +242,11 @@ namespace Psycho
             DebugPanel.UpdateData();
 #endif
 
-            if (m_bHouseBurningState.Value == true && !m_bHouseOnFire)
+            if (houseBurningState.Value == true && !houseOnFire)
             {
-                if (Vector3.Distance(_houseFire.position, _player.position) > 4f) return;
+                if (Vector3.Distance(houseFire.position, Player.position) > 4f) return;
                 Logic.PlayerCommittedOffence("HOUSE_BURNING");
-                m_bHouseOnFire = true;
+                houseOnFire = true;
             }
 
             WorldManager.ShowCrows(!(SUN_hours.Value >= 20f || SUN_hours.Value < 6f));
@@ -243,30 +256,30 @@ namespace Psycho
                 
             
 
-            if (!m_bBellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
+            if (!bellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
             {
-                (_bellsState.Actions[0] as ActivateGameObject).activate = true;
-                _bells.gameObject.SetActive(true);
-                _bells.position = GameObject.Find("PLAYER").transform.position;
-                m_bBellsActivated = true;
+                (bellsState.Actions[0] as ActivateGameObject).activate = true;
+                bells.gameObject.SetActive(true);
+                bells.position = GameObject.Find("PLAYER").transform.position;
+                bellsActivated = true;
             }
-            else if (m_bBellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
+            else if (bellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
             {
-                (_bellsState.Actions[0] as ActivateGameObject).activate = false;
-                _bells.gameObject.SetActive(false);
-                _bells.position = bellsOrigPos;
-                m_bBellsActivated = false;
+                (bellsState.Actions[0] as ActivateGameObject).activate = false;
+                bells.gameObject.SetActive(false);
+                bells.position = bellsOrigPos;
+                bellsActivated = false;
             }
         }
 
         void Mod_Save()
         {
             // restore original game textures for materials (avoid game crash)
-            OnUnload();
+            _unload();
             SaveManager.SaveData(this);
         }
 
-        void OnUnload()
+        void _unload()
         {
             WorldManager.ChangeWorldTextures(false);
             WorldManager.ChangeIndepTextures(true);
@@ -337,26 +350,26 @@ namespace Psycho
                     .Find("PayMoney").gameObject.AddComponent<HouseShitHandler>();
 
             // add handlers for human triggers (hit by player & crime)
-            GameObject[] objects = Resources.FindObjectsOfTypeAll<GameObject>();
+            GameObject[] _objects = Resources.FindObjectsOfTypeAll<GameObject>();
 
-            foreach (GameObject obj in objects)
+            foreach (GameObject _object in _objects)
             {
-                if (obj.name.Contains("HumanTrigger"))
-                    obj.AddComponent<NPCHitHandler>();
-                else if (obj.name == "SleepTrigger")
-                    obj.AddComponent<SleepTriggerHandler>();
+                if (_object.name.Contains("HumanTrigger"))
+                    _object.AddComponent<NPCHitHandler>();
+                else if (_object.name == "SleepTrigger")
+                    _object.AddComponent<SleepTriggerHandler>();
 
-                else if (obj.name == "Starter" && obj.transform.parent?.name != "DatabaseMotor")
-                    obj.AddComponent<EngineStarterHandler>();
+                else if (_object.name == "Starter" && _object.transform.parent?.name != "DatabaseMotor")
+                    _object.AddComponent<EngineStarterHandler>();
             }
 
             // main sleep trigger for initiating a night screamers
             GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger")
                 .AddComponent<ScreamsInitiator>();
 
-            Transform HouseLightSwitches = GameObject.Find("YARD/Building/Dynamics/LightSwitches").transform;
-            for (int i = 0; i < HouseLightSwitches.childCount; i++)
-                HouseLightSwitches.GetChild(i).gameObject.AddComponent<LightSwitchHandler>();
+            Transform _houseLightSwitches = GameObject.Find("YARD/Building/Dynamics/LightSwitches").transform;
+            for (int i = 0; i < _houseLightSwitches.childCount; i++)
+                _houseLightSwitches.GetChild(i).gameObject.AddComponent<LightSwitchHandler>();
 
             GameObject.Find("BOAT/GFX/Motor/Pivot/Ignition").AddComponent<BoatIgnitionHandler>();
             GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").AddComponent<DumpCigaretteHandler>();
@@ -382,31 +395,31 @@ namespace Psycho
         void _setupActions(Transform camera)
         {
             // fix for the items scale (1, 1, 1) after pick them up and drop
-            camera.parent.Find("1Hand_Assemble/Hand")?.transform?.ClearActions("PickUp", "Wait", 2);
+            camera.parent.Find("1Hand_Assemble/Hand")?.transform?.ClearFsmActions("PickUp", "Wait", 2);
 
             // add fatigue increasing by drink milk
-            Transform drink = camera.Find("Drink");
-            PlayMakerFSM drinkfsm = drink.GetPlayMaker("Drink");
-            FsmState drink_state = drinkfsm.GetState("Activate 3");
+            Transform _drink = camera.Find("Drink");
+            PlayMakerFSM _drinkfsm = _drink.GetPlayMaker("Drink");
+            FsmState _drinkState = _drinkfsm.GetState("Activate 3");
 
-            var actions1 = new List<FsmStateAction>(drink_state.Actions); // copy actions list
-            actions1.Insert(9, new FloatAdd // insert action
+            List<FsmStateAction> _actions1 = new List<FsmStateAction>(_drinkState.Actions); // copy actions list
+            _actions1.Insert(9, new FloatAdd // insert action
             {
                 add = 2.5f,
                 floatVariable = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue"),
                 everyFrame = true,
                 perSecond = true
             });
-            drink_state.Actions = actions1.ToArray(); // replace actions list
-            drink_state.SaveActions(); // save changes
+            _drinkState.Actions = _actions1.ToArray(); // replace actions list
+            _drinkState.SaveActions(); // save changes
 
 
-            PlayMakerFSM functions = camera.parent.GetPlayMaker("PlayerFunctions");
-            functions.Fsm.InitData();
-            FsmState fn_finger = functions.GetState("Finger");
+            PlayMakerFSM _functions = camera.parent.GetPlayMaker("PlayerFunctions");
+            _functions.Fsm.InitData();
+            FsmState _fnFinger = _functions.GetState("Finger");
             
-            var actions2 = new List<FsmStateAction>(fn_finger.Actions);
-            actions2.Insert(10, new AddToFsmInt
+            List<FsmStateAction> _actions2 = new List<FsmStateAction>(_fnFinger.Actions);
+            _actions2.Insert(10, new AddToFsmInt
             {
                 gameObject = new FsmOwnerDefault
                 {
@@ -418,11 +431,11 @@ namespace Psycho
                 add = 1,
                 everyFrame = false
             });
-            fn_finger.Actions = actions2.ToArray();
-            fn_finger.SaveActions();
+            _fnFinger.Actions = _actions2.ToArray();
+            _fnFinger.SaveActions();
 
             // 
-            _injectStateHooks(camera, drink);
+            _injectStateHooks(camera, _drink);
         }
 
         void _injectStateHooks(Transform camera, Transform drink)
@@ -452,19 +465,19 @@ namespace Psycho
             StateHook.Inject(drink.gameObject, "Drink", "Throw bottle", PlayerDrunkBeer, 2);
             StateHook.Inject(drink.gameObject, "Drink", "Throw bottle 1", PlayerDrunkBooze, 2);
 
-            GameObject farmer_walker = GameObject.Find("HUMANS/Farmer/Walker");
-            if (!farmer_walker) return;
-            StateHook.Inject(farmer_walker, "Speak", "Done", PlayerCompleteFarmerQuest);
+            GameObject _farmerWalker = GameObject.Find("HUMANS/Farmer/Walker");
+            if (!_farmerWalker) return;
+            StateHook.Inject(_farmerWalker, "Speak", "Done", PlayerCompleteFarmerQuest);
 
-            Transform systems = GameObject.Find("Systems").transform;
-            Transform menu = systems.Find("OptionsMenu/Menu");
-            Transform btnconfirm = menu.Find("Btn_ConfirmQuit");
-            StateHook.Inject(btnconfirm.Find("Button").gameObject, "Button", "State 3", OnUnload);
+            Transform _systems = GameObject.Find("Systems").transform;
+            Transform _menu = _systems.Find("OptionsMenu/Menu");
+            Transform _btnConfirm = _menu.Find("Btn_ConfirmQuit");
+            StateHook.Inject(_btnConfirm.Find("Button").gameObject, "Button", "State 3", _unload);
         }
 
-        void UpdateFridgePaperText() => GUIsubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
+        void UpdateFridgePaperText() => guiSubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];
 
-        void ChangeSetting()
+        void _changeSetting()
             => EventsManager.ChangeLanguage(lang.GetSelectedItemIndex());
 
         void MilkUsed()
@@ -482,6 +495,7 @@ namespace Psycho
         void PlayerSwears() => Logic.PlayerCommittedOffence("PLAYER_SWEARS");
 
         void PlayerDrunkBeer() => Logic.BeerBottlesDrunked++;
+
         void PlayerDrunkBooze() => Logic.PlayerCommittedOffence("DRUNK_BOOZE");
 
         void PlayerCompleteFarmerQuest() => Logic.PlayerCompleteJob("FARMER_QUEST");

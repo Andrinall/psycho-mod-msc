@@ -32,8 +32,8 @@ namespace Psycho.Handlers
             if (IsItemIn) return;
             if (other.gameObject == null) return;
 
-            string itemname = other.gameObject.name.Replace("(Clone)", "").ToLower();
-            if (!Globals.PentaRecipe.Contains(itemname)) return;
+            string _itemname = other.gameObject.name.Replace("(Clone)", "").ToLower();
+            if (!Globals.PentaRecipe.Contains(_itemname)) return;
 
             Hand.CallGlobalTransition("DROP_PART");
 

@@ -30,28 +30,28 @@ namespace Psycho.Screamers
             suicidal.transform.localEulerAngles = new Vector3(270f, 177.6f, 0f);
             suicidal.SetActive(false);
 
-            AudioSource origSource = GameObject.Find(
+            AudioSource _origSource = GameObject.Find(
                 "KILJUGUY/HikerPivot/JokkeHiker2/RagDoll/pelvis/spine_mid/shoulders(xxxxx)/head/Speak"
             )?.GetComponent<AudioSource>();
 
-            if (origSource == null)
+            if (_origSource == null)
                 throw new NullReferenceException("Original JokkeHiker2 AudioSource not exists!");
 
-            AudioSource newSource = suicidal.AddComponent<AudioSource>();
-            newSource.clip = AudioClip.Instantiate(origSource.clip);
-            newSource.mute = false;
-            newSource.loop = true;
-            newSource.priority = 128;
-            newSource.volume = 1f;
-            newSource.pitch = 1f;
-            newSource.panStereo = 0f;
-            newSource.spatialBlend = 1f;
-            newSource.reverbZoneMix = 1f;
-            newSource.dopplerLevel = 1f;
-            newSource.rolloffMode = AudioRolloffMode.Custom;
-            newSource.minDistance = 1f;
-            newSource.spread = 0f;
-            newSource.maxDistance = 12f;
+            AudioSource _newSource = suicidal.AddComponent<AudioSource>();
+            _newSource.clip = AudioClip.Instantiate(_origSource.clip);
+            _newSource.mute = false;
+            _newSource.loop = true;
+            _newSource.priority = 128;
+            _newSource.volume = 1f;
+            _newSource.pitch = 1f;
+            _newSource.panStereo = 0f;
+            _newSource.spatialBlend = 1f;
+            _newSource.reverbZoneMix = 1f;
+            _newSource.dopplerLevel = 1f;
+            _newSource.rolloffMode = AudioRolloffMode.Custom;
+            _newSource.minDistance = 1f;
+            _newSource.spread = 0f;
+            _newSource.maxDistance = 12f;
         }
 
         public override void TriggerScreamer()

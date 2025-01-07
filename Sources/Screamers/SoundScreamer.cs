@@ -12,26 +12,23 @@ namespace Psycho.Screamers
 {
     internal sealed class SoundScreamer : CatchedComponent
     {
-        const int SoundDisableTime = 90;
-        const float TargetDistance = 1.75f;
+        const int DISABLE_TIME = 90;
+        const float TARGET_DISTANCE = 1.75f;
 
-        List<AudioSource> ScreamSoundPoints;
-        Transform Player;
+        List<AudioSource> screamSoundPoints;
 
-        DateTime StartScream;
-        TimeSpan Span;
+        DateTime startScream;
+        TimeSpan span;
 
-        int SoundVariant = -1;
-        bool SoundEnabled = false;
+        int soundVariant = -1;
+        bool soundEnabled = false;
 
 
         protected override void Awaked()
         {
-            ScreamSoundPoints = SoundManager.ScreamPoints
+            screamSoundPoints = SoundManager.ScreamPoints
                 .Where(v => v.clip.name != "door_knock" && v.clip.name != "water_kitchen")
                 .ToList();
-
-            Player = GameObject.Find("PLAYER").transform;
 
             // add door callbacks for disable night screamer sounds
             WorldManager.AddDoorOpenCallback("YARD/Building/LIVINGROOM/DoorFront", DisableSoundsLinkedToDoorFront);
@@ -42,20 +39,20 @@ namespace Psycho.Screamers
 
         protected override void OnFixedUpdate()
         {
-            if (!SoundEnabled) return;
+            if (!soundEnabled) return;
 
-            foreach (AudioSource source in ScreamSoundPoints)
+            foreach (AudioSource _source in screamSoundPoints)
             {
-                if (!source.isPlaying) continue;
-                if (Vector3.Distance(source.transform.position, Player.position) > TargetDistance) continue;
+                if (!_source.isPlaying) continue;
+                if (Vector3.Distance(_source.transform.position, Psycho.Player.position) > TARGET_DISTANCE) continue;
 
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip{{{source.clip.name}}} stopped by distance checker!");
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip{{{_source.clip.name}}} stopped by distance checker!");
                 StopEvent();
                 return;
             }
 
-            Span = (DateTime.Now - StartScream);
-            if (Span.Seconds < SoundDisableTime) return;
+            span = (DateTime.Now - startScream);
+            if (span.Seconds < DISABLE_TIME) return;
 
             StopEvent();
             Utils.PrintDebug(eConsoleColors.YELLOW, $"All scream sounds stopped");
@@ -66,9 +63,9 @@ namespace Psycho.Screamers
             if (time != ScreamTimeType.SOUNDS) return;
 
             SoundManager.PlayRandomScreamSound(variation);
-            SoundVariant = variation;
-            StartScream = DateTime.Now;
-            SoundEnabled = true;
+            soundVariant = variation;
+            startScream = DateTime.Now;
+            soundEnabled = true;
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Sound triggered [{(ScreamSoundType)variation}]");
         }
@@ -76,9 +73,9 @@ namespace Psycho.Screamers
         void StopEvent()
         {
             SoundManager.StopAllScreamSounds();
-            SoundEnabled = false;
+            soundEnabled = false;
 
-            EventsManager.FinishScreamer(ScreamTimeType.SOUNDS, SoundVariant);
+            EventsManager.FinishScreamer(ScreamTimeType.SOUNDS, soundVariant);
         }
 
         void DisableSoundsLinkedToDoorFront()

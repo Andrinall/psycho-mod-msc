@@ -29,8 +29,8 @@ namespace Psycho.Internal
             if (screamerEnabled) return;
             if (!Logic.IsFullScreenScreamerAvailableForTrigger()) return;
 
-            float random = Random.Range(0f, 100f);
-            if (random < 5f || random > 15f)
+            float _random = Random.Range(0f, 100f);
+            if (_random < 5f || _random > 15f)
                 return;
             
             if (hud == null)
