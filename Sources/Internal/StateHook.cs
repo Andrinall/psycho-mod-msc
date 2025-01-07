@@ -143,7 +143,8 @@ namespace Psycho.Internal
             }
             catch (Exception ex)
             {
-                Utils.PrintDebug(eConsoleColors.YELLOW, $"DisposeHook go: {gameObject}; fsmName: {fsmName}; stateName: {stateName}; index: {index}");
+                ModConsole.Error($"DisposeHook error go: {gameObject}; fsmName: {fsmName}; stateName: {stateName}; index: {index}");
+                ModConsole.Error(ex.GetFullMessage());
             }
         }
 

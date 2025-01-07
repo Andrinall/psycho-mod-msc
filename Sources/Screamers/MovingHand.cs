@@ -94,7 +94,7 @@ namespace Psycho.Screamers
 
             if (movingStage == 2)
             {
-                AudioSource.PlayClipAtPoint(Globals.HandDroppedToFace_clip, transform.position, 1f);
+                AudioSource.PlayClipAtPoint(ResourcesStorage.HandDroppedToFace_clip, transform.position, 1f);
 
                 Utils.PlayScreamSleepAnim(ref animPlayed, () =>
                 {

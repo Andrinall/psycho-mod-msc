@@ -62,14 +62,14 @@ namespace Psycho.Features
             _renamer.TargetName = "potato chips(itemx)";
             _renamer.FinalName = "pills(itemx)";
 
-            GameObject _pillsPrefab = Globals.Pills_prefab;
+            GameObject _pillsPrefab = ResourcesStorage.Pills_prefab;
             WorldManager.ChangeModel(self,
                 _pillsPrefab.GetComponent<MeshFilter>().mesh,
                 _pillsPrefab.GetComponent<MeshRenderer>().material.mainTexture
             );
 
             BoxCollider _collider = self.GetComponent<BoxCollider>();
-            BoxCollider _pcoll = Globals.Pills_prefab.GetComponent<BoxCollider>();
+            BoxCollider _pcoll = ResourcesStorage.Pills_prefab.GetComponent<BoxCollider>();
             _collider.contactOffset = _pcoll.contactOffset;
             _collider.center = _pcoll.center;
             _collider.name = _pcoll.name;

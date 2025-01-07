@@ -52,7 +52,7 @@ namespace Psycho.Screamers
             charTransform.gameObject.SetActive(true);
             SoundManager.PlayHeartbeat(true);
 
-            AudioSource.PlayClipAtPoint(Globals.GrannyCrawlScreamer_clip, transform.position, 1f);
+            AudioSource.PlayClipAtPoint(ResourcesStorage.GrannyCrawlScreamer_clip, transform.position, 1f);
         }
 
         public override void StopScreamer()

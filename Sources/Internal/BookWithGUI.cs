@@ -171,7 +171,7 @@ namespace Psycho.Internal
         /// Play page turn sound
         /// </summary>
         public void PlayPageTurn()
-            => AudioSource.PlayClipAtPoint(pageTurn, Psycho.Player.position);
+            => AudioSource.PlayClipAtPoint(pageTurn, Globals.Player.position);
 
 
         void SetMainCamera(GameObject newCamera)

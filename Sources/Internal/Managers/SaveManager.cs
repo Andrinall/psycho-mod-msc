@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 using MSCLoader;
 using UnityEngine;
 
@@ -20,7 +18,8 @@ namespace Psycho.Internal
                 if (Logic.GameFinished)
                 {
                     Logic.DestroyAllObjects();
-                    Utils.FreeResources();
+                    ResourcesStorage.UnloadAll();
+                    Globals.Reset();
                     return true;
                 }
 
@@ -61,7 +60,7 @@ namespace Psycho.Internal
                 Utils.PrintDebug(eConsoleColors.GREEN, "Save Data Loaded!");
                 return true;
             }
-            catch (Exception _)
+            catch
             {
                 ModConsole.Print("Unable to load save data");
                 return false;

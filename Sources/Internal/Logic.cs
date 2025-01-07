@@ -8,13 +8,12 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
-using Psycho.Internal;
 using Psycho.Ambient;
 
 using Object = UnityEngine.Object;
 
 
-namespace Psycho
+namespace Psycho.Internal
 {
     internal enum eWorldType { MAIN, HORROR }
 
@@ -191,11 +190,11 @@ namespace Psycho
             LastTimeTriggerScreamer = DateTime.Now;
             MinutesToNextScreamer = UnityEngine.Random.Range(10, 20);
 
-            int _randomTexture = UnityEngine.Random.Range(0, Globals.FullScreenScreamerTextures.Count);
+            int _randomTexture = UnityEngine.Random.Range(0, ResourcesStorage.FullScreenScreamerTextures.Count);
             Globals.FullScreenScreamer.transform
                 .GetChild(1).gameObject
                 .GetComponent<MeshRenderer>().material
-                .SetTexture("_MainTex", Globals.FullScreenScreamerTextures[_randomTexture]);
+                .SetTexture("_MainTex", ResourcesStorage.FullScreenScreamerTextures[_randomTexture]);
 
             Globals.FullScreenScreamer.SetActive(true);
         }
@@ -273,7 +272,7 @@ namespace Psycho
             try
             {
                 PlayMakerFSM _train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
-                Psycho.Player.GetComponent<CharacterMotor>().canControl = false;
+                Globals.Player.GetComponent<CharacterMotor>().canControl = false;
 
                 StateHook.Inject(_train.gameObject, "Player", "Die 2",
                     () => DeathSystem.KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
@@ -284,8 +283,8 @@ namespace Psycho
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 15f, default, () =>
                 {
-                    Psycho.Player.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
-                    Psycho.Player.eulerAngles = new Vector3(0f, 233.4375f, 0f);
+                    Globals.Player.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
+                    Globals.Player.eulerAngles = new Vector3(0f, 233.4375f, 0f);
 
                     ShizAnimPlayer.PlayAnimation("sleep_off", 5f, default);
                 });
@@ -319,7 +318,7 @@ namespace Psycho
             FixedHUD.RemoveElement("Psycho");
             FixedHUD.Structurize();
 
-            AudioSource.PlayClipAtPoint(Globals.FinishGame_clip, GameObject.Find("PLAYER").transform.position);
+            AudioSource.PlayClipAtPoint(ResourcesStorage.FinishGame_clip, GameObject.Find("PLAYER").transform.position);
             DestroyAllObjects();
 
             Utils.PrintDebug(eConsoleColors.GREEN, "Shiz game finished!");
@@ -369,7 +368,7 @@ namespace Psycho
         {
             try
             {                
-                CharacterMotor _motor = Psycho.Player.GetComponent<CharacterMotor>();
+                CharacterMotor _motor = Globals.Player.GetComponent<CharacterMotor>();
                 _motor.canControl = false;
 
                 FsmFloat _volume = Utils.GetGlobalVariable<FsmFloat>("GameVolume");

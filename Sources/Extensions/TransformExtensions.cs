@@ -28,6 +28,7 @@ namespace Psycho
                 catch (Exception ex)
                 {
                     ModConsole.Error($"Error in IterateAllChilds handler delegate ({handler.Method.DeclaringType.Name}");
+                    ModConsole.Error(ex.GetFullMessage());
                 }
 
                 if (_child.childCount == 0) continue;

@@ -61,7 +61,7 @@ namespace Psycho.Screamers
             nightFSM = nightProgram.GetComponent<PlayMakerFSM>();
             nightFSM.Fsm.InitData();
 
-            replaceTexture = Globals.Pictures[Globals.Pictures.Count - 1];
+            replaceTexture = ResourcesStorage.Pictures[ResourcesStorage.Pictures.Count - 1];
 
             tvAudio = nightProgram.GetComponent<AudioSource>();
         }
@@ -118,7 +118,7 @@ namespace Psycho.Screamers
 
             buttonAlreadyUsed = true;
             _setTexture();
-            PlayAudioClip(Globals.TVScream_clip);
+            PlayAudioClip(ResourcesStorage.TVScream_clip);
             Utils.PrintDebug(eConsoleColors.YELLOW, "Player pressed switch button. Show screamer.");
         }
 

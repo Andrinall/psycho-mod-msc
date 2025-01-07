@@ -32,11 +32,11 @@ namespace Psycho.Features
                 return;
             }
 
-            int _day = Psycho.GlobalDay.Value % 7;
+            int _day = Globals.GlobalDay.Value % 7;
 
-            if (_day == 3 && Psycho.SUN_hours.Value > 18)
+            if (_day == 3 && Globals.SUN_Hours.Value > 18)
                 SpawnRandomFlower();
-            else if (_day == 4 && Psycho.SUN_hours.Value < 4)
+            else if (_day == 4 && Globals.SUN_Hours.Value < 4)
                 SpawnRandomFlower();
             else
                 DespawnItems();
@@ -48,7 +48,7 @@ namespace Psycho.Features
             if (IsFlowerSpawned) return;
 
             GameObject _point = RandomFlower;
-            GameObject _flower = ItemsPool.AddItem(Globals.FernFlower_prefab);
+            GameObject _flower = ItemsPool.AddItem(ResourcesStorage.FernFlower_prefab);
 
             _flower.transform.SetParent(_point.transform, worldPositionStays: false);
             _flower.transform.localPosition = Vector3.zero;

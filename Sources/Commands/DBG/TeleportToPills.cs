@@ -2,6 +2,8 @@
 using MSCLoader;
 using UnityEngine;
 
+using Psycho.Internal;
+
 
 namespace Psycho.Debug
 {

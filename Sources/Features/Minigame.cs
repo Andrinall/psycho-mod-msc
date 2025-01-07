@@ -3,7 +3,6 @@ using System.Linq;
 
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
 
 using Psycho.Internal;
 using System.Collections;
@@ -19,8 +18,6 @@ namespace Psycho.Features
 
         Material housekeeperCardMat;
         Material playerCardMat;
-
-        Camera camera;
 
         int housekeeperCurrentCardNumber = 0;
         int playerCurrentCardNumber = 0;
@@ -77,7 +74,7 @@ namespace Psycho.Features
             int _randomCard = Random.Range(0, MAX_CARD);
             playerCurrentCardNumber = _randomCard + 1;
 
-            playerCardMat.SetTexture("_MainTex", Globals.TaroCards[_randomCard]);
+            playerCardMat.SetTexture("_MainTex", ResourcesStorage.TaroCardsTextures[_randomCard]);
             playerCard.SetActive(true);
 
             Utils.PrintDebug($"PlayerCurrentCardNumber {playerCurrentCardNumber}");
@@ -91,13 +88,13 @@ namespace Psycho.Features
             }
 
             PlayHousekeeperLaughing();
-            Logic.LastDayMinigame = Psycho.GlobalDay.Value;
+            Logic.LastDayMinigame = Globals.GlobalDay.Value;
         }
 
         internal void UpdateHousekeeperCard()
         {
             int _randomCard = Random.Range(0, MAX_CARD / 2);
-            housekeeperCardMat.SetTexture("_MainTex", Globals.TaroCards[_randomCard]);
+            housekeeperCardMat.SetTexture("_MainTex", ResourcesStorage.TaroCardsTextures[_randomCard]);
             housekeeperCurrentCardNumber = _randomCard + 1;
             playerCard.SetActive(false);
 
@@ -111,11 +108,11 @@ namespace Psycho.Features
 
         bool CheckDayChangedAndUpdateHousekeeperCard()
         {
-            if (Logic.LastDayMinigame == Psycho.GlobalDay.Value) return false;
-            if (lastUpdated != Psycho.GlobalDay.Value)
+            if (Logic.LastDayMinigame == Globals.GlobalDay.Value) return false;
+            if (lastUpdated != Globals.GlobalDay.Value)
             {
                 UpdateHousekeeperCard();
-                lastUpdated = Psycho.GlobalDay.Value;
+                lastUpdated = Globals.GlobalDay.Value;
             }
             return true;
         }
@@ -136,7 +133,7 @@ namespace Psycho.Features
             yield return new WaitForSeconds(1f);
 
             GameObject _pageObj = (GameObject)Instantiate(
-                Globals.NotebookPage_prefab,
+                ResourcesStorage.NotebookPage_prefab,
                 playerCard.transform.position,
                 Quaternion.Euler(Vector3.zero)
             );
@@ -155,7 +152,7 @@ namespace Psycho.Features
         }
 
         void PlayHousekeeperLaughing()
-            => AudioSource.PlayClipAtPoint(Globals.HousekeeperLaughs_clip, transform.position);
+            => AudioSource.PlayClipAtPoint(ResourcesStorage.HousekeeperLaughs_clip, transform.position);
 
         public static void Initialize()
         {
@@ -165,7 +162,7 @@ namespace Psycho.Features
             Destroy(_bottlehide);
 
             if (Notebook.Pages.Any(v => v.isFinalPage)) return;
-            GameObject _minigame = Object.Instantiate(Globals.CottageMinigame_prefab);
+            GameObject _minigame = Object.Instantiate(ResourcesStorage.CottageMinigame_prefab);
             _minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
             _minigame.AddComponent<Minigame>();
         }

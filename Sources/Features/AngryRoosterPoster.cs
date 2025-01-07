@@ -26,26 +26,25 @@ namespace Psycho.Features
         {
             AudioSource[] sources = GetComponents<AudioSource>();
             angrySounds = sources[0];
-            angrySounds.enabled = false;
-
             completeSound = sources[1];
+            angrySounds.enabled = false;
 
             renderer = GetComponent<MeshRenderer>();
 
             hand = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/1Hand_Assemble/Hand").GetPlayMaker("PickUp");
-            Utils.PrintDebug($"rooster awaked day: {Psycho.GlobalDay.Value % 7}, hours: {Psycho.SUN_hours.Value}, applyed");
+            Utils.PrintDebug(eConsoleColors.YELLOW, $"[RoosterPoster.Awaked()] day: {Globals.GlobalDay.Value % 7}; hours: {Globals.SUN_Hours.Value}; applyed: {Applyed}; lastDayApplyed: {LastDayApplyed}");
         }
 
         protected override void OnFixedUpdate()
         {
-            int day = Psycho.GlobalDay.Value % 7;
-            if (Applyed && LastDayApplyed != Psycho.GlobalDay.Value)
+            int day = Globals.GlobalDay.Value % 7;
+            if (Applyed && LastDayApplyed != Globals.GlobalDay.Value)
                 Applyed = false;
 
 
-            if (!status && !Applyed && day == 6 && Psycho.SUN_hours.Value > 4 && Psycho.SUN_hours.Value < 16)
+            if (!status && !Applyed && day == 6 && Globals.SUN_Hours.Value > 4 && Globals.SUN_Hours.Value < 16)
                 Activate(true);
-            else if (status && day == 6 && (Psycho.SUN_hours.Value < 4 || Psycho.SUN_hours.Value > 16))
+            else if (status && day == 6 && (Globals.SUN_Hours.Value < 4 || Globals.SUN_Hours.Value > 16))
             {
                 Activate(false);
                 Applyed = false;
@@ -70,9 +69,9 @@ namespace Psycho.Features
             other.gameObject.GetComponent<PlayMakerFSM>().CallGlobalTransition("GARBAGE");
 
             Applyed = true;
-            LastDayApplyed = Psycho.GlobalDay.Value;
+            LastDayApplyed = Globals.GlobalDay.Value;
             Activate(false);
-            ItemsPool.AddItem(Globals.BlackEgg_prefab, pos, Vector3.zero);
+            ItemsPool.AddItem(ResourcesStorage.BlackEgg_prefab, pos, Vector3.zero);
         }
 
         void Activate(bool state)

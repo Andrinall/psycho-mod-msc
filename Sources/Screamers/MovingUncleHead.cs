@@ -37,7 +37,7 @@ namespace Psycho.Screamers
             startPoint = headObj.transform.position;
 
             var _source = headObj.AddComponent<AudioSource>();
-            _source.clip = Globals.UncleScream_clip;
+            _source.clip = ResourcesStorage.UncleScream_clip;
             _source.playOnAwake = true;
             _source.loop = false;
             _source.priority = 128;

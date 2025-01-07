@@ -95,6 +95,7 @@
     <Compile Include="Sources\Extensions\TransformExtensions.cs" />
     <Compile Include="Sources\Extensions\VectorExtensions.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
+    <Compile Include="Sources\Features\Postcard.cs" />
     <Compile Include="Sources\FullScreenScreamers\AssemblyBatteryToChargeHandler.cs" />
     <Compile Include="Sources\FullScreenScreamers\BoatIgnitionHandler.cs" />
     <Compile Include="Sources\FullScreenScreamers\CashRegisterHandler.cs" />
@@ -116,15 +117,16 @@
     <Compile Include="Sources\Handlers\SuskiHelpHandler.cs" />
     <Compile Include="Sources\Internal\DeathSystem.cs" />
     <Compile Include="Sources\DebugPanel.cs" />
-    <Compile Include="Sources\Internal\EventsManager.cs" />
+    <Compile Include="Sources\Internal\Managers\EventsManager.cs" />
     <Compile Include="Sources\Internal\FsmHookAction.cs" />
     <Compile Include="Sources\Internal\SaveLoadData.cs" />
     <Compile Include="Sources\Internal\ScreamerBase.cs" />
-    <Compile Include="Sources\Internal\TexturesManager.cs" />
+    <Compile Include="Sources\Internal\Managers\TexturesManager.cs" />
     <Compile Include="Sources\Locales.cs" />
     <Compile Include="Sources\Features\AnyPentaItemsSpawner.cs" />
     <Compile Include="Sources\Features\FernFlowerSpawner.cs" />
     <Compile Include="Sources\Features\Pentagram.cs" />
+    <Compile Include="Sources\Internal\ResourcesStorage.cs" />
     <Compile Include="Sources\Screamers\BathroomShower.cs" />
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />
     <Compile Include="Sources\Screamers\KitchenShower.cs" />
@@ -139,9 +141,9 @@
     <Compile Include="Sources\Internal\BookWithGUI.cs" />
     <Compile Include="Sources\Internal\CatchedComponent.cs" />
     <Compile Include="Sources\Extensions\Extensions.cs" />
-    <Compile Include="Sources\Internal\ItemsPool.cs" />
-    <Compile Include="Sources\Internal\SaveManager.cs" />
-    <Compile Include="Sources\Internal\SoundManager.cs" />
+    <Compile Include="Sources\Internal\Managers\ItemsPool.cs" />
+    <Compile Include="Sources\Internal\Managers\SaveManager.cs" />
+    <Compile Include="Sources\Internal\Managers\SoundManager.cs" />
     <Compile Include="Sources\Handlers\FliesChanger.cs" />
     <Compile Include="Sources\Handlers\Hangover.cs" />
     <Compile Include="Sources\Handlers\HouseShitHandler.cs" />
@@ -152,9 +154,9 @@
     <Compile Include="Sources\Handlers\JokkeMovingJobHandler.cs" />
     <Compile Include="Sources\Internal\ShizAnimPlayer.cs" />
     <Compile Include="Sources\Psycho.cs" />
-    <Compile Include="Sources\Logic.cs" />
-    <Compile Include="Sources\Internal\FixedHUD.cs" />
-    <Compile Include="Sources\Globals.cs" />
+    <Compile Include="Sources\Internal\Logic.cs" />
+    <Compile Include="Sources\Internal\Managers\FixedHUD.cs" />
+    <Compile Include="Sources\Internal\Globals.cs" />
     <Compile Include="Sources\Handlers\ItemRenamer.cs" />
     <Compile Include="Sources\Features\MailBoxEnvelope.cs" />
     <Compile Include="Sources\Features\PillsItem.cs" />
@@ -165,7 +167,7 @@
     <Compile Include="Sources\Handlers\StoreActionsHandler.cs" />
     <Compile Include="Sources\Internal\Utils.cs" />
     <Compile Include="Sources\Handlers\SuitcaseHandler.cs" />
-    <Compile Include="Sources\Internal\WorldManager.cs" />
+    <Compile Include="Sources\Internal\Managers\WorldManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\bundle.unity3d" />

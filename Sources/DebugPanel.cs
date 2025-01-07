@@ -241,24 +241,24 @@ namespace Psycho
         static void SpawnPentagramItem()
         {
             string _itemName = debug_SpawnItem.GetSelectedItemName();
-            Vector3 _pos = Psycho.Player.position;
+            Vector3 _pos = Globals.Player.position;
 
             switch (_itemName)
             {
                 case "churchcandle":
-                    ItemsPool.AddItem(Globals.Candle_prefab, _pos, Vector3.zero);
+                    ItemsPool.AddItem(ResourcesStorage.Candle_prefab, _pos, Vector3.zero);
                     break;
                 case "fernflower":
-                    ItemsPool.AddItem(Globals.FernFlower_prefab, _pos, Vector3.zero);
+                    ItemsPool.AddItem(ResourcesStorage.FernFlower_prefab, _pos, Vector3.zero);
                     break;
                 case "mushroom":
-                    ItemsPool.AddItem(Globals.Mushroom_prefab, _pos, Vector3.zero);
+                    ItemsPool.AddItem(ResourcesStorage.Mushroom_prefab, _pos, Vector3.zero);
                     break;
                 case "blackegg":
-                    ItemsPool.AddItem(Globals.BlackEgg_prefab, _pos, Vector3.zero);
+                    ItemsPool.AddItem(ResourcesStorage.BlackEgg_prefab, _pos, Vector3.zero);
                     break;
                 case "walnut":
-                    ItemsPool.AddItem(Globals.Walnut_prefab, _pos, Vector3.zero);
+                    ItemsPool.AddItem(ResourcesStorage.Walnut_prefab, _pos, Vector3.zero);
                     break;
 
                 default:

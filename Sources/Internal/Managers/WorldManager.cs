@@ -27,7 +27,7 @@ namespace Psycho.Internal
         {
             GameObject _houseTriggerObj = new GameObject("HouseAmbientTrigger");
             _houseTriggerObj.transform.position = new Vector3(-6.67f, 0.7f, 9.47f);
-            SoundManager.AddAudioSource(_houseTriggerObj, Globals.HouseAmbient_clip, 0.22f);
+            SoundManager.AddAudioSource(_houseTriggerObj, ResourcesStorage.HouseAmbient_clip, 0.22f);
 
             BoxCollider _box = _houseTriggerObj.AddComponent<BoxCollider>();
             _box.isTrigger = true;
@@ -40,7 +40,7 @@ namespace Psycho.Internal
 
             GameObject _islandAmbientObj = new GameObject("IslandAmbientTrigger");
             _islandAmbientObj.transform.position = new Vector3(-878.7f, -3.695f, 496.6f);
-            SoundManager.AddAudioSource(_islandAmbientObj, Globals.IslandAmbient_clip, 0.26f);
+            SoundManager.AddAudioSource(_islandAmbientObj, ResourcesStorage.IslandAmbient_clip, 0.26f);
 
             SphereCollider _sphere = _islandAmbientObj.AddComponent<SphereCollider>();
             _sphere.isTrigger = true;
@@ -54,7 +54,7 @@ namespace Psycho.Internal
             GameObject _dingonbiisiAmbientObj = new GameObject("DingonbiisiAmbientTrigger");
             _dingonbiisiAmbientObj.transform.position = new Vector3(1368.03f, 10.63f, 799.7194f);
             _dingonbiisiAmbientObj.transform.eulerAngles = new Vector3(0f, 39.213f, 0f);
-            SoundManager.AddAudioSource(_dingonbiisiAmbientObj, Globals.DingonbiisiAmbient_clip, 0.09f);
+            SoundManager.AddAudioSource(_dingonbiisiAmbientObj, ResourcesStorage.DingonbiisiAmbient_clip, 0.09f);
 
             BoxCollider _box2 = _dingonbiisiAmbientObj.AddComponent<BoxCollider>();
             _box2.isTrigger = true;
@@ -74,7 +74,7 @@ namespace Psycho.Internal
         {
             elapsedFrames = 0;
 
-            Transform _player = Psycho.Player;
+            Transform _player = Globals.Player;
             ClonedPhantom.transform.position = _player.position - _player.forward * distance;
             ClonedPhantom.transform.LookAt(_player.position);
             ClonedPhantom.SetActive(true);
@@ -410,7 +410,7 @@ namespace Psycho.Internal
 
         public static void ChangeWorldModels(GameObject parent)
         {
-            foreach (var _item in Globals.ModelsReplaces)
+            foreach (var _item in ResourcesStorage.ModelsReplaces)
             {
                 GameObject _obj = parent?.transform?.Find(_item.Value.path)?.gameObject;
                 if (_obj == null) continue;
@@ -447,18 +447,18 @@ namespace Psycho.Internal
         public static void ChangeIndepTextures(bool onSave)
         {
             if (onSave)
-                TexturesManager.RestoreDefaults(Globals.IndependentlyTextures);
+                TexturesManager.RestoreDefaults(ResourcesStorage.IndependentlyTextures);
             else
-                TexturesManager.ReplaceTextures(Globals.IndependentlyTextures);
+                TexturesManager.ReplaceTextures(ResourcesStorage.IndependentlyTextures);
         }
 
 
         public static void ChangeWorldTextures(bool state)
         {
             if (state)
-                TexturesManager.ReplaceTextures(Globals.Replaces);
+                TexturesManager.ReplaceTextures(ResourcesStorage.Replaces);
             else
-                TexturesManager.RestoreDefaults(Globals.Replaces);
+                TexturesManager.RestoreDefaults(ResourcesStorage.Replaces);
         }
 
         public static void ChangeBedroomModels()
@@ -470,13 +470,13 @@ namespace Psycho.Internal
             if (_coffinsGroup == null && _state)
             {
                 _coffinsGroup = new GameObject("BedroomCoffins");
-                GameObject _coffin1 = (Object.Instantiate(Globals.Coffin_prefab,
+                GameObject _coffin1 = (Object.Instantiate(ResourcesStorage.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738183f, 13.52571f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
                 _coffin1.transform.SetParent(_coffinsGroup.transform, worldPositionStays: false);
 
-                GameObject _coffin2 = (Object.Instantiate(Globals.Coffin_prefab,
+                GameObject _coffin2 = (Object.Instantiate(ResourcesStorage.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738185f, 12.52524f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);

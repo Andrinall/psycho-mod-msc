@@ -7,7 +7,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using Psycho.Handlers;
 
 
 namespace Psycho.Features
@@ -19,7 +18,7 @@ namespace Psycho.Features
             new NotebookPage { index = 14, isDefaultPage = true }
         };
 
-        protected override GameObject GUIPrefab => Globals.NotebookGUI_prefab;
+        protected override GameObject GUIPrefab => ResourcesStorage.NotebookGUI_prefab;
 
         TextMesh notebookGUIText;
         TextMesh notebookGUIPage;
@@ -105,18 +104,18 @@ namespace Psycho.Features
             {
                 notebookGUIText.text = Locales.FINAL_PAGE[_isTrueEnding ? 0 : 1, Globals.CurrentLang];
                 Background.SetTexture("_MainTex",
-                    _isTrueEnding ? Globals.NotebookPages_texture : Globals.NotebookFinalPage_texture
+                    _isTrueEnding ? ResourcesStorage.NotebookPages_texture : ResourcesStorage.NotebookFinalPage_texture
                 );
             }
             else if (_page.index == 14) // default
             {
                 notebookGUIText.text = Locales.DEFAULT_PAGE[Globals.CurrentLang];
-                Background.SetTexture("_MainTex", Globals.NotebookStartPage_texture);
+                Background.SetTexture("_MainTex", ResourcesStorage.NotebookStartPage_texture);
             }
             else if (_page.index < 14)
             {
                 notebookGUIText.text = Locales.PAGES[_page.index - 1, _isTrueEnding ? 0 : 1, Globals.CurrentLang];
-                Background.SetTexture("_MainTex", Globals.NotebookPages_texture);
+                Background.SetTexture("_MainTex", ResourcesStorage.NotebookPages_texture);
             }
 
             notebookGUIPage.text = $"Page {_page.index}";
@@ -192,10 +191,7 @@ namespace Psycho.Features
 
         void SpawnPostcard()
         {
-            GameObject _postcard = ItemsPool.AddItem(Globals.Postcard_prefab);
-            _postcard.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
-            _postcard.AddComponent<ItemsGravityEnabler>();
-            Utils.InitPostcard(_postcard);
+            Postcard.Initialize();
         }
 
         public static int GetMaxPageIndex()

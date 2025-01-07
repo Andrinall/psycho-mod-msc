@@ -83,15 +83,15 @@ namespace Psycho.Features
                 return;
             }
 
-            if (!LightsEnabled && Psycho.SUN_hours.Value >= 20 || Psycho.SUN_hours.Value < 5)
+            if (!LightsEnabled && Globals.SUN_Hours.Value >= 20 || Globals.SUN_Hours.Value < 5)
                 SetCandlesFireActive(true);
-            else if (LightsEnabled && Psycho.SUN_hours.Value > 4 && Psycho.SUN_hours.Value < 20)
+            else if (LightsEnabled && Globals.SUN_Hours.Value > 4 && Globals.SUN_Hours.Value < 20)
                 SetCandlesFireActive(false);
         }
 
         public void SetCandlesFireActive(bool state, bool notSet = false)
         {
-            if (!LightsEnabled && Vector3.Distance(candles.position, Psycho.Player.position) > 10f) return;
+            if (!LightsEnabled && Vector3.Distance(candles.position, Globals.Player.position) > 10f) return;
 
             for (int i = 0; i < candles.childCount; i++)
                 candles.GetChild(i).GetChild(0 /* Fire */).gameObject.SetActive(state);

@@ -7,7 +7,6 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Features;
-using Psycho.Handlers;
 
 using Object = UnityEngine.Object;
 
@@ -89,10 +88,7 @@ namespace Psycho.Internal
             if (prefab.name == "Notebook")
                 Globals.Notebook = _cloned.AddComponent<Notebook>();
             if (prefab.name == "Postcard")
-            {
-                _cloned.AddComponent<ItemsGravityEnabler>();
-                Utils.InitPostcard(_cloned);
-            }
+                Postcard.Initialize(_cloned);
 
             _cloned.MakePickable();
 
@@ -105,21 +101,21 @@ namespace Psycho.Internal
             switch (item)
             {
                 case "ChurchCandle":
-                    return Globals.Candle_prefab;
+                    return ResourcesStorage.Candle_prefab;
                 case "FernFlower":
-                    return Globals.FernFlower_prefab;
+                    return ResourcesStorage.FernFlower_prefab;
                 case "Mushroom":
-                    return Globals.Mushroom_prefab;
+                    return ResourcesStorage.Mushroom_prefab;
                 case "Walnut":
-                    return Globals.Walnut_prefab;
+                    return ResourcesStorage.Walnut_prefab;
                 case "BlackEgg":
-                    return Globals.BlackEgg_prefab;
+                    return ResourcesStorage.BlackEgg_prefab;
                 case "Picture":
-                    return Globals.Picture_prefab;
+                    return ResourcesStorage.Picture_prefab;
                 case "Notebook":
-                    return Globals.Notebook_prefab;
+                    return ResourcesStorage.Notebook_prefab;
                 case "Postcard":
-                    return Globals.Postcard_prefab;
+                    return ResourcesStorage.Postcard_prefab;
                 default: return null;
             }
         }

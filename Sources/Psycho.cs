@@ -33,13 +33,6 @@ namespace Psycho
         internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         internal static bool IsLoaded = false;
 
-        internal static Transform Player;
-
-        internal static FsmInt GlobalDay;
-        internal static FsmFloat SUN_minutes;
-        internal static FsmFloat SUN_hours;
-
-
         GameObject loaderMenu;
 
         Transform houseFire;
@@ -90,7 +83,8 @@ namespace Psycho
         {
             SaveManager.RemoveData(this);
             Logic.SetDefaultValues();
-            Utils.FreeResources();
+            ResourcesStorage.UnloadAll();
+            Globals.Reset();
             Utils.PrintDebug(eConsoleColors.RED, $"New game started, save file removed!");
         }
 
@@ -98,19 +92,22 @@ namespace Psycho
         {
             IsLoaded = false;
             loaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
-            Utils.FreeResources(); // clear resources for avoid game crashes after loading saved game
+            ResourcesStorage.UnloadAll(); // clear resources for avoid game crashes after loading saved game
 
-            AssetBundle _bundle = LoadAssets.LoadBundle("Psycho.Assets.bundle.unity3d");
-            Globals.LoadAssets(_bundle);
-            _bundle.Unload(false);
+            // load resources from bundle
+            ResourcesStorage.LoadFromBundle("Psycho.Assets.bundle.unity3d");
 
+            // init global vars
+            Globals.InitializeGlobalVars();
+
+            // load save data
             if (!SaveManager.TryLoad(this))
             {
                 Logic.SetDefaultValues(); // reset data if savedata not loaded
 
                 if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
                 {
-                    ItemsPool.AddItem(Globals.Picture_prefab,
+                    ItemsPool.AddItem(ResourcesStorage.Picture_prefab,
                         new Vector3(-10.1421f, 0.2857685f, 6.501729f),
                         new Vector3(0.01392611f, 2.436693f, 89.99937f)
                     );
@@ -118,7 +115,7 @@ namespace Psycho
 
                 if (GameObject.Find("Notebook(Clone)") == null)
                 {
-                    GameObject _notebook = ItemsPool.AddItem(Globals.Notebook_prefab,
+                    GameObject _notebook = ItemsPool.AddItem(ResourcesStorage.Notebook_prefab,
                         new Vector3(-2.007682f, 0.04279194f, 7.669019f),
                         new Vector3(90f, 247.8114f, 0f)
                     );
@@ -127,7 +124,7 @@ namespace Psycho
                 }
             }
 
-            GameObject _sketchbook = (GameObject)UnityEngine.Object.Instantiate(Globals.Sketchbook_prefab,
+            GameObject _sketchbook = (GameObject)Object.Instantiate(ResourcesStorage.Sketchbook_prefab,
                 new Vector3(-4.179454f, -0.08283298f, 7.728132f),
                 Quaternion.Euler(new Vector3(90f, 44.45397f, 0f))
             );
@@ -135,7 +132,7 @@ namespace Psycho
             _sketchbook.MakePickable();
             ////////////
 
-            Transform _newspaperFrame = Object.Instantiate(Globals.Picture_prefab).transform;
+            Transform _newspaperFrame = Object.Instantiate(ResourcesStorage.Picture_prefab).transform;
             _newspaperFrame.gameObject.name = "Newspaper(Clone)";
             Object.Destroy(_newspaperFrame.GetComponent<Rigidbody>());
             Object.Destroy(_newspaperFrame.GetComponent<MeshCollider>());
@@ -146,7 +143,7 @@ namespace Psycho
             _newspaperFrame.localScale = new Vector3(29.68098f, 19.2858f, 10f);
 
             MeshRenderer renderer = _newspaperFrame.GetComponent<MeshRenderer>();
-            renderer.materials[1].SetTexture("_MainTex", Globals.NewsPaper_texture);
+            renderer.materials[1].SetTexture("_MainTex", ResourcesStorage.NewsPaper_texture);
             
             // add job handlers (what is not possible for use in second pass)
             AddComponent<JokkeMovingJobHandler>("JOBS/HouseDrunk/Moving");
@@ -155,13 +152,6 @@ namespace Psycho
             
             houseBurningState = Utils.GetGlobalVariable<FsmBool>("HouseBurning");
             houseFire = GameObject.Find("YARD/Building/HOUSEFIRE").transform;
-            Player = GameObject.Find("PLAYER").transform;
-
-            GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
-
-            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
-            SUN_hours = sun.GetVariable<FsmFloat>("Hours");
-            SUN_minutes = sun.GetVariable<FsmFloat>("Minutes");
 
             bells = GameObject.Find("PERAJARVI/CHURCH/Bells").transform;
             bellsState = bells.parent.GetPlayMaker("Bells").GetState("Stop bells");
@@ -201,7 +191,7 @@ namespace Psycho
             // add inactive audio source for play in screamer
             GameObject _grandma = GameObject.Find("ChurchGrandma/GrannyHiker");
             AudioSource _source = _grandma.AddComponent<AudioSource>(); // add burn sound to grandma, used for night screamer
-            _source.clip = Globals.AcidBurn_clip;
+            _source.clip = ResourcesStorage.AcidBurn_clip;
             _source.loop = false;
             _source.volume = 2f;
             _source.priority = 5;
@@ -212,7 +202,7 @@ namespace Psycho
             _source.spread = 0f;
             _grandma.AddComponent<GrandmaDistanceChecker>();
 
-            SoundManager.ReplaceRadioStaticSound(Globals.UBV_psy_clip);
+            SoundManager.ReplaceRadioStaticSound(ResourcesStorage.UBV_psy_clip);
 
             // finalize a loading
             ModConsole.Print($"[{Name}{{{Version}}}]: <color=green>Successfully loaded!</color>");
@@ -244,26 +234,26 @@ namespace Psycho
 
             if (houseBurningState.Value == true && !houseOnFire)
             {
-                if (Vector3.Distance(houseFire.position, Player.position) > 4f) return;
+                if (Vector3.Distance(houseFire.position, Globals.Player.position) > 4f) return;
                 Logic.PlayerCommittedOffence("HOUSE_BURNING");
                 houseOnFire = true;
             }
 
-            WorldManager.ShowCrows(!(SUN_hours.Value >= 20f || SUN_hours.Value < 6f));
+            WorldManager.ShowCrows(!(Globals.SUN_Hours.Value >= 20f || Globals.SUN_Hours.Value < 6f));
 
             if (Logic.CurrentAmbientTrigger == null)
                 SoundManager.MuteGlobalAmbient(false);
                 
             
 
-            if (!bellsActivated && SUN_hours.Value == 24f && Mathf.FloorToInt(SUN_minutes.Value) == 0)
+            if (!bellsActivated && Globals.SUN_Hours.Value == 24f && Mathf.FloorToInt(Globals.SUN_Minutes.Value) == 0)
             {
                 (bellsState.Actions[0] as ActivateGameObject).activate = true;
                 bells.gameObject.SetActive(true);
                 bells.position = GameObject.Find("PLAYER").transform.position;
                 bellsActivated = true;
             }
-            else if (bellsActivated && Mathf.FloorToInt(SUN_minutes.Value) > 1)
+            else if (bellsActivated && Mathf.FloorToInt(Globals.SUN_Minutes.Value) > 1)
             {
                 (bellsState.Actions[0] as ActivateGameObject).activate = false;
                 bells.gameObject.SetActive(false);

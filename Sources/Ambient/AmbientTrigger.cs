@@ -13,8 +13,6 @@ namespace Psycho.Ambient
     public class AmbientTrigger : CatchedComponent
     {
         AudioSource localAmbientSource;
-        AudioSource globalAmbientSource;
-        AudioSource globalPhychoAmbientSource;
 
         GameObject jonnez;
         GameObject boat;
@@ -22,13 +20,11 @@ namespace Psycho.Ambient
         Collider selfColl;
 
         public bool CheckTimeOfDay = false;
-        Vector3 ClosestPoint => selfColl.ClosestPointOnBounds(Psycho.Player.position);
+        Vector3 ClosestPoint => selfColl.ClosestPointOnBounds(Globals.Player.position);
 
         protected override void Awaked()
         {
             localAmbientSource = GetComponent<AudioSource>();
-            globalAmbientSource = null;
-            globalPhychoAmbientSource = null;
 
             jonnez = GameObject.Find("JONNEZ ES(Clone)");
             boat = GameObject.Find("BOAT/GFX/Colliders/Collider");
@@ -38,7 +34,7 @@ namespace Psycho.Ambient
 
         protected override void OnFixedUpdate()
         {
-            if (Vector3.Distance(ClosestPoint, Psycho.Player.position) == 0)
+            if (Vector3.Distance(ClosestPoint, Globals.Player.position) == 0)
             {
                 Logic.CurrentAmbientTrigger = this;
                 if (!CheckTimeOfDay)
@@ -47,7 +43,7 @@ namespace Psycho.Ambient
                     return;
                 }
 
-                if (Psycho.SUN_hours.Value >= 22f || Psycho.SUN_hours.Value < 4f)
+                if (Globals.SUN_Hours.Value >= 22f || Globals.SUN_Hours.Value < 4f)
                 {
                     MuteAmbient(false);
                     return;
@@ -75,7 +71,7 @@ namespace Psycho.Ambient
         {
             GameObject _obj = other?.gameObject;
             if (_obj == null) return false;
-            return _obj == Psycho.Player.gameObject || _obj == jonnez || _obj == boat;
+            return _obj == Globals.Player.gameObject || _obj == jonnez || _obj == boat;
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Psycho.Screamers
             foreach (AudioSource _source in screamSoundPoints)
             {
                 if (!_source.isPlaying) continue;
-                if (Vector3.Distance(_source.transform.position, Psycho.Player.position) > TARGET_DISTANCE) continue;
+                if (Vector3.Distance(_source.transform.position, Globals.Player.position) > TARGET_DISTANCE) continue;
 
                 Utils.PrintDebug(eConsoleColors.YELLOW, $"AudioClip{{{_source.clip.name}}} stopped by distance checker!");
                 StopEvent();

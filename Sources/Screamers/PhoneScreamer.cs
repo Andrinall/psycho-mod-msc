@@ -126,7 +126,7 @@ namespace Psycho.Screamers
         void _addAudios()
         {
             AudioSource _source = player.gameObject.AddComponent<AudioSource>();
-            _source.clip = Globals.ScreamCall_clip;
+            _source.clip = ResourcesStorage.ScreamCall_clip;
             _source.loop = false;
             _source.priority = 128;
             _source.volume = 1f;
@@ -141,7 +141,7 @@ namespace Psycho.Screamers
             callScreamer = _source;
 
             AudioSource _source2 = player.gameObject.AddComponent<AudioSource>();
-            _source2.clip = Globals.PhantomScream_clip;
+            _source2.clip = ResourcesStorage.PhantomScream_clip;
             _source2.loop = false;
             _source2.priority = 128;
             _source2.volume = 1;

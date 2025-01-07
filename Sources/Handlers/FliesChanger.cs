@@ -119,22 +119,22 @@ namespace Psycho.Handlers
                 AudioClip _moveeclip = _movee.audioClip.Value as AudioClip;
                 if (_stopclip.name == "fly" && _moveeclip.name == "fly2")
                 {
-                    Globals.FliesCached.Add(_stopclip);
-                    Globals.FliesCached.Add(_moveeclip);
+                    Globals.CachedFliesSounds.Add(_stopclip);
+                    Globals.CachedFliesSounds.Add(_moveeclip);
                 }
 
                 if (Logic.InHorror)
                 {
-                    int _idx = Random.Range(0, Globals.HorrorFlies.Count);
-                    int _idx2 = Random.Range(0, Globals.HorrorFlies.Count);
-                    _movee.audioClip.Value = Globals.HorrorFlies[_idx];
-                    _stop.audioClip.Value = Globals.HorrorFlies[_idx2];
+                    int _idx = Random.Range(0, ResourcesStorage.HorrorFliesSounds.Count);
+                    int _idx2 = Random.Range(0, ResourcesStorage.HorrorFliesSounds.Count);
+                    _movee.audioClip.Value = ResourcesStorage.HorrorFliesSounds[_idx];
+                    _stop.audioClip.Value = ResourcesStorage.HorrorFliesSounds[_idx2];
                     _count += 2;
                     continue;
                 }
 
-                _stop.audioClip.Value = Globals.FliesCached[_count];
-                _movee.audioClip.Value = Globals.FliesCached[_count + 1];
+                _stop.audioClip.Value = Globals.CachedFliesSounds[_count];
+                _movee.audioClip.Value = Globals.CachedFliesSounds[_count + 1];
                 _count += 2;
             }
         }

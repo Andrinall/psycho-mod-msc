@@ -38,14 +38,14 @@ namespace Psycho.Screamers
         {
             if (!ScreamerEnabled) return;
             if (isBlowed) return;
-            if (Vector3.Distance(transform.position, Psycho.Player.position) > DISTANCE) return;
+            if (Vector3.Distance(transform.position, Globals.Player.position) > DISTANCE) return;
             BlowUpGrandmaAndReset();
         }
 
 
         public void BlowUpGrandmaAndReset()
         {
-            GameObject _smokes = Instantiate(Globals.SmokeParticleSystem_prefab);
+            GameObject _smokes = Instantiate(ResourcesStorage.SmokeParticleSystem_prefab);
             _smokes.transform.position = transform.position;
             _smokes.transform.localScale = new Vector3(0.0075f, 0.0075f, 0.0075f);
 

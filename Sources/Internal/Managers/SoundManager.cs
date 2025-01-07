@@ -37,7 +37,7 @@ namespace Psycho.Internal
 
             if (!Logic.InHorror)
             {
-                MuteSource(Globals.GlobalAmbient_source, !(Psycho.SUN_hours.Value >= 22f || Psycho.SUN_hours.Value < 4f));
+                MuteSource(Globals.GlobalAmbient_source, !(Globals.SUN_Hours.Value >= 22f || Globals.SUN_Hours.Value < 4f));
                 MuteSource(Globals.GlobalPsychoAmbient_source, true);
             }
             else

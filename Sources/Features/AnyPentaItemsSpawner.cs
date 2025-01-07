@@ -48,10 +48,10 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-            int day = Psycho.GlobalDay.Value % 7;
-            CheckItemSpawnTimeAndSpawn(day, WalnutDay, ref WalnutSpawned, palm, Globals.Walnut_prefab, walnutPos);
-            CheckItemSpawnTimeAndSpawn(day, MushroomDay, ref MushroomSpawned, island, Globals.Mushroom_prefab, mushroom_pos);
-            CheckItemSpawnTimeAndSpawn(day, CandleDay, ref CandleSpawned, church, Globals.Candle_prefab, candlePos);
+            int day = Globals.GlobalDay.Value % 7;
+            CheckItemSpawnTimeAndSpawn(day, WalnutDay, ref WalnutSpawned, palm, ResourcesStorage.Walnut_prefab, walnutPos);
+            CheckItemSpawnTimeAndSpawn(day, MushroomDay, ref MushroomSpawned, island, ResourcesStorage.Mushroom_prefab, mushroom_pos);
+            CheckItemSpawnTimeAndSpawn(day, CandleDay, ref CandleSpawned, church, ResourcesStorage.Candle_prefab, candlePos);
         }
 
         void CheckItemSpawnTimeAndSpawn(

@@ -59,7 +59,7 @@ namespace Psycho.Screamers
             enableTime = DateTime.Now;
             suicidal?.SetActive(true);
             lamp?.SetActive(false);
-            AudioSource.PlayClipAtPoint(Globals.JokkeSpawned_clip, transform.position, 1f);
+            AudioSource.PlayClipAtPoint(ResourcesStorage.JokkeSpawned_clip, transform.position, 1f);
         }
 
 

@@ -41,7 +41,7 @@ namespace Psycho.Features
             Transform _oldBackground = envelopeSheet.transform.GetChild(1);
             Destroy(_oldBackground.gameObject);
 
-            GameObject _background = Instantiate(Globals.Background_prefab);
+            GameObject _background = Instantiate(ResourcesStorage.Background_prefab);
             _background.transform.SetParent(envelopeSheet.transform, worldPositionStays: false);
             _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
             _background.name = "Background";
@@ -119,7 +119,7 @@ namespace Psycho.Features
         void SetBackgroundScreenForLetter(int index)
         {
             Transform _image = envelopeSheet.transform.Find("Background/Image");
-            Texture _newTexture = Globals.MailScreens.Find(v => v.name == index.ToString());
+            Texture _newTexture = ResourcesStorage.MailScreens.Find(v => v.name == index.ToString());
             _image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", _newTexture);
             Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {_newTexture.name} idx");
         }

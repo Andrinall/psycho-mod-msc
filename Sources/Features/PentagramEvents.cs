@@ -25,7 +25,7 @@ namespace Psycho.Features
         Vector3 itemSpawnPos, grandmaSoundOrigPos;
 
         AudioSource grandmaSound;
-        GameObject fire, moneyObj, fpsCamera, grandma, tireStatus;
+        GameObject fire, fpsCamera, grandma, tireStatus;
         Transform fusetable;
 
         PlayMakerFSM blindless, hangoverCamera, knockout;
@@ -167,7 +167,7 @@ namespace Psycho.Features
             _rb.detectCollisions = true;
 
 
-            Utils.SetupFSM(_obj, "Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
+            _obj.SetupFSM("Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
             {
                 FsmFloat _playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
                 FsmFloat _money = new FsmFloat() { Name = "Money", Value = 100f };
@@ -388,7 +388,7 @@ namespace Psycho.Features
                 return;
             }
 
-            AudioSource.PlayClipAtPoint(clip, Psycho.Player.position, 1f);
+            AudioSource.PlayClipAtPoint(clip, Globals.Player.position, 1f);
         }
 
         void _destroyItems()
