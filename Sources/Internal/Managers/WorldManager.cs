@@ -238,7 +238,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Unable to change material for {obj?.name}, idx {index}, name {name}, tex {texture?.name};\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to change material for {obj?.name}, idx {index}, name {name}, tex {texture?.name};");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 
@@ -254,7 +255,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Unable to change mesh for {obj?.name}, mesh {mesh?.name};\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to change mesh for {obj?.name}, mesh {mesh?.name};");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

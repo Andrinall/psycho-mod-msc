@@ -53,5 +53,36 @@ namespace Psycho
 
             return default(T);
         }
+
+
+        /// ===================================
+        ///       BACKWARD COMPABILITY
+        /// ===================================
+
+        public static Vector3 GetFromBytes(this Vector3 obj, byte[] array, ref int offset)
+        {
+            float x = BitConverter.ToSingle(array, offset);
+            float y = BitConverter.ToSingle(array, offset + 4);
+            float z = BitConverter.ToSingle(array, offset + 8);
+            offset += 12;
+            return new Vector3(x, y, z);
+        }
+
+        public static string GetFromBytes(this string obj, byte[] array, ref int offset)
+        {
+            int len = BitConverter.ToInt32(array, offset);
+            if (len == 0) return string.Empty;
+
+            char[] chars = new char[len];
+            offset += 4;
+
+            for (int i = 0; i < len; i++)
+            {
+                chars[i] = BitConverter.ToChar(array, offset);
+                offset += 2;
+            }
+
+            return new string(chars);
+        }
     }
 }

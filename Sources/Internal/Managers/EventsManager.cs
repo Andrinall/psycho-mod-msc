@@ -49,6 +49,7 @@ namespace Psycho.Internal
             }
             catch (System.Exception ex)
             {
+                Utils.PrintDebug(eConsoleColors.RED, "Unable to trigger night screamer.");
                 ModConsole.Error($"{ex.GetFullMessage()}\n{ex.StackTrace}");
             }
         }

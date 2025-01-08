@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 4260592745
+CRC: 2805340174
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e4bd85dbdd593bdc0f555db8c52f3034
+    Hash: 635f2dd5c9e5b80282f495db333f772e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
@@ -100,6 +100,7 @@ Assets:
 - Assets/Screens/33.png
 - Assets/Replaces/Horror/wood_panel2.png
 - Assets/Materials/suicidal/char_shirt01.mat
+- Assets/Audio/FullScreenScreamers/kriki-skrimery.mp3
 - Assets/Textures/FullScreenScreamers/maxresdefault34.jpg
 - Assets/Materials/Postcard/postcard0.png
 - Assets/Audio/acid_burn.mp3
@@ -155,7 +156,6 @@ Assets:
 - Assets/Screens/4.png
 - Assets/Replaces/Horror/fabric6.png
 - Assets/Replaces/Horror/helmet_vision.png
-- Assets/Audio/FullScreenScreamers/kriki-skrimery.mp3
 - Assets/Replaces/Horror/wood_panel16.png
 - Assets/Screens/13.png
 - Assets/Audio/heartbeat.wav

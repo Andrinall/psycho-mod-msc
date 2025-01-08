@@ -4,6 +4,8 @@ using System;
 using MSCLoader;
 using UnityEngine;
 
+using Psycho.Internal;
+
 
 namespace Psycho
 {
@@ -27,7 +29,7 @@ namespace Psycho
                 }
                 catch (Exception ex)
                 {
-                    ModConsole.Error($"Error in IterateAllChilds handler delegate ({handler.Method.DeclaringType.Name}");
+                    Utils.PrintDebug($"Error in IterateAllChilds handler delegate ({handler.Method.DeclaringType.Name}");
                     ModConsole.Error(ex.GetFullMessage());
                 }
 

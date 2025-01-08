@@ -92,5 +92,24 @@ namespace Psycho.Features
             Globals.Pills = null;
             Utils.PrintDebug($"Pills with index {index} removed");
         }
+
+
+
+        /// ===================================
+        ///       BACKWARD COMPABILITY
+        /// =================================== 
+
+        internal static PillsItem ReadData(ref byte[] array, int offset)
+        {
+            int index = BitConverter.ToInt32(array, offset);
+            offset += 4;
+
+            Vector3 position = Vector3.zero.GetFromBytes(array, ref offset);
+            Vector3 euler = Vector3.zero.GetFromBytes(array, ref offset);
+
+            PillsItem item = new PillsItem(position, euler);
+            item.self.SetActive(Logic.InHorror);
+            return item;
+        }
     }
 }

@@ -7,6 +7,8 @@ using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 
+using Psycho.Internal;
+
 
 namespace Psycho
 {
@@ -42,7 +44,7 @@ namespace Psycho
             }
             catch (Exception ex)
             {
-                ModConsole.Error("Clearing fsm actions failed;");
+                Utils.PrintDebug(eConsoleColors.RED, $"Clearing FSM actions failed for {obj.GetPath()}");
                 ModConsole.Error(ex.GetFullMessage());
             }
         }
@@ -66,7 +68,7 @@ namespace Psycho
             }
             catch (Exception e)
             {
-                ModConsole.Error("Failed to clears actions;");
+                Utils.PrintDebug(eConsoleColors.RED, $"Failed clear actions for {state?.Fsm?.Owner?.gameObject}");
                 ModConsole.Error(e.GetFullMessage());
             }
         }

@@ -17,8 +17,6 @@ namespace Psycho.Internal
     {
         static List<GameObject> Pool = new List<GameObject>();
         static List<GameObject> ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToList();
-
-        public static readonly int base_offset = 64;
         internal static int Length => ItemsForSave.Count;
 
         internal static GameObject AddItem(GameObject prefab)
@@ -119,5 +117,56 @@ namespace Psycho.Internal
                 default: return null;
             }
         }
+
+
+        /// ===================================
+        ///       BACKWARD COMPABILITY
+        /// ===================================
+
+        public static int base_offset { get; } = 64;
+
+        public static void Load(byte[] array)
+        {
+            int offset = base_offset;
+            int count = BitConverter.ToInt32(array, offset);
+            offset += 4;
+
+            if (count == 0)
+            {
+                Utils.PrintDebug(eConsoleColors.RED, "[ItemsPool.Load] Is empty; Skip stopped.");
+                return;
+            }
+            if (count > 1000)
+            {
+                Utils.PrintDebug(eConsoleColors.YELLOW, $"[ItemPool.Load] Pool has too high length ({count})! Skip loading.");
+                return;
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                string sName = "".GetFromBytes(array, ref offset); // 1
+                if (Logic.IsDead && Globals.PentaRecipe.Contains(sName.ToLower())) continue;
+
+                Vector3 temp = new Vector3();
+                Vector3 pos = temp.GetFromBytes(array, ref offset);
+                Vector3 rot = temp.GetFromBytes(array, ref offset);
+
+                GameObject prefab = GetPrefabByItemName(sName);
+                if (prefab == null)
+                {
+                    Utils.PrintDebug(eConsoleColors.RED, $"[ItemsPool.Load] Loaded item {sName} has null prefab; Skip item.");
+                    continue;
+                }
+
+                Utils.PrintDebug($"[LP:{i}-{offset}]:\"{sName}\";{pos};{rot};{prefab?.name}");
+                _addItemToLocalPool(prefab, pos, rot);
+            }
+        }
+
+        public static int GetCountInSave(byte[] array)
+            => BitConverter.ToInt32(array, base_offset);
+
+        public static int GetSizeInSave(byte[] array)
+            => GetCountInSave(array) * 90;
     }
 }

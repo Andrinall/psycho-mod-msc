@@ -29,7 +29,8 @@ namespace Psycho.Handlers
             }
             catch (System.Exception e)
             {
-                ModConsole.Error($"Unable to change ambience&flies sounds after moving between worlds;\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to change ambience&flies sounds after moving between worlds;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

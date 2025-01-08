@@ -23,13 +23,13 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "0.9.9-RC2";
+        public override string Version => "0.9.9-RC3";
         public override string Description => "Adds a schizophrenia for your game character";
 
         internal static SettingsDropDownList LangDropDownList;
         internal static SettingsCheckBox ShowFullScreenScreamers;
         internal static Keybind FastOpenKeybind;
-
+        
         internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         internal static bool IsLoaded = false;
 
@@ -47,6 +47,8 @@ namespace Psycho
         bool bellsActivated = false;
         Vector3 bellsOrigPos;
 
+        internal static Psycho Instance;
+
 
         public override void ModSetup()
         {
@@ -59,6 +61,8 @@ namespace Psycho
             SetupFunction(Setup.PostLoad, Mod_SecondPassLoad);
             SetupFunction(Setup.Update, Mod_Update);
             SetupFunction(Setup.FixedUpdate, Mod_FixedUpdate);
+
+            Instance = this;
         }
 
         // setup mod settings
@@ -129,6 +133,8 @@ namespace Psycho
                     _notebook.MakePickable();
                 }
             }
+
+            if (Logic.GameFinished) return;
 
             GameObject _sketchbook = (GameObject)Object.Instantiate(ResourcesStorage.Sketchbook_prefab,
                 new Vector3(-4.179454f, -0.08283298f, 7.728132f),
@@ -224,6 +230,7 @@ namespace Psycho
         void Mod_Update()
         {
             if (Logic.GameFinished) return;
+            if (Globals.Player == null) return;
 
             if (IsLoaded && !IsLoaderMenuOpened && FastOpenKeybind.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
             {
@@ -234,6 +241,7 @@ namespace Psycho
         void Mod_FixedUpdate()
         {
             if (Logic.GameFinished) return;
+            if (Globals.Player == null) return;
 
             Logic.Tick();
 
@@ -280,16 +288,26 @@ namespace Psycho
 
         void _unload()
         {
+            Utils.PrintDebug("OnUnload called");
             TexturesManager.ChangeWorldTextures(false);
+            Utils.PrintDebug("ChangeWorldTextures - OK");
             TexturesManager.ChangeIndepTextures(true);
+            Utils.PrintDebug("ChangeIndepTextures - OK");
             Utils.ChangeSmokingModel();
+            Utils.PrintDebug("ChangeSmokingModel - OK");
             SoundManager.ChangeFliesSounds();
+            Utils.PrintDebug("ChangeFliesSounds - OK");
             SoundManager.ReplaceRadioStaticSound(null);
+            Utils.PrintDebug("ChangeReplaceRadioStaticSound - OK");
 
             EventsManager.UnSubscribeAll();
-            ResourcesStorage.UnloadAll();
+            Utils.PrintDebug("EventsManager.UnsubscribeAll - OK");
             Logic.DestroyAllObjects();
+            Utils.PrintDebug("Logic.DestroyAllObjects - OK");
+            ResourcesStorage.UnloadAll();
+            Utils.PrintDebug("ResourcesStorage.UnloadAll - OK");
             Globals.Reset();
+            Utils.PrintDebug("Globals.Reset - OK");
 #if DEBUG
             DebugPanel.SetSettingsVisible(false);
 #endif

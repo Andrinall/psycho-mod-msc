@@ -112,7 +112,8 @@ namespace Psycho.Features
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Failed to create a random pills;\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Failed to create a random pills;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

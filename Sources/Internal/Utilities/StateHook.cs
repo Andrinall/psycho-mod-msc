@@ -40,9 +40,12 @@ namespace Psycho.Internal
                     if (!hooksList.ContainsKey(_state))
                         hooksList[_state] = new List<HookInfo>();
 
+                    int finalIndex = Insert(0, _fsm, _state, hook);
+                    if (finalIndex == -1) return;
+
                     hooksList[_state].Add(new HookInfo
                     {
-                        Index = Insert(0, _fsm, _state, hook),
+                        Index = finalIndex,
                         FsmName = _fsm.Fsm.Name,
                         StateName = stateName
                     });
@@ -50,7 +53,7 @@ namespace Psycho.Internal
             }
             catch
             {
-                ModConsole.Error($"FsmInject: Cannot find state <b>{stateName}</b> in GameObject <b>{gameObject.name}</b>");
+                Utils.PrintDebug(eConsoleColors.RED, $"FsmInject: Cannot find state <b>{stateName}</b> in GameObject <b>{gameObject.name}</b>");
             }
         }
 
@@ -73,16 +76,19 @@ namespace Psycho.Internal
                 if (!hooksList.ContainsKey(_playMakerState))
                     hooksList[_playMakerState] = new List<HookInfo>();
 
+                int finalIndex = Insert(index, _playMaker, _playMakerState, hook);
+                if (finalIndex == -1) return;
+
                 hooksList[_playMakerState].Add(new HookInfo
                 {
-                    Index = Insert(index, _playMaker, _playMakerState, hook),
+                    Index = finalIndex,
                     FsmName = fsmName,
                     StateName = stateName
                 });
             }
             catch
             {
-                ModConsole.Error($"FsmInject: Cannot find FSM <b>{fsmName}</b>, state <b>{stateName}</b> in GameObject <b>'{gameObject.transform.GetPath()}'</b>");
+                Utils.PrintDebug(eConsoleColors.RED, $"FsmInject: Cannot find FSM <b>{fsmName}</b>, state <b>{stateName}</b> in GameObject <b>'{gameObject.transform.GetPath()}'</b>");
             }
         }
         
@@ -104,16 +110,19 @@ namespace Psycho.Internal
                 if (!hooksList.ContainsKey(_playMakerState))
                     hooksList[_playMakerState] = new List<HookInfo>();
 
+                int finalIndex = Insert(index, _playMaker, _playMakerState, hook);
+                if (finalIndex == -1) return;
+
                 hooksList[_playMakerState].Add(new HookInfo
                 {
-                    Index = Insert(index, _playMaker, _playMakerState, hook),
+                    Index = finalIndex,
                     FsmName = fsmName,
                     StateName = stateName
                 });
             }
             catch
             {
-                ModConsole.Error($"FsmInject: Cannot find FSM <b>{fsmName}</b>, state <b>{stateName}</b> in GameObject <b>'{gameObject.transform.GetPath()}'</b>");
+                Utils.PrintDebug(eConsoleColors.RED, $"FsmInject: Cannot find FSM <b>{fsmName}</b>, state <b>{stateName}</b> in GameObject <b>'{gameObject.transform.GetPath()}'</b>");
             }
         }
 
@@ -152,11 +161,12 @@ namespace Psycho.Internal
             if (hooksList.Count == 0) return;
             foreach (KeyValuePair<FsmState, List<HookInfo>> _item in hooksList)
             {
-                if (_item.Key == null) continue;
+                if (_item.Key?.Fsm == null) continue;
                 if (_item.Value == null) continue;
                 if (!_item.Key.Fsm.Initialized) continue;
 
                 FsmState _state = _item.Key;
+                if (_state.Name == "State 3" && _state.Fsm.Name == "Button") return;
                 if (_item.Value.Count == 0) continue;
 
                 List<FsmStateAction> _actions = new List<FsmStateAction>(_state.Actions);
@@ -175,6 +185,8 @@ namespace Psycho.Internal
 
         static bool Find(FsmStateAction v, int index)
         {
+            if (v == null) return false;
+
             if (v is FsmHookAction)
                 return (v as FsmHookAction).index == index;
             if (v is FsmHookActionWithArg)
@@ -186,12 +198,16 @@ namespace Psycho.Internal
 
         static void AddNewHooksContainer(FsmState state)
         {
+            if (state == null) return;
+
             if (!hooksList.ContainsKey(state))
                 hooksList[state] = new List<HookInfo>();
         }
 
         static int Insert(int index, PlayMakerFSM fsm, FsmState state, Action hook)
         {
+            if (fsm == null || state == null || hook == null) return -1;
+
             FsmHookAction _item = new FsmHookAction
             {
                 index = index,
@@ -206,6 +222,8 @@ namespace Psycho.Internal
 
         static int Insert(int index, PlayMakerFSM fsm, FsmState state, Action<PlayMakerFSM> hook)
         {
+            if (fsm == null || state == null || hook == null) return -1;
+
             FsmHookActionWithArg _item = new FsmHookActionWithArg
             {
                 index = index,

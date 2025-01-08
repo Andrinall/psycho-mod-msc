@@ -291,7 +291,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Error in KillUsingTrain;\n{e.GetFullMessage()}");
+                Utils.PrintDebug("Error in KillUsingTrain.");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 
@@ -305,7 +306,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Error in KillHearthAttack;\n{e.GetFullMessage()}");
+                Utils.PrintDebug("Error in KillHearthAttack.");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 
@@ -358,7 +360,8 @@ namespace Psycho.Internal
             Object.Destroy(GameObject.Find("IslandAmbientTrigger"));
             Object.Destroy(GameObject.Find("Picture(Clone)"));
 
-            ItemsPool.RemoveItems(v => true);
+            if (ItemsPool.Length > 0)
+                ItemsPool.RemoveItems(v => true);
 
             StateHook.DisposeAllHooks();
         }
@@ -396,7 +399,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Error in KnockOutPlayer;\n{e.GetFullMessage()}");
+                Utils.PrintDebug("Error in KnockOutPlayer;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

@@ -14,7 +14,7 @@ namespace Psycho.Internal
 
     internal static class Utils
     {
-        static readonly string DBG_STRING = "[Shiz-DBG]: ";
+        static string DBG_STRING => $"[{Psycho.Instance.Name}{{{Psycho.Instance.Version}}}]: ";
 
         static FsmBool guiUse;
         static FsmString guiInteraction;
@@ -86,7 +86,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Failed to change cigarette model after moving between worlds;\n{e.GetFullMessage()}");
+                PrintDebug(eConsoleColors.RED, "Failed to change cigarette model after moving between worlds;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

@@ -94,7 +94,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"PlayDeathSound error in KillCustor;\n{e.GetFullMessage()}");
+                Utils.PrintDebug("PlayDeathSound error in KillCustom;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
 

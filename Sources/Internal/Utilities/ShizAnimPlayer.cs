@@ -61,13 +61,13 @@ namespace Psycho.Internal
         {
             if (animation == null)
             {
-                ModConsole.Error("ShizAnimPlayer.m_oAnimation == null");
+                ModConsole.Warning("ShizAnimPlayer.m_oAnimation == null");
                 yield break;
             }
 
             if (eyes == null)
             {
-                ModConsole.Error("ShizAnimPlayer._eyes == null");
+                ModConsole.Warning("ShizAnimPlayer._eyes == null");
                 yield break;
             }
 
@@ -98,13 +98,13 @@ namespace Psycho.Internal
         {
             if (animationOrig == null)
             {
-                ModConsole.Error("ShizAnimPlayer.m_oAnimation == null");
+                ModConsole.Warning("ShizAnimPlayer.m_oAnimation == null");
                 yield break;
             }
 
             if (eyesOrig == null)
             {
-                ModConsole.Error("ShizAnimPlayer._eyes == null");
+                ModConsole.Warning("ShizAnimPlayer._eyes == null");
                 yield break;
             }
 

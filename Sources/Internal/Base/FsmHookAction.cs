@@ -24,7 +24,7 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error(
+                Utils.PrintDebug(eConsoleColors.RED,
 $@"Error in StateHook action delegate!
 [{component.transform.GetPath()}]
 [fsm {component.Fsm.Name}][state {state}][index {index}]
@@ -54,7 +54,7 @@ $@"Error in StateHook action delegate!
             }
             catch (Exception e)
             {
-                ModConsole.Error(
+                Utils.PrintDebug(eConsoleColors.RED,
 $@"Error in StateHook action delegate!
 [{component.transform.GetPath()}]
 [fsm {component.Fsm.Name}][state {state}][index {index}]

@@ -36,7 +36,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Failed to change clouds after moving between worlds;\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Failed to change clouds after moving between worlds;");
+                ModConsole.Error(e.GetFullMessage());
             }
         }
     }

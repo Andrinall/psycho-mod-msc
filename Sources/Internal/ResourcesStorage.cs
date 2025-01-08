@@ -263,7 +263,8 @@ namespace Psycho.Internal
             }
             catch (Exception e)
             {
-                ModConsole.Error($"Unable to load asset {path} from embedded resource;\n{e.GetFullMessage()}");
+                Utils.PrintDebug(eConsoleColors.RED, $"Unable to load asset {path} from embedded resource;");
+                ModConsole.Error(e.GetFullMessage());
             }
             return null;
         }
