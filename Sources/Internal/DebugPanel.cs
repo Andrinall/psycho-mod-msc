@@ -175,7 +175,7 @@ namespace Psycho.Internal
 
         static void SetGameFinished()
         {
-            if (Logic.GameFinished) return;
+            if (Logic.GameFinished || Logic.IsDeadByGame) return;
 
             bool _newValue = debug_GameFinished.GetValue();
             if (_newValue)

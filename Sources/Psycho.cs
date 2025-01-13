@@ -32,6 +32,7 @@ namespace Psycho
         
         internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         internal static bool IsLoaded = false;
+        static bool unloaded = false;
 
         GameObject loaderMenu;
 
@@ -99,6 +100,7 @@ namespace Psycho
 
         void Mod_Load()
         {
+            unloaded = false;
             IsLoaded = false;
             loaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
             ResourcesStorage.UnloadAll(); // clear resources for avoid game crashes after loading saved game
@@ -229,7 +231,7 @@ namespace Psycho
 
         void Mod_Update()
         {
-            if (Logic.GameFinished) return;
+            if (Logic.GameFinished || Logic.IsDeadByGame) return;
             if (Globals.Player == null) return;
 
             if (IsLoaded && !IsLoaderMenuOpened && FastOpenKeybind.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
@@ -240,7 +242,7 @@ namespace Psycho
 
         void Mod_FixedUpdate()
         {
-            if (Logic.GameFinished) return;
+            if (Logic.GameFinished || Logic.IsDeadByGame) return;
             if (Globals.Player == null) return;
 
             Logic.Tick();
@@ -283,11 +285,13 @@ namespace Psycho
         {
             SaveManager.SaveData(this);
 
-            _unload();
+            Unload();
         }
 
-        void _unload()
+        internal static void Unload()
         {
+            if (unloaded) return;
+
             Utils.PrintDebug("OnUnload called");
             TexturesManager.ChangeWorldTextures(false);
             Utils.PrintDebug("ChangeWorldTextures - OK");
@@ -311,7 +315,10 @@ namespace Psycho
 #if DEBUG
             DebugPanel.SetSettingsVisible(false);
 #endif
+            unloaded = true;
         }
+
+
 
         void _applyHorrorIfNeeded()
         {
@@ -491,8 +498,10 @@ namespace Psycho
             Transform _systems = GameObject.Find("Systems").transform;
             Transform _menu = _systems.Find("OptionsMenu/Menu");
             Transform _btnConfirm = _menu.Find("Btn_ConfirmQuit");
-            StateHook.Inject(_btnConfirm.Find("Button").gameObject, "Button", "State 3", _unload);
+            StateHook.Inject(_btnConfirm.Find("Button").gameObject, "Button", "State 3", Unload);
         }
+
+
 
         void UpdateFridgePaperText() => guiSubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];       
 
@@ -515,6 +524,8 @@ namespace Psycho
         void PlayerDrunkBooze() => Logic.PlayerCommittedOffence("DRUNK_BOOZE");
 
         void PlayerCompleteFarmerQuest() => Logic.PlayerCompleteJob("FARMER_QUEST");
+
+
 
         T AddComponent<T>(string path) where T : Component
             => GameObject.Find(path)?.AddComponent<T>() ?? null;

@@ -77,12 +77,6 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-            if (Logic.GameFinished)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
             if (!LightsEnabled && Globals.SUN_Hours >= 20 || Globals.SUN_Hours <= 4)
                 SetCandlesFireActive(true);
             else if (LightsEnabled && Globals.SUN_Hours > 4 && Globals.SUN_Hours < 20)

@@ -167,6 +167,7 @@ namespace Psycho.Internal
 
                 FsmState _state = _item.Key;
                 if (_state.Name == "State 3" && _state.Fsm.Name == "Button") return;
+                if (_state.Name == "Take photo" && _state.Fsm.Name == "Activate Dead Body") return;
                 if (_item.Value.Count == 0) continue;
 
                 List<FsmStateAction> _actions = new List<FsmStateAction>(_state.Actions);

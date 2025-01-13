@@ -77,24 +77,12 @@ namespace Psycho.Features
 
         void DisableStrangeLetter()
         {
-            if (Logic.GameFinished)
-            {
-                Destroy(this);
-                return;
-            }
-
             mailboxEnvelope.SetActive(false);
             Logic.EnvelopeSpawned = false;
         }
 
         void CreateRandomPills()
         {
-            if (Logic.GameFinished)
-            {
-                Destroy(this);
-                return;
-            }
-
             try
             {
                 if (Globals.Pills != null)

@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\SteamLibrary\steamapps\common\My Summer Car\Mods\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files %28x86%29\Steam\steamapps\common\My Summer Car\Mods\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,8 +44,29 @@
     <AssemblyOriginatorKeyFile>psycho.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\0Harmony.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-UnityScript-firstpass">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="cInput">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="MSCLoader">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PlayMaker">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -55,35 +76,11 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="Assembly-UnityScript-firstpass">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-UnityScript-firstpass.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="cInput">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PlayMaker">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="0Harmony">
-      <HintPath>D:\SteamLibrary\steamapps\common\My Summer Car\mysummercar_Data\Managed\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

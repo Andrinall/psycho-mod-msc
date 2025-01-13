@@ -77,6 +77,7 @@ namespace Psycho.Internal
             ["PLAYER_SWEARS"] = 0.01f
         };
 
+        internal static bool IsDeadByGame = false;
         public static bool GameFinished = false;
 
         public static float Value
@@ -84,7 +85,7 @@ namespace Psycho.Internal
             get => _value;
             private set
             {
-                if (GameFinished) return;
+                if (GameFinished || IsDeadByGame) return;
 
                 _value = value;
                 psycho.Value = value;
@@ -109,7 +110,7 @@ namespace Psycho.Internal
             get => _points;
             private set
             {
-                if (GameFinished) return;
+                if (GameFinished || IsDeadByGame) return;
 
                 float prev = _points;
                 _points = value;
@@ -207,7 +208,7 @@ namespace Psycho.Internal
 
         public static void ChangeWorld(eWorldType type)
         {
-            if (GameFinished) return;
+            if (GameFinished || IsDeadByGame) return;
             
             InHorror = type == eWorldType.HORROR;
             if (InHorror)
@@ -238,7 +239,7 @@ namespace Psycho.Internal
 
         internal static void Tick()
         {
-            if (GameFinished) return;
+            if (GameFinished || IsDeadByGame) return;
 
             if (InHorror)
             {
@@ -265,6 +266,14 @@ namespace Psycho.Internal
 
             Points = _newValue;
             Utils.PrintDebug($"Player committed offence : {offence}" + (string.IsNullOrEmpty(comment) ? "" : $"\"{comment}\""));
+        }
+
+        internal static void PlayerDeadByGame()
+        {
+            if (GameFinished || IsDead || IsDeadByGame) return;
+            Utils.PrintDebug("Player death triggered by game");
+            IsDeadByGame = true;
+            Psycho.Unload();
         }
 
         internal static void KillUsingTrain()

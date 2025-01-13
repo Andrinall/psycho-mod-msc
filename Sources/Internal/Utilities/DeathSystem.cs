@@ -17,6 +17,8 @@ namespace Psycho.Internal
         {
             instance = this;
             death = transform.Find("Death");
+
+            StateHook.Inject(death.gameObject, "Activate Dead Body", "Take photo", Logic.PlayerDeadByGame, -1);
         }
 
         protected override void Destroyed()
@@ -30,7 +32,6 @@ namespace Psycho.Internal
 
             instance.KillCustom_internal(palette, en, fi);
         }
-
 
         void KillCustom_internal(string palette, string en, string fi)
         {

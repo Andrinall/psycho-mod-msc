@@ -26,12 +26,6 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-            if (Logic.GameFinished)
-            {
-                Destroy(this);
-                return;
-            }
-
             int _day = Globals.GlobalDay.Value % 7;
 
             if (_day == 3 && Globals.SUN_Hours >= 20)

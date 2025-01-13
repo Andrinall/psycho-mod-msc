@@ -293,6 +293,8 @@ namespace Psycho.Internal
             PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Color");
             sunHours = sun.GetVariable<FsmInt>("Time");
             sunMinutes = sun.GetVariable<FsmFloat>("Minutes");
+
+            Logic.IsDeadByGame = false;
         }
 
         public static void InitializeObjects()
