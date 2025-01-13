@@ -50,8 +50,8 @@ namespace Psycho.Internal
                 var _rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
                 if (_rooster)
                 {
-                    _rooster.Applyed = _data.RoosterPosterApplyed;
-                    _rooster.LastDayApplyed = _data.RoosterPosterLastDayApplyed;
+                    AngryRoosterPoster.Applyed = _data.RoosterPosterApplyed;
+                    AngryRoosterPoster.LastDayApplyed = _data.RoosterPosterLastDayApplyed;
                 }
 
                 Logic.EnvelopeSpawned = _data.EnvelopeSpawned;
@@ -105,13 +105,13 @@ namespace Psycho.Internal
                 BeerBottlesDrunked = Logic.BeerBottlesDrunked,
                 LastDayMinigame = Logic.LastDayMinigame,
 
-                RoosterPosterApplyed = _rooster?.Applyed ?? false,
-                RoosterPosterLastDayApplyed = _rooster?.LastDayApplyed ?? 0,
+                RoosterPosterApplyed = AngryRoosterPoster.Applyed,
+                RoosterPosterLastDayApplyed = AngryRoosterPoster.LastDayApplyed,
 
                 EnvelopeSpawned = Logic.EnvelopeSpawned,
 
-                PillsPosition = _pills == null ? Vector3.zero : _pills.position,
-                PillsEuler = _pills == null ? Vector3.zero : _pills.eulerAngles,
+                PillsPosition = _pills?.position ?? Vector3.zero,
+                PillsEuler = _pills?.eulerAngles ?? Vector3.zero,
 
                 ItemsPoolData = ItemsPool.GetSaveData(),
                 NotebookPagesPool = Notebook.Pages
@@ -151,8 +151,8 @@ namespace Psycho.Internal
                 var rooster = GameObject.Find("rooster_poster(Clone)")?.GetComponent<AngryRoosterPoster>();
                 if (rooster)
                 {
-                    rooster.Applyed = BitConverter.ToBoolean(value, 23);
-                    rooster.LastDayApplyed = BitConverter.ToInt32(value, 24);
+                    AngryRoosterPoster.Applyed = BitConverter.ToBoolean(value, 23);
+                    AngryRoosterPoster.LastDayApplyed = BitConverter.ToInt32(value, 24);
                 }
 
                 // spawn pills in needed

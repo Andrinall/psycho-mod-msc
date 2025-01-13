@@ -16,8 +16,8 @@ namespace Psycho.Internal
     internal static class ItemsPool
     {
         static List<GameObject> Pool = new List<GameObject>();
-        static List<GameObject> ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToList();
-        internal static int Length => ItemsForSave.Count;
+        static GameObject[] ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToArray();
+        internal static int Length => Pool.Count;
 
         internal static GameObject AddItem(GameObject prefab)
             => _addItemToLocalPool(prefab, Vector3.zero, Vector3.zero);
@@ -53,16 +53,16 @@ namespace Psycho.Internal
         {
             var _list = new List<ItemsPoolSaveLoadData>();
 
-            foreach (var _item in Pool)
+            foreach (var _item in ItemsForSave)
             {
-                if (_item == null) continue;
-                if (_item.transform.parent != null) continue;
+                string _name = _item?.name?.Replace("(Clone)", "") ?? "";
+                if (_name == "") continue;
 
                 _list.Add(new ItemsPoolSaveLoadData
                 {
-                    Name = _item.name.Replace("(Clone)", ""),
-                    Position = _item.transform.position,
-                    Euler = _item.transform.eulerAngles
+                    Name = _name,
+                    Position = _item?.transform?.position ?? Vector3.zero,
+                    Euler = _item?.transform?.eulerAngles ?? Vector3.zero
                 });
             }
 
@@ -94,7 +94,7 @@ namespace Psycho.Internal
             return _cloned;
         }
 
-        private static GameObject GetPrefabByItemName(string item)
+        public static GameObject GetPrefabByItemName(string item)
         {
             switch (item)
             {

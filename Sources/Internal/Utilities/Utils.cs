@@ -16,9 +16,6 @@ namespace Psycho.Internal
     {
         static string DBG_STRING => $"[{Psycho.Instance.Name}{{{Psycho.Instance.Version}}}]: ";
 
-        static FsmBool guiUse;
-        static FsmString guiInteraction;
-
         public static bool WaitFrames(ref int elapsedFrames, int neededFrames)
         {
             if (elapsedFrames < neededFrames)
@@ -27,7 +24,6 @@ namespace Psycho.Internal
                 return false;
             }
 
-            elapsedFrames = 0;
             return true;
         }
 
@@ -55,20 +51,8 @@ namespace Psycho.Internal
 
         internal static void SetGUIUse(bool state, string name = "")
         {
-            if (!CheckGUIFsm()) return;
-
-            guiUse.Value = state;
-            guiInteraction.Value = name;
-        }
-
-        static bool CheckGUIFsm()
-        {
-            if (guiUse == null)
-                guiUse = GetGlobalVariable<FsmBool>("GUIuse");
-            if (guiInteraction == null)
-                guiInteraction = GetGlobalVariable<FsmString>("GUIinteraction");
-
-            return guiUse != null && guiInteraction != null;
+            Globals.GUIuse.Value = state;
+            Globals.GUIinteraction.Value = name;
         }
 
         internal static void ChangeSmokingModel()

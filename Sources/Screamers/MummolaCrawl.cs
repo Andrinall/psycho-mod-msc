@@ -57,7 +57,12 @@ namespace Psycho.Screamers
 
         public override void StopScreamer()
         {
+            fsm.enabled = true;
             elapsedFrames = 0;
+            animPlayed = false;
+            
+            Utils.ResetCameraLook(cameraOrigs);
+            fsm.CallGlobalTransition("SCREAMSTOP");
 
             charTransform.gameObject.SetActive(false);
             ResetHeadRotation();
@@ -78,15 +83,12 @@ namespace Psycho.Screamers
 
         void RotateHeadPivot()
         {
+            if (animPlayed) return;
+
             if (elapsedFrames == NEEDED_FRAMES)
             {
-                Utils.PlayScreamSleepAnim(ref animPlayed, () =>
-                {
-                    fsm.enabled = true;
-                    Utils.ResetCameraLook(cameraOrigs);
-                    fsm.CallGlobalTransition("SCREAMSTOP");
-                    base.Stop();
-                });
+                animPlayed = true;
+                ShizAnimPlayer.PlayOriginalAnimation("sleep_knockout", 4f, default, base.Stop);
                 return;
             }
 

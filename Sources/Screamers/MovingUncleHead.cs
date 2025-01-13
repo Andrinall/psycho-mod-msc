@@ -63,19 +63,23 @@ namespace Psycho.Screamers
 
         public override void StopScreamer()
         {
+            fsm.enabled = true;
             animPlayed = false;
-            charObj.SetActive(false);
             elapsedFrames = 0;
+
+            SoundManager.PlayHeartbeat(false);
+            Utils.ResetCameraLook(cameraOrigs);
+            fsm.CallGlobalTransition("SCREAMSTOP");
+            charObj.SetActive(false);
         }
 
 
         protected override void OnFixedUpdate()
         {
             if (!ScreamerEnabled) return;
-            if (elapsedFrames < NEEDED_FRAMES)
+            if (!Utils.WaitFrames(ref elapsedFrames, NEEDED_FRAMES))
             {
-                elapsedFrames++;
-                if (elapsedFrames == NEEDED_FRAMES)
+                if (elapsedFrames == NEEDED_FRAMES - 1)
                 {
                     headObj.SetActive(true);
                     SoundManager.PlayHeartbeat(true);
@@ -86,14 +90,8 @@ namespace Psycho.Screamers
             if (animPlayed) return;
             if (!headObj.transform.MoveTowards(TargetPoint, TARGET_DISTANCE, MAX_SPEED)) return;
 
-            Utils.PlayScreamSleepAnim(ref animPlayed, () =>
-            {
-                fsm.enabled = true;
-                SoundManager.PlayHeartbeat(false);
-                Utils.ResetCameraLook(cameraOrigs);
-                fsm.CallGlobalTransition("SCREAMSTOP");
-                base.Stop();
-            });
+            animPlayed = true;
+            ShizAnimPlayer.PlayOriginalAnimation("sleep_knockout", 4f, default, base.Stop);
         }
     }
 }

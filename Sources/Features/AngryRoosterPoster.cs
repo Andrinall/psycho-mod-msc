@@ -10,8 +10,8 @@ namespace Psycho.Features
     [RequireComponent(typeof(AudioSource), typeof(MeshRenderer), typeof(BoxCollider))]
     internal sealed class AngryRoosterPoster : CatchedComponent
     {
-        public bool Applyed = false;
-        public int LastDayApplyed = 0;
+        public static bool Applyed = false;
+        public static int LastDayApplyed = 0;
 
         bool status = false; // false = IDLE, true = NEED CHIPS
 
@@ -41,9 +41,9 @@ namespace Psycho.Features
                 Applyed = false;
 
 
-            if (!status && !Applyed && day == 6 && Globals.SUN_Hours.Value > 4 && Globals.SUN_Hours.Value < 16)
+            if (!status && !Applyed && day == 6 && Globals.SUN_Hours > 4 && Globals.SUN_Hours < 16)
                 Activate(true);
-            else if (status && day == 6 && (Globals.SUN_Hours.Value < 4 || Globals.SUN_Hours.Value > 16))
+            else if (status && day == 6 && (Globals.SUN_Hours < 4 || Globals.SUN_Hours > 16))
             {
                 Activate(false);
                 Applyed = false;

@@ -83,9 +83,9 @@ namespace Psycho.Features
                 return;
             }
 
-            if (!LightsEnabled && Globals.SUN_Hours.Value >= 20 || Globals.SUN_Hours.Value < 5)
+            if (!LightsEnabled && Globals.SUN_Hours >= 20 || Globals.SUN_Hours <= 4)
                 SetCandlesFireActive(true);
-            else if (LightsEnabled && Globals.SUN_Hours.Value > 4 && Globals.SUN_Hours.Value < 20)
+            else if (LightsEnabled && Globals.SUN_Hours > 4 && Globals.SUN_Hours < 20)
                 SetCandlesFireActive(false);
         }
 

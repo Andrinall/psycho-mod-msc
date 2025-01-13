@@ -27,6 +27,13 @@ namespace Psycho
             }
         };
 
+        public static readonly string[,] BUY_ITEMS = new string[,]
+        {
+            { "Money first!", "Деньги вперёд!" },
+            { "You can find this in your home", "Найдёшь это у себя дома." }
+        };
+
+
         public static readonly string[] POSTCARD_TEXT = new string[]
         {
             "Son! We hope\nyou're doing well!\nWe'll be back soon,\ndon't be bored!",

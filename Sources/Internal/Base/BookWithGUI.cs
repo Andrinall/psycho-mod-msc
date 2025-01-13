@@ -30,7 +30,6 @@ namespace Psycho.Internal
 
         AudioClip pageTurn;
 
-        Ray RayFromScreenPoint => Camera.main.ScreenPointToRay(Input.mousePosition);
         int GUILayerMask => LayerMask.GetMask("Parts", "GUI");
 
         protected override void Awaked()
@@ -71,7 +70,7 @@ namespace Psycho.Internal
                 return;
             }
 
-            if (!Physics.Raycast(RayFromScreenPoint, out hitInfo, 1.5f, GUILayerMask)) return;
+            if (!Physics.Raycast(Globals.RayFromScreenPoint, out hitInfo, 1.5f, GUILayerMask)) return;
             if (hitInfo.collider == null) return;
 
             GameObject hitted = hitInfo.collider?.gameObject;

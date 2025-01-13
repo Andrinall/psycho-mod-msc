@@ -99,11 +99,7 @@ namespace Psycho.Screamers
         protected override void OnFixedUpdate()
         {
             if (!buttonAlreadyUsed) return;
-            if (elapsedFrames <= NEEDED_FRAMES)
-            {
-                elapsedFrames++;
-                return;
-            }
+            if (!Utils.WaitFrames(ref elapsedFrames, NEEDED_FRAMES)) return;
 
             base.Stop();
         }

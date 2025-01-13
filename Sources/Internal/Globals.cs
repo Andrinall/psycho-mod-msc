@@ -81,11 +81,20 @@ namespace Psycho.Internal
         public static FsmFloat PlayerThirst;
         public static FsmFloat PlayerFatigue;
         public static FsmFloat PlayerStress;
+        public static FsmFloat PlayerMoney;
+
+        public static FsmBool GUIuse;
+        public static FsmString GUIinteraction;
+        public static FsmString GUIsubtitle;
 
         public static FsmInt GlobalDay;
+        public static Ray RayFromScreenPoint => Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        public static FsmFloat SUN_Hours;
-        public static FsmFloat SUN_Minutes;
+        public static int SUN_Hours => sunHours.Value;
+        public static float SUN_Minutes => Mathf.FloorToInt(sunMinutes.Value % 60);
+
+        static FsmInt sunHours;
+        static FsmFloat sunMinutes;
 
         public static PillsItem Pills = null;
         public static Notebook Notebook = null;
@@ -273,12 +282,17 @@ namespace Psycho.Internal
             PlayerThirst = Utils.GetGlobalVariable<FsmFloat>("PlayerThirst");
             PlayerFatigue = Utils.GetGlobalVariable<FsmFloat>("PlayerFatigue");
             PlayerStress = Utils.GetGlobalVariable<FsmFloat>("PlayerStress");
+            PlayerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
+
+            GUIuse = Utils.GetGlobalVariable<FsmBool>("GUIuse");
+            GUIinteraction = Utils.GetGlobalVariable<FsmString>("GUIinteraction");
+            GUIsubtitle = Utils.GetGlobalVariable<FsmString>("GUIsubtitle");
 
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
-            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Clock");
-            SUN_Hours = sun.GetVariable<FsmFloat>("Hours");
-            SUN_Minutes = sun.GetVariable<FsmFloat>("Minutes");
+            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Color");
+            sunHours = sun.GetVariable<FsmInt>("Time");
+            sunMinutes = sun.GetVariable<FsmFloat>("Minutes");
         }
 
         public static void InitializeObjects()
@@ -353,14 +367,21 @@ namespace Psycho.Internal
             _fssss.minDistance = 1.5f;
             _fssss.maxDistance = 12f;
             SoundManager.FullScreenScreamerSoundsSource = _fssss;
+
+            GameObject _fittan = GameObject.Find("TRAFFIC/VehiclesDirtRoad/Rally/FITTAN") ?? GameObject.Find("FITTAN");
+            GameObject _fittanStore = GameObject.Instantiate(ResourcesStorage.FittanItemsStore_prefab);
+            _fittanStore.transform.SetParent(_fittan.transform);
+            _fittanStore.transform.localPosition = Vector3.zero; // new Vector3(2, 2, 2);
+            _fittanStore.transform.localEulerAngles = Vector3.zero;
+            _fittanStore.AddComponent<FittanItemsStore>();
         }
 
         public static void Reset()
         {
             Player = null;
 
-            SUN_Hours = null;
-            SUN_Minutes = null;
+            sunHours = null;
+            sunMinutes = null;
 
             Pills = null;
             Notebook = null;

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2805340174
+CRC: 258909393
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 635f2dd5c9e5b80282f495db333f772e
+    Hash: 82d737b0cda5c8b98562a2ef80e59464
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
@@ -108,6 +108,7 @@ Assets:
 - Assets/Prefabs/Notebook Page.prefab
 - Assets/Textures/FullScreenScreamers/scale_1200.png
 - Assets/Replaces/Horror/store_floor.png
+- Assets/Prefabs/FittanItemsStore.prefab
 - Assets/Audio/screamers/crying_female.mp3
 - Assets/Replaces/Horror/wood_panel6.png
 - Assets/Screens/7.png

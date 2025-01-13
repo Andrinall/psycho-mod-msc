@@ -39,6 +39,7 @@ namespace Psycho.Internal
         public static GameObject SketchbookGUI_prefab = null;
 
         public static GameObject Postcard_prefab = null;
+        public static GameObject FittanItemsStore_prefab = null;
 
         public static Texture NotebookPages_texture = null;
         public static Texture NotebookStartPage_texture = null;
@@ -116,6 +117,7 @@ namespace Psycho.Internal
             SketchbookGUI_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/sketchbookgui.prefab");
 
             Postcard_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/postcard.prefab");
+            FittanItemsStore_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fittanitemsstore.prefab");
 
             NotebookPages_texture = LoadAsset<Texture>(_bundle, "assets/textures/page(1-13)(notebook).png");
             NotebookStartPage_texture = LoadAsset<Texture>(_bundle, "assets/textures/page14.png");

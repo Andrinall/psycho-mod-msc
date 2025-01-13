@@ -71,17 +71,20 @@ namespace Psycho.Internal
                 yield break;
             }
 
-            animation.Stop();
             eyes.SetActive(true);
+            animation.Stop();
 
             animation.Play(animationName, mode);
+            if (!animation.isPlaying)
+                ModConsole.Warning("ShizAnimPlayer !animation.isPlaying");
+
             while (animation.isPlaying)
                 yield return new WaitForEndOfFrame();
 
             if (waitSeconds > 0f)
                 yield return new WaitForSeconds(waitSeconds);
 
-            animation.Stop();
+            animation.Stop(animationName);
             try
             {
                 finish_callback?.Invoke();

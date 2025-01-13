@@ -256,21 +256,21 @@ namespace Psycho
                 houseOnFire = true;
             }
 
-            WorldManager.ShowCrows(!(Globals.SUN_Hours.Value >= 20f || Globals.SUN_Hours.Value < 6f));
+            WorldManager.ShowCrows(!(Globals.SUN_Hours >= 20f || Globals.SUN_Hours < 6f));
 
             if (Logic.CurrentAmbientTrigger == null)
                 AmbientTrigger.MuteGlobalAmbient(false);
                 
             
 
-            if (!bellsActivated && Globals.SUN_Hours.Value == 24f && Mathf.FloorToInt(Globals.SUN_Minutes.Value) == 0)
+            if (!bellsActivated && Globals.SUN_Hours == 24f && Globals.SUN_Minutes == 0)
             {
                 (bellsState.Actions[0] as ActivateGameObject).activate = true;
                 bells.gameObject.SetActive(true);
                 bells.position = GameObject.Find("PLAYER").transform.position;
                 bellsActivated = true;
             }
-            else if (bellsActivated && Mathf.FloorToInt(Globals.SUN_Minutes.Value) > 1)
+            else if (bellsActivated && Globals.SUN_Minutes > 1)
             {
                 (bellsState.Actions[0] as ActivateGameObject).activate = false;
                 bells.gameObject.SetActive(false);

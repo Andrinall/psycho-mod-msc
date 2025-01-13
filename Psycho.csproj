@@ -94,6 +94,7 @@
     <Compile Include="Sources\Extensions\TransformExtensions.cs" />
     <Compile Include="Sources\Extensions\VectorExtensions.cs" />
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
+    <Compile Include="Sources\Features\FittanItemsStore.cs" />
     <Compile Include="Sources\Features\Postcard.cs" />
     <Compile Include="Sources\Handlers\FullScreenScreamers\AssemblyBatteryToChargeHandler.cs" />
     <Compile Include="Sources\Handlers\FullScreenScreamers\BoatIgnitionHandler.cs" />

@@ -43,7 +43,7 @@ namespace Psycho.Features
                     return;
                 }
 
-                if (Globals.SUN_Hours.Value >= 22f || Globals.SUN_Hours.Value < 4f)
+                if (Globals.SUN_Hours >= 22f || Globals.SUN_Hours < 4f)
                 {
                     MuteAmbient(false);
                     return;
@@ -139,7 +139,7 @@ namespace Psycho.Features
 
             if (!Logic.InHorror)
             {
-                MuteSource(Globals.GlobalAmbient_source, !(Globals.SUN_Hours.Value >= 22f || Globals.SUN_Hours.Value < 4f));
+                MuteSource(Globals.GlobalAmbient_source, !(Globals.SUN_Hours >= 22f || Globals.SUN_Hours < 4f));
                 MuteSource(Globals.GlobalPsychoAmbient_source, true);
             }
             else
