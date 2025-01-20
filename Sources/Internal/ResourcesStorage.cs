@@ -86,7 +86,7 @@ namespace Psycho.Internal
 
         public static void LoadFromBundle(string bundlePath)
         {
-            AssetBundle _bundle = LoadAssets.LoadBundle(bundlePath);
+            AssetBundle _bundle = LoadAssets.LoadBundle(Properties.Resources.mod_assets);
 
             Pentagram_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab");
             RoosterPoster_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/rooster_poster.prefab");
