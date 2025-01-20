@@ -9,7 +9,7 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class SpillHandler : CatchedComponent
+    class SpillShit : CatchedComponent
     {
         FsmBool isCrime;
 
@@ -17,10 +17,10 @@ namespace Psycho.Handlers
         protected override void Awaked()
         {
             isCrime = transform.GetPlayMaker("SpillPump").FsmVariables.GetFsmBool("Crime");
-            StateHook.Inject(gameObject, "SpillPump", "Spill grow", SpillShit);
+            StateHook.Inject(gameObject, "SpillPump", "Spill grow", Handler);
         }
 
-        void SpillShit()
+        void Handler()
         {
             if (isCrime?.Value == false) return;
             Logic.PlayerCommittedOffence("SPILL_SHIT");

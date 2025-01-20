@@ -12,7 +12,24 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Internal
 {
-    internal static class WorldManager
+    enum HandOrig : int
+    {
+        PUSH = 0,
+        HELLO = 1,
+        WATCH = 2,
+        MILK = 3
+    }
+
+    enum HandParent : int
+    {
+        MAIN = 0,
+        STAIRS = 1,
+        HOUSE = 2,
+        LOFT = 3
+    }
+
+
+    static class WorldManager
     {
         static int elapsedFrames = 0;
          

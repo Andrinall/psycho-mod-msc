@@ -1,7 +1,7 @@
 ﻿
 namespace Psycho
 {
-    public sealed class Locales
+    class Locales
     {
         public static readonly string[] FRIDGE_PAPER_TEXT = new string[]
         {

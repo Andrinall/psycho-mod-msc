@@ -7,7 +7,7 @@ using Psycho.Handlers;
 
 namespace Psycho.Features
 {
-    internal sealed class AnyPentaItemsSpawner : CatchedComponent
+    class AnyPentaItemsSpawner : CatchedComponent
     {
         readonly Vector3 walnutPos = new Vector3(.071f, 0, .653f);
         readonly Vector3 candlePos = new Vector3(-11.264f, .089f, -3.158f);
@@ -48,10 +48,10 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-            int day = Globals.GlobalDay.Value % 7;
-            CheckItemSpawnTimeAndSpawn(day, WalnutDay, ref WalnutSpawned, palm, ResourcesStorage.Walnut_prefab, walnutPos);
-            CheckItemSpawnTimeAndSpawn(day, MushroomDay, ref MushroomSpawned, island, ResourcesStorage.Mushroom_prefab, mushroom_pos);
-            CheckItemSpawnTimeAndSpawn(day, CandleDay, ref CandleSpawned, church, ResourcesStorage.Candle_prefab, candlePos);
+            int _day = Globals.GlobalDay.Value % 7;
+            CheckItemSpawnTimeAndSpawn(_day, WalnutDay, ref WalnutSpawned, palm, ResourcesStorage.Walnut_prefab, walnutPos);
+            CheckItemSpawnTimeAndSpawn(_day, MushroomDay, ref MushroomSpawned, island, ResourcesStorage.Mushroom_prefab, mushroom_pos);
+            CheckItemSpawnTimeAndSpawn(_day, CandleDay, ref CandleSpawned, church, ResourcesStorage.Candle_prefab, candlePos);
         }
 
         void CheckItemSpawnTimeAndSpawn(

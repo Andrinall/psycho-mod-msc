@@ -8,7 +8,7 @@ using Psycho.Features;
 
 namespace Psycho.Internal
 {
-    internal sealed class SaveLoadData
+    class SaveLoadData
     {
         public bool GameFinished = false;
 
@@ -33,7 +33,7 @@ namespace Psycho.Internal
         public List<NotebookPage> NotebookPagesPool = default;
     }
 
-    internal sealed class ItemsPoolSaveLoadData
+    class ItemsPoolSaveLoadData
     {
         public string Name = string.Empty;
         public Vector3 Position = Vector3.zero;

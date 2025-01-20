@@ -10,7 +10,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal sealed class HookInfo
+    class HookInfo
     {
         public int Index = -1;
         public string FsmName = string.Empty;
@@ -18,9 +18,9 @@ namespace Psycho.Internal
     }
 
 
-    public sealed class StateHook
+    class StateHook
     {
-        internal static Dictionary<FsmState, List<HookInfo>> hooksList = new Dictionary<FsmState, List<HookInfo>>();
+        public static Dictionary<FsmState, List<HookInfo>> hooksList = new Dictionary<FsmState, List<HookInfo>>();
 
         public static void Inject(GameObject gameObject, string stateName, Action hook)
         {
@@ -37,8 +37,7 @@ namespace Psycho.Internal
                     FsmState _state = _fsm.GetState(stateName);
                     if (_state == null) continue;
 
-                    if (!hooksList.ContainsKey(_state))
-                        hooksList[_state] = new List<HookInfo>();
+                    AddNewHooksContainer(_state);
 
                     int finalIndex = Insert(0, _fsm, _state, hook);
                     if (finalIndex == -1) return;
@@ -73,8 +72,7 @@ namespace Psycho.Internal
                 if (_playMakerState == null)
                     throw new NullReferenceException();
 
-                if (!hooksList.ContainsKey(_playMakerState))
-                    hooksList[_playMakerState] = new List<HookInfo>();
+                AddNewHooksContainer(_playMakerState);
 
                 int finalIndex = Insert(index, _playMaker, _playMakerState, hook);
                 if (finalIndex == -1) return;
@@ -107,8 +105,7 @@ namespace Psycho.Internal
                 if (_playMakerState == null)
                     throw new NullReferenceException();
 
-                if (!hooksList.ContainsKey(_playMakerState))
-                    hooksList[_playMakerState] = new List<HookInfo>();
+                AddNewHooksContainer(_playMakerState);
 
                 int finalIndex = Insert(index, _playMaker, _playMakerState, hook);
                 if (finalIndex == -1) return;
@@ -156,7 +153,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void DisposeAllHooks()
+        public static void DisposeAllHooks()
         {
             if (hooksList.Count == 0) return;
             foreach (KeyValuePair<FsmState, List<HookInfo>> _item in hooksList)

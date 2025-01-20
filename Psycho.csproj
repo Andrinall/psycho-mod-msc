@@ -98,14 +98,14 @@
     <Compile Include="Sources\Features\AngryRoosterPoster.cs" />
     <Compile Include="Sources\Features\FittanItemsStore.cs" />
     <Compile Include="Sources\Features\Postcard.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\AssemblyBatteryToChargeHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\BoatIgnitionHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\CashRegisterHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\CottageStoveSteamHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\DumpCigaretteHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\EngineStarterHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\FishTrapHandler.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\FridgeOpenDoorHandler.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\AssemblyBatteryToCharge.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\BoatIgnitionOn.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\CashRegisterUse.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\CottageStoveSteam.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\DumpCigarette.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\EngineStarter.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\FishTrapUse.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\FridgeDoorOpen.cs" />
     <Compile Include="Sources\Internal\Managers\DoorsManager.cs" />
     <Compile Include="Sources\Internal\Utilities\Electricity.cs" />
     <Compile Include="Sources\Internal\Base\FullScreenScreamerBase.cs" />
@@ -113,12 +113,12 @@
     <Compile Include="Sources\Features\Notebook.cs" />
     <Compile Include="Sources\Features\NotebookPage.cs" />
     <Compile Include="Sources\Features\Sketchbook.cs" />
-    <Compile Include="Sources\Handlers\FullScreenScreamers\LightSwitchHandler.cs" />
-    <Compile Include="Sources\Handlers\Jobs\FirewoodJobHandler.cs" />
-    <Compile Include="Sources\Handlers\Utilities\ItemsGravityEnabler.cs" />
+    <Compile Include="Sources\Handlers\FullScreenScreamers\LightSwitch.cs" />
+    <Compile Include="Sources\Handlers\Jobs\FirewoodDelivery.cs" />
+    <Compile Include="Sources\Internal\Utilities\ItemsGravityEnabler.cs" />
     <Compile Include="Sources\Features\PentagramEvents.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
-    <Compile Include="Sources\Handlers\Jobs\SuskiHelpHandler.cs" />
+    <Compile Include="Sources\Handlers\Jobs\SuskiHelp.cs" />
     <Compile Include="Sources\Internal\Utilities\DeathSystem.cs" />
     <Compile Include="Sources\Internal\DebugPanel.cs" />
     <Compile Include="Sources\Internal\Managers\EventsManager.cs" />
@@ -150,29 +150,29 @@
     <Compile Include="Sources\Internal\Managers\ItemsPool.cs" />
     <Compile Include="Sources\Internal\Managers\SaveManager.cs" />
     <Compile Include="Sources\Internal\Managers\SoundManager.cs" />
-    <Compile Include="Sources\Handlers\Utilities\FliesChanger.cs" />
-    <Compile Include="Sources\Handlers\Utilities\Hangover.cs" />
-    <Compile Include="Sources\Handlers\Jobs\HouseShitHandler.cs" />
-    <Compile Include="Sources\Handlers\Jobs\JunkYardJobHandler.cs" />
-    <Compile Include="Sources\Handlers\Jobs\MummolaJobHandler.cs" />
-    <Compile Include="Sources\Handlers\Jobs\JokkeDropOffHandler.cs" />
-    <Compile Include="Sources\Handlers\Offence\NPCHitHandler.cs" />
-    <Compile Include="Sources\Handlers\Jobs\JokkeMovingJobHandler.cs" />
+    <Compile Include="Sources\Internal\Utilities\FliesChanger.cs" />
+    <Compile Include="Sources\Internal\Utilities\Hangover.cs" />
+    <Compile Include="Sources\Handlers\Jobs\HouseShit.cs" />
+    <Compile Include="Sources\Handlers\Jobs\JunkYardDelivery.cs" />
+    <Compile Include="Sources\Handlers\Jobs\MummolaJob.cs" />
+    <Compile Include="Sources\Handlers\Jobs\JokkeDropOff.cs" />
+    <Compile Include="Sources\Handlers\Offences\NPCHit.cs" />
+    <Compile Include="Sources\Handlers\Jobs\JokkeMovingJob.cs" />
     <Compile Include="Sources\Internal\Utilities\ShizAnimPlayer.cs" />
     <Compile Include="Sources\Psycho.cs" />
     <Compile Include="Sources\Internal\Logic.cs" />
     <Compile Include="Sources\Internal\Managers\FixedHUD.cs" />
     <Compile Include="Sources\Internal\Globals.cs" />
-    <Compile Include="Sources\Handlers\Utilities\ItemRenamer.cs" />
+    <Compile Include="Sources\Internal\Utilities\ItemRenamer.cs" />
     <Compile Include="Sources\Features\MailBoxEnvelope.cs" />
     <Compile Include="Sources\Features\PillsItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sources\Handlers\SleepTriggerHandler.cs" />
+    <Compile Include="Sources\Handlers\SleepTrigger.cs" />
     <Compile Include="Sources\Internal\Utilities\StateHook.cs" />
-    <Compile Include="Sources\Handlers\Offence\SpillHandler.cs" />
-    <Compile Include="Sources\Handlers\Offence\StoreActionsHandler.cs" />
+    <Compile Include="Sources\Handlers\Offences\SpillShit.cs" />
+    <Compile Include="Sources\Handlers\Offences\StoreActionsHandler.cs" />
     <Compile Include="Sources\Internal\Utilities\Utils.cs" />
-    <Compile Include="Sources\Handlers\Offence\SuitcaseHandler.cs" />
+    <Compile Include="Sources\Handlers\Offences\SuitcaseGrab.cs" />
     <Compile Include="Sources\Internal\Managers\WorldManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -186,5 +186,6 @@
     <None Include="Resources\mod_assets" />
     <None Include="Resources\mod_icon" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,7 +9,7 @@ using Psycho.Internal;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(AudioSource))]
-    internal sealed class GrandmaDistanceChecker : ScreamerBase
+    class GrandmaDistanceChecker : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
         public override int ScreamerVariant => (int)ScreamFearType.GRANNY;
@@ -69,6 +69,5 @@ namespace Psycho.Screamers
             
             isBlowed = true;
         }
-
     }
 }

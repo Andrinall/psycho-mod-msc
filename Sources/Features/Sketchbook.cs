@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    public sealed class Sketchbook : BookWithGUI
+    class Sketchbook : BookWithGUI
     {
         protected override GameObject GUIPrefab => ResourcesStorage.SketchbookGUI_prefab;
 

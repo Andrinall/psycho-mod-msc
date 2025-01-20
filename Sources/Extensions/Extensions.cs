@@ -10,7 +10,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho
 {
-    public static class Extensions
+    static class Extensions
     {
         public static void SetupFSM(this GameObject obj, string name, string[] eventNames, string startState, Func<PlayMakerFSM, List<FsmEvent>, FsmState[]> callback)
         {
@@ -61,28 +61,28 @@ namespace Psycho
 
         public static Vector3 GetFromBytes(this Vector3 obj, byte[] array, ref int offset)
         {
-            float x = BitConverter.ToSingle(array, offset);
-            float y = BitConverter.ToSingle(array, offset + 4);
-            float z = BitConverter.ToSingle(array, offset + 8);
+            float _x = BitConverter.ToSingle(array, offset);
+            float _y = BitConverter.ToSingle(array, offset + 4);
+            float _z = BitConverter.ToSingle(array, offset + 8);
             offset += 12;
-            return new Vector3(x, y, z);
+            return new Vector3(_x, _y, _z);
         }
 
         public static string GetFromBytes(this string obj, byte[] array, ref int offset)
         {
-            int len = BitConverter.ToInt32(array, offset);
-            if (len == 0) return string.Empty;
+            int _len = BitConverter.ToInt32(array, offset);
+            if (_len == 0) return string.Empty;
 
-            char[] chars = new char[len];
+            char[] _chars = new char[_len];
             offset += 4;
 
-            for (int i = 0; i < len; i++)
+            for (int i = 0; i < _len; i++)
             {
-                chars[i] = BitConverter.ToChar(array, offset);
+                _chars[i] = BitConverter.ToChar(array, offset);
                 offset += 2;
             }
 
-            return new string(chars);
+            return new string(_chars);
         }
     }
 }

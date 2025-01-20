@@ -11,7 +11,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal sealed class Notebook : BookWithGUI
+    class Notebook : BookWithGUI
     {
         public static List<NotebookPage> Pages = new List<NotebookPage>()
         {

@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal class NotebookPage
+    class NotebookPage
     {
         public int index = -1;
         public bool isTruePage = false;
@@ -27,7 +27,7 @@ namespace Psycho.Features
     }
 
 
-    internal class NotebookPageComponent : CatchedComponent
+    class NotebookPageComponent : CatchedComponent
     {
         public NotebookPage Page;
 

@@ -10,9 +10,9 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
+    enum eConsoleColors { WHITE, RED, YELLOW, GREEN }
 
-    internal static class Utils
+    static class Utils
     {
         static string DBG_STRING => $"[{Psycho.Instance.Name}{{{Psycho.Instance.Version}}}]: ";
 
@@ -43,19 +43,19 @@ namespace Psycho.Internal
             return _result;
         }
 
-        internal static string GetMethodPath(MethodInfo method)
+        public static string GetMethodPath(MethodInfo method)
         {
             Type _declaringType = method.DeclaringType;
             return $"{_declaringType.Namespace}::{_declaringType.Name}.{method.Name}";
         }
 
-        internal static void SetGUIUse(bool state, string name = "")
+        public static void SetGUIUse(bool state, string name = "")
         {
             Globals.GUIuse.Value = state;
             Globals.GUIinteraction.Value = name;
         }
 
-        internal static void ChangeSmokingModel()
+        public static void ChangeSmokingModel()
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void SetPictureImage()
+        public static void SetPictureImage()
         {
             GameObject _picture = GameObject.Find("Picture(Clone)");
             if (_picture == null) return;
@@ -90,10 +90,11 @@ namespace Psycho.Internal
             PrintDebug($"SetPictureImage [{_idx}]");
             _material.SetTexture("_MainTex", _texture);
         }
-        internal static T GetGlobalVariable<T>(string name) where T : NamedVariable =>
-            FsmVariables.GlobalVariables.FindVariable(name) as T;
 
-        internal static void PlayScreamSleepAnim(ref bool animPlayed, Action callback)
+        public static T GetGlobalVariable<T>(string name) where T : NamedVariable
+            => FsmVariables.GlobalVariables.FindVariable(name) as T;
+
+        public static void PlayScreamSleepAnim(ref bool animPlayed, Action callback)
         {
             if (animPlayed) return;
             animPlayed = true;
@@ -101,7 +102,7 @@ namespace Psycho.Internal
             ShizAnimPlayer.PlayOriginalAnimation("sleep_knockout", 4f, default, () => callback?.Invoke());
         }
 
-        internal static Vector3[] SetCameraLookAt(Vector3 targetPoint)
+        public static Vector3[] SetCameraLookAt(Vector3 targetPoint)
         {
             Transform _fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
 
@@ -114,7 +115,7 @@ namespace Psycho.Internal
             return _origs;
         }
 
-        internal static void ResetCameraLook(Vector3[] origs)
+        public static void ResetCameraLook(Vector3[] origs)
         {
             Transform _fpsCamera = GetGlobalVariable<FsmGameObject>("POV").Value.transform.parent;
 
@@ -122,7 +123,7 @@ namespace Psycho.Internal
             _fpsCamera.localEulerAngles = origs[1];
         }
 
-        internal static void PrintDebug(string msg)
+        public static void PrintDebug(string msg)
         {
 #if DEBUG
             ModConsole.Print(DBG_STRING + msg);
@@ -131,7 +132,7 @@ namespace Psycho.Internal
 #endif
         }
 
-        internal static void PrintDebug(eConsoleColors color, string msg)
+        public static void PrintDebug(eConsoleColors color, string msg)
         {
 #if DEBUG
             ModConsole.Print(string.Format("{0}<color={1}>{2}</color>", DBG_STRING, _getColor(color), msg));

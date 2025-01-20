@@ -6,7 +6,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    public class BookWithGUI : CatchedComponent
+    class BookWithGUI : CatchedComponent
     {
         protected int CurrentPage { get; set; } = 0;
         protected virtual int MAX_PAGE { get; set; } = 0;

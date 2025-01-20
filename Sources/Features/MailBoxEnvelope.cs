@@ -13,7 +13,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal sealed class MailBoxEnvelope : CatchedComponent
+    class MailBoxEnvelope : CatchedComponent
     {
         GameObject mailboxEnvelope;
         GameObject envelopeSheet;
@@ -28,21 +28,21 @@ namespace Psycho.Features
 
             mailboxEnvelope = Instantiate(transform.Find("EnvelopeInspection").gameObject);
             mailboxEnvelope.gameObject.name = "EnvelopeDoctor";
-            mailboxEnvelope.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, worldPositionStays: false);
+            mailboxEnvelope.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
             mailboxEnvelope.transform.localPosition = new Vector3(-0.0685f, -0.007f, 0.1076f);
             mailboxEnvelope.GetComponent<CapsuleCollider>().radius = 0.04f;
 
             GameObject _sheets = FindObjectsOfType<GameObject>().First(v => v.name == "Sheets");
             envelopeSheet = Instantiate(_sheets.transform.Find("InspectionAD").gameObject);
             envelopeSheet.name = "DoctorMail";
-            envelopeSheet.transform.SetParent(_sheets.transform, worldPositionStays: false);
+            envelopeSheet.transform.SetParent(_sheets.transform, false);
             envelopeSheet.SetActive(true);
 
             Transform _oldBackground = envelopeSheet.transform.GetChild(1);
             Destroy(_oldBackground.gameObject);
 
             GameObject _background = Instantiate(ResourcesStorage.Background_prefab);
-            _background.transform.SetParent(envelopeSheet.transform, worldPositionStays: false);
+            _background.transform.SetParent(envelopeSheet.transform, false);
             _background.transform.localPosition = new Vector3(0, 0.002f, 0.126f);
             _background.name = "Background";
             _background.layer = 14;

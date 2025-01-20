@@ -7,7 +7,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal class Postcard
+    class Postcard
     {
         public static GameObject self = null;
 

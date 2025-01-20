@@ -8,7 +8,7 @@ namespace Psycho.Features
 {
     [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(Collider))]
-    public class AmbientTrigger : CatchedComponent
+    class AmbientTrigger : CatchedComponent
     {
         public AudioSource LocalAmbientSource;
         public bool CheckTimeOfDay = false;
@@ -97,7 +97,7 @@ namespace Psycho.Features
             _box2.center = new Vector3(-5.927717f, -0.1420171f, 1.617358f);
             _box2.size = new Vector3(2.983747f, 2.255966f, 7.793219f);
 
-            var _trigger = _houseTriggerObj2.AddComponent<AmbientTrigger>();
+            AmbientTrigger _trigger = _houseTriggerObj2.AddComponent<AmbientTrigger>();
             _trigger.LocalAmbientSource = _houseTriggerObj.GetComponent<AudioSource>();
             _trigger.CheckTimeOfDay = true;
 

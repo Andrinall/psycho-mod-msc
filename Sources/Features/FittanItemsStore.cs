@@ -9,17 +9,16 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal class FittanItemsStore : CatchedComponent
+    class FittanItemsStore : CatchedComponent
     {
         const int COOLDOWN_FRAMES = 120;
         const float ITEM_PRICE = 500f;
 
+        readonly Vector3 ItemsSpawnPoint = new Vector3(-4.850542f, 1.522235f, 7.135977f);
 
         GameObject container;
         List<Collider> colliders = new List<Collider>();
 
-        Vector3 ItemsSpawnPoint = new Vector3(-4.850542f, 1.522235f, 7.135977f);
-        
         int elapsedFrames = 120;
         bool offerAborted = false;
 

@@ -9,7 +9,7 @@ using Psycho.Internal;
 
 namespace Psycho
 {
-    public static class TransformExtensions
+    static class TransformExtensions
     {
         public static bool IsPrefab(this Transform obj)
         {

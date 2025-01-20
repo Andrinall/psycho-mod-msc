@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal static class ResourcesStorage
+    static class ResourcesStorage
     {
         public static GameObject Pentagram_prefab = null;
         public static GameObject RoosterPoster_prefab = null;
@@ -149,27 +149,27 @@ namespace Psycho.Internal
 
             // load all replaces
             Transform _building = GameObject.Find("YARD/Building").transform;
-            foreach (string path in _bundle.GetAllAssetNames())
+            foreach (string _path in _bundle.GetAllAssetNames())
             {
-                if (path.Contains("assets/replaces")) // load texture & sound replaces
+                if (_path.Contains("assets/replaces")) // load texture & sound replaces
                 {
-                    if (path.Contains("/horror"))
-                        Replaces.Add(LoadAsset<Texture>(_bundle, path));
-                    else if (path.Contains("/sounds")) // replaces for flies sounds in horror world
-                        HorrorFliesSounds.Add(LoadAsset<AudioClip>(_bundle, path));
-                    else if (path.Contains("/allworlds")) // load texture used independently of world
-                        IndependentlyTextures.Add(LoadAsset<Texture>(_bundle, path));
+                    if (_path.Contains("/horror"))
+                        Replaces.Add(LoadAsset<Texture>(_bundle, _path));
+                    else if (_path.Contains("/sounds")) // replaces for flies sounds in horror world
+                        HorrorFliesSounds.Add(LoadAsset<AudioClip>(_bundle, _path));
+                    else if (_path.Contains("/allworlds")) // load texture used independently of world
+                        IndependentlyTextures.Add(LoadAsset<Texture>(_bundle, _path));
                 }
-                else if (path.Contains("assets/pictures")) // load textures for picture in frame
-                    Pictures.Add(LoadAsset<Texture>(_bundle, path));
-                else if (path.Contains("assets/audio/screamers"))
+                else if (_path.Contains("assets/pictures")) // load textures for picture in frame
+                    Pictures.Add(LoadAsset<Texture>(_bundle, _path));
+                else if (_path.Contains("assets/audio/screamers"))
                 { // load sounds for night screamer
-                    string _item = path.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
+                    string _item = _path.Replace("assets/audio/screamers/", "").Replace(".mp3", "");
                     GameObject _emptyPoint = new GameObject($"ScreamPoint({_item})");
                     AudioSource _source = _emptyPoint.AddComponent<AudioSource>();
-                    _source.clip = LoadAsset<AudioClip>(_bundle, path);
+                    _source.clip = LoadAsset<AudioClip>(_bundle, _path);
                     _source.loop = true;
-                    _source.volume = path.Contains("crying") ? 0.4f : 0.9f;
+                    _source.volume = _path.Contains("crying") ? 0.4f : 0.9f;
                     _source.priority = 0;
                     _source.rolloffMode = AudioRolloffMode.Logarithmic;
                     _source.minDistance = 1.5f;
@@ -182,32 +182,32 @@ namespace Psycho.Internal
                     _emptyPoint.transform.position = Globals.NightScreamersPointsPos[_item];
                     SoundManager.ScreamPoints.Add(_source);
                 }
-                else if (path.Contains("assets/audio/fullscreenscreamers"))
-                    SoundManager.FullScreenScreamersSounds.Add(LoadAsset<AudioClip>(_bundle, path));
-                else if (path.Contains("screens/"))
-                    MailScreens.Add(LoadAsset<Texture>(_bundle, path));
-                else if (path.Contains("textures/taro"))
-                    TaroCardsTextures.Add(LoadAsset<Texture>(_bundle, path));
-                else if (path.Contains("textures/album"))
-                    SketchbookPages.Add(LoadAsset<Texture>(_bundle, path));
-                else if (path.Contains("textures/fullscreenscreamers"))
-                    FullScreenScreamerTextures.Add(LoadAsset<Texture>(_bundle, path));
+                else if (_path.Contains("assets/audio/fullscreenscreamers"))
+                    SoundManager.FullScreenScreamersSounds.Add(LoadAsset<AudioClip>(_bundle, _path));
+                else if (_path.Contains("screens/"))
+                    MailScreens.Add(LoadAsset<Texture>(_bundle, _path));
+                else if (_path.Contains("textures/taro"))
+                    TaroCardsTextures.Add(LoadAsset<Texture>(_bundle, _path));
+                else if (_path.Contains("textures/album"))
+                    SketchbookPages.Add(LoadAsset<Texture>(_bundle, _path));
+                else if (_path.Contains("textures/fullscreenscreamers"))
+                    FullScreenScreamerTextures.Add(LoadAsset<Texture>(_bundle, _path));
             }
 
             // load smoking replaces
-            Texture _cig_texture = LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
+            Texture _cigTexture = LoadAsset<Texture>(_bundle, "assets/replaces/smoking/hand.png");
             ModelsReplaces.Add("cigarette_filter".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Filter",
                 mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_filter.obj"),
-                texture = _cig_texture
+                texture = _cigTexture
             });
 
             ModelsReplaces.Add("cigarette_shaft".GetHashCode(), new ModelData
             {
                 path = "Armature/Bone/Bone_001/Bone_008/Bone_009/Bone_019/Bone_020/Cigarette/Shaft",
                 mesh = LoadAsset<Mesh>(_bundle, "assets/replaces/smoking/cigarette_shaft.obj"),
-                texture = _cig_texture
+                texture = _cigTexture
             });
 
             MailScreens.Sort(delegate (Texture item, Texture target) {

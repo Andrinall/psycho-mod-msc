@@ -14,7 +14,7 @@ using Random = UnityEngine.Random;
 namespace Psycho.Screamers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class ScreamsInitiator : CatchedComponent
+    class ScreamsInitiator : CatchedComponent
     {
         readonly int[] targetTimes = new int[3] { 1, 4, 1 };
 
@@ -93,17 +93,18 @@ namespace Psycho.Screamers
                 return;
             }
 
-            int day = (globalDay.Value + 1) % 7;
+            int _day = (globalDay.Value + 1) % 7;
             lastRand = Random.Range(0, 3);
             screamerVariation = Random.Range(0, maxScreamTypes[lastRand]);
 
+            bool _isDayForCurrentScreamer = targetDays[lastRand].Contains(_day);
             if (lastRand == 3)
             {
                 Utils.PrintDebug("RandomEvent == 3; Skip night screamer");
                 return;
             }
 
-            if (!targetDays[lastRand].Contains(day))
+            if (!_isDayForCurrentScreamer)
             {
                 Utils.PrintDebug("Event not exists in table for current day\nSkip night screamer");
                 return;
@@ -115,7 +116,7 @@ namespace Psycho.Screamers
                 return;
             }
 
-            Utils.PrintDebug($"Day: {globalDay.Value}[next {day}]; rand[{(ScreamTimeType)lastRand}]; contains[{targetDays[lastRand].Contains(day)}]");
+            Utils.PrintDebug($"Day: {globalDay.Value}[next {_day}]; rand[{(ScreamTimeType)lastRand}]; contains[{_isDayForCurrentScreamer}]");
             FsmInt _sleepTime = fsm.GetVariable<FsmInt>("SleepTime"); // 10
             int _timeOfDay = timeOfDay.Value;
 

@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class BathroomShower : ScreamerBase
+    class BathroomShower : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
         public override int ScreamerVariant => (int)ScreamFearType.WATERBATHROOM;
@@ -44,7 +44,8 @@ namespace Psycho.Screamers
             StateHook.Inject(transform.Find("Valve").gameObject, "Switch", "OFF", _showerHook);
         }
 
-        public override void TriggerScreamer() => OpenValve();
+        public override void TriggerScreamer()
+            => OpenValve();
 
         public override void StopScreamer()
         {
@@ -84,6 +85,7 @@ namespace Psycho.Screamers
             playerStop.Value = true;
         }
 
-        void _phantomCallback() => base.Stop();
+        void _phantomCallback()
+            => base.Stop();
     }
 }

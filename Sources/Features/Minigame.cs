@@ -10,7 +10,7 @@ using Psycho.Internal;
 
 namespace Psycho.Features
 {
-    internal class Minigame : CatchedComponent
+    class Minigame : CatchedComponent
     {
         GameObject taroUsable;
         GameObject housekeeperCard;
@@ -69,7 +69,7 @@ namespace Psycho.Features
             }
         }
 
-        internal void PlayerGetsCard()
+        public void PlayerGetsCard()
         {
             int _randomCard = Random.Range(0, MAX_CARD);
             playerCurrentCardNumber = _randomCard + 1;
@@ -80,10 +80,10 @@ namespace Psycho.Features
             Utils.PrintDebug($"PlayerCurrentCardNumber {playerCurrentCardNumber}");
             if (playerCurrentCardNumber > 7) // get card clarity
             {
-                int player = (playerCurrentCardNumber % 7);
-                player = (player == 0) ? 7 : player;
+                int _player = (playerCurrentCardNumber % 7);
+                _player = (_player == 0) ? 7 : _player;
 
-                StartCoroutine(SpawnNewPage(player <= housekeeperCurrentCardNumber));
+                StartCoroutine(SpawnNewPage(_player <= housekeeperCurrentCardNumber));
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace Psycho.Features
             Logic.LastDayMinigame = Globals.GlobalDay.Value;
         }
 
-        internal void UpdateHousekeeperCard()
+        public void UpdateHousekeeperCard()
         {
             int _randomCard = Random.Range(0, MAX_CARD / 2);
             housekeeperCardMat.SetTexture("_MainTex", ResourcesStorage.TaroCardsTextures[_randomCard]);

@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class JokkeMovingJobHandler : CatchedComponent
+    class JokkeMovingJob : CatchedComponent
     {
         GameObject payMoney;
 
@@ -35,6 +35,7 @@ namespace Psycho.Handlers
             StateHook.Inject(payMoney.gameObject, "Use", "Anim", JobCompleted);
         }
 
-        void JobCompleted() => Logic.PlayerCompleteJob("YOKKE_RELOCATION");
+        void JobCompleted()
+            => Logic.PlayerCompleteJob("YOKKE_RELOCATION");
     }
 }

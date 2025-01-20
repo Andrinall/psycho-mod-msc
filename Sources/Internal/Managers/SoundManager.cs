@@ -13,19 +13,19 @@ using Random = UnityEngine.Random;
 
 namespace Psycho.Internal
 {
-    internal static class SoundManager
+    static class SoundManager
     {
-        public static AudioSource DeathSound;
         public static readonly List<AudioSource> ScreamPoints = new List<AudioSource>();
         public static readonly List<AudioClip> FullScreenScreamersSounds = new List<AudioClip>();
 
+        public static AudioSource DeathSound;
         public static AudioSource FullScreenScreamerSoundsSource = null;
-
         static AudioClip adRadioStaticOrig_clip;
 
         static AudioSource RandomPoint => ScreamPoints[Random.Range(0, ScreamPoints.Count)];
         static AudioClip RandomSoundForFullScreenScreamer => FullScreenScreamersSounds[Random.Range(0, FullScreenScreamersSounds.Count)];
         
+
         public static AudioSource AddAudioSource(GameObject parent, AudioClip clip, float volume)
         {
             AudioSource _source = parent.AddComponent<AudioSource>();

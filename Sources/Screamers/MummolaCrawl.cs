@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class MummolaCrawl : ScreamerBase
+    class MummolaCrawl : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.PARALYSIS;
         public override int ScreamerVariant => (int)ScreamParalysisType.GRANNY;

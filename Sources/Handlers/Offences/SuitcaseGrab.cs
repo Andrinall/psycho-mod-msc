@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class SuitcaseHandler : CatchedComponent
+    class SuitcaseGrab : CatchedComponent
     {
         bool suitCaseSpawned = false;
         bool suitCaseGrabbed = false;

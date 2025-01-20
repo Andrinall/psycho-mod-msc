@@ -10,53 +10,14 @@ using Psycho.Features;
 
 namespace Psycho.Internal
 {
-    public enum HandOrig : byte { PUSH = 0, HELLO = 1, WATCH = 2, MILK = 3 }
-    public enum HandParent : byte { MAIN = 0, STAIRS = 1, HOUSE = 2, LOFT = 3 }
-
-    public enum ScreamTimeType : int
-    {
-        SOUNDS = 0,
-        FEAR = 1,
-        PARALYSIS = 2
-    }
-
-    public enum ScreamSoundType : int
-    {
-        BEDROOM = 0,
-        CRYFEMALE = 1,
-        CRYKID = 2,
-        KNOCK = 3,
-        FOOTSTEPS = 4,
-        GLASS1 = 5,
-        GLASS2 = 6,
-        WATER = 7
-    }
-
-    public enum ScreamFearType : int
-    {
-        GRANNY = 0,
-        SUICIDAL = 1,
-        WATERKITCHEN = 2,
-        WATERBATHROOM = 3,
-        TV = 4,
-        PHONE = 5
-    }
-
-    public enum ScreamParalysisType : int
-    {
-        GRANNY = 0,
-        HAND = 1,
-        KESSELI = 2
-    }
-
-    public struct ModelData
+    struct ModelData
     {
         public string path { get; set; }
         public Mesh mesh { get; set; }
         public Texture texture { get; set; }
     }
 
-    public struct ScreamHand
+    struct ScreamHand
     {
         public HandOrig orig { get; set; }
         public HandParent parent { get; set; }
@@ -65,8 +26,7 @@ namespace Psycho.Internal
         public float scale { get; set; }
     }
 
-
-    internal static class Globals
+    static class Globals
     {
         public static readonly Dictionary<int, ModelData> ModelsCached = new Dictionary<int, ModelData> { };
         public static readonly Dictionary<int, object> CachedTextures = new Dictionary<int, object> { };
@@ -90,11 +50,12 @@ namespace Psycho.Internal
         public static FsmInt GlobalDay;
         public static Ray RayFromScreenPoint => Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        public static int SUN_Hours => sunHours.Value;
-        public static float SUN_Minutes => Mathf.FloorToInt(sunMinutes.Value % 60);
-
         static FsmInt sunHours;
+        public static int SUN_Hours => sunHours.Value;
+
         static FsmFloat sunMinutes;
+        public static float SUN_Minutes => Mathf.FloorToInt(sunMinutes.Value % 60);
+        
 
         public static PillsItem Pills = null;
         public static Notebook Notebook = null;
@@ -290,9 +251,9 @@ namespace Psycho.Internal
 
             GlobalDay = Utils.GetGlobalVariable<FsmInt>("GlobalDay");
 
-            PlayMakerFSM sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Color");
-            sunHours = sun.GetVariable<FsmInt>("Time");
-            sunMinutes = sun.GetVariable<FsmFloat>("Minutes");
+            PlayMakerFSM _sun = GameObject.Find("MAP/SUN/Pivot/SUN").GetPlayMaker("Color");
+            sunHours = _sun.GetVariable<FsmInt>("Time");
+            sunMinutes = _sun.GetVariable<FsmFloat>("Minutes");
 
             Logic.IsDeadByGame = false;
         }

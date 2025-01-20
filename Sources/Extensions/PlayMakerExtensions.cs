@@ -12,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho
 {
-    public static class PlayMakerExtensions
+    static class PlayMakerExtensions
     {
         public static FsmEvent AddEvent(this PlayMakerFSM fsm, string eventName)
         {

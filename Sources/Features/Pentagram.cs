@@ -13,13 +13,21 @@ using Random = UnityEngine.Random;
 
 namespace Psycho.Features
 {
-    internal sealed class Pentagram : CatchedComponent
+    class Pentagram : CatchedComponent
     {
         List<PentaTrigger> triggers = new List<PentaTrigger>();
 
         Transform candles;
-        Transform spawnerPos;
         PlayMakerFSM hand;
+
+        Dictionary<string, float> eventCategories = new Dictionary<string, float>
+        {
+            { "Very good", 0.2f },
+            { "Good", 0.5f },
+            { "Normal", 1f },
+            { "Bad", 0.5f },
+            { "Very bad", 0.2f }
+        };
 
         public bool LightsEnabled { get; private set; } = false;
 
@@ -41,20 +49,11 @@ namespace Psycho.Features
             { "knockout", "bursttires", "outoffuel", "blindless" }
         };
         
-        Dictionary<string, float> events = new Dictionary<string, float>
-        {
-            { "Very good", 0.2f },
-            { "Good", 0.5f },
-            { "Normal", 1f },
-            { "Bad", 0.5f },
-            { "Very bad", 0.2f }
-        };
 
 
         protected override void Awaked()
         {
             candles = transform.Find("Candles");
-            spawnerPos = transform.Find("ItemsSpawner");
 
             Transform _triggers = transform.Find("Triggers");
             for (int i = 0; i < _triggers.childCount; i++)
@@ -138,7 +137,7 @@ namespace Psycho.Features
         void _spawnRandomEvent()
         {
             Utils.PrintDebug("All ritual items in trigger.");
-            string _mainEvent = events.RandomElementByWeight(_weightSelector).Key;
+            string _mainEvent = eventCategories.RandomElementByWeight(_weightSelector).Key;
             string[] _innerEvents = InnerEvents[_mainEvent];
             string _innerEvent = _innerEvents[Random.Range(0, _innerEvents.Length)];
 

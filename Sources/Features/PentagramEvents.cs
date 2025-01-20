@@ -16,7 +16,7 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Features
 {
-    internal sealed class PentagramEvents : CatchedComponent
+    class PentagramEvents : CatchedComponent
     {
         bool isEventCalled = false;
         bool isEventFinished = true;
@@ -32,10 +32,11 @@ namespace Psycho.Features
         FsmFloat blindIntensity;
 
         Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();
+        Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
+
         List<FsmFloat> fuelLevels = new List<FsmFloat>();
         List<FsmGameObject> tireStatusList = new List<FsmGameObject>();
 
-        Dictionary<string, AudioClip> sounds = new Dictionary<string, AudioClip>();
 
         static PentagramEvents instance;
 
@@ -97,7 +98,7 @@ namespace Psycho.Features
                     ?.Find("Fire")?.gameObject
             );
 
-            fire.transform.SetParent(transform, worldPositionStays: false);
+            fire.transform.SetParent(transform, false);
             fire.transform.position = itemSpawnPos; //transform.position;
             Object.Destroy(fire.GetComponent<PlayMakerFSM>());
             Object.Destroy(fire.transform.Find("GarbageTrigger").gameObject);
@@ -164,11 +165,11 @@ namespace Psycho.Features
             _rb.detectCollisions = true;
 
 
-            _obj.SetupFSM("Use", new string[] { "FINISHED", "USE" }, "Wait player", (_fsm, events) =>
+            _obj.SetupFSM("Use", new string[] { "FINISHED", "USE" }, "Wait player", (fsm, events) =>
             {
                 FsmFloat _playerMoney = Utils.GetGlobalVariable<FsmFloat>("PlayerMoney");
                 FsmFloat _money = new FsmFloat() { Name = "Money", Value = 100f };
-                _fsm.AddVariable(_money);
+                fsm.AddVariable(_money);
 
                 FsmEvent _finished = events[0];
                 FsmEvent _useEvent = events[1];
@@ -179,7 +180,7 @@ namespace Psycho.Features
                 FsmOwnerDefault _owner = new FsmOwnerDefault() { OwnerOption = OwnerDefaultOption.UseOwner };
                 FsmInt[] _layerMask = new FsmInt[1] { new FsmInt() { Value = 19 } };
 
-                FsmState _waitPlayer = new FsmState(_fsm.Fsm)
+                FsmState _waitPlayer = new FsmState(fsm.Fsm)
                 {
                     Name = "Wait player",
                     Transitions = new FsmTransition[1] {
@@ -207,7 +208,7 @@ namespace Psycho.Features
                 };
                 _waitPlayer.SaveActions();
 
-                FsmState _waitButton = new FsmState(_fsm.Fsm)
+                FsmState _waitButton = new FsmState(fsm.Fsm)
                 {
                     Name = "Wait button",
                     Transitions = new FsmTransition[2] {
@@ -234,7 +235,7 @@ namespace Psycho.Features
                 };
                 _waitButton.SaveActions();
 
-                FsmState _useItem = new FsmState(_fsm.Fsm)
+                FsmState _useItem = new FsmState(fsm.Fsm)
                 {
                     Name = "Use item",
                     Actions = new FsmStateAction[5]
@@ -513,9 +514,11 @@ namespace Psycho.Features
             }
         }
 
-        void _startEvent(Action func, string sound = "") => StartCoroutine(_eventCoroutine(func, sound));
+        void _startEvent(Action func, string sound = "")
+            => StartCoroutine(_eventCoroutine(func, sound));
 
-        void _startGrannyEvent(Action func) => StartCoroutine(_eventGrannyCoroutine(func));
+        void _startGrannyEvent(Action func)
+            => StartCoroutine(_eventGrannyCoroutine(func));
 
         void _cloneItemFromPrefab(string item)
         {

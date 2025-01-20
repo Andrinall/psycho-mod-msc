@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class SuskiHelpHandler : CatchedComponent
+    class SuskiHelp : CatchedComponent
     {
         protected override void Awaked()
         {
@@ -19,6 +19,7 @@ namespace Psycho.Handlers
             StateHook.Inject(_stages, "Logic", "Enable note", SuskiMoved);
         }
 
-        void SuskiMoved() => Logic.PlayerCompleteJob("SUSKI_HELP");
+        void SuskiMoved()
+            => Logic.PlayerCompleteJob("SUSKI_HELP");
     }
 }

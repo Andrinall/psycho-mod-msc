@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class FirewoodJobHandler : CatchedComponent
+    class FirewoodDelivery : CatchedComponent
     {
         protected override void Awaked()
         {
@@ -23,6 +23,7 @@ namespace Psycho.Handlers
             StateHook.Inject(_payMoney.gameObject, "Use", "State 1", JobCompleted);
         }
 
-        void JobCompleted() => Logic.PlayerCompleteJob("WOOD_DELIVERY");
+        void JobCompleted()
+            => Logic.PlayerCompleteJob("WOOD_DELIVERY");
     }
 }

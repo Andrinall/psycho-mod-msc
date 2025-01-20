@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Psycho.Internal
 {
     [RequireComponent(typeof(Animation))]
-    public sealed class ShizAnimPlayer : CatchedComponent
+    class ShizAnimPlayer : CatchedComponent
     {
         GameObject eyesOrig;
         Animation animationOrig;

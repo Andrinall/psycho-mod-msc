@@ -1,7 +1,43 @@
 ﻿
 namespace Psycho.Internal
 {
-    internal abstract class ScreamerBase : CatchedComponent
+    enum ScreamTimeType : int
+    {
+        SOUNDS = 0,
+        FEAR = 1,
+        PARALYSIS = 2
+    }
+
+    enum ScreamSoundType : int
+    {
+        BEDROOM = 0,
+        CRYFEMALE = 1,
+        CRYKID = 2,
+        KNOCK = 3,
+        FOOTSTEPS = 4,
+        GLASS1 = 5,
+        GLASS2 = 6,
+        WATER = 7
+    }
+
+    enum ScreamFearType : int
+    {
+        GRANNY = 0,
+        SUICIDAL = 1,
+        WATERKITCHEN = 2,
+        WATERBATHROOM = 3,
+        TV = 4,
+        PHONE = 5
+    }
+
+    enum ScreamParalysisType : int
+    {
+        GRANNY = 0,
+        HAND = 1,
+        KESSELI = 2
+    }
+
+    abstract class ScreamerBase : CatchedComponent
     {
         public virtual ScreamTimeType ScreamerTime => 0;
         public virtual int ScreamerVariant => 0;

@@ -10,9 +10,10 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class NPCHitHandler : CatchedComponent
+    class NPCHit : CatchedComponent
     {
-        bool HasCrimeAction => transform.GetPlayMaker("CarHit").FsmStates.First(v => v.Name == "Crime") != null;
+        bool HasCrimeAction
+            => transform.GetPlayMaker("CarHit").FsmStates.First(v => v.Name == "Crime") != null;
 
         protected override void Awaked()
         {            
@@ -32,8 +33,11 @@ namespace Psycho.Handlers
             SetupPlayerHitCrime(transform.childCount);
         }
 
-        void SuskiHitted() => Logic.PlayerCommittedOffence("SUSKI_HIT");
-        void NPCHitted() => Logic.PlayerCommittedOffence("NPC_HIT");
+        void SuskiHitted()
+            => Logic.PlayerCommittedOffence("SUSKI_HIT");
+
+        void NPCHitted()
+            => Logic.PlayerCommittedOffence("NPC_HIT");
 
         void SetupCarHitCrime()
         {

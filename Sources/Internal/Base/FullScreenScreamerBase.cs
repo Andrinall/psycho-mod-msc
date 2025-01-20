@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    internal abstract class FullScreenScreamerBase : CatchedComponent
+    class FullScreenScreamerBase : CatchedComponent
     {
         GameObject hud;
 

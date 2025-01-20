@@ -4,7 +4,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal class CashRegisterHandler : FullScreenScreamerBase
+    class CashRegisterUse : FullScreenScreamerBase
     {
         protected override void Awaked()
             => StateHook.Inject(

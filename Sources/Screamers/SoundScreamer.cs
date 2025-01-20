@@ -10,7 +10,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class SoundScreamer : CatchedComponent
+    class SoundScreamer : CatchedComponent
     {
         const int DISABLE_TIME = 90;
         const float TARGET_DISTANCE = 1.75f;

@@ -7,9 +7,9 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    public static class TexturesManager
+    static class TexturesManager
     {
-        internal static Dictionary<Material, Texture> Cache = new Dictionary<Material, Texture>();
+        public static Dictionary<Material, Texture> Cache = new Dictionary<Material, Texture>();
         static Material[] globalMaterials;
 
         const string PROPERTY = "_MainTex";

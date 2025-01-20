@@ -12,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class TVScreamer : ScreamerBase
+    class TVScreamer : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
         public override int ScreamerVariant => (int)ScreamFearType.TV;
@@ -47,8 +47,8 @@ namespace Psycho.Screamers
             tvSwitch.AddEvent("SCREAM_ON");
             tvSwitch.AddGlobalTransition("SCREAM_ON", "State 5");
 
-            var state = tvSwitch.GetState("Switch");
-            state.Transitions = new List<FsmTransition>(state.Transitions)
+            var _state = tvSwitch.GetState("Switch");
+            _state.Transitions = new List<FsmTransition>(_state.Transitions)
             {
                 new FsmTransition
                 {
@@ -105,11 +105,11 @@ namespace Psycho.Screamers
         }
 
 
-        void _hook(PlayMakerFSM _fsm)
+        void _hook(PlayMakerFSM fsm)
         {
             if (!ScreamerEnabled) return;
             
-            _fsm.SendEvent("FINISHED");
+            fsm.SendEvent("FINISHED");
             if (buttonAlreadyUsed) return;
 
             buttonAlreadyUsed = true;

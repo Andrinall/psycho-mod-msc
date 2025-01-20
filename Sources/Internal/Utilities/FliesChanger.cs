@@ -12,7 +12,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class FliesChanger : CatchedComponent
+    class FliesChanger : MonoBehaviour
     {
         void OnEnable() => Change();
 
@@ -44,15 +44,15 @@ namespace Psycho.Handlers
                 { Logic.psycho }.ToArray();
         }
 
-        void _changeActionsData(PlayMakerFSM _fsm)
+        void _changeActionsData(PlayMakerFSM fsm)
         {
             FsmFloat _dirtiness = Utils.GetGlobalVariable<FsmFloat>("PlayerDirtiness");
             if (_dirtiness == null) return;
 
-            FloatCompare _clean = _fsm.GetState("Clean").Actions[6] as FloatCompare;
+            FloatCompare _clean = fsm.GetState("Clean").Actions[6] as FloatCompare;
             _clean.float1 = (Logic.InHorror ? Logic.psycho : _dirtiness);
 
-            FsmState[] _states = _sortStates(_fsm);
+            FsmState[] _states = _sortStates(fsm);
 
             int _current = 1;
             float[] _defaults = new float[5] { 60f, 90f, 120f, 150f, 180f };
@@ -87,23 +87,23 @@ namespace Psycho.Handlers
                 _current++;
             }
 
-            FsmState _fly6 = _fsm.GetState("Fly6");
+            FsmState _fly6 = fsm.GetState("Fly6");
             FloatCompare _compare6 = (_fly6.Actions[2] as FloatCompare);
             _compare6.float1 = Logic.InHorror ? Logic.psycho : _dirtiness;
             _compare6.float2 = 90f;
 
         }
 
-        FsmState[] _sortStates(PlayMakerFSM _fsm)
+        FsmState[] _sortStates(PlayMakerFSM fsm)
         {
-            var _states = new List<FsmState>(_fsm.Fsm.States);
+            var _states = new List<FsmState>(fsm.Fsm.States);
             _states.Sort((item, target) => {
                 if (!int.TryParse(item.Name.Substring(3), out int i)) return -1;
                 if (!int.TryParse(target.Name.Substring(3), out int t)) return 1;
                 return i < t ? -1 : 0;
             });
-            _fsm.Fsm.States = _states.ToArray();
-            return _fsm.Fsm.States;
+            fsm.Fsm.States = _states.ToArray();
+            return fsm.Fsm.States;
         }
 
         void _replaceAudioClips(PlayMakerFSM fsm)

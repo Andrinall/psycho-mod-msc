@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Psycho.Internal
 {
-    internal static class DebugPanel
+    static class DebugPanel
     {
         static SettingsSlider debug_Psycho;
         static SettingsSlider debug_Points;

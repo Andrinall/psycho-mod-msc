@@ -7,7 +7,7 @@ using Psycho.Screamers;
 
 namespace Psycho.Internal
 {
-    internal static class ObjectCloner
+    static class ObjectCloner
     {
         static GameObject ClonedGrannyHiker;
         public static AnimationClip PigWalkAnimation;

@@ -15,9 +15,9 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Internal
 {
-    internal enum eWorldType { MAIN, HORROR }
+    enum eWorldType { MAIN, HORROR }
 
-    internal static class Logic
+    static class Logic
     {
         static readonly string PAPER_TEXT_FI_MAX = "Mies kuoli\nsydänkohtaukseen";
         static readonly string PAPER_TEXT_FI_POINTS = "\nMies teki itsemurhan";
@@ -28,10 +28,10 @@ namespace Psycho.Internal
         static readonly float MIN_VALUE = 0f;
         static readonly float MAX_VALUE = 100f;
 
-        private static float _value = 100f;
-        private static float _points = 0f;
+        static float _value = 100f;
+        static float _points = 0f;
         
-        private static int beerBottlesDrunked = 0;
+        static int beerBottlesDrunked = 0;
 
         public static int LastDayMinigame = 0;
         public static bool MilkUsed = false;
@@ -42,12 +42,12 @@ namespace Psycho.Internal
         public static AmbientTrigger CurrentAmbientTrigger = null;
         public static DateTime MilkUseTime = DateTime.MinValue;
         
-        internal static DateTime LastTimeTriggerScreamer { get; private set; } = default;
-        internal static int MinutesToNextScreamer { get; private set; } = 0;
+        public static DateTime LastTimeTriggerScreamer { get; private set; } = default;
+        public static int MinutesToNextScreamer { get; private set; } = 0;
 
-        internal static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
+        public static FsmFloat psycho = new FsmFloat { Name = "PsychoValue", Value = 100f };
 
-        internal static readonly Dictionary<string, float> config = new Dictionary<string, float>
+        public static readonly Dictionary<string, float> config = new Dictionary<string, float>
         {
             // Increase
             ["FARMER_QUEST"]     = 5.00f,
@@ -77,7 +77,7 @@ namespace Psycho.Internal
             ["PLAYER_SWEARS"] = 0.01f
         };
 
-        internal static bool IsDeadByGame = false;
+        public static bool IsDeadByGame = false;
         public static bool GameFinished = false;
 
         public static float Value
@@ -98,9 +98,9 @@ namespace Psycho.Internal
                     KillHeartAttack();
                 else if (FixedHUD.IsElementExist("Psycho") == true)
                 {
-                    float clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
-                    FixedHUD.SetElementScale("Psycho", new Vector3(clamped, 1f));
-                    FixedHUD.SetElementColor("Psycho", (clamped >= 0.85f && InHorror) ? Color.red : Color.white);
+                    float _clamped = Mathf.Clamp(value / MAX_VALUE, 0f, 1f);
+                    FixedHUD.SetElementScale("Psycho", new Vector3(_clamped, 1f));
+                    FixedHUD.SetElementColor("Psycho", (_clamped >= 0.85f && InHorror) ? Color.red : Color.white);
                 }
             }
         }
@@ -111,8 +111,6 @@ namespace Psycho.Internal
             private set
             {
                 if (GameFinished || IsDeadByGame) return;
-
-                float prev = _points;
                 _points = value;
 
                 if (IsDead) return;
@@ -124,11 +122,11 @@ namespace Psycho.Internal
                 else if (value < -7.0f)
                     KillUsingTrain();
 
-                Utils.PrintDebug($"New value for points {value}; prev: {prev}");
+                Utils.PrintDebug($"New value for points {value};");
             }
         }
 
-        internal static int BeerBottlesDrunked
+        public static int BeerBottlesDrunked
         {
             get => beerBottlesDrunked;
             set
@@ -237,7 +235,7 @@ namespace Psycho.Internal
         }
 
 
-        internal static void Tick()
+        public static void Tick()
         {
             if (GameFinished || IsDeadByGame) return;
 
@@ -250,13 +248,13 @@ namespace Psycho.Internal
             Value -= DEFAULT_DECREASE * Time.fixedDeltaTime;
         }
 
-        internal static void PlayerCompleteJob(string job, int multiplier = 1, string comment = default)
+        public static void PlayerCompleteJob(string job, int multiplier = 1, string comment = default)
         {
             Points += config.GetValueSafe(job) * multiplier;
             Utils.PrintDebug(eConsoleColors.GREEN, $"Player complete job : {job} [mult X{multiplier}] \"{comment}\"");
         }
 
-        internal static void PlayerCommittedOffence(string offence, string comment = default)
+        public static void PlayerCommittedOffence(string offence, string comment = default)
         {
             float _previous = Points;
             float _newValue = Points - config.GetValueSafe(offence);
@@ -268,7 +266,7 @@ namespace Psycho.Internal
             Utils.PrintDebug($"Player committed offence : {offence}" + (string.IsNullOrEmpty(comment) ? "" : $"\"{comment}\""));
         }
 
-        internal static void PlayerDeadByGame()
+        public static void PlayerDeadByGame()
         {
             if (GameFinished || IsDead || IsDeadByGame) return;
             Utils.PrintDebug("Player death triggered by game");
@@ -276,7 +274,7 @@ namespace Psycho.Internal
             Psycho.Unload();
         }
 
-        internal static void KillUsingTrain()
+        public static void KillUsingTrain()
         {
             try
             {
@@ -305,7 +303,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void KillHeartAttack()
+        public static void KillHeartAttack()
         {
             if (!InHorror) return;
             try
@@ -320,7 +318,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void FinishShizGame()
+        public static void FinishShizGame()
         {
             if (InHorror)
                 ChangeWorld(eWorldType.MAIN);
@@ -335,7 +333,7 @@ namespace Psycho.Internal
             Utils.PrintDebug(eConsoleColors.GREEN, "Shiz game finished!");
         }
 
-        internal static void DestroyAllObjects()
+        public static void DestroyAllObjects()
         {
             EventsManager.OnScreamerTriggered.RemoveAllListeners();
             EventsManager.OnScreamerFinished.RemoveAllListeners();

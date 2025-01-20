@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal class EngineStarterHandler : FullScreenScreamerBase
+    class EngineStarter : FullScreenScreamerBase
     {
         protected override void Awaked()
         {

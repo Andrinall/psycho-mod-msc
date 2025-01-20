@@ -13,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Features
 {
-    public sealed class PillsItem
+    class PillsItem
     {
         PlayMakerFSM fsm;
 
@@ -99,7 +99,7 @@ namespace Psycho.Features
         ///       BACKWARD COMPABILITY
         /// =================================== 
 
-        internal static PillsItem ReadData(ref byte[] array, int offset)
+        public static PillsItem ReadData(ref byte[] array, int offset)
         {
             int index = BitConverter.ToInt32(array, offset);
             offset += 4;

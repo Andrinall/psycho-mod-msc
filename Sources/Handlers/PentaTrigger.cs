@@ -10,13 +10,13 @@ using Psycho.Features;
 
 namespace Psycho.Handlers
 {
-    internal sealed class PentaTrigger : CatchedComponent
+    class PentaTrigger : CatchedComponent
     {
         Pentagram penta;
         PlayMakerFSM Hand;
 
-        internal GameObject Item = null;
-        internal bool IsItemIn = false;
+        public GameObject Item = null;
+        public bool IsItemIn = false;
 
         Vector3 Position => transform.position;
 

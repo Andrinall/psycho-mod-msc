@@ -12,7 +12,7 @@ using Psycho.Features;
 
 namespace Psycho.Internal
 {
-    internal static class SaveManager
+    static class SaveManager
     {
         public static bool TryLoad(Mod mod)
         {
@@ -131,7 +131,7 @@ namespace Psycho.Internal
         static string _saveDataPath = Application.persistentDataPath + "\\Psycho.dat";
         public static bool OldSaveLoaded = false;
 
-        internal static bool LoadData()
+        public static bool LoadData()
         {
             // load saved data
             try
@@ -227,7 +227,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static void LoadNotebookPages(byte[] value)
+        public static void LoadNotebookPages(byte[] value)
         {
             Notebook.Pages.Clear();
 

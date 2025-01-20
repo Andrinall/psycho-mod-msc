@@ -8,7 +8,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class LivingRoomSuicidal : ScreamerBase
+    class LivingRoomSuicidal : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
         public override int ScreamerVariant => (int)ScreamFearType.SUICIDAL;
@@ -76,6 +76,5 @@ namespace Psycho.Screamers
                 base.Stop();
             }
         }
-
     }
 }

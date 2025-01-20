@@ -7,7 +7,7 @@ using Psycho.Internal;
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(PlayMakerFSM))]
-    internal sealed class SleepTriggerHandler : CatchedComponent
+    class SleepTrigger : CatchedComponent
     {
         protected override void Awaked()
         {

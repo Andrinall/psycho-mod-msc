@@ -7,9 +7,9 @@ using UnityEngine.Events;
 
 namespace Psycho.Internal
 {
-    public sealed class ScreamerEvent : UnityEvent<ScreamTimeType, int> { } // crutch
+    class ScreamerEvent : UnityEvent<ScreamTimeType, int> { } // crutch
 
-    public static class EventsManager
+    static class EventsManager
     {
         public static UnityEvent OnLanguageChanged { get; private set; } = new UnityEvent();
 

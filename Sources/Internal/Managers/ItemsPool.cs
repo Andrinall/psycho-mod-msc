@@ -13,25 +13,26 @@ using Object = UnityEngine.Object;
 
 namespace Psycho.Internal
 {
-    internal static class ItemsPool
+    static class ItemsPool
     {
         static List<GameObject> Pool = new List<GameObject>();
         static GameObject[] ItemsForSave => Pool.Where(v => v != null && v.transform.parent == null).ToArray();
-        internal static int Length => Pool.Count;
+        public static int Length => Pool.Count;
 
-        internal static GameObject AddItem(GameObject prefab)
+
+        public static GameObject AddItem(GameObject prefab)
             => _addItemToLocalPool(prefab, Vector3.zero, Vector3.zero);
 
-        internal static GameObject AddItem(GameObject prefab, Vector3 pos, Vector3 euler)
+        public static GameObject AddItem(GameObject prefab, Vector3 pos, Vector3 euler)
             => _addItemToLocalPool(prefab, pos, euler);
 
-        internal static GameObject GetItem(int index)
+        public static GameObject GetItem(int index)
             => Pool.ElementAtOrDefault(index);
 
-        internal static bool RemoveItem(GameObject obj)
+        public static bool RemoveItem(GameObject obj)
             => Pool.Remove(obj);
 
-        internal static bool RemoveItem(Func<GameObject, bool> callback)
+        public static bool RemoveItem(Func<GameObject, bool> callback)
         {
             GameObject _item = Pool.FirstOrDefault(callback);
             
@@ -39,7 +40,7 @@ namespace Psycho.Internal
             return Pool.Remove(_item);
         }
 
-        internal static void RemoveItems(Func<GameObject, bool> callback)
+        public static void RemoveItems(Func<GameObject, bool> callback)
         {
             var _items = Pool.Where(callback).ToList();
             foreach (GameObject _item in _items)
@@ -49,7 +50,7 @@ namespace Psycho.Internal
             }
         }
 
-        internal static List<ItemsPoolSaveLoadData> GetSaveData()
+        public static List<ItemsPoolSaveLoadData> GetSaveData()
         {
             var _list = new List<ItemsPoolSaveLoadData>();
 
@@ -69,7 +70,7 @@ namespace Psycho.Internal
             return _list;
         }
 
-        internal static void LoadData(List<ItemsPoolSaveLoadData> data)
+        public static void LoadData(List<ItemsPoolSaveLoadData> data)
         {
             foreach (var _item in data)
             {
@@ -78,20 +79,6 @@ namespace Psycho.Internal
 
                 _addItemToLocalPool(_prefab, _item.Position, _item.Euler);
             }
-        }
-
-        private static GameObject _addItemToLocalPool(GameObject prefab, Vector3 pos, Vector3 euler)
-        {
-            GameObject _cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
-            if (prefab.name == "Notebook")
-                Globals.Notebook = _cloned.AddComponent<Notebook>();
-            if (prefab.name == "Postcard")
-                Postcard.Initialize(_cloned);
-
-            _cloned.MakePickable();
-
-            Pool.Add(_cloned);
-            return _cloned;
         }
 
         public static GameObject GetPrefabByItemName(string item)
@@ -116,6 +103,22 @@ namespace Psycho.Internal
                     return ResourcesStorage.Postcard_prefab;
                 default: return null;
             }
+        }
+
+
+
+        static GameObject _addItemToLocalPool(GameObject prefab, Vector3 pos, Vector3 euler)
+        {
+            GameObject _cloned = (GameObject)Object.Instantiate(prefab, pos, Quaternion.Euler(euler));
+            if (prefab.name == "Notebook")
+                Globals.Notebook = _cloned.AddComponent<Notebook>();
+            if (prefab.name == "Postcard")
+                Postcard.Initialize(_cloned);
+
+            _cloned.MakePickable();
+
+            Pool.Add(_cloned);
+            return _cloned;
         }
 
 

@@ -9,7 +9,7 @@ using HutongGames.PlayMaker.Actions;
 
 namespace Psycho.Internal
 {
-    internal static class WeatherManager
+    static class WeatherManager
     {
         public static void StopCloudsOrRandomize()
         {

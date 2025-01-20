@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class JunkYardJobHandler : CatchedComponent
+    class JunkYardDelivery : CatchedComponent
     {
         int carsCount = 0;
 
@@ -20,7 +20,8 @@ namespace Psycho.Handlers
             StateHook.Inject(gameObject, "Use", "State 1", UsePayMoneyTicket, -1);
         }
 
-        void IncreaseCars() => carsCount += 1;
+        void IncreaseCars()
+            => carsCount += 1;
 
         void UsePayMoneyTicket()
         {

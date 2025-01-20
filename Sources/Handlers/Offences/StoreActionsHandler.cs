@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class StoreActionsHandler : CatchedComponent
+    class StoreActionsHandler : CatchedComponent
     {
         Transform gfxStore;
         Transform gfxPub;
@@ -37,9 +37,16 @@ namespace Psycho.Handlers
             StateHook.Inject(_adv, "Use", "Average", AdsJobCompleted);
         }
 
-        void WindowBreaked() => Logic.PlayerCommittedOffence("WINDOW_BREAK");
-        void TeimoSwears() => Logic.PlayerCommittedOffence("TEIMO_SWEARS");
-        void PissedOnTeimo() => Logic.PlayerCommittedOffence("TEIMO_PISS");
-        void AdsJobCompleted() => Logic.PlayerCompleteJob("TEIMO_ADS");
+        void WindowBreaked()
+            => Logic.PlayerCommittedOffence("WINDOW_BREAK");
+
+        void TeimoSwears()
+            => Logic.PlayerCommittedOffence("TEIMO_SWEARS");
+
+        void PissedOnTeimo()
+            => Logic.PlayerCommittedOffence("TEIMO_PISS");
+
+        void AdsJobCompleted()
+            => Logic.PlayerCompleteJob("TEIMO_ADS");
     }
 }

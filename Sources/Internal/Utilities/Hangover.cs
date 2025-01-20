@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    internal sealed class Hangover : CatchedComponent
+    class Hangover : MonoBehaviour
     {
         const float STRENGHT_PLUS = 0.004251007f;
         const float STRENGHT_MINUS = -0.004251007f; // defaults from game

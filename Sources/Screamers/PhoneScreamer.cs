@@ -13,7 +13,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class PhoneScreamer : ScreamerBase
+    class PhoneScreamer : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.FEAR;
         public override int ScreamerVariant => (int)ScreamFearType.PHONE;

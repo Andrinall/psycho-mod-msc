@@ -8,7 +8,7 @@ using Psycho.Internal;
 namespace Psycho.Features
 {
     [RequireComponent(typeof(AudioSource), typeof(MeshRenderer), typeof(BoxCollider))]
-    internal sealed class AngryRoosterPoster : CatchedComponent
+    class AngryRoosterPoster : CatchedComponent
     {
         public static bool Applyed = false;
         public static int LastDayApplyed = 0;
@@ -24,9 +24,9 @@ namespace Psycho.Features
 
         protected override void Awaked()
         {
-            AudioSource[] sources = GetComponents<AudioSource>();
-            angrySounds = sources[0];
-            completeSound = sources[1];
+            AudioSource[] _sources = GetComponents<AudioSource>();
+            angrySounds = _sources[0];
+            completeSound = _sources[1];
             angrySounds.enabled = false;
 
             renderer = GetComponent<MeshRenderer>();
@@ -36,19 +36,19 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
-            int day = Globals.GlobalDay.Value % 7;
+            int _day = Globals.GlobalDay.Value % 7;
             if (Applyed && LastDayApplyed != Globals.GlobalDay.Value)
                 Applyed = false;
 
 
-            if (!status && !Applyed && day == 6 && Globals.SUN_Hours > 4 && Globals.SUN_Hours < 16)
+            if (!status && !Applyed && _day == 6 && Globals.SUN_Hours > 4 && Globals.SUN_Hours < 16)
                 Activate(true);
-            else if (status && day == 6 && (Globals.SUN_Hours < 4 || Globals.SUN_Hours > 16))
+            else if (status && _day == 6 && (Globals.SUN_Hours < 4 || Globals.SUN_Hours > 16))
             {
                 Activate(false);
                 Applyed = false;
             }
-            else if (status && day != 6)
+            else if (status && _day != 6)
             {
                 Activate(false);
                 Applyed = false;
@@ -60,17 +60,17 @@ namespace Psycho.Features
             if (!status) return;
             if (other?.gameObject?.name?.Contains("potato chips") != true) return;
             
-            Transform parent = other.gameObject.transform.parent;
-            if (parent == null) return;
+            Transform _parent = other.gameObject.transform.parent;
+            if (_parent == null) return;
 
-            Vector3 pos = other.gameObject.transform.position;
+            Vector3 _pos = other.gameObject.transform.position;
             hand.CallGlobalTransition("DROP_PART");
             other.gameObject.GetComponent<PlayMakerFSM>().CallGlobalTransition("GARBAGE");
 
             Applyed = true;
             LastDayApplyed = Globals.GlobalDay.Value;
             Activate(false);
-            ItemsPool.AddItem(ResourcesStorage.BlackEgg_prefab, pos, Vector3.zero);
+            ItemsPool.AddItem(ResourcesStorage.BlackEgg_prefab, _pos, Vector3.zero);
         }
 
         void Activate(bool state)

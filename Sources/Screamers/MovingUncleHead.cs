@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Screamers
 {
-    internal sealed class MovingUncleHead : ScreamerBase
+    class MovingUncleHead : ScreamerBase
     {
         public override ScreamTimeType ScreamerTime => ScreamTimeType.PARALYSIS;
         public override int ScreamerVariant => (int)ScreamParalysisType.KESSELI;

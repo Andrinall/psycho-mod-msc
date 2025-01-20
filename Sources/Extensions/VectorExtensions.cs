@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Psycho
 {
-    public static class VectorExtensions
+    static class VectorExtensions
     {
         public static Vector3 Clamp(this Vector3 obj, float min, float max)
             => new Vector3(

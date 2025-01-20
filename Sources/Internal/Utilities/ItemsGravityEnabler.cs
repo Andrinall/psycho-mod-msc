@@ -1,13 +1,11 @@
 ﻿
 using UnityEngine;
 
-using Psycho.Internal;
-
 
 namespace Psycho.Handlers
 {
     [RequireComponent(typeof(Rigidbody))]
-    internal sealed class ItemsGravityEnabler : CatchedComponent
+    class ItemsGravityEnabler : MonoBehaviour
     {
         Rigidbody rb;
 

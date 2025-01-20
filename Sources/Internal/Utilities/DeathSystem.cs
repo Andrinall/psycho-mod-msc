@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Psycho.Internal
 {
-    public class DeathSystem : CatchedComponent
+    class DeathSystem : CatchedComponent
     {
         static DeathSystem instance = null;
         Transform death;

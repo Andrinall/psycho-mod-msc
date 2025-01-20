@@ -8,14 +8,14 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    public enum DOOR : int
+    enum DOOR : int
     {
         SAUNA, BATHROOM, MIDDLEROOM,
         REAR, PANTRY, FRONT,
         WC, BEDROOM1, BEDROOM2
     }
 
-    internal static class DoorsManager
+    static class DoorsManager
     {
         static string[] houseDoorsPaths = new string[]
         {

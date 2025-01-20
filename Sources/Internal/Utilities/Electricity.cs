@@ -6,7 +6,7 @@ using HutongGames.PlayMaker;
 
 namespace Psycho.Internal
 {
-    internal static class Electricity
+    static class Electricity
     {
         public static float GetCutoffTimer()
         {

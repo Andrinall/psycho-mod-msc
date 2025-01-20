@@ -10,7 +10,7 @@ using Psycho.Handlers;
 
 namespace Psycho.Features
 {
-    internal sealed class FernFlowerSpawner : CatchedComponent
+    class FernFlowerSpawner : CatchedComponent
     {
         List<GameObject> flowers = new List<GameObject>();
 
@@ -37,7 +37,7 @@ namespace Psycho.Features
         }
 
 
-        internal void SpawnRandomFlower()
+        public void SpawnRandomFlower()
         {
             if (IsFlowerSpawned) return;
 
@@ -58,15 +58,15 @@ namespace Psycho.Features
         {
             if (!IsFlowerSpawned) return;
 
-            foreach (GameObject flower in flowers)
+            foreach (GameObject _flower in flowers)
             {
-                if (!flower.activeSelf || flower.transform.childCount == 0) goto setActive;
+                if (!_flower.activeSelf || _flower.transform.childCount == 0) goto setActive;
 
-                GameObject _child = flower.transform.GetChild(0).gameObject;
+                GameObject _child = _flower.transform.GetChild(0).gameObject;
                 ItemsPool.RemoveItem(_child);
                 Destroy(_child);
             setActive:
-                flower.SetActive(false);
+                _flower.SetActive(false);
             }
         }
     }

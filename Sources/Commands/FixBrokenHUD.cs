@@ -5,7 +5,7 @@ using Psycho.Internal;
 
 namespace Psycho.Commands
 {
-    public sealed class FixBrokenHUD : ConsoleCommand
+    class FixBrokenHUD : ConsoleCommand
     {
         public override string Name => "fhud";
         public override string Help => "Fixes a broken HUD line";
