@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\SteamLibrary\steamapps\common\My Summer Car\Mods\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files %28x86%29\Steam\steamapps\common\My Summer Car\Mods\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -170,7 +170,7 @@
     <Compile Include="Sources\Handlers\SleepTrigger.cs" />
     <Compile Include="Sources\Internal\Utilities\StateHook.cs" />
     <Compile Include="Sources\Handlers\Offences\SpillShit.cs" />
-    <Compile Include="Sources\Handlers\Offences\StoreActionsHandler.cs" />
+    <Compile Include="Sources\Handlers\Offences\StoreActions.cs" />
     <Compile Include="Sources\Internal\Utilities\Utils.cs" />
     <Compile Include="Sources\Handlers\Offences\SuitcaseGrab.cs" />
     <Compile Include="Sources\Internal\Managers\WorldManager.cs" />

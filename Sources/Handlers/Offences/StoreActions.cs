@@ -6,7 +6,7 @@ using Psycho.Internal;
 
 namespace Psycho.Handlers
 {
-    class StoreActionsHandler : CatchedComponent
+    class StoreActions : CatchedComponent
     {
         Transform gfxStore;
         Transform gfxPub;

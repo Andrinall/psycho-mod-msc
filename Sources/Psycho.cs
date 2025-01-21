@@ -8,10 +8,7 @@ using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
 using Psycho.Features;
-using Psycho.Commands;
-using Psycho.Handlers;
 using Psycho.Internal;
-using Psycho.Screamers;
 
 using Object = UnityEngine.Object;
 
@@ -23,7 +20,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.0";
+        public override string Version => "1.0.1";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -162,9 +159,9 @@ namespace Psycho
             _renderer.materials[1].SetTexture("_MainTex", ResourcesStorage.NewsPaper_texture);
             
             // add job handlers (what is not possible for use in second pass)
-            AddComponent<JokkeMovingJob>("JOBS/HouseDrunk/Moving");
-            AddComponent<JokkeDropOff>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
-            AddComponent<MummolaJob>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
+            AddComponent<Handlers.JokkeMovingJob>("JOBS/HouseDrunk/Moving");
+            AddComponent<Handlers.JokkeDropOff>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
+            AddComponent<Handlers.MummolaJob>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
 
             GameObject.Find("YARD/Building/BEDROOM1").transform.Find("DoorBedroom1/Pivot/Handle")
                 .GetPlayMaker("Use")
@@ -186,7 +183,7 @@ namespace Psycho
             if (Logic.GameFinished) return;
 
             // register crutch command
-            ConsoleCommand.Add(new FixBrokenHUD());
+            ConsoleCommand.Add(new Commands.FixBrokenHUD());
 
             AddComponent<FixedHUD>("GUI/HUD");
             FixedHUD.AddElement(eHUDCloneType.RECT, "Psycho", "Money");
@@ -194,7 +191,7 @@ namespace Psycho
 
             // add component for make hangover in horror world
             Transform _camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
-            _camera.gameObject.AddComponent<Hangover>();
+            _camera.gameObject.AddComponent<Handlers.Hangover>();
             
             AddComponent<DeathSystem>("Systems");
             AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
@@ -219,7 +216,7 @@ namespace Psycho
             _source.maxDistance = 5f;
             _source.spatialBlend = 1f;
             _source.spread = 0f;
-            _grandma.AddComponent<GrandmaDistanceChecker>();
+            _grandma.AddComponent<Screamers.GrandmaDistanceChecker>();
 
             SoundManager.ReplaceRadioStaticSound(ResourcesStorage.UBV_psy_clip);
 
@@ -266,7 +263,6 @@ namespace Psycho
                 AmbientTrigger.MuteGlobalAmbient(false);
                 
             
-
             if (!bellsActivated && Globals.SUN_Hours == 24f && Globals.SUN_Minutes == 0)
             {
                 (bellsState.Actions[0] as ActivateGameObject).activate = true;
@@ -321,7 +317,7 @@ namespace Psycho
         }
 
 
-
+        // =================================================== \\
         void _applyHorrorIfNeeded()
         {
             ObjectCloner.ActivateDINGONBIISIMiscThing3Permanently(); // activate phantom permanently
@@ -332,12 +328,12 @@ namespace Psycho
             ObjectCloner.CopyScreamHand(); // copy player hand for use in paralysis screamer
 
             // attach screamers components to game objects
-            AddComponent<TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
-            AddComponent<PhoneScreamer>("YARD/Building/LIVINGROOM/Telephone");
-            AddComponent<BathroomShower>("YARD/Building/BATHROOM/Shower");
-            AddComponent<KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
-            AddComponent<LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
-            AddComponent<SoundScreamer>("YARD/Building");
+            AddComponent<Screamers.TVScreamer>("YARD/Building/Dynamics/HouseElectricity/ElectricAppliances/TV_Programs");
+            AddComponent<Screamers.PhoneScreamer>("YARD/Building/LIVINGROOM/Telephone");
+            AddComponent<Screamers.BathroomShower>("YARD/Building/BATHROOM/Shower");
+            AddComponent<Screamers.KitchenShower>("YARD/Building/KITCHEN/KitchenWaterTap");
+            AddComponent<Screamers.LivingRoomSuicidal>("YARD/Building/LIVINGROOM/LOD_livingroom");
+            AddComponent<Screamers.SoundScreamer>("YARD/Building");
 
             if (!Logic.InHorror) return;
             // if world == horror -> apply world & features
@@ -355,27 +351,26 @@ namespace Psycho
             Globals.SuicidalsList.SetActive(true); // activate suicidals 
         }
 
-        void _addHandlers()
+        void _addHandlers() // add player behaviour handlers, used for social points increase or decrease
         {
-            // add player behaviour handlers, used for social points increase or decrease
+            AddComponent<Handlers.StoreActions>("STORE");
+            AddComponent<Handlers.SpillShit>("GIFU(750/450psi)/ShitTank");
+            AddComponent<Handlers.JunkYardDelivery>("REPAIRSHOP/JunkYardJob/PayMoney");
+            AddComponent<Handlers.SuitcaseGrab>("KILJUGUY/SuitcaseSpawns");
+            AddComponent<Handlers.FirewoodDelivery>("JOBS/HouseWood1");
+            AddComponent<Handlers.SuskiHelp>("JOBS/Suski");
+            AddComponent<Handlers.FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
 
-            AddComponent<StoreActionsHandler>("STORE");
-            AddComponent<SpillShit>("GIFU(750/450psi)/ShitTank");
-            AddComponent<JunkYardDelivery>("REPAIRSHOP/JunkYardJob/PayMoney");
-            AddComponent<SuitcaseGrab>("KILJUGUY/SuitcaseSpawns");
-            AddComponent<FirewoodDelivery>("JOBS/HouseWood1");
-            AddComponent<SuskiHelp>("JOBS/Suski");
-
-            AddComponent<FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter
-            AddComponent<AnyPentaItemsSpawner>("PLAYER");
+            AddComponent<AnyPentaItemsSpawner>("PLAYER"); // spawn items for pentagram
 
             // add handlers for HOUSE_SHIT objects (septics)
+            Transform _jobs = GameObject.Find("JOBS").transform;
             for (int i = 1; i < 6; i++)
-                GameObject.Find($"JOBS/HouseShit{i}/LOD/ShitNPC/ShitMan").transform
+                _jobs.Find($"HouseShit{i}/LOD/ShitNPC/ShitMan{i}")
                     .Find("skeleton/pelvis/RotationPivot")
                     .Find("spine_middle/spine_upper/collar_left/shoulder_left/arm_left/hand_left/finger_left")
-                    .Find("PayMoney").gameObject.AddComponent<HouseShit>();
+                    .Find("PayMoney").gameObject.AddComponent<Handlers.HouseShit>();
 
             // add handlers for human triggers (hit by player & crime)
             GameObject[] _objects = Resources.FindObjectsOfTypeAll<GameObject>();
@@ -383,41 +378,39 @@ namespace Psycho
             foreach (GameObject _object in _objects)
             {
                 if (_object.name.Contains("HumanTrigger"))
-                    _object.AddComponent<NPCHit>();
+                    _object.AddComponent<Handlers.NPCHit>();
                 else if (_object.name == "SleepTrigger")
-                    _object.AddComponent<SleepTrigger>();
-
+                    _object.AddComponent<Handlers.SleepTrigger>();
                 else if (_object.name == "Starter" && _object.transform.parent?.name != "DatabaseMotor")
-                    _object.AddComponent<EngineStarter>();
+                    _object.AddComponent<Handlers.EngineStarter>();
             }
 
             // main sleep trigger for initiating a night screamers
             GameObject.Find("YARD/Building/BEDROOM1/LOD_bedroom1/Sleep/SleepTrigger")
-                .AddComponent<ScreamsInitiator>();
+                .AddComponent<Screamers.ScreamsInitiator>();
 
             Transform _houseLightSwitches = GameObject.Find("YARD/Building/Dynamics/LightSwitches").transform;
             for (int i = 0; i < _houseLightSwitches.childCount; i++)
-                _houseLightSwitches.GetChild(i).gameObject.AddComponent<LightSwitch>();
+                _houseLightSwitches.GetChild(i).gameObject.AddComponent<Handlers.LightSwitch>();
 
-            GameObject.Find("BOAT/GFX/Motor/Pivot/Ignition").AddComponent<BoatIgnitionOn>();
-            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").AddComponent<DumpCigarette>();
-            GameObject.Find("YARD/Building/Garage/BatteryCharger/TriggerCharger").AddComponent<AssemblyBatteryToCharge>();
-            GameObject.Find("YARD/Building/KITCHEN/Fridge/Pivot/Handle").AddComponent<FridgeDoorOpen>();
-            GameObject.Find("COTTAGE/Sauna/Stove/StoveTrigger").AddComponent<CottageStoveSteam>();
+            GameObject.Find("BOAT/GFX/Motor/Pivot/Ignition").AddComponent<Handlers.BoatIgnitionOn>();
+            GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/FPSCamera").AddComponent<Handlers.DumpCigarette>();
+            GameObject.Find("YARD/Building/Garage/BatteryCharger/TriggerCharger").AddComponent<Handlers.AssemblyBatteryToCharge>();
+            GameObject.Find("YARD/Building/KITCHEN/Fridge/Pivot/Handle").AddComponent<Handlers.FridgeDoorOpen>();
+            GameObject.Find("COTTAGE/Sauna/Stove/StoveTrigger").AddComponent<Handlers.CottageStoveSteam>();
 
-            GameObject.Find("STORE/StoreCashRegister").AddComponent<CashRegisterUse>();
-
+            GameObject.Find("STORE/StoreCashRegister").AddComponent<Handlers.CashRegisterUse>();
             GameObject.Find("STORE").transform.Find("LOD/GFX_Pub/PubCashRegister").gameObject
-                .AddComponent<CashRegisterUse>();
+                .AddComponent<Handlers.CashRegisterUse>();
 
             GameObject.Find("WATERFACILITY").transform.Find("LOD/Desk/FacilityCashRegister").gameObject
-                .AddComponent<CashRegisterUse>();
+                .AddComponent<Handlers.CashRegisterUse>();
 
             GameObject.Find("REPAIRSHOP").transform.Find("LOD/Store/ShopCashRegister").gameObject
-                .AddComponent<CashRegisterUse>();
+                .AddComponent<Handlers.CashRegisterUse>();
 
             (GameObject.Find("ITEMS/fish trap(itemx)/PickFish") ?? GameObject.Find("fish trap(itemx)/PickFish"))
-                .AddComponent<FishTrapUse>();
+                .AddComponent<Handlers.FishTrapUse>();
         }
 
         void _setupActions(Transform camera)
@@ -442,6 +435,7 @@ namespace Psycho
             _drinkState.SaveActions(); // save changes
 
 
+            // add swears by show finger to main swears statistics in permadeath mode
             PlayMakerFSM _functions = camera.parent.GetPlayMaker("PlayerFunctions");
             _functions.Fsm.InitData();
             FsmState _fnFinger = _functions.GetState("Finger");
@@ -462,7 +456,7 @@ namespace Psycho
             _fnFinger.Actions = _actions2.ToArray();
             _fnFinger.SaveActions();
 
-            // 
+            // inject other hooks
             _injectStateHooks(camera, _drink);
         }
 
@@ -490,20 +484,25 @@ namespace Psycho
             StateHook.Inject(camera.parent.Find("SpeakDatabase").gameObject, "Speech", "Swear", PlayerSwears, 7);
             StateHook.Inject(camera.parent.gameObject, "PlayerFunctions", "Finger", PlayerSwears, 11);
 
+            // player throws bottle after drinking
             StateHook.Inject(drink.gameObject, "Drink", "Throw bottle", PlayerDrunkBeer, 2);
             StateHook.Inject(drink.gameObject, "Drink", "Throw bottle 1", PlayerDrunkBooze, 2);
 
-            GameObject _farmerWalker = GameObject.Find("HUMANS/Farmer/Walker");
-            if (!_farmerWalker) return;
-            StateHook.Inject(_farmerWalker, "Speak", "Done", PlayerCompleteFarmerQuest);
-
+            // add ingame `Quit` button handler for unloading resources
             Transform _systems = GameObject.Find("Systems").transform;
             Transform _menu = _systems.Find("OptionsMenu/Menu");
             Transform _btnConfirm = _menu.Find("Btn_ConfirmQuit");
             StateHook.Inject(_btnConfirm.Find("Button").gameObject, "Button", "State 3", Unload);
+
+            // add handler for farmer quest
+            GameObject _farmerWalker = GameObject.Find("HUMANS/Farmer/Walker");
+            if (!_farmerWalker) return;
+            StateHook.Inject(_farmerWalker, "Speak", "Done", PlayerCompleteFarmerQuest);
         }
 
 
+        // =================================================== \\
+        // StateHook callbacks (actions)
         void UpdateFridgePaperText()
             => guiSubtitle.Value = Locales.FRIDGE_PAPER_TEXT[Globals.CurrentLang];       
 
@@ -535,7 +534,7 @@ namespace Psycho
             => Logic.PlayerCompleteJob("FARMER_QUEST");
 
 
-
+        // =================================================== \\
         T AddComponent<T>(string path) where T : Component
             => GameObject.Find(path)?.AddComponent<T>() ?? null;
     }
