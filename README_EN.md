@@ -3,9 +3,9 @@
 [ [RU](README.md) | EN ]
 
 Authors:
-**LUAR - Idea, game design, textures, screenplay**
-**Andrinal - programming**
-**@racer - 3D models**
+**LUAR - Idea, game design, textures, screenplay, description**<br>
+**Andrinal - programming**<br>
+**@racer - 3D models**<br>
 
 I always thought that My Summer Car was perfect for adding more creepy and disturbing content. And we did it!
 
