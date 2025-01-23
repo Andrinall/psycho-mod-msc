@@ -2,7 +2,7 @@
 
 [ [RU](README.md) | EN ]
 
-Authors:
+Authors:<br>
 **LUAR - Idea, game design, textures, screenplay, description**<br>
 **Andrinal - programming**<br>
 **@racer - 3D models**<br>
