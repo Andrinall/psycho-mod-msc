@@ -3,21 +3,16 @@ using UnityEngine;
 
 using Psycho.Internal;
 
-
 namespace Psycho.Handlers
 {
     class StoreActions : CatchedComponent
     {
-        Transform gfxStore;
-        Transform gfxPub;
-        Transform teimo;
-
-
         protected override void Awaked()
         { 
-            gfxStore = transform.FindChild("LOD/GFX_Store");
-            gfxPub = transform.FindChild("LOD/GFX_Pub");
-            teimo = transform.FindChild("TeimoInShop").Find("Pivot");
+            Transform gfxStore = transform.FindChild("LOD/GFX_Store");
+            Transform gfxPub = transform.FindChild("LOD/GFX_Pub");
+            Transform teimo = transform.FindChild("TeimoInShop").Find("Pivot");
+
             GameObject _windowPub = gfxPub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
             GameObject _windowStore = gfxStore.Find("BreakableWindows/BreakableWindow")?.gameObject;
 

@@ -186,6 +186,5 @@
     <None Include="Resources\mod_assets" />
     <None Include="Resources\mod_icon" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
