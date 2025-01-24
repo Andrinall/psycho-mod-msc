@@ -202,7 +202,6 @@ namespace Psycho.Internal
                     IsTruePage = _useRandom ? (Random.Range(0, 2) == 1) : _index == 0
                 });
             }
-            Globals.Notebook?.SortPages();
             Globals.Notebook?.CreateFinalPage();
 
             Utils.PrintDebug(eConsoleColors.GREEN, $"Pages list filled with ({debug_NotebookFillType.GetSelectedItemName()}) pages");

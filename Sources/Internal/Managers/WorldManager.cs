@@ -32,6 +32,7 @@ namespace Psycho.Internal
     static class WorldManager
     {
         static int elapsedFrames = 0;
+        static GameObject coffinsGroup;
          
         public static void ShowCrows(bool state)
         {
@@ -215,24 +216,26 @@ namespace Psycho.Internal
             bool _state = Logic.InHorror;
             GameObject.Find("YARD/Building/BEDROOM2/bed_base")?.SetActive(!_state);
 
-            GameObject _coffinsGroup = GameObject.Find("YARD/Building/BEDROOM2").transform.FindChild("BedroomCoffins")?.gameObject;
-            if (_coffinsGroup == null && _state)
+            if (coffinsGroup == null && _state)
             {
-                _coffinsGroup = new GameObject("BedroomCoffins");
+                coffinsGroup = new GameObject("BedroomCoffins");
+                //coffinsGroup.transform.SetParent(GameObject.Find("YARD/Building/BEDROOM2").transform, false);
+
                 GameObject _coffin1 = (Object.Instantiate(ResourcesStorage.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738183f, 13.52571f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
-                _coffin1.transform.SetParent(_coffinsGroup.transform, worldPositionStays: false);
+                _coffin1.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
 
                 GameObject _coffin2 = (Object.Instantiate(ResourcesStorage.Coffin_prefab,
                     new Vector3(-2.456927f, -0.5738185f, 12.52524f),
                     Quaternion.Euler(new Vector3(270f, 180.2751f, 0f))
                 ) as GameObject);
-                _coffin2.transform.SetParent(_coffinsGroup.transform, worldPositionStays: false);
+                _coffin2.transform.SetParent(coffinsGroup.transform, worldPositionStays: false);
+
             }
 
-            _coffinsGroup?.SetActive(_state);
+            coffinsGroup?.SetActive(_state);
         }
 
         public static void ChangeModel(GameObject obj, Mesh mesh, Texture texture)
