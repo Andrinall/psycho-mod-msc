@@ -136,7 +136,9 @@ namespace Psycho.Features
 
             Pages[_page.Index] = _page;
             CreateFinalPage();
-            SortPages();
+
+            if (Pages.Values.Any(v => v.IsFinalPage) && GameObject.Find("Postcard(Clone)") == null)
+                Postcard.Initialize();
 
             PlayPageTurn();
             Utils.PrintDebug($"{_page} added into notebook");
@@ -158,20 +160,10 @@ namespace Psycho.Features
             CurrentPage = MAX_PAGE;
         }
 
-        public void SortPages()
-        {
-            MAX_PAGE = Pages.Keys.Max();
-
-            if (Pages.Values.Any(v => v.IsFinalPage) && GameObject.Find("Postcard(Clone)") == null)
-            {
-                SpawnPostcard();
-            }
-        }
-
         public void CreateFinalPage()
         {
             int _maxPage = GetMaxPageIndex();
-            if (_maxPage == 15 || _maxPage != 13) return;
+            if (_maxPage != 13) return;
 
             int _truePages = GetCountOfTruePages();
             bool _isTrueStory = (_truePages > 7);
@@ -184,23 +176,17 @@ namespace Psycho.Features
             });
 
             if (_isTrueStory)
-                SpawnPostcard();
+                Postcard.Initialize();
 
-            Pages.Remove(14);
-            GameObject.Find("COTTAGE/minigame(Clone)").SetActive(false);
+            if (Pages.ContainsKey(14))
+                Pages.Remove(14);
 
+            GameObject.Find("COTTAGE/minigame(Clone)")?.SetActive(false);
             Utils.PrintDebug($"Final page added with ({_truePages > 7} story)");
-            foreach (var _page in Pages)
-                Utils.PrintDebug(_page.ToString());
         }
 
         public static void AddDefaultPage()
             => Pages[14] = new NotebookPage { Index = 14, IsDefaultPage = true };
-
-        void SpawnPostcard()
-        {
-            Postcard.Initialize();
-        }
 
         public static int GetMaxPageIndex()
         {
@@ -213,8 +199,5 @@ namespace Psycho.Features
                 return 0;
             }
         }
-
-        int GetMaxPageIndexAll()
-            => Pages.Values.Max(v => v.Index);
     }
 }

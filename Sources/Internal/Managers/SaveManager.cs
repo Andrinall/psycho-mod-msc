@@ -8,6 +8,7 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Features;
+using System.Security.Cryptography;
 
 
 namespace Psycho.Internal
@@ -258,8 +259,11 @@ namespace Psycho.Internal
 
                 if (!Notebook.Pages.Values.Any(v => v.IsFinalPage))
                     Notebook.AddDefaultPage();
-
-                Globals.Notebook?.SortPages();
+                else
+                {
+                    if (GameObject.Find("Postcard(Clone)") == null)
+                        Postcard.Initialize();
+                }
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "Notebook Pages Loaded!");
 
