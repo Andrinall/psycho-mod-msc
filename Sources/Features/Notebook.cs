@@ -7,15 +7,17 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
+using System;
+using System.Diagnostics.SymbolStore;
 
 
 namespace Psycho.Features
 {
     class Notebook : BookWithGUI
     {
-        public static List<NotebookPage> Pages = new List<NotebookPage>()
+        public static Dictionary<int, NotebookPage> Pages = new Dictionary<int, NotebookPage>()
         {
-            new NotebookPage { index = 14, isDefaultPage = true }
+            [14] = new NotebookPage { Index = 14, IsDefaultPage = true }
         };
 
         protected override GameObject GUIPrefab => ResourcesStorage.NotebookGUI_prefab;
@@ -28,18 +30,6 @@ namespace Psycho.Features
 
         Transform ItemInHand => itemPivot.childCount > 0 ? itemPivot.GetChild(0) : null;
 
-        int prevMax = 0;
-
-        protected override void Destroyed() => MAX_PAGE = -1;
-
-        protected override void Enabled() => MAX_PAGE = prevMax;
-
-        protected override void Disabled()
-        {
-            prevMax = MAX_PAGE;
-            MAX_PAGE = -1;
-        }
-
         protected override void AfterAwake()
         {
             itemPivot = Utils.GetGlobalVariable<FsmGameObject>("ItemPivot").Value.transform;
@@ -51,7 +41,7 @@ namespace Psycho.Features
             MAX_PAGE = Pages.Count - 1;
             CurrentPage = MAX_PAGE;
 
-            EventsManager.OnLanguageChanged.AddListener(UpdatePageText);
+            EventsManager.OnLanguageChanged.AddListener(UpdatePageTextLang);
         }
 
         protected override void ObjectUsed()
@@ -71,7 +61,7 @@ namespace Psycho.Features
 
         protected override void PageSelected(bool next)
         {
-            UpdatePageText();
+            UpdatePageText(next);
             Utils.PrintDebug($"CurrentPage: {CurrentPage}; MAX_PAGE :{MAX_PAGE}");
         }
 
@@ -83,111 +73,129 @@ namespace Psycho.Features
 
         public static bool TryAddPage(NotebookPage page)
         {
-            if (IsPageExists(page.index)) return false;
+            int _index = page.Index;
+            if (IsPageExists(_index))
+                return false;
 
-            Pages.Add(page);
+            Pages[_index] = page;            
             return true;
         }
 
         public static bool IsPageExists(int index)
-            => Pages.Any(v => v.index == index);
+            => Pages.ContainsKey(index);
 
-        public void UpdatePageText()
+        public void UpdatePageTextLang() => UpdatePageText();
+
+        void UpdatePageText(bool next = true)
         {
-            if (CurrentPage < 0 || CurrentPage >= Pages.Count) return;
+            if (!Pages.ContainsKey(CurrentPage))
+            {
+                MAX_PAGE = Pages.Keys.Max();
+                MIN_PAGE = Pages.Keys.Min();
 
-            NotebookPage _page = Pages.ElementAt(CurrentPage);
-            if (_page == null) return;
+                int _maxPage = GetMaxPageIndex();
+                CurrentPage = next ? MAX_PAGE : (CurrentPage < 0 ? MAX_PAGE : (_maxPage == 0 ? MIN_PAGE : _maxPage));
+            }
 
-            bool _isTrueEnding = _page.isTruePage;
-            if (_page.index == 15) // final page
+            NotebookPage _page = Pages[CurrentPage];
+            if (_page == null)
+                return;
+
+            bool _isTrueEnding = _page.IsTruePage;
+            if (_page.Index == 15) // final page
             {
                 notebookGUIText.text = Locales.FINAL_PAGE[_isTrueEnding ? 0 : 1, Globals.CurrentLang];
                 Background.SetTexture("_MainTex",
                     _isTrueEnding ? ResourcesStorage.NotebookPages_texture : ResourcesStorage.NotebookFinalPage_texture
                 );
             }
-            else if (_page.index == 14) // default
+            else if (_page.Index == 14) // default
             {
                 notebookGUIText.text = Locales.DEFAULT_PAGE[Globals.CurrentLang];
                 Background.SetTexture("_MainTex", ResourcesStorage.NotebookStartPage_texture);
             }
-            else if (_page.index < 14)
+            else if (_page.Index < 14)
             {
-                notebookGUIText.text = Locales.PAGES[_page.index - 1, _isTrueEnding ? 0 : 1, Globals.CurrentLang];
+                notebookGUIText.text = Locales.PAGES[_page.Index - 1, _isTrueEnding ? 0 : 1, Globals.CurrentLang];
                 Background.SetTexture("_MainTex", ResourcesStorage.NotebookPages_texture);
             }
 
-            notebookGUIPage.text = $"Page {_page.index}";
-            MAX_PAGE = Pages.Count - 1;
+            notebookGUIPage.text = $"Page {_page.Index}";
         }
 
         bool AddNewPage(GameObject pageObj)
         {
             if (pageObj == null) return false;
-            if (Pages.Count > 13) return false;
+
+            int _maxPage = GetMaxPageIndex();
+            if (_maxPage == 15) return false;
 
             NotebookPageComponent _newPage = pageObj.GetComponent<NotebookPageComponent>();
             NotebookPage _page = new NotebookPage(_newPage.Page);
             Destroy(pageObj);
 
-            Pages.Add(_page);
+            Pages[_page.Index] = _page;
             CreateFinalPage();
             SortPages();
 
             PlayPageTurn();
             Utils.PrintDebug($"{_page} added into notebook");
+
+            MIN_PAGE = Pages.Keys.Min();
+            MAX_PAGE = Pages.Keys.Max();
             return true;
         }
 
 
         public int GetCountOfTruePages()
-            => Pages.Count(v => !v.isFinalPage && v.isTruePage);
+            => Pages.Values.Count(v => !v.IsFinalPage && !v.IsDefaultPage && v.IsTruePage);
 
         public void ClearPages()
         {
             Pages.Clear();
             AddDefaultPage();
-            MAX_PAGE = 0;
+            MAX_PAGE = 14;
             CurrentPage = MAX_PAGE;
         }
 
         public void SortPages()
         {
-            Pages.Sort((v, t) => (v.index < t.index) ? -1 : 1);
-            MAX_PAGE = Pages.Count - 1;
+            MAX_PAGE = Pages.Keys.Max();
 
-            if (Pages.Any(v => v.isFinalPage) && GameObject.Find("Postcard(Clone)") == null)
+            if (Pages.Values.Any(v => v.IsFinalPage) && GameObject.Find("Postcard(Clone)") == null)
+            {
                 SpawnPostcard();
+            }
         }
 
         public void CreateFinalPage()
         {
-            if (GetMaxPageIndex() == 15) return;
-            if (Pages.Count < 14) return;
+            int _maxPage = GetMaxPageIndex();
+            if (_maxPage == 15 || _maxPage != 13) return;
 
             int _truePages = GetCountOfTruePages();
             bool _isTrueStory = (_truePages > 7);
 
             TryAddPage(new NotebookPage
             {
-                index = 15,
-                isTruePage = _isTrueStory,
-                isFinalPage = true
+                Index = 15,
+                IsTruePage = _isTrueStory,
+                IsFinalPage = true
             });
 
             if (_isTrueStory)
                 SpawnPostcard();
 
-            Pages.Remove(Pages.First(v => v.isDefaultPage));
+            Pages.Remove(14);
             GameObject.Find("COTTAGE/minigame(Clone)").SetActive(false);
 
             Utils.PrintDebug($"Final page added with ({_truePages > 7} story)");
-            Pages.ForEach(v => Utils.PrintDebug(v.ToString()));
+            foreach (var _page in Pages)
+                Utils.PrintDebug(_page.ToString());
         }
 
         public static void AddDefaultPage()
-            => Pages.Add(new NotebookPage { index = 14, isDefaultPage = true });
+            => Pages[14] = new NotebookPage { Index = 14, IsDefaultPage = true };
 
         void SpawnPostcard()
         {
@@ -196,15 +204,17 @@ namespace Psycho.Features
 
         public static int GetMaxPageIndex()
         {
-            int _max = 0;
-            foreach (NotebookPage _page in Pages)
+            try
             {
-                if (_page.isDefaultPage || _page.isFinalPage) continue;
-
-                if (_page.index > _max)
-                    _max = _page.index;
+                return Pages.Values.Max(v => (v.IsDefaultPage || v.IsFinalPage) ? 0 : v.Index);
             }
-            return _max;
+            catch (InvalidOperationException)
+            {
+                return 0;
+            }
         }
+
+        int GetMaxPageIndexAll()
+            => Pages.Values.Max(v => v.Index);
     }
 }

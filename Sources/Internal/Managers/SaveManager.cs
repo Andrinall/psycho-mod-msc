@@ -248,23 +248,23 @@ namespace Psycho.Internal
 
                     bool result = Notebook.TryAddPage(new NotebookPage
                     {
-                        index = idx,
-                        isTruePage = isTrue,
-                        isFinalPage = isFinal
+                        Index = idx,
+                        IsTruePage = isTrue,
+                        IsFinalPage = isFinal
                     });
 
                     offset += 6;
                 }
 
-                if (!Notebook.Pages.Any(v => v.isFinalPage))
+                if (!Notebook.Pages.Values.Any(v => v.IsFinalPage))
                     Notebook.AddDefaultPage();
 
                 Globals.Notebook?.SortPages();
 
                 Utils.PrintDebug(eConsoleColors.GREEN, "Notebook Pages Loaded!");
-                Notebook.Pages.ForEach(v =>
-                    Utils.PrintDebug($"page[{v.index}]: true? {v.isTruePage}; default? {v.isDefaultPage}; final? {v.isFinalPage}")
-                );
+
+                foreach (var _page in Notebook.Pages.Values)
+                    Utils.PrintDebug($"page[{_page.Index}]: true? {_page.IsTruePage}; default? {_page.IsDefaultPage}; final? {_page.IsFinalPage}");
             }
             catch (Exception ex)
             {

@@ -12,6 +12,8 @@ namespace Psycho.Features
 {
     class Minigame : CatchedComponent
     {
+        const int MAX_CARD = 14;
+
         GameObject taroUsable;
         GameObject housekeeperCard;
         GameObject playerCard;
@@ -23,9 +25,6 @@ namespace Psycho.Features
         int playerCurrentCardNumber = 0;
 
         int lastUpdated = 0;
-
-        const int MAX_PAGES = 13;
-        const int MAX_CARD = 14;
 
         protected override void Awaked()
         {
@@ -40,12 +39,6 @@ namespace Psycho.Features
             GameObject _clonedFire = Instantiate(_fireParticle);
             _clonedFire.transform.SetParent(transform.Find("Candle"), false);
             _clonedFire.transform.localPosition = new Vector3(0, 0, 0.06f);
-            
-            if (Notebook.Pages.Count >= 14)
-            {
-                Destroy(gameObject);
-                return;
-            }
         }
 
         protected override void OnUpdate()
@@ -97,13 +90,7 @@ namespace Psycho.Features
             housekeeperCardMat.SetTexture("_MainTex", ResourcesStorage.TaroCardsTextures[_randomCard]);
             housekeeperCurrentCardNumber = _randomCard + 1;
             playerCard.SetActive(false);
-
-            GameObject _page = GameObject.Find("Notebook Page(Clone)");
-            if (_page?.transform?.parent == null)
-                Destroy(_page);
-
-            if (Notebook.Pages.Count == 15 && _page == null)
-                Destroy(this);
+            Destroy(GameObject.Find("Notebook Page(Clone)"));
         }
 
         bool CheckDayChangedAndUpdateHousekeeperCard()
@@ -119,13 +106,12 @@ namespace Psycho.Features
 
         IEnumerator SpawnNewPage(bool isFake)
         {
-            int _index = Notebook.GetMaxPageIndex();
-            if (_index >= 13)
+            int _index = Notebook.GetMaxPageIndex() + 1;
+            if (_index == 14)
             {
                 PlayHousekeeperLaughing();
-                yield return new WaitForSeconds(0.5f);
-
-                gameObject.SetActive(false);
+                housekeeperCard.SetActive(false);
+                playerCard.SetActive(false);
                 yield break;
             }
 
@@ -141,14 +127,14 @@ namespace Psycho.Features
             NotebookPageComponent _component = _pageObj.AddComponent<NotebookPageComponent>();
             _component.Page = new NotebookPage
             {
-                index = _index + 1,
-                isTruePage = !isFake
+                Index = _index,
+                IsTruePage = !isFake
             };
             _component.enabled = true;
             _component.UpdatePageText();
             _pageObj.MakePickable();
 
-            Utils.PrintDebug($"{(isFake ? "Fake" : "True")} Page spawned with index {_index + 1}");
+            Utils.PrintDebug($"{(isFake ? "Fake" : "True")} Page spawned with index {_index}");
         }
 
         void PlayHousekeeperLaughing()
@@ -161,8 +147,8 @@ namespace Psycho.Features
             Vector3 _bottlehideRot = _bottlehide.transform.eulerAngles;
             Destroy(_bottlehide);
 
-            if (Notebook.Pages.Any(v => v.isFinalPage)) return;
-            GameObject _minigame = Object.Instantiate(ResourcesStorage.CottageMinigame_prefab);
+            if (Notebook.Pages.Values.Any(v => v.IsFinalPage)) return;
+            GameObject _minigame = Instantiate(ResourcesStorage.CottageMinigame_prefab);
             _minigame.transform.SetParent(GameObject.Find("COTTAGE").transform, false);
             _minigame.AddComponent<Minigame>();
         }

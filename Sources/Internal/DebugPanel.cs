@@ -198,8 +198,8 @@ namespace Psycho.Internal
             {
                 Notebook.TryAddPage(new NotebookPage
                 {
-                    index = i,
-                    isTruePage = _useRandom ? (Random.Range(0, 2) == 1) : _index == 0
+                    Index = i,
+                    IsTruePage = _useRandom ? (Random.Range(0, 2) == 1) : _index == 0
                 });
             }
             Globals.Notebook?.SortPages();

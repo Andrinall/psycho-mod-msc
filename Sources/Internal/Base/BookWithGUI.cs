@@ -10,6 +10,7 @@ namespace Psycho.Internal
     {
         protected int CurrentPage { get; set; } = 0;
         protected virtual int MAX_PAGE { get; set; } = 0;
+        protected virtual int MIN_PAGE { get; set; } = 0;
 
         protected virtual GameObject GUIPrefab => null;
         protected GameObject GUI { get; private set; }
@@ -129,8 +130,11 @@ namespace Psycho.Internal
         {
             CurrentPage += next ? 1 : -1;
 
-            if (CurrentPage > MAX_PAGE) CurrentPage = 0;
-            if (CurrentPage < 0) CurrentPage = MAX_PAGE;
+            if (CurrentPage > MAX_PAGE)
+                CurrentPage = MIN_PAGE;
+
+            if (CurrentPage < MIN_PAGE)
+                CurrentPage = MAX_PAGE;
 
             PlayPageTurn();
             PageSelected(next);

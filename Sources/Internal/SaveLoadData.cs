@@ -30,7 +30,7 @@ namespace Psycho.Internal
         public Vector3 PillsEuler = Vector3.zero;
 
         public List<ItemsPoolSaveLoadData> ItemsPoolData = default;
-        public List<NotebookPage> NotebookPagesPool = default;
+        public Dictionary<int, NotebookPage> NotebookPagesPool = default;
     }
 
     class ItemsPoolSaveLoadData

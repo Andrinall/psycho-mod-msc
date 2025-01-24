@@ -8,22 +8,22 @@ namespace Psycho.Features
 {
     class NotebookPage
     {
-        public int index = -1;
-        public bool isTruePage = false;
-        public bool isDefaultPage = false;
-        public bool isFinalPage = false;
+        public int Index = -1;
+        public bool IsTruePage = false;
+        public bool IsDefaultPage = false;
+        public bool IsFinalPage = false;
 
         public NotebookPage() { }
         public NotebookPage(NotebookPage parent)
         {
-            index = parent.index;
-            isTruePage = parent.isTruePage;
-            isDefaultPage = parent.isDefaultPage;
-            isFinalPage = parent.isFinalPage;
+            Index = parent.Index;
+            IsTruePage = parent.IsTruePage;
+            IsDefaultPage = parent.IsDefaultPage;
+            IsFinalPage = parent.IsFinalPage;
         }
 
         public override string ToString()
-            => $"NotebookPage[idx:{index}; isTrue:{isTruePage}; isDefault:{isDefaultPage}; isFinal:{isFinalPage}]";
+            => $"NotebookPage[idx:{Index}; isTrue:{IsTruePage}; isDefault:{IsDefaultPage}; isFinal:{IsFinalPage}]";
     }
 
 
@@ -48,10 +48,14 @@ namespace Psycho.Features
             _pageTextMat.color = new Color(0.0353f, 0.1922f, 0.3882f);
         }
 
-        protected override void Disabled() => Destroy(gameObject);
+        protected override void Disabled()
+        {
+            EventsManager.OnLanguageChanged.RemoveListener(UpdatePageText);
+            Destroy(gameObject);
+        }
 
         public void UpdatePageText()
-            => pageText.text = Locales.PAGES[Page.index - 1, Page.isTruePage ? 0 : 1, Globals.CurrentLang];
+            => pageText.text = Locales.PAGES[Page.Index - 1, Page.IsTruePage ? 0 : 1, Globals.CurrentLang];
     }
 }
  
