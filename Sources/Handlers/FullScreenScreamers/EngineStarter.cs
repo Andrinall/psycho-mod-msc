@@ -12,7 +12,14 @@ namespace Psycho.Handlers
     {
         protected override void Awaked()
         {
-            bool _isSatsumaStarter = transform.GetPlayMaker("Starter").FsmVariables.FloatVariables.Any(v => v.Name == "Wear");
+            PlayMakerFSM _starterFsm = transform.GetPlayMaker("Starter");
+            if (_starterFsm == null)
+            {
+                Destroy(this);
+                return;
+            }
+
+            bool _isSatsumaStarter = _starterFsm.FsmVariables.FloatVariables.Any(v => v.Name == "Wear");
 
             StateHook.Inject(gameObject, "Starter", _isSatsumaStarter ? "Running" : "Motor running", ShowScreamer);
         }

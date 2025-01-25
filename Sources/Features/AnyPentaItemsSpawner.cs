@@ -41,13 +41,22 @@ namespace Psycho.Features
 
         protected override void Awaked()
         {
-            palm = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/jukkapalm").transform;
-            island = GameObject.Find("COTTAGE/SpawnToCottage").transform;
-            church = GameObject.Find("PERAJARVI/CHURCH/Church/church_base").transform;
+            palm = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/jukkapalm")?.transform;
+            island = GameObject.Find("COTTAGE/SpawnToCottage")?.transform;
+            church = GameObject.Find("PERAJARVI/CHURCH/Church/church_base")?.transform;
+
+            if (palm == null || island == null || church == null)
+                throw new System.NullReferenceException("Could't be find needed objects.\nMay be caused by a conflict for other mods.");
         }
 
         protected override void OnFixedUpdate()
         {
+            if (ResourcesStorage.Walnut_prefab == null || ResourcesStorage.Mushroom_prefab == null || ResourcesStorage.Candle_prefab == null)
+                throw new System.NullReferenceException("Prefabs doesn't loaded from bundle.");
+
+            if (Globals.GlobalDay == null)
+                throw new System.NullReferenceException("Global FSMString `GlobalDay` doesn't exists.");
+
             int _day = Globals.GlobalDay.Value % 7;
             CheckItemSpawnTimeAndSpawn(_day, WalnutDay, ref WalnutSpawned, palm, ResourcesStorage.Walnut_prefab, walnutPos);
             CheckItemSpawnTimeAndSpawn(_day, MushroomDay, ref MushroomSpawned, island, ResourcesStorage.Mushroom_prefab, mushroom_pos);

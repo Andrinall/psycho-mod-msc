@@ -34,6 +34,12 @@ namespace Psycho.Features
 
         protected override void OnFixedUpdate()
         {
+            if (Globals.Player == null || jonnez == null || boat == null || selfColl == null)
+            {
+                Destroy(this);
+                throw new System.NullReferenceException($"AmbientTrigger handler disabled by nullcheck in [ {transform.GetPath()} ( AmbientTrigger.OnFixedUpdate() ) ]");
+            }
+
             if (Vector3.Distance(ClosestPoint, Globals.Player.position) == 0)
             {
                 Logic.CurrentAmbientTrigger = this;

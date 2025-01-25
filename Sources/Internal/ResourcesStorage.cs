@@ -86,7 +86,7 @@ namespace Psycho.Internal
 
         public static void LoadFromBundle(string bundlePath)
         {
-            AssetBundle _bundle = LoadAssets.LoadBundle(Properties.Resources.mod_assets);
+            AssetBundle _bundle = LoadAssets.LoadBundle(bundlePath);
 
             Pentagram_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/penta.prefab");
             RoosterPoster_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/rooster_poster.prefab");
@@ -179,6 +179,9 @@ namespace Psycho.Internal
                     _source.dopplerLevel = 1;
 
                     _emptyPoint.transform.SetParent(_building, worldPositionStays: false);
+
+                    if (!Globals.NightScreamersPointsPos.ContainsKey(_item))
+                        Utils.PrintDebug(eConsoleColors.RED, $"Key `{_item}` doesn't exists in NightScreamersPointsPos");
                     _emptyPoint.transform.position = Globals.NightScreamersPointsPos[_item];
                     SoundManager.ScreamPoints.Add(_source);
                 }

@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Collections;
 
@@ -6,7 +7,7 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Internal;
-
+using Random = UnityEngine.Random;
 
 namespace Psycho.Features
 {
@@ -143,6 +144,9 @@ namespace Psycho.Features
         public static void Initialize()
         {
             GameObject _bottlehide = GameObject.Find("YARD/Building/LIVINGROOM/LOD_livingroom/bottlehide");
+            if (_bottlehide == null)
+                throw new NullReferenceException("Couldn't initialize a psycho minigame.\nMay be caused by a conflict with other mods.");
+
             Vector3 _bottlehidePos = _bottlehide.transform.position;
             Vector3 _bottlehideRot = _bottlehide.transform.eulerAngles;
             Destroy(_bottlehide);

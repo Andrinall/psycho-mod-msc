@@ -182,6 +182,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Assets\psycho.unity3d" />
     <None Include="psycho.pfx" />
     <None Include="Resources\mod_assets" />
     <None Include="Resources\mod_icon" />

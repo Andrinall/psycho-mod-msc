@@ -1,4 +1,5 @@
-﻿
+﻿#define SILENCE_ERRORS
+
 using System;
 using System.Linq;
 using System.Reflection;
@@ -6,7 +7,6 @@ using System.Reflection;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
-
 
 namespace Psycho.Internal
 {
@@ -131,7 +131,6 @@ namespace Psycho.Internal
             Debug.Log(DBG_STRING + msg);
 #endif
         }
-
         public static void PrintDebug(eConsoleColors color, string msg)
         {
 #if DEBUG
@@ -139,7 +138,12 @@ namespace Psycho.Internal
 #else
             string message = DBG_STRING + msg;
             if (color == eConsoleColors.RED)
+#if SILENCE_ERRORS
+                ModConsole.Print($"<color=\"red\">{message}</color>");
+#else
                 ModConsole.LogError(message);
+#endif
+
             else if (color == eConsoleColors.YELLOW)
                 ModConsole.LogWarning(message);
             else

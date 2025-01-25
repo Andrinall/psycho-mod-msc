@@ -20,7 +20,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.3";
+        public override string Version => "1.0.6";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -122,7 +122,7 @@ namespace Psycho
             ResourcesStorage.UnloadAll(); // clear resources for avoid game crashes after loading saved game
 
             // load resources from bundle
-            ResourcesStorage.LoadFromBundle("Psycho.Assets.bundle.unity3d");
+            ResourcesStorage.LoadFromBundle("Psycho.Assets.psycho.unity3d");
 
             // init global vars
             Globals.InitializeGlobalVars();
@@ -220,6 +220,7 @@ namespace Psycho
 
             TexturesManager.ChangeIndepTextures(false); // set textures what used independently of world
             AmbientTrigger.InitializeAllTriggers();
+            
             Minigame.Initialize();
 
             // add inactive audio source for play in screamer
