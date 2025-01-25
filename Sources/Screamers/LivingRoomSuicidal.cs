@@ -30,9 +30,7 @@ namespace Psycho.Screamers
             suicidal.transform.localEulerAngles = new Vector3(270f, 177.6f, 0f);
             suicidal.SetActive(false);
 
-            AudioSource _origSource = GameObject.Find(
-                "KILJUGUY/HikerPivot/JokkeHiker2/RagDoll/pelvis/spine_mid/shoulders(xxxxx)/head/Speak"
-            )?.GetComponent<AudioSource>();
+            AudioSource _origSource = GameObject.Find("MasterAudio/DrunkLifter/drunk_sounds")?.GetComponent<AudioSource>();
 
             if (_origSource == null)
                 throw new NullReferenceException("Original JokkeHiker2 AudioSource not exists!");
