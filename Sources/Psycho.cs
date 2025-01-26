@@ -49,10 +49,12 @@ namespace Psycho
         bool bellsActivated = false;
         Vector3 bellsOrigPos;
 
-        static bool isSteamExists = false;
 
         public override void ModSetup()
         {
+            if (!ModLoader.CheckSteam())
+                throw new AccessViolationException("Steam not connected");
+
             SetupFunction(Setup.ModSettings, Mod_Settings);
             SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
 
@@ -69,20 +71,10 @@ namespace Psycho
 
         // setup mod settings
         void Mod_SettingsLoad()
-        {
-            if (!isSteamExists) return;
-            _changeSetting();
-        }
+            => _changeSetting();
 
         void Mod_Settings()
         {
-            isSteamExists = ModLoader.CheckSteam();
-            if (!isSteamExists)
-            {
-                Utils.PrintDebug(eConsoleColors.RED, "Buy the game, lol...");
-                throw new AccessViolationException("Steam not connected");
-            }
-
             LangDropDownList = Settings.AddDropDownList(
                 "psychoLang", "Language Select",
                 new string[] { "English", "Russian" },
@@ -103,8 +95,6 @@ namespace Psycho
 
         void Mod_NewGame()
         {
-            if (!isSteamExists) return;
-
             SaveManager.RemoveData(this);
             Logic.SetDefaultValues();
             ResourcesStorage.UnloadAll();
@@ -114,8 +104,6 @@ namespace Psycho
 
         void Mod_Load()
         {
-            if (!isSteamExists) return;
-
             unloaded = false;
             IsLoaded = false;
             loaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
@@ -197,7 +185,6 @@ namespace Psycho
 
         void Mod_SecondPassLoad()
         {
-            if (!isSteamExists) return;
             if (Logic.GameFinished) return;
 
             // register crutch command
@@ -249,7 +236,6 @@ namespace Psycho
 
         void Mod_Update()
         {
-            if (!isSteamExists) return;
             if (Logic.GameFinished || Logic.IsDeadByGame) return;
             if (Globals.Player == null) return;
 
@@ -261,7 +247,6 @@ namespace Psycho
 
         void Mod_FixedUpdate()
         {
-            if (!isSteamExists) return;
             if (Logic.GameFinished || Logic.IsDeadByGame) return;
             if (Globals.Player == null) return;
 
@@ -302,7 +287,6 @@ namespace Psycho
 
         void Mod_Save()
         {
-            if (!isSteamExists) return;
             SaveManager.SaveData(this);
 
             Unload();
@@ -310,7 +294,6 @@ namespace Psycho
 
         internal static void Unload()
         {
-            if (!isSteamExists) return;
             if (unloaded) return;
 
             Utils.PrintDebug("OnUnload called");
