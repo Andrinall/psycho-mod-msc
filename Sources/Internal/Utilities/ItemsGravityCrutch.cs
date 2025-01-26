@@ -2,10 +2,10 @@
 using UnityEngine;
 
 
-namespace Psycho.Handlers
+namespace Psycho.Internal
 {
     [RequireComponent(typeof(Rigidbody))]
-    class ItemsGravityEnabler : MonoBehaviour
+    class ItemsGravityCrutch : MonoBehaviour
     {
         Rigidbody rb;
 

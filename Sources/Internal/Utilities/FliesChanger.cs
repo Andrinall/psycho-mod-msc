@@ -10,7 +10,7 @@ using HutongGames.PlayMaker.Actions;
 using Psycho.Internal;
 
 
-namespace Psycho.Handlers
+namespace Psycho.Internal
 {
     class FliesChanger : MonoBehaviour
     {

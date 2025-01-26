@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 
 using MSCLoader;
@@ -20,7 +21,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.7";
+        public override string Version => "1.0.8";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -48,12 +49,19 @@ namespace Psycho
 
         bool bellsActivated = false;
         Vector3 bellsOrigPos;
-
+        
 
         public override void ModSetup()
         {
-            if (!ModLoader.CheckSteam())
-                throw new AccessViolationException("Steam not connected");
+            FieldInfo _fieldSteamID = typeof(ModLoader).GetField("steamID", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+
+            bool _hasConnection = ModLoader.CheckSteam();
+            string _steamId = (string)_fieldSteamID.GetValue(null);
+
+            ModConsole.Print($"<b><color=orange>Steam User ID</color> : {(_hasConnection ? $"<color=lime>{_steamId}</color>" : "<color=red>undefined</color>")}</b>");
+
+            if (!_hasConnection)
+                throw new AccessViolationException("Steam not connected"); 
 
             SetupFunction(Setup.ModSettings, Mod_Settings);
             SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
@@ -196,7 +204,7 @@ namespace Psycho
 
             // add component for make hangover in horror world
             Transform _camera = GameObject.Find("PLAYER").transform.Find("Pivot/AnimPivot/Camera/FPSCamera/FPSCamera");
-            _camera.gameObject.AddComponent<Handlers.Hangover>();
+            _camera.gameObject.AddComponent<Hangover>();
             
             AddComponent<DeathSystem>("Systems");
             AddComponent<ShizAnimPlayer>("PLAYER"); // add animplayer component
@@ -365,8 +373,8 @@ namespace Psycho
             AddComponent<Handlers.SuitcaseGrab>("KILJUGUY/SuitcaseSpawns");
             AddComponent<Handlers.FirewoodDelivery>("JOBS/HouseWood1");
             AddComponent<Handlers.SuskiHelp>("JOBS/Suski");
-            AddComponent<Handlers.FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
 
+            AddComponent<FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter
             AddComponent<AnyPentaItemsSpawner>("PLAYER"); // spawn items for pentagram
 

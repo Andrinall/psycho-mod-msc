@@ -48,7 +48,7 @@ namespace Psycho.Features
             _flower.transform.localPosition = new Vector3(0f, 0.14f, 0f);
             _flower.transform.eulerAngles = new Vector3(90f, 270f, 0f);
             _flower.transform.localScale = new Vector3(.5f, .5f, .5f);
-            _flower.AddComponent<ItemsGravityEnabler>();
+            _flower.AddComponent<ItemsGravityCrutch>();
 
             _point.SetActive(true);
             Utils.PrintDebug("Fern Flower Spawned");

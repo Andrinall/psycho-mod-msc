@@ -10,30 +10,30 @@ namespace Psycho.Internal
 {
     static class ResourcesStorage
     {
-        public static GameObject Pentagram_prefab = null;
-        public static GameObject RoosterPoster_prefab = null;
         public static GameObject Ferns_prefab = null;
+        public static GameObject Walnut_prefab = null;
         public static GameObject Candle_prefab = null;
-        public static GameObject FernFlower_prefab = null;
-        public static GameObject Nut_prefab = null;
         public static GameObject BlackEgg_prefab = null;
         public static GameObject Mushroom_prefab = null;
-        public static GameObject Walnut_prefab = null;
+        public static GameObject FernFlower_prefab = null;
 
-        public static GameObject Background_prefab = null;
+        public static GameObject Pentagram_prefab = null;
+        public static GameObject RoosterPoster_prefab = null;
+
         public static GameObject Pills_prefab = null;
-        public static GameObject CrowsList_prefab = null;
-        public static GameObject SuicidalsList_prefab = null;
-        public static GameObject Picture_prefab = null;
         public static GameObject Coffin_prefab = null;
+        public static GameObject Picture_prefab = null;
+        public static GameObject CrowsList_prefab = null;
+        public static GameObject Background_prefab = null;
+        public static GameObject SuicidalsList_prefab = null;
         public static GameObject CottageMinigame_prefab = null;
 
-        public static GameObject SmokeParticleSystem_prefab = null;
         public static GameObject FullScreenScreamer_prefab = null;
+        public static GameObject SmokeParticleSystem_prefab = null;
 
         public static GameObject Notebook_prefab = null;
-        public static GameObject NotebookPage_prefab = null;
         public static GameObject NotebookGUI_prefab = null;
+        public static GameObject NotebookPage_prefab = null;
 
         public static GameObject Sketchbook_prefab = null;
         public static GameObject SketchbookGUI_prefab = null;
@@ -41,47 +41,48 @@ namespace Psycho.Internal
         public static GameObject Postcard_prefab = null;
         public static GameObject FittanItemsStore_prefab = null;
 
+        public static Texture NewsPaper_texture = null;
         public static Texture NotebookPages_texture = null;
         public static Texture NotebookStartPage_texture = null;
         public static Texture NotebookFinalPage_texture = null;
-        public static Texture NewsPaper_texture = null;
 
         public static AudioClip Heartbeat_clip = null;
         public static AudioClip HeartStop_clip = null;
 
         public static AudioClip AcidBurn_clip = null;
-        public static AudioClip ScreamCall_clip = null;
-        public static AudioClip PhantomScream_clip = null;
         public static AudioClip TVScream_clip = null;
+        public static AudioClip ScreamCall_clip = null;
         public static AudioClip UncleScream_clip = null;
+        public static AudioClip PhantomScream_clip = null;
         public static AudioClip HousekeeperLaughs_clip = null;
 
         public static AudioClip JokkeSpawned_clip = null;
-        public static AudioClip GrannyCrawlScreamer_clip = null;
         public static AudioClip HandDroppedToFace_clip = null;
+        public static AudioClip GrannyCrawlScreamer_clip = null;
 
         public static AudioClip UBV_psy_clip = null;
         public static AudioClip HouseAmbient_clip = null;
+        public static AudioClip GlobalAmbient_clip = null;
         public static AudioClip IslandAmbient_clip = null;
         public static AudioClip DingonbiisiAmbient_clip = null;
-        public static AudioClip GlobalAmbient_clip = null;
         public static AudioClip GlobalPsychoAmbient_clip = null;
 
         public static AudioClip FinishGame_clip = null;
 
-
-        public static readonly List<Texture> Replaces = new List<Texture> { };
-        public static readonly List<Texture> IndependentlyTextures = new List<Texture> { };
-
-        public static readonly List<Texture> MailScreens = new List<Texture> { };
-        public static readonly List<Texture> TaroCardsTextures = new List<Texture> { };
-        public static readonly List<Texture> Pictures = new List<Texture> { };
-        public static readonly List<Texture> SketchbookPages = new List<Texture> { };
-        public static readonly List<Texture> FullScreenScreamerTextures = new List<Texture> { };
-
         public static readonly List<AudioClip> HorrorFliesSounds = new List<AudioClip> { };
 
+        public static readonly List<Texture> Replaces = new List<Texture> { };
         public static readonly Dictionary<int, ModelData> ModelsReplaces = new Dictionary<int, ModelData> { };
+
+        public static readonly List<Texture> Pictures = new List<Texture> { };
+        public static readonly List<Texture> MailScreens = new List<Texture> { };
+        public static readonly List<Texture> SketchbookPages = new List<Texture> { };
+
+        public static readonly List<Texture> TaroCardsTextures = new List<Texture> { };
+        public static readonly List<Texture> IndependentlyTextures = new List<Texture> { };
+        public static readonly List<Texture> FullScreenScreamerTextures = new List<Texture> { };
+
+
 
 
         public static void LoadFromBundle(string bundlePath)
@@ -93,7 +94,6 @@ namespace Psycho.Internal
             Ferns_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/ferns.prefab");
             Candle_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/churchcandle.prefab");
             FernFlower_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/fernflower.prefab");
-            Nut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/nut.prefab");
             BlackEgg_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/blackegg.prefab");
             Mushroom_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/mushroom.prefab");
             Walnut_prefab = LoadAsset<GameObject>(_bundle, "assets/prefabs/walnut.prefab");

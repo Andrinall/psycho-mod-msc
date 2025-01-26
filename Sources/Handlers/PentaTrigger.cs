@@ -43,6 +43,8 @@ namespace Psycho.Handlers
             Item.transform.localEulerAngles = new Vector3(0, 90f, 0);
             Item.transform.position = new Vector3(Position.x, Position.y, Position.z + 0.001f);
 
+            Item.AddComponent<ItemsGravityCrutch>();
+
             penta.TryTriggerEvent();
             Utils.PrintDebug($"Item {other.gameObject.name} enter trigger {name};");
         }

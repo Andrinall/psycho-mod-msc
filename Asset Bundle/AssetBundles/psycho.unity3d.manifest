@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1785083295
+CRC: 4043866358
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: be6028283e0de163910d8d7d98a81532
+    Hash: 1bb8b7d2cd44b1eb59c6511f77a7c2a9
   TypeTreeHash:
     serializedVersion: 2
     Hash: 9a0b4a31a53ee05dbae55adf1d9ffdf4
@@ -83,7 +83,6 @@ Assets:
 - Assets/Replaces/Horror/fabric8.png
 - Assets/Prefabs/Sketchbook.prefab
 - Assets/Replaces/Horror/wallpaper.png
-- Assets/Prefabs/Nut.prefab
 - Assets/Screens/3.png
 - Assets/Replaces/Horror/paint2.png
 - Assets/Replaces/Horror/wood2.png

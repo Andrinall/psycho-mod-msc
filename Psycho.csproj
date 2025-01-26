@@ -115,7 +115,7 @@
     <Compile Include="Sources\Features\Sketchbook.cs" />
     <Compile Include="Sources\Handlers\FullScreenScreamers\LightSwitch.cs" />
     <Compile Include="Sources\Handlers\Jobs\FirewoodDelivery.cs" />
-    <Compile Include="Sources\Internal\Utilities\ItemsGravityEnabler.cs" />
+    <Compile Include="Sources\Internal\Utilities\ItemsGravityCrutch.cs" />
     <Compile Include="Sources\Features\PentagramEvents.cs" />
     <Compile Include="Sources\Handlers\PentaTrigger.cs" />
     <Compile Include="Sources\Handlers\Jobs\SuskiHelp.cs" />

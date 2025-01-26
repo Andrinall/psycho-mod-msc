@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace Psycho.Handlers
+namespace Psycho.Internal
 {
     class ItemRenamer : MonoBehaviour
     {

@@ -17,7 +17,7 @@ namespace Psycho.Features
 
             GameObject _cloned = ItemsPool.AddItem(ResourcesStorage.Postcard_prefab);
             _cloned.transform.SetParent(GameObject.Find("YARD/PlayerMailBox").transform, false);
-            _cloned.AddComponent<ItemsGravityEnabler>();
+            _cloned.AddComponent<ItemsGravityCrutch>();
 
             Shader _text3D = Shader.Instantiate(Shader.Find("GUI/3D Text Shader"));
             Transform _text = _cloned.transform.Find("Text");
@@ -48,7 +48,7 @@ namespace Psycho.Features
 
             self = cloned;
 
-            cloned.AddComponent<ItemsGravityEnabler>();
+            cloned.AddComponent<ItemsGravityCrutch>();
         }
     }
 }

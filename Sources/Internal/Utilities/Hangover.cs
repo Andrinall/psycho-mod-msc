@@ -4,7 +4,7 @@ using UnityEngine;
 using Psycho.Internal;
 
 
-namespace Psycho.Handlers
+namespace Psycho.Internal
 {
     class Hangover : MonoBehaviour
     {

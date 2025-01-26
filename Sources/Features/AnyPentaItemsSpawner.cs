@@ -87,7 +87,7 @@ namespace Psycho.Features
             if (spawnDay == CandleDay)
                 _cloned.transform.localEulerAngles = new Vector3(63.902f, -90, -90);
 
-            _cloned.AddComponent<ItemsGravityEnabler>();
+            _cloned.AddComponent<ItemsGravityCrutch>();
             spawned = true;
             Utils.PrintDebug($"Item {_cloned.name} spawned!");
         }
