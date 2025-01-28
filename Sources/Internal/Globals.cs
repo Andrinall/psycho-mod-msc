@@ -57,7 +57,6 @@ namespace Psycho.Internal
         public static float SUN_Minutes => Mathf.FloorToInt(sunMinutes.Value % 60);
         
 
-        public static PillsItem Pills = null;
         public static Notebook Notebook = null;
 
         public static GameObject MailboxSheet = null;
@@ -346,7 +345,6 @@ namespace Psycho.Internal
             sunHours = null;
             sunMinutes = null;
 
-            Pills = null;
             Notebook = null;
             MailboxSheet = null;
             EnvelopeObject = null;

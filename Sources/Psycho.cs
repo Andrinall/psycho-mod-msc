@@ -126,26 +126,24 @@ namespace Psycho
 
             // load save data
             if (!SaveManager.TryLoad(this))
-            {
                 Logic.SetDefaultValues(); // reset data if savedata not loaded
 
-                if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
-                {
-                    ItemsPool.AddItem(ResourcesStorage.Picture_prefab,
-                        new Vector3(-10.1421f, 0.2857685f, 6.501729f),
-                        new Vector3(0.01392611f, 2.436693f, 89.99937f)
-                    );
-                }
+            if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
+            {
+                ItemsPool.AddItem(ResourcesStorage.Picture_prefab,
+                    new Vector3(-10.1421f, 0.2857685f, 6.501729f),
+                    new Vector3(0.01392611f, 2.436693f, 89.99937f)
+                );
+            }
 
-                if (GameObject.Find("Notebook(Clone)") == null)
-                {
-                    GameObject _notebook = ItemsPool.AddItem(ResourcesStorage.Notebook_prefab,
-                        new Vector3(-2.007682f, 0.04279194f, 7.669019f),
-                        new Vector3(90f, 247.8114f, 0f)
-                    );
-                    Globals.Notebook = _notebook.AddComponent<Notebook>();
-                    _notebook.MakePickable();
-                }
+            if (GameObject.Find("Notebook(Clone)") == null)
+            {
+                GameObject _notebook = ItemsPool.AddItem(ResourcesStorage.Notebook_prefab,
+                    new Vector3(-2.007682f, 0.04279194f, 7.669019f),
+                    new Vector3(90f, 247.8114f, 0f)
+                );
+                Globals.Notebook = _notebook.AddComponent<Notebook>();
+                _notebook.MakePickable();
             }
 
             if (Logic.GameFinished) return;
@@ -244,13 +242,15 @@ namespace Psycho
 
         void Mod_Update()
         {
-            if (Logic.GameFinished || Logic.IsDeadByGame) return;
+            if (FastOpenKeybind == null) return;
+            if (Logic.GameFinished || Logic.IsDead || Logic.IsDeadByGame) return;
+            if (!Logic.InHorror) return;
             if (Globals.Player == null) return;
+            if (PillsItem.Index == -1) return;
+            if (!IsLoaded || IsLoaderMenuOpened) return;
 
-            if (IsLoaded && !IsLoaderMenuOpened && FastOpenKeybind.GetKeybindUp() && Logic.InHorror && !Logic.EnvelopeSpawned)
-            {
+            if (FastOpenKeybind.GetKeybindUp())
                 Globals.MailboxSheet?.SetActive(true);
-            }
         }
 
         void Mod_FixedUpdate()
@@ -324,6 +324,9 @@ namespace Psycho
             Utils.PrintDebug("ResourcesStorage.UnloadAll - OK");
             Globals.Reset();
             Utils.PrintDebug("Globals.Reset - OK");
+
+            PillsItem.Index = -1;
+            PillsItem.Self = null;
 #if DEBUG
             DebugPanel.SetSettingsVisible(false);
 #endif

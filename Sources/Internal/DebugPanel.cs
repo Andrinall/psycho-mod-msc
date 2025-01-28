@@ -298,13 +298,13 @@ namespace Psycho.Internal
 
         static void TeleportToPills()
         {
-            if (Globals.Pills?.self == null)
+            if (PillsItem.Self == null)
             {
-                ModConsole.Error("Pills not exists!");
+                Utils.PrintDebug(eConsoleColors.RED, "Pills not exists!");
                 return;
             }
 
-            GameObject.Find("PLAYER").transform.position = Globals.Pills.self.transform.position;
+            GameObject.Find("PLAYER").transform.position = PillsItem.Self.transform.position;
         }
 
         static void KillHeartAttack()
