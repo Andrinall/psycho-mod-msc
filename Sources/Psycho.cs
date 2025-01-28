@@ -21,7 +21,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.8";
+        public override string Version => "1.0.9";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -57,11 +57,16 @@ namespace Psycho
 
             bool _hasConnection = ModLoader.CheckSteam();
             string _steamId = (string)_fieldSteamID.GetValue(null);
+            string _output = $"<b><color=orange>Steam User ID</color> : {(_hasConnection ? $"<color=lime>{_steamId ?? ""}</color>" : "<color=red>undefined</color>")}</b>";
 
-            ModConsole.Print($"<b><color=orange>Steam User ID</color> : {(_hasConnection ? $"<color=lime>{_steamId}</color>" : "<color=red>undefined</color>")}</b>");
+#if DEBUG
+            ModConsole.Print(_output);
+#else
+            Debug.Log(_output);
+#endif
 
             if (!_hasConnection)
-                throw new AccessViolationException("Steam not connected"); 
+                throw new AccessViolationException("Steam not connected");
 
             SetupFunction(Setup.ModSettings, Mod_Settings);
             SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
