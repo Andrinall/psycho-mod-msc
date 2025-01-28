@@ -42,7 +42,6 @@ namespace Psycho.Internal
 
             try
             {
-
                 death.gameObject.SetActive(true);
                 _paper.Find("TextFI").GetComponent<TextMesh>().text = fi;
                 _paper.Find("TextEN").GetComponent<TextMesh>().text = en;

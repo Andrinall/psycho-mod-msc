@@ -62,19 +62,20 @@ namespace Psycho.Internal
             ["SEPTIC_TANK"]      = 0.10f,
 
             // Decrease
-            ["GRAB_SUITCASE"] = 7.1f,
-            ["HOUSE_BURNING"] = 3f,
-            ["FITTAN_CRASH"]  = 3f,
-            ["SPILL_SHIT"]    = 3f / 5,
-            ["SUSKI_HIT"]     = 3f,
-            ["GRANNY_ANGRY"]  = 2f,
-            ["NPC_HIT"]       = 1f,
-            ["WINDOW_BREAK"]  = 0.5f,
-            ["TEIMO_PISS"]    = 0.5f,
-            ["DRUNK_BOOZE"]   = 0.2f,
-            ["TEIMO_SWEARS"]  = 0.1f,
-            ["DRUNK_BEER"]    = 0.05f,
-            ["PLAYER_SWEARS"] = 0.01f
+            ["GRAB_SUITCASE"]    = 7.1f,
+            ["HOUSE_BURNING"]    = 3f,
+            ["FITTAN_CRASH"]     = 3f,
+            ["SPILL_SHIT"]       = 3f / 5,
+            ["SUSKI_HIT"]        = 3f,
+            ["GRAB_VIDEOPOKER"]  = 2.5f,
+            ["GRANNY_ANGRY"]     = 2f,
+            ["NPC_HIT"]          = 1f,
+            ["WINDOW_BREAK"]     = 0.5f,
+            ["TEIMO_PISS"]       = 0.5f,
+            ["DRUNK_BOOZE"]      = 0.2f,
+            ["TEIMO_SWEARS"]     = 0.1f,
+            ["DRUNK_BEER"]       = 0.05f,
+            ["PLAYER_SWEARS"]    = 0.01f
         };
 
         public static bool IsDeadByGame = false;

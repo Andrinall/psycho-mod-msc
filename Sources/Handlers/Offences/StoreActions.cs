@@ -15,12 +15,16 @@ namespace Psycho.Handlers
 
             GameObject _windowPub = gfxPub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
             GameObject _windowStore = gfxStore.Find("BreakableWindows/BreakableWindow")?.gameObject;
+            GameObject _videoPoker = transform.FindChild("LOD/VideoPoker")?.gameObject;
 
             if (_windowPub != null)
                 StateHook.Inject(_windowPub, "Shatter", WindowBreaked);
 
             if (_windowStore != null)
                 StateHook.Inject(_windowStore, "Shatter", WindowBreaked);
+
+            if (_videoPoker != null)
+                StateHook.Inject(_videoPoker, "Data", "Disable game", PokerGrabbed, -1);
 
             StateHook.Inject(teimo.Find("Speak").gameObject, "Speak", "State 1", TeimoSwears);
             StateHook.Inject(teimo.Find("FacePissTrigger").gameObject, "Reaction", "State 2", PissedOnTeimo);
@@ -34,6 +38,9 @@ namespace Psycho.Handlers
 
         void WindowBreaked()
             => Logic.PlayerCommittedOffence("WINDOW_BREAK");
+
+        void PokerGrabbed()
+            => Logic.PlayerCommittedOffence("GRAB_VIDEOPOKER");
 
         void TeimoSwears()
             => Logic.PlayerCommittedOffence("TEIMO_SWEARS");
