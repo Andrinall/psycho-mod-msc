@@ -19,12 +19,14 @@ namespace Psycho.Features
         GameObject envelopeSheet;
 
         bool installed = false;
+        
+        static MailBoxEnvelope instance = null;
 
 
         protected override void Enabled()
         {
             if (installed) return;
-
+            instance = this;
 
             mailboxEnvelope = Instantiate(transform.Find("EnvelopeInspection").gameObject);
             mailboxEnvelope.gameObject.name = "EnvelopeDoctor";
@@ -69,11 +71,13 @@ namespace Psycho.Features
             Globals.MailboxSheet = envelopeSheet;
             Globals.EnvelopeObject = mailboxEnvelope;
 
-            if (Globals.Pills != null)
-                SetBackgroundScreenForLetter(Globals.Pills.index);
+            if (PillsItem.Index != -1)
+                SetBackgroundScreenForLetter(PillsItem.Index);
 
             installed = true;
         }
+
+        protected override void Destroyed() => instance = null;
 
         void DisableStrangeLetter()
         {
@@ -85,15 +89,15 @@ namespace Psycho.Features
         {
             try
             {
-                if (Globals.Pills != null)
+                if (PillsItem.Self != null)
                 {
-                    Destroy(Globals.Pills.self);
-                    Globals.Pills = null;
+                    Destroy(PillsItem.Self);
+                    PillsItem.Self = null;
                     Utils.PrintDebug(eConsoleColors.YELLOW, "Removed previous pills");
                 }
 
                 int _idx = UnityEngine.Random.Range(0, Globals.PillsPositions.Count - 1);
-                Globals.Pills = new PillsItem(Globals.PillsPositions[_idx]);
+                PillsItem.TryCreatePills(_idx, Globals.PillsPositions[_idx], Vector3.zero);
 
                 SetBackgroundScreenForLetter(_idx);
                 Utils.PrintDebug($"Generated pills: {_idx}");
@@ -105,9 +109,11 @@ namespace Psycho.Features
             }
         }
 
-        void SetBackgroundScreenForLetter(int index)
+        public static void SetBackgroundScreenForLetter(int index)
         {
-            Transform _image = envelopeSheet.transform.Find("Background/Image");
+            if (instance == null) return;
+
+            Transform _image = instance.envelopeSheet.transform.Find("Background/Image");
             Texture _newTexture = ResourcesStorage.MailScreens.Find(v => v.name == index.ToString());
             _image.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", _newTexture);
             Utils.PrintDebug($"Sheets/DoctorMail/Background/Image screen updated to {_newTexture.name} idx");
