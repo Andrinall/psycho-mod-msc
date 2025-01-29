@@ -21,7 +21,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.9";
+        public override string Version => "1.0.10";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -130,7 +130,7 @@ namespace Psycho
             Globals.InitializeObjects();
 
             // load save data
-            if (!SaveManager.TryLoad(this))
+            if (!SaveManager.Load(this))
                 Logic.SetDefaultValues(); // reset data if savedata not loaded
 
             if (GameObject.Find("Picture(Clone)") == null) // spawn picture frame at default position if needed
@@ -301,7 +301,6 @@ namespace Psycho
         void Mod_Save()
         {
             SaveManager.SaveData(this);
-
             Unload();
         }
 
@@ -330,8 +329,7 @@ namespace Psycho
             Globals.Reset();
             Utils.PrintDebug("Globals.Reset - OK");
 
-            PillsItem.Index = -1;
-            PillsItem.Self = null;
+            PillsItem.Reset();
 #if DEBUG
             DebugPanel.SetSettingsVisible(false);
 #endif

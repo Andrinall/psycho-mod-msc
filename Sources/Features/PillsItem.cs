@@ -14,8 +14,6 @@ namespace Psycho.Features
 {
     class PillsItem
     {
-        static PlayMakerFSM fsm;
-
         public static GameObject Self;
         public static int Index;
         
@@ -35,6 +33,13 @@ namespace Psycho.Features
                 Self = null;
                 Utils.PrintDebug(eConsoleColors.RED, $"Unable to create PillsItem\n{e.GetFullMessage()}");
             }
+        }
+
+        public static void Reset()
+        {
+            Object.Destroy(Self);
+            Index = -1;
+            Self = null;
         }
 
         static void CreatePillsItem(Vector3 position, Vector3 euler)
@@ -63,11 +68,11 @@ namespace Psycho.Features
             _collider.name = _pcoll.name;
             _collider.size = _pcoll.size;
 
-            fsm = Self.GetPlayMaker("Use");
-            fsm.GetState("Eat").ClearActions(6, 3);
-            fsm.GetState("Load").ClearActions();
-            fsm.GetState("Save").ClearActions();
-            fsm.GetState("Destroy").ClearActions();
+            PlayMakerFSM _fsm = Self.GetPlayMaker("Use");
+            _fsm.GetState("Eat").ClearActions(6, 3);
+            _fsm.GetState("Load").ClearActions();
+            _fsm.GetState("Save").ClearActions();
+            _fsm.GetState("Destroy").ClearActions();
 
             StateHook.Inject(Self, "Use", "Eat", EatState);
             StateHook.Inject(Self, "Use", "Destroy", () => Object.Destroy(Self), -1);
@@ -76,11 +81,6 @@ namespace Psycho.Features
         static void EatState()
         {
             Logic.ChangeWorld(eWorldType.MAIN);
-            
-            Object.Destroy(Self);
-            Index = -1;
-            Self = null;
-
             Utils.PrintDebug($"Pills with index {Index} removed");
         }
     }

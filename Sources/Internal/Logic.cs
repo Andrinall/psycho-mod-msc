@@ -231,6 +231,8 @@ namespace Psycho.Internal
                 }
             }
 
+            PillsItem.Reset();
+
             Utils.PrintDebug(eConsoleColors.GREEN, $"World changed to {(type == eWorldType.MAIN ? "MAIN" : "HORROR")}");
             KnockOutPlayer();
         }

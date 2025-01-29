@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -7,8 +8,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 
 using Psycho.Internal;
-using System;
-using System.Diagnostics.SymbolStore;
 
 
 namespace Psycho.Features

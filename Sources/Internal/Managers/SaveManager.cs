@@ -1,11 +1,6 @@
 ﻿
-using System;
-using System.IO;
-using System.Linq;
-
 using MSCLoader;
 using UnityEngine;
-using HutongGames.PlayMaker;
 
 using Psycho.Features;
 
@@ -14,7 +9,7 @@ namespace Psycho.Internal
 {
     static class SaveManager
     {
-        public static bool TryLoad(Mod mod)
+        public static bool Load(Mod mod)
         {
             try
             {
@@ -61,8 +56,11 @@ namespace Psycho.Internal
                     if (Logic.InHorror && !Logic.EnvelopeSpawned && _data.PillsIndex != -1)
                         PillsItem.TryCreatePills(_data.PillsIndex, _data.PillsPosition, _data.PillsEuler);
 
-                    if (_data.PillsIndex == -1)
+                    if (Logic.InHorror && _data.PillsIndex == -1)
                         Logic.EnvelopeSpawned = true;
+
+                    if (!Logic.InHorror && _data.PillsIndex != -1)
+                        PillsItem.Reset();
                 }
 
                 ModConsole.Print($"[{mod.Name}{{{mod.Version}}}]: <color=green>Save Data Loaded!</color>");

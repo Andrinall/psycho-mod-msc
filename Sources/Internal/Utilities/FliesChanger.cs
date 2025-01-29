@@ -7,8 +7,6 @@ using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 
-using Psycho.Internal;
-
 
 namespace Psycho.Internal
 {
