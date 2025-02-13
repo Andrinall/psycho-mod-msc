@@ -42,4 +42,4 @@ Like a regular mod via a modloader. Just put psycho.dll in the mods folder and e
 
 The published version is considered a release. The mod will not be further developed. However, we will fix the errors found.
 
-Version 1.0.1
+Version 1.0.10
