@@ -21,7 +21,7 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.10";
+        public override string Version => "1.0.11";
         public override string Description => "Adds a schizophrenia for your game character";
 
         public override byte[] Icon => Properties.Resources.mod_icon;
@@ -32,6 +32,8 @@ namespace Psycho
         internal static SettingsDropDownList LangDropDownList;
         internal static SettingsCheckBox ShowFullScreenScreamers;
         internal static Keybind FastOpenKeybind;
+
+        SettingsCheckBox canUseModWithUnofficialVersion;
         
         internal bool IsLoaderMenuOpened => loaderMenu?.activeSelf == true;
         static bool unloaded = false;
@@ -49,24 +51,23 @@ namespace Psycho
 
         bool bellsActivated = false;
         Vector3 bellsOrigPos;
+
+        bool hasConnection = false;
         
 
         public override void ModSetup()
         {
             FieldInfo _fieldSteamID = typeof(ModLoader).GetField("steamID", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 
-            bool _hasConnection = ModLoader.CheckSteam();
+            hasConnection = ModLoader.CheckSteam();
             string _steamId = (string)_fieldSteamID.GetValue(null);
-            string _output = $"<b><color=orange>Steam User ID</color> : {(_hasConnection ? $"<color=lime>{_steamId ?? ""}</color>" : "<color=red>undefined</color>")}</b>";
+            string _output = $"<b><color=orange>Steam User ID</color> : {(hasConnection ? $"<color=lime>{_steamId ?? ""}</color>" : "<color=red>undefined</color>")}</b>";
 
 #if DEBUG
             ModConsole.Print(_output);
 #else
             Debug.Log(_output);
 #endif
-
-            if (!_hasConnection)
-                throw new AccessViolationException("Steam not connected");
 
             SetupFunction(Setup.ModSettings, Mod_Settings);
             SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
@@ -95,6 +96,12 @@ namespace Psycho
 
             ShowFullScreenScreamers = Settings.AddCheckBox("psychoFullScreenScreamers", "Show Full Screen Screamers", true);
 
+            if (!hasConnection)
+            {
+                Settings.AddText(" "); // spacing between checkboxes
+                canUseModWithUnofficialVersion = Settings.AddCheckBox("psychoCanUseWithUnofficialVersion", "Use With Unofficial Version", false);
+            }
+
             FastOpenKeybind = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
 #if DEBUG
             DebugPanel.Init();
@@ -117,6 +124,9 @@ namespace Psycho
 
         void Mod_Load()
         {
+            if (!hasConnection && canUseModWithUnofficialVersion?.GetValue() == false)
+                return;
+
             unloaded = false;
             IsLoaded = false;
             loaderMenu = GameObject.Find("​​MSCLoade​r ​Can​vas m​enu/MSCLoader Mod Menu");
@@ -196,6 +206,9 @@ namespace Psycho
 
         void Mod_SecondPassLoad()
         {
+            if (!hasConnection && canUseModWithUnofficialVersion?.GetValue() == false)
+                throw new AccessViolationException("Steam not connected");
+
             if (Logic.GameFinished) return;
 
             // register crutch command
@@ -247,6 +260,7 @@ namespace Psycho
 
         void Mod_Update()
         {
+            if (!IsLoaded) return;
             if (FastOpenKeybind == null) return;
             if (Logic.GameFinished || Logic.IsDead || Logic.IsDeadByGame) return;
             if (!Logic.InHorror) return;
@@ -260,6 +274,7 @@ namespace Psycho
 
         void Mod_FixedUpdate()
         {
+            if (!IsLoaded) return;
             if (Logic.GameFinished || Logic.IsDeadByGame) return;
             if (Globals.Player == null) return;
 
@@ -300,6 +315,7 @@ namespace Psycho
 
         void Mod_Save()
         {
+            if (!IsLoaded) return;
             SaveManager.SaveData(this);
             Unload();
         }
