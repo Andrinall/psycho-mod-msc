@@ -58,13 +58,12 @@ namespace Psycho.Features
                 MuteAmbient(true);
                 return;
             }
-            else
-            {
-                if (Logic.CurrentAmbientTrigger != this) return;
+            
+            
+            if (Logic.CurrentAmbientTrigger != this) return;
                 
-                MuteAmbient(true);
-                Logic.CurrentAmbientTrigger = null;
-            }
+            MuteAmbient(true);
+            Logic.CurrentAmbientTrigger = null;
         }
 
         public void MuteAmbient(bool state)
@@ -120,7 +119,6 @@ namespace Psycho.Features
             _islandAmbientObj.AddComponent<AmbientTrigger>();
 
 
-
             GameObject _dingonbiisiAmbientObj = new GameObject("DingonbiisiAmbientTrigger");
             _dingonbiisiAmbientObj.transform.position = new Vector3(1368.03f, 10.63f, 799.7194f);
             _dingonbiisiAmbientObj.transform.eulerAngles = new Vector3(0f, 39.213f, 0f);
@@ -147,12 +145,11 @@ namespace Psycho.Features
             {
                 MuteSource(Globals.GlobalAmbient_source, !(Globals.SUN_Hours >= 22f || Globals.SUN_Hours < 4f));
                 MuteSource(Globals.GlobalPsychoAmbient_source, true);
+                return;
             }
-            else
-            {
-                MuteSource(Globals.GlobalAmbient_source, true);
-                MuteSource(Globals.GlobalPsychoAmbient_source, false);
-            }
+            
+            MuteSource(Globals.GlobalAmbient_source, true);
+            MuteSource(Globals.GlobalPsychoAmbient_source, false);
         }
 
         public static void MuteSource(AudioSource source, bool state)

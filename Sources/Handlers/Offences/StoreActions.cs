@@ -15,15 +15,14 @@ namespace Psycho.Handlers
             Transform teimo = transform.FindChild("TeimoInShop").Find("Pivot");
 
             GameObject _windowPub = gfxPub.Find("BreakableWindowsPub/BreakableWindowPub")?.gameObject;
-            GameObject _windowStore = gfxStore.Find("BreakableWindows/BreakableWindow")?.gameObject;
-            GameObject _videoPoker = transform.FindChild("LOD/VideoPoker")?.gameObject;
-
             if (_windowPub != null)
                 StateHook.Inject(_windowPub, "Shatter", WindowBreaked);
 
+            GameObject _windowStore = gfxStore.Find("BreakableWindows/BreakableWindow")?.gameObject;
             if (_windowStore != null)
                 StateHook.Inject(_windowStore, "Shatter", WindowBreaked);
 
+            GameObject _videoPoker = transform.FindChild("LOD/VideoPoker")?.gameObject;
             if (_videoPoker != null)
                 StateHook.Inject(_videoPoker, "Data", "Disable game", PokerGrabbed, -1);
 

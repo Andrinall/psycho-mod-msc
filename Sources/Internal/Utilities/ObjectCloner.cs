@@ -3,6 +3,7 @@ using MSCLoader;
 using UnityEngine;
 
 using Psycho.Screamers;
+using System.Linq;
 
 
 namespace Psycho.Internal
@@ -116,12 +117,17 @@ namespace Psycho.Internal
         {
             if (PigWalkAnimation) return;
 
-            PigWalkAnimation = AnimationClip.Instantiate
-            (
-                GameObject.Find("CABIN/Cabin/Ventti/PIG/VenttiPig/Pivot/Char/skeleton")
-                    .GetComponent<Animation>()
-                    .GetClip("venttipig_pig_walk")
-            );
+            Transform _pigMain = GameObject.Find("CABIN/Cabin/Ventti/PIG").transform;
+            Transform _pigSkeleton = _pigMain.transform.Find("VenttiPig/Pivot/Char/skeleton");
+
+            AnimationClip _clip = _pigSkeleton
+                ? _pigSkeleton.GetComponent<Animation>().GetClip("venttipig_pig_walk")
+                : Resources.FindObjectsOfTypeAll<AnimationClip>().Where(clip => clip.name == "venttipig_pig_walk").First();
+
+            if (!_clip)
+                throw new System.NullReferenceException("Cannot find a venttipig_pig_walk AnimationClip");
+
+            PigWalkAnimation = AnimationClip.Instantiate(_clip);
         }
 
         public static void ActivateDINGONBIISIMiscThing3Permanently()

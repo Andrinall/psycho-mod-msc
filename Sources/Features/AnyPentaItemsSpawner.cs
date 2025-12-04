@@ -95,7 +95,6 @@ namespace Psycho.Features
         {
             if (parent.childCount != 0)
             {
-
                 GameObject _obj = parent.GetChild(0).gameObject;
                 ItemsPool.RemoveItem(_obj);
                 Utils.PrintDebug($"Item {_obj.name} destroyed, because not picked up.");
