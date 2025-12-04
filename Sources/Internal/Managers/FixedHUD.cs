@@ -96,18 +96,19 @@ namespace Psycho.Internal
             Structurize();
         }
 
-        /// <summary>
-        /// Add element to GUI/HUD && local storage
-        /// </summary>
-        /// <param name="cloneFrom">Clone RECT or TEXT field of HUD ?</param>
-        /// <param name="name">Name for new HUD element</param>
-        /// <param name="parent">This parameter selects a parent (use name of element in HUD)</param>
-        /// <example>
-        /// GameObject guiHud = GameObject.Find("GUI/HUD");
-        /// FixedHUD hud = guiHud.GetComponent<FixedHUD>() ?? guiHud.AddComponent<FixedHUD>();
-        /// hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", "Money");
-        /// hud.Structurize();
-        /// </example>
+        /** <summary>
+          * Add element to GUI/HUD && local storage
+          * </summary>
+          * <param name="cloneFrom">Clone RECT or TEXT field of HUD ?</param>
+          * <param name="name">Name for new HUD element</param>
+          * <param name="parent">This parameter selects a parent (use name of element in HUD)</param>
+          * <example>
+          * GameObject guiHud = GameObject.Find("GUI/HUD");
+          * FixedHUD hud = guiHud.GetComponent<FixedHUD>() ?? guiHud.AddComponent<FixedHUD>();
+          * hud.AddElement(eHUDCloneType.RECT, "NewHUDRect", "Money");
+          * hud.Structurize();
+          * </example>
+        */
         public static void AddElement(eHUDCloneType cloneFrom, string name, string parent)
         {
             if (instance == null) return;

@@ -349,18 +349,19 @@ namespace Psycho.Internal
             EventsManager.OnScreamerTriggered.RemoveAllListeners();
             EventsManager.OnScreamerFinished.RemoveAllListeners();
 
+            string[] _objectsToDestroy = new string[]
+            {
+                "Minigame", "AmbientTrigger", "MovingHand",
+                "MovingUncleHead","MummolaCrawl", "Sketchbook",
+                "Notebook", "FernFlowerSpawner", "AngryRoosterPoster",
+                "Pentagram", "PentagramEvents"
+            };
+
             foreach (CatchedComponent _catched in Resources.FindObjectsOfTypeAll<CatchedComponent>())
             {
                 if (_catched == null) continue;
 
                 string _typeName = _catched.GetType().Name;
-                string[] _objectsToDestroy = new string[]
-                {
-                    "Minigame", "AmbientTrigger", "MovingHand",
-                    "MovingUncleHead","MummolaCrawl", "Sketchbook",
-                    "Notebook", "FernFlowerSpawner", "AngryRoosterPoster",
-                    "Pentagram", "PentagramEvents"
-                };
 
                 if (_objectsToDestroy.Contains(_typeName))
                 {

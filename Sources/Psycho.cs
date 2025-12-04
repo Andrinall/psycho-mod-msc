@@ -23,7 +23,7 @@ namespace Psycho
         public override string Author => "LUAR, Andrinall, @racer";
         public override string Version => "1.0.11";
         public override string Description => "Adds a schizophrenia for your game character";
-
+        
         public override byte[] Icon => Properties.Resources.mod_icon;
 
         internal static Psycho Instance;
