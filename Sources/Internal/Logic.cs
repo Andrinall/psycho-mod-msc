@@ -279,30 +279,38 @@ namespace Psycho.Internal
 
         public static void KillUsingTrain()
         {
+            int __crutch = 0; // for detects a very rare null reference exception
             try
             {
                 PlayMakerFSM _train = GameObject.Find("TRAIN/SpawnEast/TRAIN").GetPlayMaker("Move");
+                __crutch++; // 1
                 Globals.Player.GetComponent<CharacterMotor>().canControl = false;
+                __crutch++; // 2
 
                 StateHook.Inject(_train.gameObject, "Player", "Die 2",
                     () => DeathSystem.KillCustom("Train", Locales.DEATH_PAPER[1, Globals.CurrentLang], PAPER_TEXT_FI_POINTS), 0); // -1
+                __crutch++; // 3
 
                 _train.SendEvent("FINISHED"); // reset current state
+                __crutch++; // 4
                 while (_train.ActiveStateName != "State 2")
                     _train.SendEvent("FINISHED");
+                __crutch++; // 5
 
                 ShizAnimPlayer.PlayAnimation("sleep_knockout", 15f, default, () =>
                 {
+                    __crutch++; // 6
                     Globals.Player.position = new Vector3(244.3646f, -1.039873f, -1262.394f);
                     Globals.Player.eulerAngles = new Vector3(0f, 233.4375f, 0f);
 
                     ShizAnimPlayer.PlayAnimation("sleep_off", 5f, default);
                 });
+                __crutch++; // 7
             }
             catch (Exception e)
             {
-                Utils.PrintDebug("Error in KillUsingTrain.");
-                ModConsole.Error(e.GetFullMessage());
+                Utils.PrintDebug($"Error in KillUsingTrain. (stage {__crutch})");
+                ModConsole.Error($"{e.GetFullMessage()}\nTrace:\n{e.StackTrace}");
             }
         }
 
