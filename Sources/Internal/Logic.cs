@@ -414,8 +414,6 @@ namespace Psycho.Internal
                         _motor.canControl = true;
                         _volume.Value = 1;
                     });
-
-                    GameObject.Find("REPAIRSHOP/LOD/Office/Fleetari/JukeboxFleetari").SetActive(!InHorror);
                 });
             }
             catch (Exception e)
