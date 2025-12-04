@@ -31,7 +31,7 @@ namespace Psycho
 
         internal static SettingsDropDownList LangDropDownList;
         internal static SettingsCheckBox ShowFullScreenScreamers;
-        internal static Keybind FastOpenKeybind;
+        internal static SettingsKeybind FastOpenKeybind;
 
         SettingsCheckBox canUseModWithUnofficialVersion;
         
@@ -102,7 +102,7 @@ namespace Psycho
                 canUseModWithUnofficialVersion = Settings.AddCheckBox("psychoCanUseWithUnofficialVersion", "Use With Unofficial Version", false);
             }
 
-            FastOpenKeybind = Keybind.Add(this, "psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
+            FastOpenKeybind = Keybind.Add("psychoFastOpenMail", "Fast Open Strange Letter", KeyCode.Quote);
 #if DEBUG
             DebugPanel.Init();
 #endif
