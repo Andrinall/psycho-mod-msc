@@ -26,6 +26,8 @@ namespace Psycho
         
         public override byte[] Icon => Properties.Resources.mod_icon;
 
+        // public override Game SupportedGames => Game.MySummerCar; // For new MSC Loader
+
         internal static Psycho Instance;
         internal static bool IsLoaded = false;
 
