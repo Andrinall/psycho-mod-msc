@@ -14,7 +14,7 @@ namespace Psycho.Internal
 
     static class Utils
     {
-        static string DBG_STRING => $"[{Psycho.Instance.Name}{{{Psycho.Instance.Version}}}]: ";
+        static string DBG_STRING => $"[Psycho]: ";
 
         public static bool WaitFrames(ref int elapsedFrames, int neededFrames)
         {

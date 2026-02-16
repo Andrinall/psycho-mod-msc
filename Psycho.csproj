@@ -138,6 +138,8 @@
     <Compile Include="Sources\Features\FernFlowerSpawner.cs" />
     <Compile Include="Sources\Features\Pentagram.cs" />
     <Compile Include="Sources\Internal\ResourcesStorage.cs" />
+    <Compile Include="Sources\Patches\PsychoPatchInfo.cs" />
+    <Compile Include="Sources\Patches\PsychoPatches.cs" />
     <Compile Include="Sources\Screamers\BathroomShower.cs" />
     <Compile Include="Sources\Screamers\GrandmaDistanceChecker.cs" />
     <Compile Include="Sources\Screamers\KitchenShower.cs" />

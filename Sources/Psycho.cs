@@ -1,17 +1,20 @@
 ﻿
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 
+using Harmony;
 using MSCLoader;
 using UnityEngine;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
+using Object = UnityEngine.Object;
 
 using Psycho.Features;
+using Psycho.Handlers;
 using Psycho.Internal;
-
-using Object = UnityEngine.Object;
+using Psycho.Patches;
 
 
 namespace Psycho
@@ -21,14 +24,12 @@ namespace Psycho
         public override string ID => "PsychoMod";
         public override string Name => "Psycho";
         public override string Author => "LUAR, Andrinall, @racer";
-        public override string Version => "1.0.14";
+        public override string Version => "1.0.15";
         public override string Description => "Adds a schizophrenia for your game character";
         
         public override byte[] Icon => Properties.Resources.mod_icon;
+        public override Game SupportedGames => Game.MySummerCar;
 
-        // public override Game SupportedGames => Game.MySummerCar; // For new MSC Loader
-
-        internal static Psycho Instance;
         internal static bool IsLoaded = false;
 
         internal static SettingsDropDownList LangDropDownList;
@@ -55,7 +56,13 @@ namespace Psycho
         Vector3 bellsOrigPos;
 
         bool hasConnection = false;
-        
+
+        List<PsychoPatchInfo> _patches = new List<PsychoPatchInfo> {
+            new PsychoPatchInfo("ForestAddon", "SleepTrigger", "CalculateSleep", ePsychoPatchType.TRANSPILER)
+        };
+
+        const string harmonyID = "MSC_Psycho_patches";
+        HarmonyInstance harmony = HarmonyInstance.Create(harmonyID);
 
         public override void ModSetup()
         {
@@ -64,7 +71,6 @@ namespace Psycho
             hasConnection = ModLoader.CheckSteam();
             string _steamId = (string)_fieldSteamID.GetValue(null);
             string _output = $"<b><color=orange>Steam User ID</color> : {(hasConnection ? $"<color=lime>{_steamId ?? ""}</color>" : "<color=red>undefined</color>")}</b>";
-
 #if DEBUG
             ModConsole.Print(_output);
 #else
@@ -72,8 +78,9 @@ namespace Psycho
 #endif
 
             SetupFunction(Setup.ModSettings, Mod_Settings);
-            SetupFunction(Setup.ModSettingsLoaded, Mod_SettingsLoad);
+            SetupFunction(Setup.ModSettingsLoaded, _changeSetting);
 
+            SetupFunction(Setup.OnMenuLoad, ApplyPatches);
             SetupFunction(Setup.OnNewGame, Mod_NewGame);
             SetupFunction(Setup.OnSave, Mod_Save);
 
@@ -82,13 +89,10 @@ namespace Psycho
             SetupFunction(Setup.Update, Mod_Update);
             SetupFunction(Setup.FixedUpdate, Mod_FixedUpdate);
 
-            Instance = this;
+            Utils.PrintDebug("Mod loaded with version: " + Version);
         }
 
         // setup mod settings
-        void Mod_SettingsLoad()
-            => _changeSetting();
-
         void Mod_Settings()
         {
             LangDropDownList = Settings.AddDropDownList(
@@ -114,6 +118,36 @@ namespace Psycho
             => EventsManager.ChangeLanguage(LangDropDownList.GetSelectedItemIndex());
         //
 
+        void ApplyPatches()
+        {
+            harmony.UnpatchAll(harmonyID);
+            Assembly[] listAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (var patchInfo in _patches)
+            {
+                try
+                {
+                    Assembly modAssembly = listAssemblies.FirstOrDefault(v => v.GetName().Name == patchInfo.AssemblyName);
+
+                    if (modAssembly == null || modAssembly == default)
+                        continue;
+
+                    Type patchingType = modAssembly.GetType(patchInfo.TypeForPatch, true, true);
+                    MethodInfo patchingMethod = patchingType.GetMethod(patchInfo.MethodForPatch, BindingFlags.Instance | BindingFlags.Public);
+
+                    if (!_patch(patchInfo.PatchType, patchingType, patchingMethod))
+                        throw new InvalidOperationException($"Assembly `{patchInfo.AssemblyName}` exists but patches not applied to method {patchInfo.FullPatchString}");
+
+                    Utils.PrintDebug($"Successfully patched: {patchInfo.AssemblyName}.{patchInfo.TypeForPatch}.{patchInfo.MethodForPatch}");
+                }
+                catch (Exception ex)
+                {
+                    Utils.PrintDebug(eConsoleColors.YELLOW, "This error not affect to gameplay for Psycho mod but may be cause problems with other mods where tried to patching.");
+                    Utils.PrintDebug(eConsoleColors.RED, $"Error caused in PsychoPatches.Apply when patching a {patchInfo.FullPatchString}");
+                    ModConsole.Error(ex.GetFullMessage());
+                }
+            }
+        }
 
         void Mod_NewGame()
         {
@@ -187,9 +221,9 @@ namespace Psycho
             _renderer.materials[1].SetTexture("_MainTex", ResourcesStorage.NewsPaper_texture);
             
             // add job handlers (what is not possible for use in second pass)
-            AddComponent<Handlers.JokkeMovingJob>("JOBS/HouseDrunk/Moving");
-            AddComponent<Handlers.JokkeDropOff>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
-            AddComponent<Handlers.MummolaJob>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
+            AddComponent<JokkeMovingJob>("JOBS/HouseDrunk/Moving");
+            AddComponent<JokkeDropOff>("KILJUGUY/HikerPivot/JokkeHiker2/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
+            AddComponent<MummolaJob>("JOBS/Mummola/LOD/GrannyTalking/Granny/Char/skeleton/pelvis/spine_middle/spine_upper/collar_right/shoulder_right/arm_right/hand_right/PayMoney");
 
             GameObject.Find("YARD/Building/BEDROOM1").transform.Find("DoorBedroom1/Pivot/Handle")
                 .GetPlayMaker("Use")
@@ -391,12 +425,12 @@ namespace Psycho
 
         void _addHandlers() // add player behaviour handlers, used for social points increase or decrease
         {
-            AddComponent<Handlers.StoreActions>("STORE");
-            AddComponent<Handlers.SpillShit>("GIFU(750/450psi)/ShitTank");
-            AddComponent<Handlers.JunkYardDelivery>("REPAIRSHOP/JunkYardJob/PayMoney");
-            AddComponent<Handlers.SuitcaseGrab>("KILJUGUY/SuitcaseSpawns");
-            AddComponent<Handlers.FirewoodDelivery>("JOBS/HouseWood1");
-            AddComponent<Handlers.SuskiHelp>("JOBS/Suski");
+            AddComponent<StoreActions>("STORE");
+            AddComponent<SpillShit>("GIFU(750/450psi)/ShitTank");
+            AddComponent<JunkYardDelivery>("REPAIRSHOP/JunkYardJob/PayMoney");
+            AddComponent<SuitcaseGrab>("KILJUGUY/SuitcaseSpawns");
+            AddComponent<FirewoodDelivery>("JOBS/HouseWood1");
+            AddComponent<SuskiHelp>("JOBS/Suski");
 
             AddComponent<FliesChanger>("PLAYER/Flies"); // component for change flies sound after moving between a worlds
             AddComponent<MailBoxEnvelope>("YARD/PlayerMailBox"); // component for handle custom letter
@@ -537,6 +571,27 @@ namespace Psycho
             if (!_farmerWalker) return;
             StateHook.Inject(_farmerWalker, "Speak", "Done", PlayerCompleteFarmerQuest);
         }
+
+        bool _patch(ePsychoPatchType patch, Type type, MethodInfo method)
+        {
+            HarmonyMethod hmethod = new HarmonyMethod(typeof(PsychoPatches), type.Name + "_" + method.Name);
+
+            switch (patch)
+            {
+                case ePsychoPatchType.PREFIX:
+                    harmony.Patch(method, hmethod, null, null);
+                    return true;
+                case ePsychoPatchType.POSTFIX:
+                    harmony.Patch(method, null, hmethod, null);
+                    return true;
+                case ePsychoPatchType.TRANSPILER:
+                    harmony.Patch(method, null, null, hmethod);
+                    return true;
+                default:
+                    throw new IndexOutOfRangeException("Value of PsychoPatchInfo.PatchType is not a ePsychoPatchType value! (out of range)");
+            }
+        }
+
 
 
         // =================================================== \\

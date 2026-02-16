@@ -11,6 +11,12 @@ namespace Psycho.Handlers
     {
         protected override void Awaked()
         {
+            if (transform.root.name == "forest(Clone)")
+            {
+                Destroy(this);
+                return;
+            }
+
             transform.ClearFsmActions("Activate", "Calc rates", 6);
             StateHook.Inject(gameObject, "Activate", "Calc rates", UpdateFatigue, -1);
         }
